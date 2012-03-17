@@ -1,0 +1,93 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset='utf-8' />
+    <title>Tributary</title>
+    <link rel='stylesheet' type='text/css' href='http://yui.yahooapis.com/2.9.0/build/reset/reset-min.css' />
+    <link rel='stylesheet' type='text/css' href='{{base_url}}css/water.css' />
+    <link rel='stylesheet' type='text/css' href='{{base_url}}slider/css/humanity/jquery-ui-slider.css' />
+    <link rel="shortcut icon" href="{{base_url}}static/img/favicon.ico">
+    <style>
+        #instructions {
+            position: absolute;
+            top: -2em;
+            text-align: right;
+            right: 0;
+            width: 100%;
+            font-size: 0.9em;
+            line-height: 1.35em;
+            color: white;
+            text-decoration: none;
+            font-family: Arial, sans-serif;
+        }
+
+        #aboutAndAttribution {
+            position: absolute;
+            bottom: -1em;
+            width: 100%;
+            font-size: 0.9em;
+            line-height: 1.35em;
+            color: white;
+            text-decoration: none;
+            font-family: Arial, sans-serif;
+        }
+
+        #aboutAndAttribution a {
+            color: white;
+            text-decoration: underline;
+        }
+
+        #attribution {
+            position: absolute;
+            left: 0;
+        }
+
+        #about {
+            position: absolute;
+            right: 0;
+        }
+    </style>
+    <script type="text/javascript">
+        window.tributary_gist = "{{gist}}";
+        window.tributary_filename = "{{filename}}";
+    </script>
+
+    </head>
+<body>
+    
+    <div id='page'>
+        <div id='display'>
+            <svg style='width: 96%; height: 96%; padding: 2%'></svg>
+        </div>
+        <div id='editor'>
+        </div>
+        <div>
+            <a class='increase font-control' href='#'>+</a>
+            <a class='decrease font-control' href='#'>-</a>
+        </div>
+        <div id="slider"></div>
+        <div id='instructions'>
+            click a number and hold down the <span id='sliderKey'></span> key
+        </div>
+        <div id='aboutAndAttribution'>
+            <p id="about">further inspired by 
+            <a href="bl.ocks.org"> bl.ocks.org </a>
+            and
+            <a href='http://gabrielflor.it/blog-water'>water</a>
+            </p>
+            <div id='attribution'>
+                <p>100% totally based on Bret Victor's genius <a href='http://vimeo.com/36579366'>Inventing on Principle</a> talk<p>
+                <p><a href='https://github.com/enjalot/tributary'>source code</a> on github</p>
+            </div>
+        </div>
+    </div>
+    <script src='http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js'></script>
+    <script src='{{base_url}}js/jquery.hotkeys.js'></script>
+    <script src='{{base_url}}slider/js/jquery.ui.slider.js'></script>
+    <script src='{{base_url}}js/d3.v2.min.js'></script>
+    <script src='{{base_url}}js/water.js'></script>
+    <script src='{{base_url}}js/ace/ace.js'></script>
+    <script src='{{base_url}}js/ace/theme-twilight.js'></script>
+    <script src='{{base_url}}js/ace/mode-javascript.js'></script>
+</body>
+</html>
