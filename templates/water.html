@@ -8,6 +8,59 @@
     <link rel='stylesheet' type='text/css' href='{{base_url}}slider/css/humanity/jquery-ui-slider.css' />
     <link rel="shortcut icon" href="{{base_url}}static/img/favicon.ico">
     <style>
+
+        #display {
+            position: absolute;
+            left: 0;
+            top: -1px;
+            height: 100%;
+            width: 50%;
+            background: white;
+            border: solid #000 1px;
+            border-right: none;
+            -moz-box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.4);
+            -webkit-box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.4);
+            box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.4);
+            border-top-left-radius: 5px;
+            border-bottom-left-radius: 5px;
+            border-top-right-radius: 40px 10px;
+            border-bottom-right-radius: 40px 10px;
+        }
+
+        #editor {
+            position: absolute;
+            top: -1px;
+            right: 0;
+            height: 100%;
+            width: 50%;
+            border: solid #FFF 1px;
+            border-left: none;
+            background: white;
+            border-top-right-radius: 5px;
+            border-bottom-right-radius: 5px;
+            border-top-left-radius: 40px 10px;
+            border-bottom-left-radius: 40px 10px;
+
+            -moz-box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.4);
+            -webkit-box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.4);
+            box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.4);
+
+            background: #141414;
+
+            font-size: 1em; /* TODO: replace with localstorage */
+        }
+
+        svg {
+            background: #FFF;
+            border-top-left-radius: 5px;
+            border-bottom-left-radius: 5px;
+            border-top-right-radius: 40px 10px;
+            border-bottom-right-radius: 40px 10px;
+            -moz-box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.4);
+            -webkit-box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.4);
+            box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.4);
+        }
+
         #instructions {
             position: absolute;
             top: -2em;
@@ -21,19 +74,27 @@
             font-family: Arial, sans-serif;
         }
 
+        body {
+            background: #fff;
+        }
+
         #aboutAndAttribution {
             position: absolute;
             bottom: -1em;
             width: 100%;
             font-size: 0.9em;
             line-height: 1.35em;
-            color: white;
+            color: black;
             text-decoration: none;
             font-family: Arial, sans-serif;
         }
 
+        #instructions {
+            color: black;
+        }
+ 
         #aboutAndAttribution a {
-            color: white;
+            color: black;
             text-decoration: underline;
         }
 
