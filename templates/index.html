@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+    <style type="text/css">
+
+body {
+  background: #888;
+}
+
+rect {
+  stroke-width: 2.5px;
+}
+
+/*
+.square:nth-child(2n + 1) rect {
+}
+*/
+
+    </style>
+  </head>
+  <body>
+<script type="text/javascript" src="http://mbostock.github.com/d3/d3.v2.js"></script>
+    <script type="text/javascript" src="/static/jwerty.js"></script>
+    <script type="text/javascript">
+
+//TODO: add input for colors, and ability to turn off
+//also control opacity and maybe sliders for rates of rotation
+
+var w = 500,
+    h = 500,
+    start = Date.now();
+
+var rings = [ ];
+
+var n = 6;
+for (i in d3.range(n))
+{
+    if(i < 3)
+        var speed = (i-3) * 1e-2;
+    else
+        var speed = (i-2) * 1e-2;
+    rings.push({ 
+        radius: 65*i, 
+        width: 16, 
+        speed: speed,
+        phase: i
+    })
+}
+
+var svg = d3.select("body").append("svg:svg")
+    .attr("width", w)
+    .attr("height", h)
+  .append("svg:g")
+    .attr("transform", "translate(" + w / 2 + "," + h / 2 + ")scale(.6)");
+
+var ring = svg.selectAll("g")
+    .data(rings)
+  .enter().append("svg:g")
+    .attr("class", "ring")
+    .each(ringEnter);
+
+var a = 1.
+
+//jwerty.key('↑', function () { 
+jwerty.key(',←', function () { 
+    a -= .1;
+});
+//jwerty.key('↓', function () { 
+jwerty.key('→', function () { 
+    a += .1;
+});
+var pause = false;
+jwerty.key('p', function () { 
+    pause = !pause;
+});
+
+
+
+var color = d3.scale.linear()
+    .domain([-1, 1])
+    .interpolate(d3.interpolateRgb)
+    .range(['#fff', '#000'])
+
+var opacity = d3.scale.linear()
+    .domain([-1, 1])
+    .range([.3, 1])
+
+b = 1;
+
+var updateRing = function(elapsed) {
+  rotate = function(d,i) { 
+    return "rotate(" + (a * d.speed * elapsed) + ")"; 
+  };
+
+  var damp = .3
+  var rings = svg.selectAll("g.ring")
+      .attr("transform", rotate)
+    .selectAll("rect")
+      .attr("transform", rotate)
+      .attr("fill", function(d,i) {
+          var eo = -1
+          if(i % 2 == 0) eo = 1;
+          var theta = damp * a * d.speed * elapsed * eo;
+          var sin = Math.sin(theta) 
+          return color( sin );
+      })
+      .attr("fill-opacity", 0)
+      /*
+      .attr("fill-opacity", function(d) {
+          var eo = -1
+          if(i % 2 == 0) eo = 1;
+          var theta = Math.sin(damp * a * d.speed * elapsed * eo) 
+          return opacity( theta );
+      })
+      .attr("stroke", function(d) {
+          var eo = -1
+          if(i % 2 == 0) eo = 1;
+          var theta = Math.cos(damp * a * d.speed * elapsed * eo) 
+          return color( theta );
+      })
+      */
+      .attr("stroke", function(d,i) {
+          var colors = ['#fff', '#000'];
+          return colors[i % 2];
+      })
+
+
+
+}
+function ringEnter(d, i) {
+  var n = Math.floor(2 * Math.PI * d.radius / d.width * Math.SQRT1_2),
+      k = 360 / n;
+
+  d3.select(this).selectAll("g")
+      .data(d3.range(n).map(function() { return d; }))
+    .enter().append("svg:g")
+      .attr("class", "square")
+      .attr("transform", function(_, i) { return "rotate(" + i * k + ")translate(" + d.radius + ")"; })
+    .append("svg:rect")
+      .attr("x", -d.width / 2)
+      .attr("y", -d.width / 2)
+      .attr("width", d.width)
+      .attr("height", d.width);
+}
+updateRing(1000)
+d3.timer(function() {
+  if(pause) return false;
+  var elapsed = Date.now() - start;
+  updateRing(elapsed);
+});
+
+
+    </script>
+  </body>
+</html>
