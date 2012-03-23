@@ -8,11 +8,12 @@ app.debug = True
 
 base_url = "/static/water/"
 
-@app.route("/")
+#@app.route("/")
 def hello():
     return "Hello World!"
 
-@app.route("/tributary/")
+#@app.route("/tributary/")
+@app.route("/")
 def tributary():
     return render_template("water.html", base_url=base_url)
 
