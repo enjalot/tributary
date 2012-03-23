@@ -1,112 +1,192 @@
 <!doctype html>
 <html>
 <head>
+    <link href='http://fonts.googleapis.com/css?family=Ubuntu:400,700' rel='stylesheet' type='text/css'>
+    
     <meta charset='utf-8' />
     <title>Tributary</title>
     <link rel='stylesheet' type='text/css' href='http://yui.yahooapis.com/2.9.0/build/reset/reset-min.css' />
-    <link rel='stylesheet' type='text/css' href='{{base_url}}css/water.css' />
     <link rel='stylesheet' type='text/css' href='{{base_url}}slider/css/humanity/jquery-ui-slider.css' />
     <link rel="shortcut icon" href="{{base_url}}static/img/favicon.ico">
     <style>
 
-        #display {
-            position: absolute;
-            left: 0;
-            top: -1px;
-            height: 100%;
-            width: 50%;
-            background: white;
-            border: solid #000 1px;
-            border-right: none;
-            -moz-box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.4);
-            -webkit-box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.4);
-            box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.4);
-            border-top-left-radius: 5px;
-            border-bottom-left-radius: 5px;
-            border-top-right-radius: 40px 10px;
-            border-bottom-right-radius: 40px 10px;
-        }
+    body {
+        font-family: 'Ubuntu', Helvetica, Georgia, serif !important;
+    	position: absolute;
+    	width: 100%;
+    	height: 100%;
+    	background: #D8D8D8;
+    	color: black;
+    }
+    a:link {
+        color: black;
+    }
+    a:visited, a:hover {
+        color: #262626;
+        text-decoration: none;
+    }
 
-        #editor {
-            position: absolute;
-            top: -1px;
-            right: 0;
-            height: 100%;
-            width: 50%;
-            border: solid #FFF 1px;
-            border-left: none;
-            background: white;
-            border-top-right-radius: 5px;
-            border-bottom-right-radius: 5px;
-            border-top-left-radius: 40px 10px;
-            border-bottom-left-radius: 40px 10px;
+    #page {
+    	position: absolute;
+    	height: 80%;
+    	width: 90%;
+    	top: 10%;
+    	left: 5%;
+    }
 
-            -moz-box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.4);
-            -webkit-box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.4);
-            box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.4);
+    #display {
+    	position: absolute;
+    	left: 0;
+    	top: -1px;
+    	height: 100%;
+    	width: 50%;
+    	background: white;
+    	border: solid black 2px;
+    	border-right: none;
+    	/*
+    	-moz-box-shadow: 0 0 50px 5px rgba(255, 255, 255, 0.4);
+    	-webkit-box-shadow: 0 0 50px 5px rgba(255, 255, 255, 0.4);
+    	box-shadow: 0 0 50px 5px rgba(255, 255, 255, 0.4);
+    	*/
+    	border-top-left-radius: 5px;
+    	border-bottom-left-radius: 5px;
+    	border-top-right-radius: 40px 10px;
+    	border-bottom-right-radius: 40px 10px;
+    }
 
-            background: #141414;
+    #editor {
+    	position: absolute;
+    	top: -1px;
+    	right: 0;
+    	height: 100%;
+    	width: 50%;
+    	border: solid black 2px;
+    	border-left: none;
+    	background: white;
+    	border-top-right-radius: 5px;
+    	border-bottom-right-radius: 5px;
+    	border-top-left-radius: 40px 10px;
+    	border-bottom-left-radius: 40px 10px;
+    	/*
+    	-moz-box-shadow: 0 0 50px 10px rgba(255, 255, 255, 0.4);
+    	-webkit-box-shadow: 0 0 50px 10px rgba(255, 255, 255, 0.4);
+    	box-shadow: 0 0 50px 10px rgba(255, 255, 255, 0.4);
+    	*/
 
-            font-size: 1em; /* TODO: replace with localstorage */
-        }
+    	font-size: 1em; /* TODO: replace with localstorage */
+    }
 
-        svg {
-            background: #FFF;
-            border-top-left-radius: 5px;
-            border-bottom-left-radius: 5px;
-            border-top-right-radius: 40px 10px;
-            border-bottom-right-radius: 40px 10px;
-            -moz-box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.4);
-            -webkit-box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.4);
-            box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.4);
-        }
+    #editor .ace_gutter {
+    	top: -1px;
+    	border: solid black 2px;
+    	border-top-right-radius: 0px;
+    	border-bottom-right-radius: 0px;
+    	border-top-left-radius: 40px 10px;
+    	border-bottom-left-radius: 40px 10px;
+        background-color: black;
+        color: white;
+    }
 
-        #instructions {
-            position: absolute;
-            top: -2em;
-            text-align: right;
-            right: 0;
-            width: 100%;
-            font-size: 0.9em;
-            line-height: 1.35em;
-            color: white;
-            text-decoration: none;
-            font-family: Arial, sans-serif;
-        }
+    svg {
+    	position: absolute;
+    	background: #FFF;
+    	border-top-left-radius: 5px;
+    	border-bottom-left-radius: 5px;
+    	border-top-right-radius: 40px 10px;
+    	border-bottom-right-radius: 40px 10px;
+/*    	-moz-box-shadow: 0 0 50px 10px rgba(255, 255, 255, 0.4);
+    	-webkit-box-shadow: 0 0 50px 10px rgba(255, 255, 255, 0.4);
+    	box-shadow: 0 0 50px 10px rgba(255, 255, 255, 0.4);
+*/
+    }
 
-        body {
-            background: #fff;
-        }
+    .font-control {
+    	position: absolute;
+    	top: 0em;
+    	right: 1.25em;
+    	width: 1em;
+    	height: 1em;
+    	background-position: 50% 50%;
+    	background-repeat: no-repeat;
+    	text-indent: -9999px;
+    	overflow: hidden;
+    	z-index: 10;
+    	cursor: pointer;
+    }
 
-        #aboutAndAttribution {
-            position: absolute;
-            bottom: -1em;
-            width: 100%;
-            font-size: 0.9em;
-            line-height: 1.35em;
-            color: black;
-            text-decoration: none;
-            font-family: Arial, sans-serif;
-        }
+    .increase.font-control {
+    	right: 2.25em;
+    	background-image: url('../img/plus_alt.png');
+    }
 
-        #instructions {
-            color: black;
-        }
- 
-        #aboutAndAttribution a {
-            color: black;
-            text-decoration: underline;
-        }
+    .decrease.font-control {
+    	background-image: url('../img/minus_alt.png');
+    }
 
-        #attribution {
-            position: absolute;
-            left: 0;
-        }
+    .increase.font-control:hover {
+    	background-image: url('../img/plus.png');
+    }
 
-        #about {
-            position: absolute;
-            right: 0;
-        }
+    .decrease.font-control:hover {
+    	background-image: url('../img/minus.png');
+    }
+
+    #slider {
+    	visibility: hidden;
+    	z-index: 10;
+    	width: 25%;
+    	-moz-box-shadow: 0 0 10px 4px rgba(255, 255, 255, 0.4);
+    	-webkit-box-shadow: 0 0 10px 4px rgba(255, 255, 255, 0.4);
+    	box-shadow: 0 0 10px 4px rgba(255, 255, 255, 0.4);
+    }
+
+    #slider .ui-slider-handle {
+    	background: #cb842e;
+    	border-color: #784e1b;
+    }
+
+    #instructions {
+    	position: absolute;
+    	top: -2em;
+    	text-align: right;
+    	right: 0;
+    	width: 100%;
+    	font-size: 0.9em;
+    	line-height: 1.35em;
+/*    	color: white; */
+    	text-decoration: none;
+    	font-family: Arial, sans-serif;
+    }
+
+    #aboutAndAttribution {
+    	position: absolute;
+    	bottom: -1em;
+    	width: 100%;
+    	font-size: 0.9em;
+    	line-height: 1.35em;
+/*    	color: white; */
+    	text-decoration: none;
+/*    	font-family: Arial, sans-serif; */
+    }
+
+    #aboutAndAttribution a {
+/*    	color: white; */
+    	text-decoration: underline;
+    }
+
+    #attribution {
+    	position: absolute;
+    	left: 0;
+    }
+
+    #about {
+    	position: absolute;
+    	right: 0;
+    }
+    h1 {
+        display: inline-block;
+    }
+
     </style>
     <script type="text/javascript">
         window.tributary_gist = "{{gist}}";
@@ -115,8 +195,13 @@
 
     </head>
 <body>
-    
+    <div id="branding">
+        <img width="200" height="75">
+        <h1>Powered by Visual.ly</h1>
+    </div> 
     <div id='page'>
+
+        
         <div id='display'>
             <svg style='width: 96%; height: 96%; padding: 2%'></svg>
         </div>
@@ -150,5 +235,6 @@
     <script src='{{base_url}}js/ace/ace.js'></script>
     <script src='{{base_url}}js/ace/theme-twilight.js'></script>
     <script src='{{base_url}}js/ace/mode-javascript.js'></script>
+    <script>document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1"></' + 'script>')</script>
 </body>
 </html>
