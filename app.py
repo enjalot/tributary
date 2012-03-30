@@ -44,4 +44,4 @@ def gist(gist=None, filename=None):
 
 
 if __name__ == "__main__":
-    app.run()
+    app.run(host="localhost", port=8888)

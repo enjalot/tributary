@@ -256,5 +256,35 @@
     <script src='{{base_url}}js/ace/ace.js'></script>
     <script src='{{base_url}}js/ace/theme-twilight.js'></script>
     <script src='{{base_url}}js/ace/mode-javascript.js'></script>
+    <!-- 3rd party libraries -->
+    <script src='http://documentcloud.github.com/underscore/underscore-min.js'></script>
+    <script type="text/javascript" src="/static/lib/jwerty.js"></script>
+    <!--
+    <script src='http://requirejs.org/docs/release/1.0.7/minified/require.js'></script>
+    -->
+    <script type="text/javascript">
+        //caching so we don't download every keystroke
+        var required_scripts = []
+        function script(src) {
+            if(_.include(required_scripts, src))
+                return true;
+
+            $.ajax({
+                url: src,
+                dataType: "script",
+                async: false,           // this is the key
+                success: function () {
+                    // all good...
+                    //console.log("success")
+                    required_scripts.push(src)
+                },
+                error: function () {
+                    throw new Error("Could not load script " + src);
+                }
+            });
+        }
+    </script>
+
+
 </body>
 </html>
