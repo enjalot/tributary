@@ -7,191 +7,15 @@
     <title>Tributary</title>
     <link rel='stylesheet' type='text/css' href='http://yui.yahooapis.com/2.9.0/build/reset/reset-min.css' />
     <link rel='stylesheet' type='text/css' href='{{base_url}}slider/css/humanity/jquery-ui-slider.css' />
+    <!--
+    <link rel='stylesheet' type='text/css' href='{{base_url}}css/water.css' />
+    -->
+    <link rel='stylesheet' type='text/css' href='/static/css/style.css' />
     <link rel="shortcut icon" href="{{base_url}}static/img/favicon.ico">
     <style>
 
-    body {
-        font-family: 'Ubuntu', Helvetica, Georgia, serif !important;
-    	position: absolute;
-    	width: 100%;
-    	height: 100%;
-    	background: #E3E3E3;
-    	color: black;
-    }
-    a:link {
-        color: black;
-    }
-    a:visited, a:hover {
-        color: #262626;
-        text-decoration: none;
-    }
-
-    #page {
-    	position: absolute;
-    	height: 80%;
-    	width: 90%;
-    	top: 10%;
-    	left: 5%;
-    }
-
-    #display {
-    	position: absolute;
-    	left: 0;
-    	top: -1px;
-    	height: 100%;
-    	width: 50%;
-    	background: white;
-    	border: solid black 2px;
-    	border-right: none;
-    	/*
-    	-moz-box-shadow: 0 0 50px 5px rgba(255, 255, 255, 0.4);
-    	-webkit-box-shadow: 0 0 50px 5px rgba(255, 255, 255, 0.4);
-    	box-shadow: 0 0 50px 5px rgba(255, 255, 255, 0.4);
-    	*/
-    	border-top-left-radius: 5px;
-    	border-bottom-left-radius: 5px;
-    	border-top-right-radius: 40px 10px;
-    	border-bottom-right-radius: 40px 10px;
-    }
-
-    #editor {
-    	position: absolute;
-    	top: -1px;
-    	right: 0;
-    	height: 100%;
-    	width: 50%;
-    	border: solid black 2px;
-    	border-left: none;
-    	background: white;
-    	border-top-right-radius: 5px;
-    	border-bottom-right-radius: 5px;
-    	border-top-left-radius: 40px 10px;
-    	border-bottom-left-radius: 40px 10px;
-    	/*
-    	-moz-box-shadow: 0 0 50px 10px rgba(255, 255, 255, 0.4);
-    	-webkit-box-shadow: 0 0 50px 10px rgba(255, 255, 255, 0.4);
-    	box-shadow: 0 0 50px 10px rgba(255, 255, 255, 0.4);
-    	*/
-
-    	font-size: 1em; /* TODO: replace with localstorage */
-    }
-
-    #editor .ace_gutter {
-    	top: -1px;
-    	border: solid black 2px;
-    	border-top-right-radius: 0px;
-    	border-bottom-right-radius: 0px;
-    	border-top-left-radius: 40px 10px;
-    	border-bottom-left-radius: 40px 10px;
-        background-color: black;
-        color: white;
-    }
-
-    svg {
-    	position: absolute;
-    	background: #FFF;
-    	border-top-left-radius: 5px;
-    	border-bottom-left-radius: 5px;
-    	border-top-right-radius: 40px 10px;
-    	border-bottom-right-radius: 40px 10px;
-/*    	-moz-box-shadow: 0 0 50px 10px rgba(255, 255, 255, 0.4);
-    	-webkit-box-shadow: 0 0 50px 10px rgba(255, 255, 255, 0.4);
-    	box-shadow: 0 0 50px 10px rgba(255, 255, 255, 0.4);
-*/
-    }
-
-    .font-control {
-    	position: absolute;
-    	top: 0em;
-    	right: 1.25em;
-    	width: 1em;
-    	height: 1em;
-    	background-position: 50% 50%;
-    	background-repeat: no-repeat;
-    	text-indent: -9999px;
-    	overflow: hidden;
-    	z-index: 10;
-    	cursor: pointer;
-    }
-
-    .increase.font-control {
-    	right: 2.25em;
-    	background-image: url('../img/plus_alt.png');
-    }
-
-    .decrease.font-control {
-    	background-image: url('../img/minus_alt.png');
-    }
-
-    .increase.font-control:hover {
-    	background-image: url('../img/plus.png');
-    }
-
-    .decrease.font-control:hover {
-    	background-image: url('../img/minus.png');
-    }
-
-    #slider {
-    	visibility: hidden;
-    	z-index: 10;
-    	width: 25%;
-    	-moz-box-shadow: 0 0 10px 4px rgba(255, 255, 255, 0.4);
-    	-webkit-box-shadow: 0 0 10px 4px rgba(255, 255, 255, 0.4);
-    	box-shadow: 0 0 10px 4px rgba(255, 255, 255, 0.4);
-    }
-
-    #slider .ui-slider-handle {
-    	background: #cb842e;
-    	border-color: #784e1b;
-    }
-
-    #instructions {
-    	position: absolute;
-    	top: -2em;
-    	text-align: right;
-    	right: 0;
-    	width: 100%;
-    	font-size: 0.9em;
-    	line-height: 1.35em;
-/*    	color: white; */
-    	text-decoration: none;
-    	font-family: Arial, sans-serif;
-    }
-
-    #aboutAndAttribution {
-    	position: absolute;
-    	bottom: -1em;
-    	width: 100%;
-    	font-size: 0.9em;
-    	line-height: 1.35em;
-/*    	color: white; */
-    	text-decoration: none;
-/*    	font-family: Arial, sans-serif; */
-    }
-
-    #aboutAndAttribution a {
-/*    	color: white; */
-    	text-decoration: underline;
-    }
-
-    #attribution {
-    	position: absolute;
-    	left: 0;
-    }
-
-    #about {
-    	position: absolute;
-    	right: 0;
-    }
-    h1 {
-        display: inline-block;
-    }
-    #branding {
-        padding-top: 10px;
-        margin-left: 4%;
-    }
-    #branding h1 {
-        margin-left: 18px;
+    #saveButton {
+        background-image: url('{{base_url}}/img/floppy.png');
     }
 
     </style>
@@ -201,25 +25,34 @@
     </script>
 
     <script type="text/javascript">
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-30237258-1']);
+        _gaq.push(['_trackPageview']);
 
-          var _gaq = _gaq || [];
-            _gaq.push(['_setAccount', 'UA-30237258-1']);
-              _gaq.push(['_trackPageview']);
-                  
-                (function() {
-                     var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-                         ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-                             var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-                               })();
-                           </script>
+        (function() {
+            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        })();
+    </script>
 
     </head>
 <body>
+
     <div id="branding">
         <img src="/static/visually_logo_solo.png" width="208" height="51" alt="Visually Logo Solo">
         <br />
+        <!--
         <h1>Powered by Visual.ly</h1>
+        -->
     </div> 
+        <div id='savePanel'>
+            <div id='saveButton'>&nbsp;</div> Save: &nbsp;
+            <!--
+            <div class='address'><a href='#'>https://gist.github.com/b9ab9418af567e575b3e</a></div>
+            -->
+		</div>
+
     <div id='page'>
 
         
@@ -233,9 +66,7 @@
             <a class='decrease font-control' href='#'>-</a>
         </div>
         <div id="slider"></div>
-        <div id='instructions'>
-            click a number and hold down the <span id='sliderKey'></span> key
-        </div>
+
         <div id='aboutAndAttribution'>
             <p id="about">further inspired by 
             <a href="http://bl.ocks.org"> bl.ocks.org </a>
@@ -248,7 +79,14 @@
             </div>
         </div>
     </div>
+
+    <div id='instructions'>
+        click a number and hold down the <span id='sliderKey'></span> key:
+    </div>
+
+
     <script src='http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js'></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/jquery-ui.min.js"></script>
     <script src='{{base_url}}js/jquery.hotkeys.js'></script>
     <script src='{{base_url}}slider/js/jquery.ui.slider.js'></script>
     <!--
@@ -287,6 +125,48 @@
                 }
             });
         }
+    </script>
+    <script type="text/javascript">
+    //Save functionality. This just creates a new gist (no forking or saving for
+    //    now, that requires oauth)
+    //$('#saveButton').on('click', function(e) {
+    $('#savePanel').on('click', function(e) {
+
+        var oldgist = parseInt(window.tributary_gist);
+        var filename = window.tributary_filename;
+        if(filename === "") {
+            filename = "inlet.js";
+        }
+        if(!oldgist === "NaN") {
+            //TODO:
+            //this gist already exists, so we can fill in some information
+            //like the description
+        }
+        //console.log("gist #", oldgist, "filename", filename)
+        var gist = {
+            description: 'just another inlet to tributary',
+            public: true,
+            files: {}
+        };
+        gist.files[filename] = {
+            content: window.aceEditor.getSession().getValue()
+        }
+
+        //turn the save button into a saving animation
+        d3.select("#saveButton").style("background-image", "url(/static/ajax-loader.gif)")
+        d3.select("#saveButton").style("background-repeat", "no-repeat")
+        d3.select("#saveButton").style("top", "0px")
+        //d3.select("#saveButton").text("Saving!")
+        
+        //console.log("gist", gist)
+        $.post('https://api.github.com/gists', JSON.stringify(gist), function(data) {
+            console.log("DATA", data)
+            var newgist = data.id
+            var newurl = "/tributary/" + newgist + "/" + filename;
+            window.location = newurl;
+        });
+    });
+
     </script>
 
 
