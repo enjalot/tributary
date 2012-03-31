@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request, make_response
 import urllib2
 from urllib2 import URLError, HTTPError
 import json
@@ -41,6 +41,25 @@ def gist(gist=None, filename=None):
     print gist, filename
     #return render_template("water.html", code=code, base_url=base_url) 
     return render_template("water.html", gist=gist, filename=filename, base_url=base_url) 
+
+
+import urllib
+@app.route("/tributary/save", methods=["POST"])
+def save():
+    #gistobj = json.loads(request.values.get("gist"))
+    data = request.values.get("gist")
+    #data = urllib.urlencode(gistobj)
+    #print "gistobj", data
+
+    url = 'https://api.github.com/gists'
+    req = urllib2.Request(url, data)
+    ret = urllib2.urlopen(req).read()
+    #print "ret", ret
+    resp = make_response(ret, 200)
+    #TODO: get this working behind apache
+    #resp.headers['Conent-Type'] = 'application/json'
+
+    return resp
 
 
 if __name__ == "__main__":

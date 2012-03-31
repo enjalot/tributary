@@ -159,10 +159,15 @@
         //d3.select("#saveButton").text("Saving!")
         
         //console.log("gist", gist)
-        $.post('https://api.github.com/gists', JSON.stringify(gist), function(data) {
-            console.log("DATA", data)
+        //$.post('https://api.github.com/gists', JSON.stringify(gist), function(data) {
+        $.post('/tributary/save', {"gist":JSON.stringify(gist)}, function(data) {
+            //TODO: fix the flask headers to send back application/json and not text/html
+            if(typeof(data) === "string") {
+                data = JSON.parse(data)
+            }
             var newgist = data.id
             var newurl = "/tributary/" + newgist + "/" + filename;
+            //console.log("new url", newurl)
             window.location = newurl;
         });
     });
