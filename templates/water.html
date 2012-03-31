@@ -52,6 +52,12 @@
             <div class='address'><a href='#'>https://gist.github.com/b9ab9418af567e575b3e</a></div>
             -->
 		</div>
+		
+		<div id="tweetPanel">
+			<div id="tweet_this">
+				
+			</div>
+		</div>
 
     <div id='page'>
 
@@ -127,10 +133,17 @@
         }
     </script>
     <script type="text/javascript">
+
+	$(document).ready(function(){
+		var thisurl = window.location.protocol + "//" + window.location.host + "/" + window.location.pathname;
+		var tweetlink = $('<a href="http://twitter.com/home/?status=See my latest tributary here '+thisurl+'">Click here to tweet this</a>')
+		$('#tweet_this').append(tweetlink);
+		
+	})
     //Save functionality. This just creates a new gist (no forking or saving for
     //    now, that requires oauth)
     //$('#saveButton').on('click', function(e) {
-    $('#savePanel').on('click', function(e) {
+    $('#saveButton').on('click', function(e) {
 
         var oldgist = parseInt(window.tributary_gist);
         var filename = window.tributary_filename;
@@ -174,6 +187,6 @@
 
     </script>
 
-
+<script>document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1"></' + 'script>')</script>
 </body>
 </html>

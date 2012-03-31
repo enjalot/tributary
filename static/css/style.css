@@ -27,11 +27,11 @@ body {
     	width: 100%;
 /*    	left: 5%; */
     }
-    
-    #savePanel {
+    #tweetPanel {
+        font-size: 10px;
         position: absolute;
         right: 40px;
-        margin-top: 10px;
+        margin-top: 70px;
         padding: 8px;
         padding-top: 12px;
         border-radius: 8px;
@@ -45,10 +45,34 @@ body {
              -o-transition:all .5s linear .05s;
                 transition:all .5s linear .05s;
     }
+    #tweetPanel:hover {
+
+        background-color: rgba(0,0,0,0.2);
+        border: 3px solid rgba(0,0,0,0.1);;
+        
+    }
+    #savePanel {
+        color: white;
+        position: absolute;
+        right: 40px;
+        margin-top: 10px;
+        padding: 8px;
+        padding-top: 12px;
+        border-radius: 8px;
+        background-color: rgba(0,0,0,0.7);
+        width: 70px;
+        z-index: 1;
+        cursor: pointer;
+        border: 3px solid rgba(0,0,0,0.008);
+        -webkit-transition:all .5s linear .05s;       
+           -moz-transition:all .5s linear .05s;
+             -o-transition:all .5s linear .05s;
+                transition:all .5s linear .05s;
+    }
     #savePanel:hover {
 
-        background-color: rgba(0,0,0,0.25);
-        border: 3px solid rgba(0,0,0,0.3);;
+        background-color: rgba(0,0,0,0.8);
+        border: 3px solid rgba(0,0,0,0.9);;
         
     }
 
@@ -120,6 +144,9 @@ body {
     	*/
 
     	font-size: 1em; /* TODO: replace with localstorage */
+    }
+    #editor #tweet_this {
+        padding-bottom: 10px;
     }
 
     #editor .ace_gutter {
