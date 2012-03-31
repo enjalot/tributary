@@ -3,9 +3,10 @@ body {
     	position: absolute;
     	width: 100%;
     	height: 100%;
-    	/* background: #E3E3E3; */
-    	background: #E3E3E3;
+    	background: #EFEFEF; 
+/*    	background: #E3E3E3; */
     	color: black;
+    	font-size: 13px;
     }
     a:link {
         color: black;
@@ -14,21 +15,41 @@ body {
         color: #262626;
         text-decoration: none;
     }
-
+    h1 {
+        padding-left: 10px;
+        padding-top: 8px;
+        float: left;
+        font-size: 42px;
+    }
     #page {
-    	position: absolute;
-    	height: 80%;
-    	width: 90%;
-    	top: 50px;
-    	left: 5%;
+/*    	position: absolute; */
+    	height: 100%;
+    	width: 100%;
+/*    	left: 5%; */
     }
     
     #savePanel {
         position: absolute;
+        right: 40px;
+        margin-top: 10px;
+        padding: 8px;
+        padding-top: 12px;
+        border-radius: 8px;
+        background-color: rgba(0,0,0,0.12);
+        width: 70px;
         z-index: 1;
-        top: 20px;
-        right: 100px;
         cursor: pointer;
+        border: 3px solid rgba(0,0,0,0.008);
+        -webkit-transition:all .5s linear .05s;       
+           -moz-transition:all .5s linear .05s;
+             -o-transition:all .5s linear .05s;
+                transition:all .5s linear .05s;
+    }
+    #savePanel:hover {
+
+        background-color: rgba(0,0,0,0.25);
+        border: 3px solid rgba(0,0,0,0.3);;
+        
     }
 
     #saveButton {
@@ -56,38 +77,42 @@ body {
     }
 
     #display {
-    	position: absolute;
-    	left: 0;
-    	top: 30px;
     	height: 100%;
-    	width: 50%;
+    	width: 100%;
     	background: white;
-    	border: solid black 2px;
+/*    	border: solid black 2px;*/
     	border-right: none;
+    	border-top: 4px solid black;
+    	border-bottom: 4px solid black;
     	/*
     	-moz-box-shadow: 0 0 50px 5px rgba(255, 255, 255, 0.4);
     	-webkit-box-shadow: 0 0 50px 5px rgba(255, 255, 255, 0.4);
     	box-shadow: 0 0 50px 5px rgba(255, 255, 255, 0.4);
     	*/
+    	/*
     	border-top-left-radius: 5px;
     	border-bottom-left-radius: 5px;
     	border-top-right-radius: 40px 10px;
     	border-bottom-right-radius: 40px 10px;
+    	*/
     }
 
     #editor {
-    	position: absolute;
-    	top: 30px;
+        
+    	position: fixed;
+    	bottom: 10px;
     	right: 0;
-    	height: 100%;
-    	width: 50%;
+
+    	height: 36%;
+    	width: 59%;
     	border: solid black 2px;
     	border-left: none;
     	background: white;
-    	border-top-right-radius: 5px;
+/*    	border-top-right-radius: 5px;
     	border-bottom-right-radius: 5px;
     	border-top-left-radius: 40px 10px;
     	border-bottom-left-radius: 40px 10px;
+*/
     	/*
     	-moz-box-shadow: 0 0 50px 10px rgba(255, 255, 255, 0.4);
     	-webkit-box-shadow: 0 0 50px 10px rgba(255, 255, 255, 0.4);
@@ -99,22 +124,32 @@ body {
 
     #editor .ace_gutter {
     	top: -1px;
-    	border: solid black 2px;
+/*    	border: solid black 2px;
+
     	border-top-right-radius: 0px;
     	border-bottom-right-radius: 0px;
     	border-top-left-radius: 40px 10px;
     	border-bottom-left-radius: 40px 10px;
+*/
         background-color: black;
         color: white;
+
+    }
+    #editor textarea {
+    }
+    .ace_scroller, .ace-twilight {
+        background-color: rgba(0,0,0,0.6) !important;  
     }
 
     svg {
     	position: absolute;
     	background: #FFF;
+/*    	
     	border-top-left-radius: 5px;
     	border-bottom-left-radius: 5px;
     	border-top-right-radius: 40px 10px;
     	border-bottom-right-radius: 40px 10px;
+*/
 /*    	-moz-box-shadow: 0 0 50px 10px rgba(255, 255, 255, 0.4);
     	-webkit-box-shadow: 0 0 50px 10px rgba(255, 255, 255, 0.4);
     	box-shadow: 0 0 50px 10px rgba(255, 255, 255, 0.4);
@@ -153,21 +188,32 @@ body {
     }
 
     #slider {
+        position: absolute;
+        top: 0;
     	visibility: hidden;
     	z-index: 10;
     	width: 25%;
+        /*
     	-moz-box-shadow: 0 0 10px 4px rgba(255, 255, 255, 0.4);
     	-webkit-box-shadow: 0 0 10px 4px rgba(255, 255, 255, 0.4);
     	box-shadow: 0 0 10px 4px rgba(255, 255, 255, 0.4);
+    	*/
+    	border: 4px solid white;
+    	border-bottom: 5px solid white;
+        -webkit-box-shadow:2px 2px 2px 4px rgba(0,0,0,0.45); /* Saf3.0+, Chrome */
+           -moz-box-shadow:2px 2px 2px 4px rgba(0,0,0,0.45); /* FF3.5+ */
+                box-shadow:2px 2px 2px 4px rgba(0,0,0,0.45); /* Opera 10.5, IE 9.0 */
+            filter:progid:DXImageTransform.Microsoft.dropshadow(OffX=2px, OffY=2px, Color='#fff'); /* IE6,IE7 */
+        -ms-filter:"progid:DXImageTransform.Microsoft.dropshadow(OffX=2px, OffY=2px, Color='#fff')"; /* IE8 */ 
     }
 
     #slider .ui-slider-handle {
-    	background: #cb842e;
-    	border-color: #784e1b;
+    	background: #CB336E;
+    	border-color: #FFF;
+    	width: 35px;
     }
 
     #instructions {
-    	position: absolute;
     	top: 50px;
         right: 100px;
     	text-align: right;
@@ -180,8 +226,6 @@ body {
     }
 
     #aboutAndAttribution {
-    	position: absolute;
-    	bottom: -3em;
     	width: 100%;
     	font-size: 0.9em;
     	line-height: 1.35em;
@@ -196,8 +240,25 @@ body {
     }
 
     #attribution {
+        color: rgba(0,0,0,0.4);
+        width: 25%;
     	position: absolute;
     	left: 0px;
+    	padding-top: 2%;
+    	padding-left: 2%;
+    	padding-bottom: 2%;
+    	
+    	-webkit-transition:all .2s linear .05s;       
+           -moz-transition:all .2s linear .05s;
+             -o-transition:all .2s linear .05s;
+                transition:all .2s linear .05s;
+    }
+    
+    #attribution a:link, #attribution a:visited {
+        opacity: 0.98;
+    }
+    #attribution:hover {
+        color: rgba(0,0,0,0.98) !important;
     }
 
     #about {
@@ -209,7 +270,10 @@ body {
     }
     #branding {
         padding-top: 10px;
-        margin-left: 4%;
+        padding-right: 10px;
+        margin-left: auto;
+        display: block;
+        width: 200px; 
     }
     #branding h1 {
         margin-left: 18px;
