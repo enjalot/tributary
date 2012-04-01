@@ -185,7 +185,7 @@
 		$('#tweet_this').append("tweet this");
         $('#tweet_this').on("click", function(e) {
             save_gist(function(newurl, newgist) {
-		        var tweetlink = "http://twitter.com/home/?status=See my latest tributary here "+"http://enjalot.com" + newurl
+		        var tweetlink = "http://twitter.com/home/?status=See my latest %23tributary here "+"http://enjalot.com" + newurl
                 window.location = tweetlink
                 //window.open(tweetlink, 'twitte')
                 /*
