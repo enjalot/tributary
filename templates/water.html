@@ -59,6 +59,7 @@
 			</div>
 		</div>
 
+    <div id="hideEditor">Hide</div>
     <div id='page'>
 
         
@@ -204,6 +205,20 @@
             })
 
     });
+
+    //Hide the editor
+    var he = $('#hideEditor')
+    he.on("click", function(e) {
+        $("#editor").toggle()
+        var txt = he.html()
+        console.log("txt", txt)
+        if(txt === "Hide") {
+            he.html("Show")
+        } else {
+            he.html("Hide")
+        }
+
+    })
 
     </script>
 <!--
