@@ -30,13 +30,14 @@ body {
     #tweetPanel {
         font-size: 10px;
         position: absolute;
-        right: 40px;
-        margin-top: 70px;
+        right: 360px;
+        top: 10px;
         padding: 8px;
         padding-top: 12px;
         border-radius: 8px;
         background-color: rgba(0,0,0,0.12);
         width: 70px;
+        height: 20px;
         z-index: 1;
         cursor: pointer;
         border: 3px solid rgba(0,0,0,0.008);
@@ -44,6 +45,11 @@ body {
            -moz-transition:all .5s linear .05s;
              -o-transition:all .5s linear .05s;
                 transition:all .5s linear .05s;
+    }
+    #twiticon {
+        display:block;
+        float:right;
+        margin-top:-5px;
     }
     #tweetPanel:hover {
 
@@ -54,13 +60,15 @@ body {
     #savePanel {
         color: white;
         position: absolute;
-        right: 40px;
+        right: 260px;
+        top: 0px;
         margin-top: 10px;
         padding: 8px;
         padding-top: 12px;
         border-radius: 8px;
         background-color: rgba(0,0,0,0.7);
         width: 70px;
+        height:20px;
         z-index: 1;
         cursor: pointer;
         border: 3px solid rgba(0,0,0,0.008);
