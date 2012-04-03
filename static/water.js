@@ -9,8 +9,11 @@ window.aceEditor.setTheme("ace/theme/twilight");
 var JavaScriptMode = require("ace/mode/javascript").Mode;
 window.aceEditor.getSession().setMode(new JavaScriptMode());
 
+window.tributary = d3.dispatch("create", "destroy")
 // redraw svg when we update our code
 window.aceEditor.getSession().on('change', function() {
+    //send an event
+    window.tributary.destroy()
 
 	// clear the window
 	$('svg').empty();
@@ -27,6 +30,7 @@ window.aceEditor.getSession().on('change', function() {
 	}
 	catch (error) {}
 	finally {};
+    window.tributary.create()
 });
 
 if(window.tributary_gist && window.tributary_filename)
