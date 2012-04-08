@@ -7,7 +7,7 @@ var delta = window.delta;
 //we will keep track of our t parameter for the user
 delta.t = 0
 //default duration for playback
-delta.duration = 5000;
+delta.duration = 3000;
 //use this to control playback
 delta.pause = true
 
@@ -252,7 +252,9 @@ time_slider.slider({
         //set the current t to the slider's value
         delta.t = ui.value
         //call the run function with the current t
-        delta.run(delta.t)
+        try {
+            delta.run(delta.t)
+        } catch (e) {}
 	},
     min: 0,
     max: 1,
@@ -270,12 +272,14 @@ delta.timer = {
 
 var play_button = $("#play_button")
 play_button.on("click", function(event) {
-    delta.pause = !delta.pause;
-    if(!delta.pause) {
-        //unpausing, so we setup our timer to run
-        delta.timer.then = new Date();
-        delta.timer.duration = (1 - delta.t) * delta.duration
-        delta.timer.ctime = delta.t
+    if(delta.t < 1) {
+        delta.pause = !delta.pause;
+        if(!delta.pause) {
+            //unpausing, so we setup our timer to run
+            delta.timer.then = new Date();
+            delta.timer.duration = (1 - delta.t) * delta.duration
+            delta.timer.ctime = delta.t
+        }
     }
 })
 
@@ -290,7 +294,7 @@ d3.timer(function() {
     
 
     //once we reach 1, lets pause and stay there
-    if(delta.t >= 1)
+    if(delta.t >= 1 || delta.t === "NaN")
     {
         delta.t = 1;
         delta.pause = true;
@@ -300,7 +304,9 @@ d3.timer(function() {
     time_slider.slider('option', 'value', delta.t);
     //update the function (there is probably a way to have the slider's
     //function get called programmatically)
-    delta.run(delta.t)
+    try {
+        delta.run(delta.t)
+    } catch (e) {}
 })
 
 
