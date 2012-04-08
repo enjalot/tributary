@@ -104,6 +104,9 @@ window.aceEditor.on("click", function(e) {
 		slider.css('font-size', '-=4');
 		slider.offset({top: sliderTop, left: sliderLeft});
 
+        //lets turn on the slider no matter what (no alt/ctrl key necessary)
+		slider.css('visibility', 'visible'); 
+
 		// allow the slider to be shown
 		onNumeric = true;
 
@@ -114,7 +117,10 @@ window.aceEditor.on("click", function(e) {
 		// prevent click event from bubbling up to body, which
 		// would then trigger an event to hide the slider
 		e.stopPropagation();
-	}
+	} else {
+        //if they click anywhere else turn off the slider
+	    slider.css('visibility', 'hidden');
+    }
 });
 
 // turn off horizontal scrollbar

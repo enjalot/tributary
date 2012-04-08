@@ -47,7 +47,7 @@
         -->
     </div> 
         <div id='savePanel'>
-            <div id='saveButton'>&nbsp;</div> Save: &nbsp;
+            <div id='saveButton'>&nbsp;</div> Fork: &nbsp;
             <!--
             <div class='address'><a href='#'>https://gist.github.com/b9ab9418af567e575b3e</a></div>
             -->
@@ -183,7 +183,8 @@
 	$(document).ready(function(){
 		//var thisurl = window.location.protocol + "//" + window.location.host + "/" + window.location.pathname;
 		$('#tweet_this').append("tweet this");
-        $('#tweet_this').on("click", function(e) {
+        //$('#tweet_this').on("click", function(e) {
+        $('#tweetPanel').on("click", function(e) {
             save_gist(function(newurl, newgist) {
 		        var tweetlink = "http://twitter.com/home/?status=See my latest %23tributary here "+"http://enjalot.com" + newurl
                 window.location = tweetlink
