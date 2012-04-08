@@ -6,10 +6,15 @@ window.delta = {}
 var delta = window.delta;
 //we will keep track of our t parameter for the user
 delta.t = 0
-//default duration for playback
-delta.duration = 3000;
 //use this to control playback
 delta.pause = true
+
+//TODO: expose these with dat.GUI (especially for the easing functions)
+//default duration for playback
+delta.duration = 3000;
+
+//default easing function
+delta.ease = d3.ease("linear")
 
 //user is responsible for defining this
 //by default we just show simple text
@@ -22,6 +27,13 @@ delta.run = function(t) {
         .attr("dy", "1em")
 }
 
+//this is a wrapper 
+var run = function() {
+
+    try {
+        delta.run(delta.ease(delta.t))
+    } catch (e) {}
+}
 
 /*
 var pause = false;
@@ -55,13 +67,12 @@ window.aceEditor.getSession().on('change', function() {
 		// get the ide code
 		var thisCode = window.aceEditor.getSession().getValue();
 
-        //var run_func = "delta.run = function(t) { " + thisCode + "}";
 
 		// run it
 		eval(thisCode);
 		//eval(run_func);
 
-        delta.run(delta.t)
+        run()
 
 		// save it in local storage
 		//setLocalStorageValue('code', thisCode);
@@ -252,9 +263,12 @@ time_slider.slider({
         //set the current t to the slider's value
         delta.t = ui.value
         //call the run function with the current t
+        run()
+    /*
         try {
             delta.run(delta.t)
         } catch (e) {}
+        */
 	},
     min: 0,
     max: 1,
@@ -304,9 +318,12 @@ d3.timer(function() {
     time_slider.slider('option', 'value', delta.t);
     //update the function (there is probably a way to have the slider's
     //function get called programmatically)
+    run()
+    /*
     try {
         delta.run(delta.t)
     } catch (e) {}
+    */
 })
 
 
