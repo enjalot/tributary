@@ -1,5 +1,37 @@
 $(function() {
 
+
+//time slider
+window.delta = {}
+var delta = window.delta;
+//we will keep track of our t parameter for the user
+delta.t = 0
+//default duration for playback
+delta.duration = 5000;
+//use this to control playback
+delta.pause = true
+
+//user is responsible for defining this
+//by default we just show simple text
+delta.run = function(t) {
+	$('svg').empty();
+    var svg = d3.select("svg")
+    svg.append("text")
+        .text("t: " + t)
+        .attr("font-size", 60)
+        .attr("dy", "1em")
+}
+
+
+/*
+var pause = false;
+d3.timer(function() {
+    if(pause) return false;
+})
+*/
+
+
+
 window.aceEditor = ace.edit("editor");
 
 // set the theme
@@ -10,6 +42,7 @@ var JavaScriptMode = require("ace/mode/javascript").Mode;
 window.aceEditor.getSession().setMode(new JavaScriptMode());
 
 window.tributary = d3.dispatch("create", "destroy")
+
 // redraw svg when we update our code
 window.aceEditor.getSession().on('change', function() {
     //send an event
@@ -22,11 +55,16 @@ window.aceEditor.getSession().on('change', function() {
 		// get the ide code
 		var thisCode = window.aceEditor.getSession().getValue();
 
+        //var run_func = "delta.run = function(t) { " + thisCode + "}";
+
 		// run it
 		eval(thisCode);
+		//eval(run_func);
+
+        delta.run(delta.t)
 
 		// save it in local storage
-		setLocalStorageValue('code', thisCode);
+		//setLocalStorageValue('code', thisCode);
 	}
 	catch (error) {}
 	finally {};
@@ -205,6 +243,67 @@ $('textarea').bind('keydown.' + sliderKey, function(e) {
 $('#slider').bind('keyup.' + sliderKey, function(e) {
 	slider.css('visibility', 'hidden');
 });
+
+// create delta's time slider
+var time_slider = $('#time_slider');
+time_slider.slider({
+	slide: function(event, ui) {
+        //console.log("ui.value", ui.value);
+        //set the current t to the slider's value
+        delta.t = ui.value
+        //call the run function with the current t
+        delta.run(delta.t)
+	},
+    min: 0,
+    max: 1,
+    step: .01,
+    value: delta.t
+});
+
+//we need to save state of timer so when we pause/unpause or manually change slider
+//we can finish a transition
+delta.timer = {
+    then: new Date(),
+    duration: delta.duration,
+    ctime: delta.t
+}
+
+var play_button = $("#play_button")
+play_button.on("click", function(event) {
+    delta.pause = !delta.pause;
+    if(!delta.pause) {
+        //unpausing, so we setup our timer to run
+        delta.timer.then = new Date();
+        delta.timer.duration = (1 - delta.t) * delta.duration
+        delta.timer.ctime = delta.t
+    }
+})
+
+d3.timer(function() {
+    //if paused lets not execute
+    if(delta.pause) return false;
+
+    var now = new Date();
+    var dtime = now - delta.timer.then;
+    var dt = (1 - delta.timer.ctime) * dtime / delta.timer.duration;
+    delta.t = delta.timer.ctime + dt;
+    
+
+    //once we reach 1, lets pause and stay there
+    if(delta.t >= 1)
+    {
+        delta.t = 1;
+        delta.pause = true;
+    }
+    
+    //move the slider
+    time_slider.slider('option', 'value', delta.t);
+    //update the function (there is probably a way to have the slider's
+    //function get called programmatically)
+    delta.run(delta.t)
+})
+
+
 
 // we're not a numeric, by default
 // if we are, the editor click will handle it

@@ -16,6 +16,12 @@ def hello():
 def tributary():
     return render_template("water.html", base_url=base_url)
 
+@app.route("/delta/")
+def delta():
+    return render_template("delta.html", base_url=base_url)
+
+
+
 
 @app.route("/tributary/api/<gist>/<filename>")
 def internal_gist(gist, filename):
