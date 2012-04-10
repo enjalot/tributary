@@ -8,6 +8,11 @@ var delta = window.delta;
 delta.t = 0
 //use this to control playback
 delta.pause = true
+//delta.loop = "pingpong";
+//delta.loop = "period";
+delta.loop = "off";
+delta.reverse = false;
+//delta.pingpong = true;
 
 //TODO: expose these with dat.GUI (especially for the easing functions)
 //default duration for playback
@@ -27,6 +32,7 @@ delta.run = function(t) {
         .attr("dy", "1em")
 }
 
+
 //this is a wrapper 
 var run = function() {
 
@@ -42,6 +48,7 @@ d3.timer(function() {
 })
 */
 
+d3.select("#off_button").style("background-color", "#e3e3e3")
 
 
 window.aceEditor = ace.edit("editor");
@@ -296,6 +303,23 @@ play_button.on("click", function(event) {
         }
     }
 })
+ $("#off_button").on("click", function(event) {
+    delta.loop = "off"
+     d3.selectAll(".select").style("background-color", null)
+     d3.select("#off_button").style("background-color", "#e3e3e3")
+})
+ 
+$("#loop_button").on("click", function(event) {
+    delta.loop = "period"
+     d3.selectAll(".select").style("background-color", null)
+     d3.select("#loop_button").style("background-color", "#e3e3e3")
+})
+ $("#pingpong_button").on("click", function(event) {
+    delta.loop = "pingpong"
+     d3.selectAll(".select").style("background-color", null)
+     d3.select("#pingpong_button").style("background-color", "#e3e3e3")
+})
+ 
 
 d3.timer(function() {
     //if paused lets not execute
@@ -303,15 +327,37 @@ d3.timer(function() {
 
     var now = new Date();
     var dtime = now - delta.timer.then;
-    var dt = (1 - delta.timer.ctime) * dtime / delta.timer.duration;
+    if (delta.reverse) {
+        var dt = delta.timer.ctime * dtime / delta.timer.duration * -1;
+    }
+    else {
+        var dt = (1 - delta.timer.ctime) * dtime / delta.timer.duration;
+    }
     delta.t = delta.timer.ctime + dt;
     
 
     //once we reach 1, lets pause and stay there
-    if(delta.t >= 1 || delta.t === "NaN")
+    if(delta.t >= 1 || delta.t <= 0 || delta.t === "NaN")
     {
-        delta.t = 1;
-        delta.pause = true;
+        if(delta.loop === "period") {
+            delta.t = 0;
+            delta.timer.then = new Date();
+            delta.timer.duration = delta.duration;
+            delta.timer.ctime = delta.t;
+            delta.reverse = false;
+            //delta.pause = false;
+        } else if (delta.loop === "pingpong") {
+            //this sets delta.t to 0 when we get to 0 and 1 when we get to 1 (because of the direction we were going)
+            delta.t = !delta.reverse
+            delta.timer.then = new Date();
+            delta.timer.duration = delta.duration;
+            delta.timer.ctime = delta.t;
+            delta.reverse = !delta.reverse;
+        }
+        else {
+            delta.t = 1;
+            delta.pause = true;
+        }
     }
     
     //move the slider

@@ -302,16 +302,52 @@ body {
      #play_button{
         position: fixed;
         display:block;
-        bottom: 39%;
+        bottom: 40%;
         right: 760px;
     	visibility: visible;
     	z-index: 14;
     	/*width: 58%;*/
         width: 40px;
-        height: 40px;
-    	border: 2px solid black;
+    	border: 1px solid black;
+        cursor: pointer;
     }
-        
+      #loop_button{
+        position: absolute;
+        display:block;
+        bottom: 44%;
+        right: 10px;
+    	visibility: visible;
+    	z-index: 14;
+    	/*width: 58%;*/
+        width: 40px;
+        height: 18px;
+    	border: 1px solid black;
+    }       
+     #pingpong_button{
+        position: absolute;
+        display:block;
+        bottom: 48%;
+        right: 10px;
+    	visibility: visible;
+    	z-index: 14;
+    	/*width: 58%;*/
+        height: 18px;
+    	border: 1px solid black;
+    }
+
+     #off_button{
+        position: absolute;
+        display:block;
+        bottom: 52%;
+        right: 10px;
+    	visibility: visible;
+    	z-index: 14;
+    	/*width: 58%;*/
+        width: 23px;
+        height: 18px;
+    	border: 1px solid black;
+    }
+
 
 
     #instructions {

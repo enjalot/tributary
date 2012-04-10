@@ -4,7 +4,7 @@
     <link href='http://fonts.googleapis.com/css?family=Ubuntu:400,700' rel='stylesheet' type='text/css'>
     
     <meta charset='utf-8' />
-    <title>Tributary</title>
+    <title>Delta</title>
     <link rel='stylesheet' type='text/css' href='http://yui.yahooapis.com/2.9.0/build/reset/reset-min.css' />
     <link rel='stylesheet' type='text/css' href='{{base_url}}slider/css/humanity/jquery-ui-slider.css' />
     <!--
@@ -68,7 +68,10 @@
             <svg style='width: 96%; height: 96%; padding: 2%'></svg>
         </div>
 
-        <div id="play_button"></div>
+        <div id="play_button" >Play</div>
+        <div id="off_button" class="select">Off</div>
+        <div id="loop_button" class="select">Loop</div>
+        <div id="pingpong_button" class="select">PingPong</div>
         <div id="time_slider"></div>
         <div id='editor'>
         </div>
@@ -175,13 +178,13 @@
             
             //console.log("gist", gist)
             //$.post('https://api.github.com/gists', JSON.stringify(gist), function(data) {
-            $.post('/tributary/save', {"gist":JSON.stringify(gist)}, function(data) {
+            $.post('/delta/save', {"gist":JSON.stringify(gist)}, function(data) {
                 //TODO: fix the flask headers to send back application/json and not text/html
                 if(typeof(data) === "string") {
                     data = JSON.parse(data)
                 }
                 var newgist = data.id
-                var newurl = "/tributary/" + newgist + "/" + filename;
+                var newurl = "/delta/" + newgist + "/" + filename;
                 //console.log("new url", newurl)
                 callback(newurl, newgist)
                 //window.location = newurl;
