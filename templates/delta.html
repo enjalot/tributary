@@ -68,12 +68,14 @@
             <svg style='width: 96%; height: 96%; padding: 2%'></svg>
         </div>
 
-        <div id="play_button" >Play</div>
-        <div id="bv_button" >BV</div>
-        <div id="off_button" class="select">Off</div>
-        <div id="loop_button" class="select">Loop</div>
-        <div id="pingpong_button" class="select">PingPong</div>
-        <div id="time_slider"></div>
+        <div id="gui">
+            <div id="play_button" >Play</div>
+            <div id="bv_button" >BV</div>
+            <div id="off_button" class="select">Off</div>
+            <div id="loop_button" class="select">Loop</div>
+            <div id="pingpong_button" class="select">PingPong</div>
+            <div id="time_slider"></div>
+        </div>
         <div id='editor'>
         </div>
         <div>
@@ -226,6 +228,7 @@
     var he = $('#hideEditor')
     he.on("click", function(e) {
         $("#editor").toggle()
+	    $('#gui').toggle()
         var txt = he.html()
         console.log("txt", txt)
         if(txt === "Hide") {
