@@ -102,7 +102,7 @@ window.aceEditor.on("click", function(e) {
 		// sync the slider size with the editor size
 		slider.css('font-size', $('#editor').css('font-size'));
 		slider.css('font-size', '-=4');
-		slider.offset({top: sliderTop, left: sliderLeft});
+		slider.offset({top: sliderTop - 10, left: sliderLeft});
 
         //lets turn on the slider no matter what (no alt/ctrl key necessary)
 		slider.css('visibility', 'visible'); 

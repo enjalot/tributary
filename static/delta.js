@@ -5,14 +5,16 @@ $(function() {
 window.delta = {}
 var delta = window.delta;
 //we will keep track of our t parameter for the user
-delta.t = 0
+delta.t = 0.01  //start at .01 so we don't trigger a flip at the start
 //use this to control playback
 delta.pause = true
-//delta.loop = "pingpong";
+//default loop mode
+//delta.loop = "off";
 //delta.loop = "period";
-delta.loop = "off";
+delta.loop = "pingpong";
+d3.select("#pingpong_button").style("background-color", "#e3e3e3")
+
 delta.reverse = false;
-//delta.pingpong = true;
 
 //TODO: expose these with dat.GUI (especially for the easing functions)
 //default duration for playback
@@ -175,7 +177,7 @@ window.aceEditor.on("click", function(e) {
 		// sync the slider size with the editor size
 		slider.css('font-size', $('#editor').css('font-size'));
 		slider.css('font-size', '-=4');
-		slider.offset({top: sliderTop, left: sliderLeft});
+		slider.offset({top: sliderTop - 10, left: sliderLeft});
 
         //lets turn on the slider no matter what (no alt/ctrl key necessary)
 		slider.css('visibility', 'visible'); 
@@ -353,6 +355,7 @@ var make_clones = function() {
         delta.append(frame)
         delta.run(i/n, frame)
     })
+    console.log("clones made")
 }
 
 delta.bv = false;
