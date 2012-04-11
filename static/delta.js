@@ -29,7 +29,7 @@ delta.clone_opacity = 0.4;
 
 
 //default number of clones to use for BV mode
-delta.numclones = 10;
+delta.nclones = 10;
 
 delta.clones = d3.select("svg").append("g").attr("id", "clones")
 delta.g = d3.select("svg").append("g").attr("id", "delta")
