@@ -21,23 +21,31 @@ delta.duration = 3000;
 //default easing function
 delta.ease = d3.ease("linear")
 
+//default opacity for clones
+delta.clone_opacity = 0.4;
+
+
+delta.clones = d3.select("svg").append("g").attr("id", "clones")
+delta.g = d3.select("svg").append("g").attr("id", "delta")
+
 //user is responsible for defining this
 //by default we just show simple text
-delta.run = function(t) {
-	$('svg').empty();
-    var svg = d3.select("svg")
-    svg.append("text")
+delta.run = function(t, g) {
+    
+	//$('svg').empty();
+	$('#delta').empty();
+    g.append("text")
         .text("t: " + t)
         .attr("font-size", 60)
         .attr("dy", "1em")
+    
 }
 
 
 //this is a wrapper 
-var run = function() {
-
+var run = function(g) {
     try {
-        delta.run(delta.ease(delta.t))
+        delta.run(delta.ease(delta.t), g)
     } catch (e) {}
 }
 
@@ -68,18 +76,27 @@ window.aceEditor.getSession().on('change', function() {
     window.tributary.destroy()
 
 	// clear the window
-	$('svg').empty();
+	//$('svg').empty();
+	$('#delta').empty();
+    //delta.g = d3.select("svg").append("g").attr("id", "delta")
 
 	try {
 		// get the ide code
 		var thisCode = window.aceEditor.getSession().getValue();
 
-
 		// run it
 		eval(thisCode);
 		//eval(run_func);
 
-        run()
+        if(delta.bv) {
+            //d3.selectAll(".bvclone").remove(); 
+            $('#clones').empty()
+            make_clones();
+        }
+        //we exec the user defined append code
+        delta.append(delta.g)
+        //then we run the user defined run function
+        run(delta.g)
 
 		// save it in local storage
 		//setLocalStorageValue('code', thisCode);
@@ -270,7 +287,7 @@ time_slider.slider({
         //set the current t to the slider's value
         delta.t = ui.value
         //call the run function with the current t
-        run()
+        run(delta.g)
     /*
         try {
             delta.run(delta.t)
@@ -320,6 +337,40 @@ $("#loop_button").on("click", function(event) {
      d3.select("#pingpong_button").style("background-color", "#e3e3e3")
 })
  
+var make_clones = function() {
+    var n = 20
+    //make n frames with lowered opacity
+    var svg = d3.select("#clones")
+    var frames = d3.range(n)
+    var gf = svg.selectAll("g.bvclone")
+        .data(frames).enter()
+        .append("g")
+            .attr("class", "bvclone")
+            .style("opacity", delta.clone_opacity)
+
+    gf.each(function(d, i) {
+        var frame = d3.select(this)
+        delta.append(frame)
+        delta.run(i/n, frame)
+    })
+}
+
+delta.bv = false;
+$("#bv_button").on("click", function(event) {
+    delta.bv = !delta.bv;
+    if(delta.bv)
+    {
+        d3.select("#bv_button").style("background-color", "#e3e3e3")
+        make_clones();
+    }
+    else
+    {
+        d3.select("#bv_button").style("background-color", null)
+        d3.selectAll(".bvclone").remove()
+    }
+})
+
+
 
 d3.timer(function() {
     //if paused lets not execute
@@ -355,8 +406,11 @@ d3.timer(function() {
             delta.reverse = !delta.reverse;
         }
         else {
-            delta.t = 1;
-            delta.pause = true;
+            if (delta.t != 0)
+            {
+                delta.t = 1;
+                delta.pause = true;
+            }
         }
     }
     
@@ -364,7 +418,7 @@ d3.timer(function() {
     time_slider.slider('option', 'value', delta.t);
     //update the function (there is probably a way to have the slider's
     //function get called programmatically)
-    run()
+    run(delta.g)
     /*
     try {
         delta.run(delta.t)

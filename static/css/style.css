@@ -311,6 +311,21 @@ body {
     	border: 1px solid black;
         cursor: pointer;
     }
+
+     #bv_button{
+        position: fixed;
+        display:block;
+        bottom: 44%;
+        right: 760px;
+    	visibility: visible;
+    	z-index: 14;
+    	/*width: 58%;*/
+        width: 40px;
+    	border: 1px solid black;
+        cursor: pointer;
+    }
+ 
+
       #loop_button{
         position: absolute;
         display:block;
