@@ -20,12 +20,16 @@ delta.reverse = false;
 //default duration for playback
 delta.duration = 3000;
 
+
 //default easing function
 delta.ease = d3.ease("linear")
 
 //default opacity for clones
 delta.clone_opacity = 0.4;
 
+
+//default number of clones to use for BV mode
+delta.numclones = 10;
 
 delta.clones = d3.select("svg").append("g").attr("id", "clones")
 delta.g = d3.select("svg").append("g").attr("id", "delta")
@@ -58,7 +62,7 @@ d3.timer(function() {
 })
 */
 
-d3.select("#off_button").style("background-color", "#e3e3e3")
+//d3.select("#off_button").style("background-color", "#e3e3e3")
 
 
 window.aceEditor = ace.edit("editor");
@@ -340,10 +344,9 @@ $("#loop_button").on("click", function(event) {
 })
  
 var make_clones = function() {
-    var n = 20
     //make n frames with lowered opacity
     var svg = d3.select("#clones")
-    var frames = d3.range(n)
+    var frames = d3.range(delta.nclones)
     var gf = svg.selectAll("g.bvclone")
         .data(frames).enter()
         .append("g")
@@ -353,7 +356,7 @@ var make_clones = function() {
     gf.each(function(d, i) {
         var frame = d3.select(this)
         delta.append(frame)
-        delta.run(i/n, frame)
+        delta.run(i/delta.nclones, frame)
     })
     console.log("clones made")
 }
