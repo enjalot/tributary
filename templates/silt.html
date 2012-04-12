@@ -4,13 +4,14 @@
     <link href='http://fonts.googleapis.com/css?family=Ubuntu:400,700' rel='stylesheet' type='text/css'>
     
     <meta charset='utf-8' />
-    <title>Delta</title>
+    <title>Silt</title>
     <link rel='stylesheet' type='text/css' href='http://yui.yahooapis.com/2.9.0/build/reset/reset-min.css' />
     <link rel='stylesheet' type='text/css' href='{{base_url}}slider/css/humanity/jquery-ui-slider.css' />
     <!--
     <link rel='stylesheet' type='text/css' href='{{base_url}}css/water.css' />
     -->
     <link rel='stylesheet' type='text/css' href='/static/css/style.css' />
+    <link rel='stylesheet' type='text/css' href='/static/css/silt.css' />
     <link rel="shortcut icon" href="{{base_url}}static/img/favicon.ico">
     <style>
 
@@ -38,17 +39,6 @@
 
     </head>
 <body>
-	
-	<div id="gui">
-        <div id="play_button" class="button">Play</div>
-        <div id="bv_button" class="button" >BV</div>
-<!--        <div id="off_button" class="select button">Off</div> 
-		Temporarily hiding "off" button- unless it serves a purpose I'm unaware of, user should probably use the "play/stop" button instead
--->
-        <div id="loop_button" class="select button">Loop</div>
-        <div id="pingpong_button" class="select button">PingPong</div>
-        <div id="time_slider"></div>
-    </div>
 
     <div id="branding">
         <img src="/static/visually_logo_solo.png" width="208" height="51" alt="Visually Logo Solo">
@@ -57,9 +47,6 @@
         <h1>Powered by Visual.ly</h1>
         -->
     </div> 
-
-
-
         <div id='savePanel'>
             <div id='saveButton'>&nbsp;</div> Fork: &nbsp;
             <!--
@@ -70,21 +57,29 @@
 		<div id="tweetPanel">
 			<div id="tweet_this">
 				
-            <img id="twiticon" src="/static/css/twitter.png" style="width:20px; height:20px;"></img>
+            <img id="twiticon" src="/static/twitter_bird.png" style="width:20px; height:20px;"></img>
 			</div>
 		</div>
-		
-
 
     <div id="hideEditor">Hide</div>
     <div id='page'>
 
         
         <div id='display'>
-            <svg style='width: 96%; height: 96%; padding: 2%'></svg>
+            <svg id="siltsvg" style='width: 96%; height: 96%; padding: 2%'></svg>
         </div>
 
+        <div id="gui">
+            <div id="play_button" >Play</div>
 
+            <svg id="siltgram"></svg>
+<!--            
+            <div id="bv_button" >BV</div>
+            <div id="off_button" class="select">Off</div>
+            <div id="loop_button" class="select">Loop</div>
+            <div id="pingpong_button" class="select">PingPong</div>
+            <div id="time_slider"></div> -->
+        </div>
         <div id='editor'>
         </div>
         <div>
@@ -94,17 +89,15 @@
         <div id="slider"></div>
 
         <div id='aboutAndAttribution'>
-
-            <div id='attribution'>
-                <p>100% totally based on Bret Victor's genius <a href='http://vimeo.com/36579366'>Inventing on Principle</a> talk<p>
-                <p><a href='https://github.com/enjalot/tributary'>source code</a> on github</p>
-            </div>
-
             <p id="about">further inspired by 
             <a href="http://bl.ocks.org"> bl.ocks.org </a>
             and
             <a href='http://gabrielflor.it/blog-water'>water</a>
             </p>
+            <div id='attribution'>
+                <p>100% totally based on Bret Victor's genius <a href='http://vimeo.com/36579366'>Inventing on Principle</a> talk<p>
+                <p><a href='https://github.com/enjalot/tributary'>source code</a> on github</p>
+            </div>
         </div>
     </div>
 
@@ -124,7 +117,7 @@
     <!--
     <script src='{{base_url}}js/d3.v2.min.js'></script>
     -->
-    <script src='/static/delta.js'></script>
+    <script src='/static/silt.js'></script>
     <script src='{{base_url}}js/ace/ace.js'></script>
     <script src='{{base_url}}js/ace/theme-twilight.js'></script>
     <script src='{{base_url}}js/ace/mode-javascript.js'></script>
@@ -192,13 +185,13 @@
             
             //console.log("gist", gist)
             //$.post('https://api.github.com/gists', JSON.stringify(gist), function(data) {
-            $.post('/delta/save', {"gist":JSON.stringify(gist)}, function(data) {
+            $.post('/silt/save', {"gist":JSON.stringify(gist)}, function(data) {
                 //TODO: fix the flask headers to send back application/json and not text/html
                 if(typeof(data) === "string") {
                     data = JSON.parse(data)
                 }
                 var newgist = data.id
-                var newurl = "/delta/" + newgist + "/" + filename;
+                var newurl = "/silt/" + newgist + "/" + filename;
                 //console.log("new url", newurl)
                 callback(newurl, newgist)
                 //window.location = newurl;
@@ -209,7 +202,7 @@
 
 	$(document).ready(function(){
 		//var thisurl = window.location.protocol + "//" + window.location.host + "/" + window.location.pathname;
-		$('#tweet_this').append("Tweet:");
+		$('#tweet_this').append("tweet this");
         //$('#tweet_this').on("click", function(e) {
         $('#tweetPanel').on("click", function(e) {
             save_gist(function(newurl, newgist) {
@@ -245,6 +238,7 @@
         if(txt === "Hide") {
             he.html("Show")
 	        $('#slider').css('visibility', 'hidden');
+	        $('#siltbars').css('visibility', 'hidden');
         } else {
             he.html("Hide")
             //hide the slider if it's open
@@ -253,8 +247,8 @@
     })
 
     </script>
-    <!--
-    <script>document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1"></' + 'script>')</script>
-        -->
+<!--
+<script>document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1"></' + 'script>')</script>
+    -->
 </body>
 </html>

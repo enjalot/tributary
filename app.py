@@ -58,12 +58,20 @@ def delta_gist(gist=None, filename=None):
     #return render_template("water.html", code=code, base_url=base_url) 
     return render_template("delta.html", gist=gist, filename=filename, base_url=base_url) 
 
+@app.route("/silt/<gist>/<filename>")
+def silt_gist(gist=None, filename=None):
+    #print gist, filename
+    #return render_template("water.html", code=code, base_url=base_url) 
+    return render_template("silt.html", gist=gist, filename=filename, base_url=base_url) 
+
+
 
 
 
 import urllib
 @app.route("/tributary/save", methods=["POST"])
 @app.route("/delta/save", methods=["POST"])
+@app.route("/silt/save", methods=["POST"])
 def save():
     #gistobj = json.loads(request.values.get("gist"))
     data = request.values.get("gist")
