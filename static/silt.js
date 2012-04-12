@@ -1,9 +1,21 @@
+window.silt = {}
+var silt = window.silt;
+silt.enabled = false
+$("#play_button").css("background-color", "rgba(255, 0, 0, .5)")
+
+//for some reason i needed to move the audio stuff out into global namespace. could use some refactoring for sure
+var context;
+var source;
+var analyser;
+var buffer;
+var audioBuffer;
+
+
+
 $(function() {
 
 
 //time slider
-window.silt = {}
-var silt = window.silt;
 //we will keep track of our t parameter for the user
 silt.t = 0.01  //start at .01 so we don't trigger a flip at the start
 //use this to control playback
@@ -13,6 +25,7 @@ silt.pause = true
 //silt.loop = "period";
 silt.loop = "pingpong";
 d3.select("#pingpong_button").style("background-color", "#e3e3e3")
+
 
 silt.reverse = false;
 
@@ -58,7 +71,7 @@ var run = function(g) {
 
 
 
-silt.findex = 10;
+silt.findex = 41;
 
 var barw = 1024;
 var barn = 1024
@@ -110,12 +123,6 @@ silt.update = function() {
 
 }
 
-
-var context;
-var source;
-var analyser;
-var buffer;
-var audioBuffer;
 
 
 window.aceEditor = ace.edit("editor");
@@ -365,7 +372,11 @@ silt.timer = {
 }
 
 var play_button = $("#play_button")
+
 play_button.on("click", function(event) {
+    console.log(silt.enabled)
+    if(!silt.enabled) return false;
+
     if(silt.t < 1) {
         silt.pause = !silt.pause;
         if(!silt.pause) {
@@ -501,7 +512,10 @@ var pulse = setInterval(function() {
 	$('.ace_numeric').animate({opacity: 0.5}).animate({opacity: 1});
 }, 1000);
 
+
+
 });
+
 
 
 function loadAudioBuffer(url) {
@@ -568,8 +582,16 @@ function seek(when, time, offset) {
 }
 
 function getFreq() {
-    analyser.smoothingTimeConstant = 0.75;
-    analyser.getByteFrequencyData(freqByteData);
+    //try {
+        analyser.smoothingTimeConstant = 0.75;
+        analyser.getByteFrequencyData(freqByteData);
+        /*
+    }
+    catch(e) {
+        freqByteData = empty
+    }
+    */
+    //console.log(freqByteData[10])
     return freqByteData;
 }
 
@@ -578,6 +600,9 @@ function finishLoad() {
     //source.looping = true;
 
     freqByteData = new Uint8Array(analyser.frequencyBinCount);
+    console.log("ENABLED")
+    silt.enabled = true;
+    $("#play_button").css("background-color", "#0f0")
 
     //source.noteOn(0.0);
     //window.requestAnimationFrame(draw);
