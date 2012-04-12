@@ -12,7 +12,8 @@ delta.pause = true
 //delta.loop = "off";
 //delta.loop = "period";
 delta.loop = "pingpong";
-d3.select("#pingpong_button").style("background-color", "#e3e3e3")
+//d3.select("#pingpong_button").style("background-color", "#e3e3e3")
+$("#"+delta.loop+"_button").addClass("selected-button")
 
 delta.reverse = false;
 
@@ -316,8 +317,21 @@ delta.timer = {
 
 var play_button = $("#play_button")
 play_button.on("click", function(event) {
+    if($("#play_button").hasClass("playing")){
+            $("#play_button").removeClass("playing");
+            play_button.text("Play")
+    }
+    else if(!$("#play_button").hasClass("playing")){
+        play_button.addClass("playing")
+        play_button.text("Stop")
+        
+    }
+
+    
     if(delta.t < 1) {
         delta.pause = !delta.pause;
+//        play_button.addClass("playing");
+        
         if(!delta.pause) {
             //unpausing, so we setup our timer to run
             delta.timer.then = new Date();
@@ -329,18 +343,22 @@ play_button.on("click", function(event) {
  $("#off_button").on("click", function(event) {
     delta.loop = "off"
      d3.selectAll(".select").style("background-color", null)
-     d3.select("#off_button").style("background-color", "#e3e3e3")
+      $('.select').removeClass("selected-button");
+      $("#play_button").removeClass("playing");
+     $("#off_button").addClass("selected-button")
 })
  
 $("#loop_button").on("click", function(event) {
     delta.loop = "period"
      d3.selectAll(".select").style("background-color", null)
-     d3.select("#loop_button").style("background-color", "#e3e3e3")
+     $('.select').removeClass("selected-button");
+     $("#loop_button").addClass("selected-button")
 })
  $("#pingpong_button").on("click", function(event) {
     delta.loop = "pingpong"
      d3.selectAll(".select").style("background-color", null)
-     d3.select("#pingpong_button").style("background-color", "#e3e3e3")
+      $('.select').removeClass("selected-button");
+     $("#pingpong_button").addClass("selected-button")
 })
  
 var make_clones = function() {
