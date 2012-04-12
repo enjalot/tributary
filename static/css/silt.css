@@ -1,0 +1,26 @@
+     #play_button{
+        position: fixed;
+        display:block;
+        bottom: 40%;
+        right: 10px;
+    	visibility: visible;
+    	z-index: 14;
+    	/*width: 58%;*/
+        width: 40px;
+    	border: 1px solid black;
+        cursor: pointer;
+    }
+
+     #siltgram{
+        position: fixed;
+        /*display:block;*/
+        top: 70px;
+        left: 5px;
+    	visibility: visible;
+    	z-index: 20;
+        width: 1024px;
+        height: 50px;
+    	/*border: 1px solid black;*/
+        cursor: pointer;
+        background-color:rgba(255,0,0,0.1);
+    }

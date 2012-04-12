@@ -1,0 +1,254 @@
+<!doctype html>
+<html>
+<head>
+    <link href='http://fonts.googleapis.com/css?family=Ubuntu:400,700' rel='stylesheet' type='text/css'>
+    
+    <meta charset='utf-8' />
+    <title>Silt</title>
+    <link rel='stylesheet' type='text/css' href='http://yui.yahooapis.com/2.9.0/build/reset/reset-min.css' />
+    <link rel='stylesheet' type='text/css' href='{{base_url}}slider/css/humanity/jquery-ui-slider.css' />
+    <!--
+    <link rel='stylesheet' type='text/css' href='{{base_url}}css/water.css' />
+    -->
+    <link rel='stylesheet' type='text/css' href='/static/css/style.css' />
+    <link rel='stylesheet' type='text/css' href='/static/css/silt.css' />
+    <link rel="shortcut icon" href="{{base_url}}static/img/favicon.ico">
+    <style>
+
+    #saveButton {
+        background-image: url('{{base_url}}/img/floppy.png');
+    }
+
+    </style>
+    <script type="text/javascript">
+        window.tributary_gist = "{{gist}}";
+        window.tributary_filename = "{{filename}}";
+    </script>
+
+    <script type="text/javascript">
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-30237258-1']);
+        _gaq.push(['_trackPageview']);
+
+        (function() {
+            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        })();
+    </script>
+
+    </head>
+<body>
+
+    <div id="branding">
+        <img src="/static/visually_logo_solo.png" width="208" height="51" alt="Visually Logo Solo">
+        <br />
+        <!--
+        <h1>Powered by Visual.ly</h1>
+        -->
+    </div> 
+        <div id='savePanel'>
+            <div id='saveButton'>&nbsp;</div> Fork: &nbsp;
+            <!--
+            <div class='address'><a href='#'>https://gist.github.com/b9ab9418af567e575b3e</a></div>
+            -->
+		</div>
+		
+		<div id="tweetPanel">
+			<div id="tweet_this">
+				
+            <img id="twiticon" src="/static/twitter_bird.png" style="width:20px; height:20px;"></img>
+			</div>
+		</div>
+
+    <div id="hideEditor">Hide</div>
+    <div id='page'>
+
+        
+        <div id='display'>
+            <svg id="siltsvg" style='width: 96%; height: 96%; padding: 2%'></svg>
+        </div>
+
+        <div id="gui">
+            <div id="play_button" >Play</div>
+
+            <svg id="siltgram"></svg>
+<!--            
+            <div id="bv_button" >BV</div>
+            <div id="off_button" class="select">Off</div>
+            <div id="loop_button" class="select">Loop</div>
+            <div id="pingpong_button" class="select">PingPong</div>
+            <div id="time_slider"></div> -->
+        </div>
+        <div id='editor'>
+        </div>
+        <div>
+            <a class='increase font-control' href='#'>+</a>
+            <a class='decrease font-control' href='#'>-</a>
+        </div>
+        <div id="slider"></div>
+
+        <div id='aboutAndAttribution'>
+            <p id="about">further inspired by 
+            <a href="http://bl.ocks.org"> bl.ocks.org </a>
+            and
+            <a href='http://gabrielflor.it/blog-water'>water</a>
+            </p>
+            <div id='attribution'>
+                <p>100% totally based on Bret Victor's genius <a href='http://vimeo.com/36579366'>Inventing on Principle</a> talk<p>
+                <p><a href='https://github.com/enjalot/tributary'>source code</a> on github</p>
+            </div>
+        </div>
+    </div>
+
+    <div id='instructions'>
+        click a number and hold down the <span id='sliderKey'></span> key:
+    </div>
+
+
+    <!--
+    <script src='http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js'></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/jquery-ui.min.js"></script>
+    -->
+    <script src="/static/lib/jquery-1.7.min.js"></script>
+    <script src="/static/lib/jquery-ui.1.8.16.custom.min.js"></script>
+    <script src='{{base_url}}js/jquery.hotkeys.js'></script>
+    <script src='{{base_url}}slider/js/jquery.ui.slider.js'></script>
+    <!--
+    <script src='{{base_url}}js/d3.v2.min.js'></script>
+    -->
+    <script src='/static/silt.js'></script>
+    <script src='{{base_url}}js/ace/ace.js'></script>
+    <script src='{{base_url}}js/ace/theme-twilight.js'></script>
+    <script src='{{base_url}}js/ace/mode-javascript.js'></script>
+    <!-- 3rd party libraries 
+    <script type="text/javascript" src="http://mbostock.github.com/d3/d3.v2.js?2.8.0"></script>
+    <script src='http://documentcloud.github.com/underscore/underscore-min.js'></script>
+    -->
+    <script type="text/javascript" src="/static/lib/d3.v2.min.js"></script>
+    <script type="text/javascript" src="/static/lib/underscore-min.js"></script>
+    <script type="text/javascript" src="/static/lib/jwerty.js"></script>
+    <!--
+    <script src='http://requirejs.org/docs/release/1.0.7/minified/require.js'></script>
+    -->
+    <script type="text/javascript">
+        //from the SO thread: http://stackoverflow.com/questions/950087/include-javascript-file-inside-javascript-file
+        //caching so we don't download every keystroke
+        var required_scripts = []
+        function script(src) {
+            if(_.include(required_scripts, src))
+                return true;
+
+            $.ajax({
+                url: src,
+                dataType: "script",
+                async: false,           // this is the key
+                success: function () {
+                    // all good...
+                    //console.log("success")
+                    required_scripts.push(src)
+                },
+                error: function () {
+                    throw new Error("Could not load script " + src);
+                }
+            });
+        }
+    </script>
+    <script type="text/javascript">
+
+    var save_gist = function(callback) {
+        var oldgist = parseInt(window.tributary_gist);
+            var filename = window.tributary_filename;
+            if(filename === "") {
+                filename = "inlet.js";
+            }
+            if(!oldgist === "NaN") {
+                //TODO:
+                //this gist already exists, so we can fill in some information
+                //like the description
+            }
+            //console.log("gist #", oldgist, "filename", filename)
+            var gist = {
+                description: 'just another inlet to tributary',
+                public: true,
+                files: {}
+            };
+            gist.files[filename] = {
+                content: window.aceEditor.getSession().getValue()
+            }
+
+            //turn the save button into a saving animation
+            d3.select("#saveButton").style("background-image", "url(/static/ajax-loader.gif)")
+            d3.select("#saveButton").style("background-repeat", "no-repeat")
+            d3.select("#saveButton").style("top", "0px")
+            //d3.select("#saveButton").text("Saving!")
+            
+            //console.log("gist", gist)
+            //$.post('https://api.github.com/gists', JSON.stringify(gist), function(data) {
+            $.post('/silt/save', {"gist":JSON.stringify(gist)}, function(data) {
+                //TODO: fix the flask headers to send back application/json and not text/html
+                if(typeof(data) === "string") {
+                    data = JSON.parse(data)
+                }
+                var newgist = data.id
+                var newurl = "/silt/" + newgist + "/" + filename;
+                //console.log("new url", newurl)
+                callback(newurl, newgist)
+                //window.location = newurl;
+            });
+
+    }
+
+
+	$(document).ready(function(){
+		//var thisurl = window.location.protocol + "//" + window.location.host + "/" + window.location.pathname;
+		$('#tweet_this').append("tweet this");
+        //$('#tweet_this').on("click", function(e) {
+        $('#tweetPanel').on("click", function(e) {
+            save_gist(function(newurl, newgist) {
+		        var tweetlink = "http://twitter.com/home/?status=See my latest %23tributary here "+"http://enjalot.com" + newurl
+                window.location = tweetlink
+                //window.open(tweetlink, 'twitte')
+                /*
+                setTimeout(funciton() {
+                    window.location = newurl;
+                    }, 500)
+                */
+            })
+        });
+		
+	})
+    //Save functionality. This just creates a new gist (no forking or saving for
+    //    now, that requires oauth)
+    //$('#saveButton').on('click', function(e) {
+    $('#savePanel').on('click', function(e) {
+            save_gist(function(newurl, newgist) {
+                window.location = newurl;
+            })
+
+    });
+
+    //Hide the editor
+    var he = $('#hideEditor')
+    he.on("click", function(e) {
+        $("#editor").toggle()
+	    $('#gui').toggle()
+        var txt = he.html()
+        console.log("txt", txt)
+        if(txt === "Hide") {
+            he.html("Show")
+	        $('#slider').css('visibility', 'hidden');
+	        $('#siltbars').css('visibility', 'hidden');
+        } else {
+            he.html("Hide")
+            //hide the slider if it's open
+        }
+
+    })
+
+    </script>
+<!--
+<script>document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1"></' + 'script>')</script>
+    -->
+</body>
+</html>
