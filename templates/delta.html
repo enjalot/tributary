@@ -38,6 +38,15 @@
 
     </head>
 <body>
+	
+	<div id="gui">
+        <div id="play_button" class="button">Play</div>
+        <div id="bv_button" class="button" >BV</div>
+        <div id="off_button" class="select button">Off</div>
+        <div id="loop_button" class="select button">Loop</div>
+        <div id="pingpong_button" class="select button">PingPong</div>
+        <div id="time_slider"></div>
+    </div>
 
     <div id="branding">
         <img src="/static/visually_logo_solo.png" width="208" height="51" alt="Visually Logo Solo">
@@ -46,6 +55,9 @@
         <h1>Powered by Visual.ly</h1>
         -->
     </div> 
+
+
+
         <div id='savePanel'>
             <div id='saveButton'>&nbsp;</div> Fork: &nbsp;
             <!--
@@ -56,9 +68,11 @@
 		<div id="tweetPanel">
 			<div id="tweet_this">
 				
-            <img id="twiticon" src="/static/twitter_bird.png" style="width:20px; height:20px;"></img>
+            <img id="twiticon" src="/static/css/twitter.png" style="width:20px; height:20px;"></img>
 			</div>
 		</div>
+		
+
 
     <div id="hideEditor">Hide</div>
     <div id='page'>
@@ -68,14 +82,7 @@
             <svg style='width: 96%; height: 96%; padding: 2%'></svg>
         </div>
 
-        <div id="gui">
-            <div id="play_button" >Play</div>
-            <div id="bv_button" >BV</div>
-            <div id="off_button" class="select">Off</div>
-            <div id="loop_button" class="select">Loop</div>
-            <div id="pingpong_button" class="select">PingPong</div>
-            <div id="time_slider"></div>
-        </div>
+
         <div id='editor'>
         </div>
         <div>
@@ -198,7 +205,7 @@
 
 	$(document).ready(function(){
 		//var thisurl = window.location.protocol + "//" + window.location.host + "/" + window.location.pathname;
-		$('#tweet_this').append("tweet this");
+		$('#tweet_this').append("Tweet:");
         //$('#tweet_this').on("click", function(e) {
         $('#tweetPanel').on("click", function(e) {
             save_gist(function(newurl, newgist) {
@@ -242,8 +249,6 @@
     })
 
     </script>
-<!--
 <script>document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1"></' + 'script>')</script>
-    -->
 </body>
 </html>
