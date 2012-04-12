@@ -329,18 +329,18 @@ play_button.on("click", function(event) {
  $("#off_button").on("click", function(event) {
     delta.loop = "off"
      d3.selectAll(".select").style("background-color", null)
-     d3.select("#off_button").style("background-color", "#e3e3e3")
+     $("#off_button").addClass("selected-button")
 })
  
 $("#loop_button").on("click", function(event) {
     delta.loop = "period"
      d3.selectAll(".select").style("background-color", null)
-     d3.select("#loop_button").style("background-color", "#e3e3e3")
+     $("#loop_button").addClass("selected-button")
 })
  $("#pingpong_button").on("click", function(event) {
     delta.loop = "pingpong"
      d3.selectAll(".select").style("background-color", null)
-     d3.select("#pingpong_button").style("background-color", "#e3e3e3")
+     $("#pingpong_button").addClass("selected-button")
 })
  
 var make_clones = function() {
