@@ -302,6 +302,9 @@ body {
     .selected-button {
         background-color: purple !important;
     }
+    .playing {
+        background-color: red;
+    }
     .button {
         display: inline-block;
         width: 40px;
