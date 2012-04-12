@@ -59,21 +59,22 @@
     </div> 
 
 
+<div id="fork-n-tweet">
+	
 
-        <div id='savePanel'>
-            <div id='saveButton'>&nbsp;</div> Fork: &nbsp;
+        <button id='savePanel' class="minimal">
+            Fork: <img src="/static/css/floppy.png" width="24" height="24" alt="Floppy">&nbsp;
             <!--
             <div class='address'><a href='#'>https://gist.github.com/b9ab9418af567e575b3e</a></div>
             -->
-		</div>
+		</button>
 		
-		<div id="tweetPanel">
-			<div id="tweet_this">
-				
-            <img id="twiticon" src="/static/css/twitter.png" style="width:20px; height:20px;"></img>
-			</div>
-		</div>
-		
+		<button id="tweetPanel" class="minimal">
+			Tweet:
+			<img id="twiticon" src="/static/css/twitter.png"></img>
+            
+		</button>
+</div>			
 
 
     <div id="hideEditor">Hide</div>
@@ -253,8 +254,8 @@
     })
 
     </script>
-    <!--
+<!--
     <script>document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1"></' + 'script>')</script>
-        -->
+-->
 </body>
 </html>

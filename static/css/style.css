@@ -27,7 +27,7 @@ body {
     	width: 100%;
 /*    	left: 5%; */
     }
-    #tweetPanel {
+/*    #tweetPanel {
         font-size: 10px;
         position: absolute;
         right: 360px;
@@ -57,7 +57,8 @@ body {
         border: 3px solid rgba(0,0,0,0.1);;
         
     }
-    #savePanel {
+*/
+/*    #savePanel {
         color: white;
         position: absolute;
         right: 260px;
@@ -82,19 +83,19 @@ body {
         background-color: rgba(0,0,0,0.8);
         border: 3px solid rgba(0,0,0,0.9);;
         
-    }
-
+    } */
+/*
     #saveButton {
         position: relative;
         top: -5px;
         width: 24px;
         height: 24px;
         cursor: pointer;
-        border: none;
+*/        border: none;
         /*background-color: "#aaaaaa";*/
-        float:right;
+/*        float:right;
     }
-
+*/
     #savePanel .address {
         font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Droid Sans Mono', 'Consolas', monospace;
         font-size: 0.8em;
@@ -179,6 +180,7 @@ body {
     #tweet_this {
         padding-bottom: 10px;
         padding-top: 4px;
+        display: inline-block;
     }
 
     #editor .ace_gutter {
@@ -354,7 +356,7 @@ body {
       color: #333;
       font: bold 12px "helvetica neue", helvetica, arial, sans-serif;
       line-height: 1;
-      padding: 8px 0 9px;
+      padding: 8px 0 9px 0;
       text-align: center;
       text-shadow: 0 1px 0 #fff;
       width: 100px;
@@ -373,7 +375,21 @@ body {
         box-shadow: inset 0 0 1px 1px #e3e3e3;
         color: #000; }
         
+        button.minimal img {
+            margin-top: 6px;
+            width: 18px;
+            height: 18px;
+            margin-bottom: -3px;
+        }
         
+    #fork-n-tweet {
+        position: absolute;
+        top: 10px;
+        right: 24%;
+    }
+    #fork-n-tweet button {
+        padding-bottom: 14px !important;
+    }
     #gui {
         position: fixed;
         top: 0;
