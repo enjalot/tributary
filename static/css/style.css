@@ -175,8 +175,9 @@ body {
 
     	font-size: 1em; /* TODO: replace with localstorage */
     }
-    #editor #tweet_this {
+    #tweet_this {
         padding-bottom: 10px;
+        padding-top: 4px;
     }
 
     #editor .ace_gutter {
@@ -298,7 +299,29 @@ body {
     	border-color: #FFF;
     	width: 35px;
     }
-
+    .selected-button {
+        background-color: purple !important;
+    }
+    .button {
+        display: inline-block;
+        width: 40px;
+        height: 20px;
+    	border: 1px solid black;
+    	text-align: center;
+    	padding-top: 7px;
+    	padding-bottom: 3px;
+    	
+        margin: 4px;
+    }
+    #gui {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 400px;
+        height: 40px;
+        padding-top: 10px;
+        z-index: 1000;
+    }
      #play_button{
         position: fixed;
         display:block;
@@ -307,60 +330,52 @@ body {
     	visibility: visible;
     	z-index: 14;
     	/*width: 58%;*/
-        width: 40px;
-    	border: 1px solid black;
+
         cursor: pointer;
+        text-align: center;
     }
 
      #bv_button{
-        position: fixed;
+/*        position: fixed;
         display:block;
         bottom: 44%;
         right: 760px;
     	visibility: visible;
-    	z-index: 14;
+*/    	z-index: 14;
     	/*width: 58%;*/
-        width: 40px;
-    	border: 1px solid black;
+
         cursor: pointer;
     }
  
 
       #loop_button{
-        position: absolute;
+/*        position: absolute;
         display:block;
         bottom: 44%;
         right: 10px;
     	visibility: visible;
-    	z-index: 14;
+*/    	z-index: 14;
     	/*width: 58%;*/
-        width: 40px;
-        height: 18px;
-    	border: 1px solid black;
     }       
      #pingpong_button{
-        position: absolute;
+/*        position: absolute;
         display:block;
         bottom: 48%;
         right: 10px;
     	visibility: visible;
     	z-index: 14;
-    	/*width: 58%;*/
-        height: 18px;
-    	border: 1px solid black;
+*/   	/*width: 58%;*/
+        width: 70px;
     }
 
      #off_button{
-        position: absolute;
+/*        position: absolute;
         display:block;
         bottom: 52%;
         right: 10px;
     	visibility: visible;
     	z-index: 14;
-    	/*width: 58%;*/
-        width: 23px;
-        height: 18px;
-    	border: 1px solid black;
+*/    	/*width: 58%;*/
     }
 
 
@@ -429,4 +444,7 @@ body {
     }
     #branding h1 {
         margin-left: 18px;
+    }
+    .ace_warning {
+        display: none;
     }
