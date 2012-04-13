@@ -39,16 +39,16 @@
     </head>
 <body>
 	
-	<div id="gui">
-        <div id="play_button" class="button">Play</div>
-        <div id="bv_button" class="button" >BV</div>
-<!--        <div id="off_button" class="select button">Off</div> 
-		Temporarily hiding "off" button- unless it serves a purpose I'm unaware of, user should probably use the "play/stop" button instead
--->
-        <div id="loop_button" class="select button">Loop</div>
-        <div id="pingpong_button" class="select button">PingPong</div>
-        <div id="time_slider"></div>
-    </div>
+		<div id="gui">
+	        <button id="play_button" class="button minimal">Play</button>
+	        <button id="bv_button" class="button minimal" >BV</button>
+	<!--        <div id="off_button" class="select button">Off</div> 
+			Temporarily hiding "off" button- unless it serves a purpose I'm unaware of, user should probably use the "play/stop" button instead
+	-->
+	        <button id="loop_button" class="select button minimal">Loop</button>
+	        <button id="pingpong_button" class="select button minimal">PingPong</button>
+	        <div id="time_slider"></div>
+	    </div>
 
     <div id="branding">
         <img src="/static/visually_logo_solo.png" width="208" height="51" alt="Visually Logo Solo">
@@ -59,21 +59,22 @@
     </div> 
 
 
+<div id="fork-n-tweet">
+	
 
-        <div id='savePanel'>
-            <div id='saveButton'>&nbsp;</div> Fork: &nbsp;
+        <button id='savePanel' class="minimal">
+            Fork: <img src="/static/css/floppy.png" width="24" height="24" alt="Floppy">&nbsp;
             <!--
             <div class='address'><a href='#'>https://gist.github.com/b9ab9418af567e575b3e</a></div>
             -->
-		</div>
+		</button>
 		
-		<div id="tweetPanel">
-			<div id="tweet_this">
-				
-            <img id="twiticon" src="/static/css/twitter.png" style="width:20px; height:20px;"></img>
-			</div>
-		</div>
-		
+		<button id="tweetPanel" class="minimal">
+			Tweet:
+			<img id="twiticon" src="/static/css/twitter.png"></img>
+            
+		</button>
+</div>			
 
 
     <div id="hideEditor">Hide</div>
@@ -253,8 +254,8 @@
     })
 
     </script>
-    <!--
+<!--
     <script>document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1"></' + 'script>')</script>
-        -->
+-->
 </body>
 </html>
