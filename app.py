@@ -14,15 +14,15 @@ def hello():
 
 @app.route("/tributary/")
 def tributary():
-    return render_template("water.html", base_url=base_url)
+    return render_template("tributary.html", base_url=base_url)
 
 @app.route("/delta/")
 def delta():
     return render_template("delta.html", base_url=base_url)
 
-@app.route("/silt/")
-def silt():
-    return render_template("silt.html", base_url=base_url)
+@app.route("/flow/")
+def flow():
+    return render_template("flow.html", base_url=base_url)
 
 
 
@@ -58,11 +58,11 @@ def delta_gist(gist=None, filename=None):
     #return render_template("water.html", code=code, base_url=base_url) 
     return render_template("delta.html", gist=gist, filename=filename, base_url=base_url) 
 
-@app.route("/silt/<gist>/<filename>")
-def silt_gist(gist=None, filename=None):
+@app.route("/flow/<gist>/<filename>")
+def flow_gist(gist=None, filename=None):
     #print gist, filename
     #return render_template("water.html", code=code, base_url=base_url) 
-    return render_template("silt.html", gist=gist, filename=filename, base_url=base_url) 
+    return render_template("flow.html", gist=gist, filename=filename, base_url=base_url) 
 
 
 
@@ -71,7 +71,7 @@ def silt_gist(gist=None, filename=None):
 import urllib
 @app.route("/tributary/save", methods=["POST"])
 @app.route("/delta/save", methods=["POST"])
-@app.route("/silt/save", methods=["POST"])
+@app.route("/flow/save", methods=["POST"])
 def save():
     #gistobj = json.loads(request.values.get("gist"))
     data = request.values.get("gist")

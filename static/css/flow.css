@@ -11,16 +11,16 @@
         cursor: pointer;
     }
 
-     #siltgram{
+     #flowgram{
         position: fixed;
         /*display:block;*/
-        top: 70px;
-        left: 5px;
+        top: 80px;
+        left: 10px;
     	visibility: visible;
     	z-index: 20;
         width: 1024px;
         height: 50px;
     	/*border: 1px solid black;*/
         cursor: pointer;
-        background-color:rgba(255,0,0,0.1);
+        background-color:rgba(255,200,200,0.1);
     }

@@ -1,6 +1,6 @@
-window.silt = {}
-var silt = window.silt;
-silt.enabled = false
+window.flow = {}
+var flow = window.flow;
+flow.enabled = false
 $("#play_button").css("background-color", "rgba(255, 0, 0, .5)")
 
 //for some reason i needed to move the audio stuff out into global namespace. could use some refactoring for sure
@@ -17,43 +17,43 @@ $(function() {
 
 //time slider
 //we will keep track of our t parameter for the user
-silt.t = 0.01  //start at .01 so we don't trigger a flip at the start
+flow.t = 0.01  //start at .01 so we don't trigger a flip at the start
 //use this to control playback
-silt.pause = true
+flow.pause = true
 //default loop mode
-//silt.loop = "off";
-//silt.loop = "period";
-silt.loop = "pingpong";
+//flow.loop = "off";
+//flow.loop = "period";
+flow.loop = "pingpong";
 d3.select("#pingpong_button").style("background-color", "#e3e3e3")
 
 
-silt.reverse = false;
+flow.reverse = false;
 
 //TODO: expose these with dat.GUI (especially for the easing functions)
 //default duration for playback
-silt.duration = 3000;
+flow.duration = 3000;
 
 
 
 //default easing function
-silt.ease = d3.ease("linear")
+flow.ease = d3.ease("linear")
 
 //default opacity for clones
-silt.clone_opacity = 0.4;
+flow.clone_opacity = 0.4;
 
 
 //default number of clones to use for BV mode
-silt.nclones = 10;
+flow.nclones = 10;
 
-silt.clones = d3.select("#siltsvg").append("g").attr("id", "clones")
-silt.g = d3.select("#siltsvg").append("g").attr("id", "silt")
+flow.clones = d3.select("#flowsvg").append("g").attr("id", "clones")
+flow.g = d3.select("#flowsvg").append("g").attr("id", "flow")
 
 //user is responsible for defining this
 //by default we just show simple text
-silt.run = function(t, g) {
+flow.run = function(t, g) {
     
 	//$('svg').empty();
-	$('#silt').empty();
+	$('#flow').empty();
     g.append("text")
         .text("t: " + t)
         .attr("font-size", 60)
@@ -65,26 +65,26 @@ silt.run = function(t, g) {
 //this is a wrapper 
 var run = function(g) {
     try {
-        silt.run(silt.ease(silt.t), g)
+        flow.run(flow.ease(flow.t), g)
     } catch (e) {}
 }
 
 
 
-silt.findex = 41;
+flow.findex = 41;
 
 var barw = 1024;
 var barn = 1024
 var barh = 50;
-//create silt bars for showing the frequency
-var siltgram = d3.select("#siltgram")
-var barg = siltgram.append("g").attr("id", "siltbars")
+//create flow bars for showing the frequency
+var flowgram = d3.select("#flowgram")
+var barg = flowgram.append("g").attr("id", "flowbars")
 var empty = _.map(d3.range(1024), function(d) { return 0 }) 
-var bars = barg.selectAll("rect.siltbar")
+var bars = barg.selectAll("rect.flowbar")
     .data(empty)
     .enter()
     .append("rect")
-        .attr("class", "siltbar")
+        .attr("class", "flowbar")
         .attr("width", (barw)/barn)
         .attr("height", 0)
         .attr("fill", "#0000dd")
@@ -95,16 +95,16 @@ var bars = barg.selectAll("rect.siltbar")
             return "translate(" + [x, y]  + ")";
         })
 
-$("#siltgram").on("click", function(e) {
+$("#flowgram").on("click", function(e) {
     //console.log(e.offsetX, e.offsetY)
-    silt.findex = e.offsetX;
+    flow.findex = e.offsetX;
 })
 
 
-silt.update = function() {
+flow.update = function() {
     //update the bars showing the frequency
     freq = getFreq();
-    d3.selectAll(".siltbar").data(freq)
+    d3.selectAll(".flowbar").data(freq)
         .attr("height", function(d, i) { return barh * d/255 })
         .attr("transform", function(d,i) {
             var x = i * barw/barn
@@ -113,7 +113,7 @@ silt.update = function() {
             return "translate(" + [x, y]  + ")";
         })
         .attr("fill", function(d,i) {
-            if(i === silt.findex) {
+            if(i === flow.findex) {
                 return "#ff0000";
             } else {
                 return "#0000ff";
@@ -143,8 +143,8 @@ window.aceEditor.getSession().on('change', function() {
 
 	// clear the window
 	//$('svg').empty();
-	$('#silt').empty();
-    //silt.g = d3.select("svg").append("g").attr("id", "silt")
+	$('#flow').empty();
+    //flow.g = d3.select("svg").append("g").attr("id", "flow")
 
 	try {
 		// get the ide code
@@ -154,15 +154,15 @@ window.aceEditor.getSession().on('change', function() {
 		eval(thisCode);
 		//eval(run_func);
 
-        if(silt.bv) {
+        if(flow.bv) {
             //d3.selectAll(".bvclone").remove(); 
             $('#clones').empty()
             make_clones();
         }
         //we exec the user defined append code
-        silt.append(silt.g)
+        flow.append(flow.g)
         //then we run the user defined run function
-        run(silt.g)
+        run(flow.g)
 
 		// save it in local storage
 		//setLocalStorageValue('code', thisCode);
@@ -345,64 +345,64 @@ $('#slider').bind('keyup.' + sliderKey, function(e) {
 	slider.css('visibility', 'hidden');
 });
 
-// create silt's time slider
+// create flow's time slider
 /*
 var time_slider = $('#time_slider');
 time_slider.slider({
 	slide: function(event, ui) {
         //console.log("ui.value", ui.value);
         //set the current t to the slider's value
-        silt.t = ui.value
+        flow.t = ui.value
         //call the run function with the current t
-        run(silt.g)
+        run(flow.g)
  	},
     min: 0,
     max: 1,
     step: .01,
-    value: silt.t
+    value: flow.t
 });
 */
 
 //we need to save state of timer so when we pause/unpause or manually change slider
 //we can finish a transition
-silt.timer = {
+flow.timer = {
     then: new Date(),
-    duration: silt.duration,
-    ctime: silt.t
+    duration: flow.duration,
+    ctime: flow.t
 }
 
 var play_button = $("#play_button")
 
 play_button.on("click", function(event) {
-    console.log(silt.enabled)
-    if(!silt.enabled) return false;
+    console.log(flow.enabled)
+    if(!flow.enabled) return false;
 
-    if(silt.t < 1) {
-        silt.pause = !silt.pause;
-        if(!silt.pause) {
+    if(flow.t < 1) {
+        flow.pause = !flow.pause;
+        if(!flow.pause) {
             play(0)
             //unpausing, so we setup our timer to run
-            silt.timer.then = new Date();
-            silt.timer.duration = (1 - silt.t) * silt.duration
-            silt.timer.ctime = silt.t
+            flow.timer.then = new Date();
+            flow.timer.duration = (1 - flow.t) * flow.duration
+            flow.timer.ctime = flow.t
         } else {
             stop(0)
         }
     }
 })
  $("#off_button").on("click", function(event) {
-    silt.loop = "off"
+    flow.loop = "off"
      d3.selectAll(".select").style("background-color", null)
      d3.select("#off_button").style("background-color", "#e3e3e3")
 })
  
 $("#loop_button").on("click", function(event) {
-    silt.loop = "period"
+    flow.loop = "period"
      d3.selectAll(".select").style("background-color", null)
      d3.select("#loop_button").style("background-color", "#e3e3e3")
 })
  $("#pingpong_button").on("click", function(event) {
-    silt.loop = "pingpong"
+    flow.loop = "pingpong"
      d3.selectAll(".select").style("background-color", null)
      d3.select("#pingpong_button").style("background-color", "#e3e3e3")
 })
@@ -410,25 +410,25 @@ $("#loop_button").on("click", function(event) {
 var make_clones = function() {
     //make n frames with lowered opacity
     var svg = d3.select("#clones")
-    var frames = d3.range(silt.nclones)
+    var frames = d3.range(flow.nclones)
     var gf = svg.selectAll("g.bvclone")
         .data(frames).enter()
         .append("g")
             .attr("class", "bvclone")
-            .style("opacity", silt.clone_opacity)
+            .style("opacity", flow.clone_opacity)
 
     gf.each(function(d, i) {
         var frame = d3.select(this)
-        silt.append(frame)
-        silt.run(i/silt.nclones, frame)
+        flow.append(frame)
+        flow.run(i/flow.nclones, frame)
     })
     console.log("clones made")
 }
 
-silt.bv = false;
+flow.bv = false;
 $("#bv_button").on("click", function(event) {
-    silt.bv = !silt.bv;
-    if(silt.bv)
+    flow.bv = !flow.bv;
+    if(flow.bv)
     {
         d3.select("#bv_button").style("background-color", "#e3e3e3")
         make_clones();
@@ -444,56 +444,56 @@ $("#bv_button").on("click", function(event) {
 
 d3.timer(function() {
     //if paused lets not execute
-    if(silt.pause) return false;
+    if(flow.pause) return false;
 
     var now = new Date();
-    var dtime = now - silt.timer.then;
-    if (silt.reverse) {
-        var dt = silt.timer.ctime * dtime / silt.timer.duration * -1;
+    var dtime = now - flow.timer.then;
+    if (flow.reverse) {
+        var dt = flow.timer.ctime * dtime / flow.timer.duration * -1;
     }
     else {
-        var dt = (1 - silt.timer.ctime) * dtime / silt.timer.duration;
+        var dt = (1 - flow.timer.ctime) * dtime / flow.timer.duration;
     }
-    silt.t = silt.timer.ctime + dt;
+    flow.t = flow.timer.ctime + dt;
     
 
     //once we reach 1, lets pause and stay there
-    if(silt.t >= 1 || silt.t <= 0 || silt.t === "NaN")
+    if(flow.t >= 1 || flow.t <= 0 || flow.t === "NaN")
     {
-        if(silt.loop === "period") {
-            silt.t = 0;
-            silt.timer.then = new Date();
-            silt.timer.duration = silt.duration;
-            silt.timer.ctime = silt.t;
-            silt.reverse = false;
-            //silt.pause = false;
-        } else if (silt.loop === "pingpong") {
-            //this sets silt.t to 0 when we get to 0 and 1 when we get to 1 (because of the direction we were going)
-            silt.t = !silt.reverse
-            silt.timer.then = new Date();
-            silt.timer.duration = silt.duration;
-            silt.timer.ctime = silt.t;
-            silt.reverse = !silt.reverse;
+        if(flow.loop === "period") {
+            flow.t = 0;
+            flow.timer.then = new Date();
+            flow.timer.duration = flow.duration;
+            flow.timer.ctime = flow.t;
+            flow.reverse = false;
+            //flow.pause = false;
+        } else if (flow.loop === "pingpong") {
+            //this sets flow.t to 0 when we get to 0 and 1 when we get to 1 (because of the direction we were going)
+            flow.t = !flow.reverse
+            flow.timer.then = new Date();
+            flow.timer.duration = flow.duration;
+            flow.timer.ctime = flow.t;
+            flow.reverse = !flow.reverse;
         }
         else {
-            if (silt.t != 0)
+            if (flow.t != 0)
             {
-                silt.t = 1;
-                silt.pause = true;
+                flow.t = 1;
+                flow.pause = true;
             }
         }
     }
     
     //move the slider
-    //time_slider.slider('option', 'value', silt.t);
+    //time_slider.slider('option', 'value', flow.t);
     //update the function (there is probably a way to have the slider's
     //function get called programmatically)
-    run(silt.g)
+    run(flow.g)
 
-    silt.update()
+    flow.update()
     /*
     try {
-        silt.run(silt.t)
+        flow.run(flow.t)
     } catch (e) {}
     */
 })
@@ -601,7 +601,7 @@ function finishLoad() {
 
     freqByteData = new Uint8Array(analyser.frequencyBinCount);
     console.log("ENABLED")
-    silt.enabled = true;
+    flow.enabled = true;
     $("#play_button").css("background-color", "#0f0")
 
     //source.noteOn(0.0);
