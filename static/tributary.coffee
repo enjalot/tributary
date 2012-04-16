@@ -11,61 +11,64 @@ setLocalStorageValue = (key, value) ->
 
 
 class tributary.Tributary extends Backbone.Model
+    defaults:
+        code: ""
     initialize: ->
-
         @on("code", @newcode)
-        
-        @aceEditor = ace.edit("editor")
-        @aceEditor.setTheme("ace/theme/twilight")
-
-        JavaScriptMode = require("ace/mode/javascript").Mode
-        @aceEditor.getSession().setMode(new JavaScriptMode())
-
-        #tributary.events = d3.dispatch("create", "destroy", "code")
-        @aceEditor.getSession().on('change', () =>
-            thisCode = @aceEditor.getSession().getValue()
-            @trigger("code", @aceEditor.getSession().getValue())
-        )
-        
-        #console.log(@get("gist"), @get("filename"))
-        #fill in the editor with text we get back from the gist
-        if(@get("gist") && @get("filename"))
-            src_url = "/tributary/api/" + @get("gist")  + "/" + @get("filename")
-            #console.log("URL??", window.tributary_gist, window.tributary_filename)
-            #d3.text('http://gabrielflor.it/static/submodule/water/data/chord.txt', function(data) {
-            d3.text(src_url, (data) =>
-                #do we have stored code? if not, set the demo code
-                #tributary.aceEditor.getSession().setValue(getLocalStorageValue('code') ? getLocalStorageValue('code') : data);
-                @aceEditor.getSession().setValue(data)
-                @trigger("code", data)
-            )
-
+        @set({"code":"hi"})
+        console.log("GET", @get("code"))
 
     #TODO: move this to view?
     newcode: (code) =>
         #empty the svg object
         $("svg").empty()
 
-        #save the code in the model
-        #@set("code", code)
-        #TODO: store code in local storage
-        
         #run the code
         try
             eval(code)
-        
+
+        #TODO: check that things went well before saving?
+        #save the code in the model
+        @set({code:code})
+        #TODO: store code in local storage
+
         return true
 
 
 class tributary.TributaryView extends Backbone.View
     initialize: ->
+        #TODO: this should all be in render() 
+        #but we assume that the #editor div is present when this class is
+        #instanciated. move it once the code is on more solid ground
         @aceEditor = @model.aceEditor
         @chosenRow = 0
         @chosenColumn = 0
         @onNumeric = false
+        
+        @aceEditor = ace.edit("editor")
+        @aceEditor.setTheme("ace/theme/twilight")
+        JavaScriptMode = require("ace/mode/javascript").Mode
+        @aceEditor.getSession().setMode(new JavaScriptMode())
+        #everytime the code changes, we trigger this event
+        @aceEditor.getSession().on('change', () =>
+            thisCode = @aceEditor.getSession().getValue()
+            @model.trigger("code", @aceEditor.getSession().getValue())
+        )
 
+        #setup functions
         @init_slider()
         @init_gui()
+        
+        #fill in the editor with text we get back from the gist
+        #console.log(@get("gist"), @get("filename"))
+        if(@model.get("gist") && @model.get("filename"))
+            src_url = "/tributary/api/" + @model.get("gist")  + "/" + @model.get("filename")
+            d3.text(src_url, (data) =>
+                if(!data)
+                    data = ""
+                @aceEditor.getSession().setValue(data)
+                @model.trigger("code", data)
+            )
 
         @aceEditor.on("click", @editor_click)
         @
@@ -146,7 +149,7 @@ class tributary.TributaryView extends Backbone.View
                     @aceEditor.clearSelection()
 
                 #get token
-                token = @aceEditor.session.getTokenAt(chosenRow, chosenColumn + 1)
+                token = @aceEditor.session.getTokenAt(@chosenRow, @chosenColumn + 1)
 
                 #find and replace
                 @aceEditor.find(String(token.value))
@@ -154,25 +157,55 @@ class tributary.TributaryView extends Backbone.View
         )
 
     init_gui: =>
+        #Setup the gui elements for this page
+
+        #Setup tweet link
+        #var thisurl = window.location.protocol + "//" + window.location.host + "/" + window.location.pathname;
+        $('#tweet_this').append("tweet this")
+        $('#tweetPanel').on("click", (e) ->
+            save_gist((newurl, newgist) ->
+                tweetlink = "http://twitter.com/home/?status=See my latest %23tributary here "+"http://enjalot.com" + newurl
+                window.location = tweetlink
+                #window.open(tweetlink, 'twitte')
+            )
+        )
+
+        #Setup the save panel
+        $('#savePanel').on('click', (e) ->
+            save_gist((newurl, newgist) ->
+                window.location = newurl
+            )
+        )
+
+        #Setup Hide the editor button
+        he = $('#hideEditor')
+        he.on("click", (e) ->
+            $("#editor").toggle()
+            txt = he.html()
+            #console.log("txt", txt)
+            if(txt == "Hide")
+                he.html("Show")
+                $('#slider').css('visibility', 'hidden');
+            else
+                he.html("Hide")
+                #hide the slider if it's open
+        )
+
+        #Setup editor settings
         #turn off horizontal scrollbar
         @aceEditor.renderer.setHScrollBarAlwaysVisible(false)
-
         #turn off print margin visibility
         @aceEditor.setShowPrintMargin(false)
-
         # load font-size from local storage
         if (getLocalStorageValue('font-size'))
             $('#editor').css('font-size', getLocalStorageValue('font-size'))
-
         # increase/decrease font
         $('.font-control').on('click', (e) ->
             e.preventDefault()
-
             if ($(this).attr('class').indexOf('decrease') != -1)
                 $('#editor').css('font-size', '-=1')
             else
                 $('#editor').css('font-size', '+=1')
-
             setLocalStorageValue('font-size', $('#editor').css('font-size'))
         )
 
@@ -198,6 +231,45 @@ class tributary.TributaryView extends Backbone.View
         pulse = setInterval(() ->
             $('.ace_numeric').animate({opacity: 0.5}).animate({opacity: 1})
         , 1000)
+        @
 
+    save_gist: (callback) =>
+        #Save the current code to a public gist
+        oldgist = parseInt(@model.get("gist"))
+        filename = @model.get("filename")
+        if(filename == "")
+            filename = "inlet.js"
+        #if(!oldgist == "NaN")
+            #TODO:
+            #this gist already exists, so we can fill in some information
+            #like the description
+        #console.log("gist #", oldgist, "filename", filename)
+        gist = {
+            description: 'just another inlet to tributary',
+            public: true,
+            files: {}
+        }
+        gist.files[filename] = {
+            content: @model.get("code")
+        }
+
+        #turn the save button into a saving animation
+        d3.select("#saveButton").style("background-image", "url(/static/img/ajax-loader.gif)")
+        d3.select("#saveButton").style("background-repeat", "no-repeat")
+        d3.select("#saveButton").style("top", "0px")
+        #d3.select("#saveButton").text("Saving!")
+        
+        #console.log("gist", gist)
+        #$.post('https://api.github.com/gists', JSON.stringify(gist), function(data) {
+        $.post('/tributary/save', {"gist":JSON.stringify(gist)}, (data) ->
+            #TODO: fix the flask headers to send back application/json and not text/html
+            if(typeof(data) == "string")
+                data = JSON.parse(data)
+            newgist = data.id
+            newurl = "/tributary/" + newgist + "/" + filename
+            #console.log("new url", newurl)
+            callback(newurl, newgist)
+            #window.location = newurl;
+        )
 
 
