@@ -23,14 +23,10 @@ check us out http://create.visual.ly
 
 Development:
 This was put together with great haste in order to allow people to share. As
-such we haven't taken much care to structure this well. If you want to get
-started you will need to checkout this repo as well as cloning
-https://github.com/gabrielflorit/water into the static/water directory
+such we haven't taken much care to structure this well. 
 
-For now we just make some modifications to water.html (in templates/water.html)
-and water.js in static/water.js
 
-We just checkout those two files instead of forking water from Gabriel since
-they are specific to working with tributary
+coffee -cw -o static/trib.js static/trib.coffee
+
 
 

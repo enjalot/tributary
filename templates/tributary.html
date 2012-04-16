@@ -22,8 +22,9 @@
     <script type="text/javascript">
         window.tributary = {}
         var tributary = window.tributary
-        window.tributary.gist = "{{gist}}";
-        window.tributary.filename = "{{filename}}";
+        var trib;
+        //window.tributary.gist = "{{gist}}";
+        //window.tributary.filename = "{{filename}}";
     </script>
 
     <script type="text/javascript">
@@ -108,7 +109,9 @@
 
 
     <script src='/static/trib.js'></script>
+    <!--
     <script src='/static/tributary.js'></script>
+    -->
     <script src='/static/lib/ace/ace.js'></script>
     <script src='/static/lib/ace/theme-twilight.js'></script>
     <script src='/static/lib/ace/mode-javascript.js'></script>
@@ -226,6 +229,9 @@
         }
 
     })
+
+    trib = new tributary.Tributary({"gist":"{{gist}}", "filename":"{{filename}}"})
+    tribView = new tributary.TributaryView({"model":trib})
 
     </script>
 <!--

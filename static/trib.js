@@ -1,3 +1,4 @@
+var getLocalStorageValue, setLocalStorageValue;
 var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; }, __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, parent) {
   for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; }
   function ctor() { this.constructor = child; }
@@ -6,16 +7,25 @@ var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments)
   child.__super__ = parent.prototype;
   return child;
 };
+getLocalStorageValue = function(key) {
+  var localStorageKey;
+  localStorageKey = 'tributary/';
+  return localStorage.getItem([localStorageKey, key].join('/'));
+};
+setLocalStorageValue = function(key, value) {
+  var localStorageKey;
+  localStorageKey = 'tributary/';
+  return localStorage.setItem([localStorageKey, key].join('/'), value);
+};
 tributary.Tributary = (function() {
   __extends(Tributary, Backbone.Model);
   function Tributary() {
-    this.init_slider = __bind(this.init_slider, this);
-    this.editor_click = __bind(this.editor_click, this);
     this.newcode = __bind(this.newcode, this);
     Tributary.__super__.constructor.apply(this, arguments);
   }
-  Tributary.prototype.init = function() {
+  Tributary.prototype.initialize = function() {
     var JavaScriptMode, src_url;
+    this.on("code", this.newcode);
     this.aceEditor = ace.edit("editor");
     this.aceEditor.setTheme("ace/theme/twilight");
     JavaScriptMode = require("ace/mode/javascript").Mode;
@@ -25,27 +35,42 @@ tributary.Tributary = (function() {
       thisCode = this.aceEditor.getSession().getValue();
       return this.trigger("code", this.aceEditor.getSession().getValue());
     }, this));
-    this.chosenRow = 0;
-    this.chosenColumn = 0;
-    this.onNumeric = false;
-    this.aceEditor.on("click", this.editor_click);
-    this.init_slider();
     if (this.get("gist") && this.get("filename")) {
-      src_url = "/tributary/api/" + tributary.gist + "/" + tributary.filename;
+      src_url = "/tributary/api/" + this.get("gist") + "/" + this.get("filename");
       return d3.text(src_url, __bind(function(data) {
-        return this.aceEditor.getSession().setValue(data);
+        this.aceEditor.getSession().setValue(data);
+        return this.trigger("code", data);
       }, this));
     }
   };
   Tributary.prototype.newcode = function(code) {
-    this.$el.find("svg").empty();
-    this.set("code", code);
+    $("svg").empty();
     try {
       eval(code);
     } catch (_e) {}
     return true;
   };
-  Tributary.prototype.editor_click = function(e) {
+  return Tributary;
+})();
+tributary.TributaryView = (function() {
+  __extends(TributaryView, Backbone.View);
+  function TributaryView() {
+    this.init_gui = __bind(this.init_gui, this);
+    this.init_slider = __bind(this.init_slider, this);
+    this.editor_click = __bind(this.editor_click, this);
+    TributaryView.__super__.constructor.apply(this, arguments);
+  }
+  TributaryView.prototype.initialize = function() {
+    this.aceEditor = this.model.aceEditor;
+    this.chosenRow = 0;
+    this.chosenColumn = 0;
+    this.onNumeric = false;
+    this.init_slider();
+    this.init_gui();
+    this.aceEditor.on("click", this.editor_click);
+    return this;
+  };
+  TributaryView.prototype.editor_click = function(e) {
     var cursorOffset, editor, pos, pulseNumerics, scrollerOffset, sliderLeft, sliderRange, sliderTop, token;
     editor = e.editor;
     pos = editor.getCursorPosition();
@@ -68,11 +93,11 @@ tributary.Tributary = (function() {
       } else {
         this.slider.slider('option', 'step', (d3.max(sliderRange) - d3.min(sliderRange)) / 200);
       }
-      slider.slider('option', 'value', token.value);
+      this.slider.slider('option', 'value', token.value);
       scrollerOffset = $('.ace_scroller').offset();
       cursorOffset = editor.renderer.$cursorLayer.pixelPos;
       sliderTop = scrollerOffset.top + cursorOffset.top - Number($('#editor').css('font-size').replace('px', '')) * 0.8;
-      sliderLeft = scrollerOffset.left + cursorOffset.left - slider.width() / 2;
+      sliderLeft = scrollerOffset.left + cursorOffset.left - this.slider.width() / 2;
       this.slider.css('font-size', $('#editor').css('font-size'));
       this.slider.css('font-size', '-=4');
       this.slider.offset({
@@ -88,7 +113,7 @@ tributary.Tributary = (function() {
       return this.slider.css('visibility', 'hidden');
     }
   };
-  Tributary.prototype.init_slider = function() {
+  TributaryView.prototype.init_slider = function() {
     this.slider = $('#slider');
     return this.slider.slider({
       slide: __bind(function(event, ui) {
@@ -104,5 +129,43 @@ tributary.Tributary = (function() {
       }, this)
     });
   };
-  return Tributary;
+  TributaryView.prototype.init_gui = function() {
+    var pulse, pulseNumerics;
+    this.aceEditor.renderer.setHScrollBarAlwaysVisible(false);
+    this.aceEditor.setShowPrintMargin(false);
+    if (getLocalStorageValue('font-size')) {
+      $('#editor').css('font-size', getLocalStorageValue('font-size'));
+    }
+    $('.font-control').on('click', function(e) {
+      e.preventDefault();
+      if ($(this).attr('class').indexOf('decrease') !== -1) {
+        $('#editor').css('font-size', '-=1');
+      } else {
+        $('#editor').css('font-size', '+=1');
+      }
+      return setLocalStorageValue('font-size', $('#editor').css('font-size'));
+    });
+    this.aceEditor.replace = function(replacement) {
+      var range;
+      range = this.getSelectionRange();
+      if (range !== null) {
+        this.$tryReplace(range, replacement);
+        if (range !== null) {
+          return this.selection.setSelectionRange(range);
+        }
+      }
+    };
+    $('body').on('focus click', __bind(function(e) {
+      return this.onNumeric = false;
+    }, this));
+    pulseNumerics = true;
+    return pulse = setInterval(function() {
+      return $('.ace_numeric').animate({
+        opacity: 0.5
+      }).animate({
+        opacity: 1
+      });
+    }, 1000);
+  };
+  return TributaryView;
 })();
