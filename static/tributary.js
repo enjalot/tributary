@@ -135,10 +135,9 @@ tributary.init = function() {
     });
 
 
-
-    if(window.tributary.gist && window.tributary.filename)
+    if(tributary.gist && tributary.filename)
     {
-        var src_url = "/tributary/api/" + window.tributary_gist  + "/" + window.tributary_filename
+        var src_url = "/tributary/api/" + tributary.gist  + "/" + tributary.filename
         //console.log("URL??", window.tributary_gist, window.tributary_filename)
         //d3.text('http://gabrielflor.it/static/submodule/water/data/chord.txt', function(data) {
         d3.text(src_url, function(data) {
