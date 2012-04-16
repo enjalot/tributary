@@ -1,5 +1,6 @@
-$(function() {
 
+
+$(function() {
 
 
 tributary.init = function() {
@@ -184,29 +185,6 @@ tributary.init = function() {
                 this.selection.setSelectionRange(range);
         }
     }
-    /* don't use slider key for now
-    // use control key on linux, alt key everywhere else
-    var sliderKey = navigator && navigator.platform && navigator.platform.toLowerCase().indexOf('linux') != -1
-    	? 'ctrl' : 'alt';
-
-    // display slider key on page
-    $('#sliderKey').text(sliderKey);
-
-    // trigger slider on control
-    $('textarea').bind('keydown.' + sliderKey, function(e) {
-        // are we on a token?
-        if (onNumeric) {
-            slider.css('visibility', 'visible'); 
-        }
-    }).bind('keyup.' + sliderKey, function(e) {
-        slider.css('visibility', 'hidden');
-    });
-
-    $('#slider').bind('keyup.' + sliderKey, function(e) {
-        slider.css('visibility', 'hidden');
-    });
-    */
-
     // we're not a numeric, by default
     // if we are, the editor click will handle it
     $('body').on('focus click', function(e) {
@@ -220,8 +198,6 @@ tributary.init = function() {
     }, 1000);
 
 }
-
-
 
 
 
