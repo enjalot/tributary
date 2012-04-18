@@ -162,6 +162,11 @@
 
     trib = new tributary.Delta({"gist":"{{gist}}", "filename":"{{filename}}"})
     tribView = new tributary.TributaryView({"model":trib, "endpoint":"delta"})
+    
+    window.onresize = function(event) {
+        trib.trigger("execute")
+    }
+
 
 
 
