@@ -6,17 +6,14 @@
     <meta charset='utf-8' />
     <title>Flow</title>
     <link rel='stylesheet' type='text/css' href='http://yui.yahooapis.com/2.9.0/build/reset/reset-min.css' />
-    <link rel='stylesheet' type='text/css' href='{{base_url}}slider/css/humanity/jquery-ui-slider.css' />
-    <!--
-    <link rel='stylesheet' type='text/css' href='{{base_url}}css/water.css' />
-    -->
+    <link rel='stylesheet' type='text/css' href='/static/lib/slider/css/humanity/jquery-ui-slider.css' />
     <link rel='stylesheet' type='text/css' href='/static/css/style.css' />
     <link rel='stylesheet' type='text/css' href='/static/css/flow.css' />
-    <link rel="shortcut icon" href="{{base_url}}static/img/favicon.ico">
+    <link rel="shortcut icon" href="/static/img/favicon.ico">
     <style>
 
     #saveButton {
-        background-image: url('{{base_url}}/img/floppy.png');
+        background-image: url('/static/img/floppy.png');
     }
 
     </style>
@@ -106,31 +103,23 @@
     </div>
 
 
-    <!--
-    <script src='http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js'></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/jquery-ui.min.js"></script>
-    -->
     <script src="/static/lib/jquery-1.7.min.js"></script>
     <script src="/static/lib/jquery-ui.1.8.16.custom.min.js"></script>
-    <script src='{{base_url}}js/jquery.hotkeys.js'></script>
-    <script src='{{base_url}}slider/js/jquery.ui.slider.js'></script>
-    <!--
-    <script src='{{base_url}}js/d3.v2.min.js'></script>
-    -->
+    <script src='/static/lib/jquery.hotkeys.js'></script>
+    <script src='/static/lib/slider/js/jquery.ui.slider.js'></script>
+
+    <!-- 3rd party libraries -->
+    <script src="/static/lib/d3.v2.min.js"></script>
+    <script src="/static/lib/underscore-min.js"></script>
+    <script src="/static/lib/backbone-min.js"></script>
+    <script src="/static/lib/jwerty.js"></script>
+
     <script src='/static/flow.js'></script>
-    <script src='{{base_url}}js/ace/ace.js'></script>
-    <script src='{{base_url}}js/ace/theme-twilight.js'></script>
-    <script src='{{base_url}}js/ace/mode-javascript.js'></script>
-    <!-- 3rd party libraries 
-    <script type="text/javascript" src="http://mbostock.github.com/d3/d3.v2.js?2.8.0"></script>
-    <script src='http://documentcloud.github.com/underscore/underscore-min.js'></script>
-    -->
-    <script type="text/javascript" src="/static/lib/d3.v2.min.js"></script>
-    <script type="text/javascript" src="/static/lib/underscore-min.js"></script>
-    <script type="text/javascript" src="/static/lib/jwerty.js"></script>
-    <!--
-    <script src='http://requirejs.org/docs/release/1.0.7/minified/require.js'></script>
-    -->
+    <script src='/static/lib/ace/ace.js'></script>
+    <script src='/static/lib/ace/theme-twilight.js'></script>
+    <script src='/static/lib/ace/mode-javascript.js'></script>
+
+
     <script type="text/javascript">
         //from the SO thread: http://stackoverflow.com/questions/950087/include-javascript-file-inside-javascript-file
         //caching so we don't download every keystroke
