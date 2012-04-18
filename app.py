@@ -28,6 +28,7 @@ def flow():
 
 
 
+
 @app.route("/tributary/api/<gist>/<filename>")
 def internal_gist(gist, filename):
     code = ""
@@ -64,6 +65,11 @@ def flow_gist(gist=None, filename=None):
     #return render_template("water.html", code=code, base_url=base_url) 
     return render_template("flow.html", gist=gist, filename=filename, base_url=base_url) 
 
+@app.route("/shore/<gist>/<filename>")
+def shore_gist(gist=None, filename=None):
+    #print gist, filename
+    #return render_template("water.html", code=code, base_url=base_url) 
+    return render_template("shore.html", gist=gist, filename=filename, base_url=base_url) 
 
 
 

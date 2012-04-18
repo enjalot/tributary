@@ -15,10 +15,18 @@ class tributary.Tributary extends Backbone.Model
         code: ""
     initialize: ->
         @on("code", @newcode)
+        @on("execute", @execute)
+
+    execute: () =>
+        $("svg").empty()
+        #run the code
+        try
+            eval(@get("code"))
+
 
     #TODO: move this to view?
     newcode: (code) =>
-        console.log("newcode")
+        #console.log("newcode")
         #empty the svg object
         $("svg").empty()
 
@@ -32,6 +40,19 @@ class tributary.Tributary extends Backbone.Model
         #TODO: store code in local storage
 
         return true
+
+    get_code: (callback) =>
+        if(@get("gist") && @get("filename"))
+            src_url = "/tributary/api/" + @get("gist")  + "/" + @get("filename")
+            d3.text(src_url, (data) =>
+                if(!data)
+                    data = ""
+                @set({code: data})
+                #TODO: add error checking
+                callback(null, data)
+            )
+
+
 
 
 class tributary.TributaryView extends Backbone.View
@@ -60,6 +81,10 @@ class tributary.TributaryView extends Backbone.View
         
         #fill in the editor with text we get back from the gist
         #console.log(@get("gist"), @get("filename"))
+        @model.get_code((error, code) =>
+            @aceEditor.getSession().setValue(code)
+        )
+        """
         if(@model.get("gist") && @model.get("filename"))
             src_url = "/tributary/api/" + @model.get("gist")  + "/" + @model.get("filename")
             d3.text(src_url, (data) =>
@@ -68,6 +93,7 @@ class tributary.TributaryView extends Backbone.View
                 @aceEditor.getSession().setValue(data)
                 #@model.trigger("code", data)
             )
+        """
 
         @aceEditor.on("click", @editor_click)
         @

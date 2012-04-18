@@ -6,18 +6,15 @@
     <meta charset='utf-8' />
     <title>Tributary</title>
     <link rel='stylesheet' type='text/css' href='http://yui.yahooapis.com/2.9.0/build/reset/reset-min.css' />
-    <link rel='stylesheet' type='text/css' href='/static/lib/slider/css/humanity/jquery-ui-slider.css' />
     <!--
     <link rel='stylesheet' type='text/css' href='{{base_url}}css/water.css' />
     <link rel='stylesheet' type='text/css' href='/static/css/style.css' />
-    -->
     <link rel='stylesheet' type='text/css' href='/static/css/tributary.css' />
+    -->
     <link rel="shortcut icon" href="/static/img/favicon.ico">
     <style>
 
-    #saveButton {
-        background-image: url('/static/img/floppy.png');
-    }
+    
 
     </style>
     <script type="text/javascript">
@@ -43,64 +40,16 @@
     </head>
 <body>
 
-    <div id="branding">
-        <img src="/static/img/visually_logo_solo.png" width="208" height="51" alt="Visually Logo Solo">
-        <br />
-        <!--
-        <h1>Powered by Visual.ly</h1>
-        -->
-    </div> 
-        <div id='savePanel'>
-            <div id='saveButton'>&nbsp;</div> Fork: &nbsp;
-            <!--
-            <div class='address'><a href='#'>https://gist.github.com/b9ab9418af567e575b3e</a></div>
-            -->
-		</div>
-		
-		<div id="tweetPanel">
-			<div id="tweet_this">
-				
-            <img id="twiticon" src="/static/img/twitter_bird.png" style="width:20px; height:20px;"></img>
-			</div>
-		</div>
-
-    <div id="hideEditor">Hide</div>
+   
     <div id='page'>
-
-        
         <div id='display'>
-            <svg style='width: 96%; height: 96%; padding: 2%'></svg>
-        </div>
-        <div id='editor'>
-        </div>
-        <div>
-            <a class='increase font-control' href='#'>+</a>
-            <a class='decrease font-control' href='#'>-</a>
-        </div>
-        <div id="slider"></div>
-
-        <div id='aboutAndAttribution'>
-            <p id="about">further inspired by 
-            <a href="http://bl.ocks.org"> bl.ocks.org </a>
-            and
-            <a href='http://gabrielflor.it/blog-water'>water</a>
-            </p>
-            <div id='attribution'>
-                <p>100% totally based on Bret Victor's genius <a href='http://vimeo.com/36579366'>Inventing on Principle</a> talk<p>
-                <p><a href='https://github.com/enjalot/tributary'>source code</a> on github</p>
-            </div>
+            <svg></svg>
         </div>
     </div>
-
-    <div id='instructions'>
-
-    </div>
-
 
     <script src="/static/lib/jquery-1.7.min.js"></script>
     <script src="/static/lib/jquery-ui.1.8.16.custom.min.js"></script>
     <script src='/static/lib/jquery.hotkeys.js'></script>
-    <script src='/static/lib/slider/js/jquery.ui.slider.js'></script>
 
     <!-- 3rd party libraries -->
     <script src="/static/lib/d3.v2.min.js"></script>
@@ -112,10 +61,7 @@
     <script src='/static/trib.js'></script>
     -->
     <script src='/static/tributary.js'></script>
-    <script src='/static/lib/ace/ace.js'></script>
-    <script src='/static/lib/ace/theme-twilight.js'></script>
-    <script src='/static/lib/ace/mode-javascript.js'></script>
-    <!--
+   <!--
     <script src='http://requirejs.org/docs/release/1.0.7/minified/require.js'></script>
     -->
     <script type="text/javascript">
@@ -144,11 +90,18 @@
     <script type="text/javascript">
 
     trib = new tributary.Tributary({"gist":"{{gist}}", "filename":"{{filename}}"})
-    tribView = new tributary.TributaryView({"model":trib})
+
+    //get the code
+    trib.get_code(function(error, code) {
+        //execute the new code onse we get it
+        trib.newcode(code);         
+    })
 
     window.onresize = function(event) {
         trib.trigger("execute")
     }
+
+    //tribView = new tributary.TributaryView({"model":trib})
 
     </script>
 <!--

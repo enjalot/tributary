@@ -20,17 +20,25 @@ setLocalStorageValue = function(key, value) {
 tributary.Tributary = (function() {
   __extends(Tributary, Backbone.Model);
   function Tributary() {
+    this.get_code = __bind(this.get_code, this);
     this.newcode = __bind(this.newcode, this);
+    this.execute = __bind(this.execute, this);
     Tributary.__super__.constructor.apply(this, arguments);
   }
   Tributary.prototype.defaults = {
     code: ""
   };
   Tributary.prototype.initialize = function() {
-    return this.on("code", this.newcode);
+    this.on("code", this.newcode);
+    return this.on("execute", this.execute);
+  };
+  Tributary.prototype.execute = function() {
+    $("svg").empty();
+    try {
+      return eval(this.get("code"));
+    } catch (_e) {}
   };
   Tributary.prototype.newcode = function(code) {
-    console.log("newcode");
     $("svg").empty();
     try {
       eval(code);
@@ -39,6 +47,21 @@ tributary.Tributary = (function() {
       code: code
     });
     return true;
+  };
+  Tributary.prototype.get_code = function(callback) {
+    var src_url;
+    if (this.get("gist") && this.get("filename")) {
+      src_url = "/tributary/api/" + this.get("gist") + "/" + this.get("filename");
+      return d3.text(src_url, __bind(function(data) {
+        if (!data) {
+          data = "";
+        }
+        this.set({
+          code: data
+        });
+        return callback(null, data);
+      }, this));
+    }
   };
   return Tributary;
 })();
@@ -52,7 +75,7 @@ tributary.TributaryView = (function() {
     TributaryView.__super__.constructor.apply(this, arguments);
   }
   TributaryView.prototype.initialize = function() {
-    var JavaScriptMode, src_url;
+    var JavaScriptMode;
     this.aceEditor = this.model.aceEditor;
     this.chosenRow = 0;
     this.chosenColumn = 0;
@@ -68,15 +91,10 @@ tributary.TributaryView = (function() {
     }, this));
     this.init_slider();
     this.init_gui();
-    if (this.model.get("gist") && this.model.get("filename")) {
-      src_url = "/tributary/api/" + this.model.get("gist") + "/" + this.model.get("filename");
-      d3.text(src_url, __bind(function(data) {
-        if (!data) {
-          data = "";
-        }
-        return this.aceEditor.getSession().setValue(data);
-      }, this));
-    }
+    this.model.get_code(__bind(function(error, code) {
+      return this.aceEditor.getSession().setValue(code);
+    }, this));
+    "if(@model.get(\"gist\") && @model.get(\"filename\"))\n    src_url = \"/tributary/api/\" + @model.get(\"gist\")  + \"/\" + @model.get(\"filename\")\n    d3.text(src_url, (data) =>\n        if(!data)\n            data = \"\"\n        @aceEditor.getSession().setValue(data)\n        #@model.trigger(\"code\", data)\n    )";
     this.aceEditor.on("click", this.editor_click);
     return this;
   };
