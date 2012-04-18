@@ -18,22 +18,18 @@ class tributary.Tributary extends Backbone.Model
         @on("execute", @execute)
 
     execute: () =>
+        #empty the svg object
         $("svg").empty()
         #run the code
         try
             eval(@get("code"))
 
+        return true
+
 
     #TODO: move this to view?
     newcode: (code) =>
-        #console.log("newcode")
-        #empty the svg object
-        $("svg").empty()
-
-        #run the code
-        try
-            eval(code)
-
+        @execute()
         #TODO: check that things went well before saving?
         #save the code in the model
         @set({code:code})
@@ -54,9 +50,33 @@ class tributary.Tributary extends Backbone.Model
 
 
 
+class tributary.Delta extends tributary.Tributary
+    execute: () =>
+        #empty the svg object
+        $("#delta").empty()
+        #run the code
+        try
+            eval(@get("code"))
+
+        if(tributary.bv)
+            #d3.selectAll(".bvclone").remove(); 
+            $('#clones').empty()
+            make_clones()
+
+        try
+            #we exec the user defined append code
+            tributary.append(tributary.g)
+        try
+            #then we run the user defined run function
+            tributary.run(tributary.t, tributary.g)
+
+        return true
+
+
 
 class tributary.TributaryView extends Backbone.View
     initialize: ->
+        @endpoint = @options.endpoint || "tributary"
         #TODO: this should all be in render() 
         #but we assume that the #editor div is present when this class is
         #instanciated. move it once the code is on more solid ground
@@ -187,8 +207,8 @@ class tributary.TributaryView extends Backbone.View
         #Setup tweet link
         #var thisurl = window.location.protocol + "//" + window.location.host + "/" + window.location.pathname;
         $('#tweet_this').append("tweet this")
-        $('#tweetPanel').on("click", (e) ->
-            save_gist((newurl, newgist) ->
+        $('#tweetPanel').on("click", (e) =>
+            @save_gist((newurl, newgist) ->
                 tweetlink = "http://twitter.com/home/?status=See my latest %23tributary here "+"http://enjalot.com" + newurl
                 window.location = tweetlink
                 #window.open(tweetlink, 'twitte')
@@ -196,8 +216,8 @@ class tributary.TributaryView extends Backbone.View
         )
 
         #Setup the save panel
-        $('#savePanel').on('click', (e) ->
-            save_gist((newurl, newgist) ->
+        $('#savePanel').on('click', (e) =>
+            @save_gist((newurl, newgist) ->
                 window.location = newurl
             )
         )
@@ -259,6 +279,7 @@ class tributary.TributaryView extends Backbone.View
         @
 
     save_gist: (callback) =>
+        console.log("ENDPOINT", @endpoint)
         #Save the current code to a public gist
         oldgist = parseInt(@model.get("gist"))
         filename = @model.get("filename")
@@ -286,12 +307,12 @@ class tributary.TributaryView extends Backbone.View
         
         #console.log("gist", gist)
         #$.post('https://api.github.com/gists', JSON.stringify(gist), function(data) {
-        $.post('/tributary/save', {"gist":JSON.stringify(gist)}, (data) ->
+        $.post('/tributary/save', {"gist":JSON.stringify(gist)}, (data) =>
             #TODO: fix the flask headers to send back application/json and not text/html
             if(typeof(data) == "string")
                 data = JSON.parse(data)
             newgist = data.id
-            newurl = "/tributary/" + newgist + "/" + filename
+            newurl = "/" + @endpoint + "/" + newgist + "/" + filename
             #console.log("new url", newurl)
             callback(newurl, newgist)
             #window.location = newurl;

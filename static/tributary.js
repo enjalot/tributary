@@ -35,14 +35,12 @@ tributary.Tributary = (function() {
   Tributary.prototype.execute = function() {
     $("svg").empty();
     try {
-      return eval(this.get("code"));
+      eval(this.get("code"));
     } catch (_e) {}
+    return true;
   };
   Tributary.prototype.newcode = function(code) {
-    $("svg").empty();
-    try {
-      eval(code);
-    } catch (_e) {}
+    this.execute();
     this.set({
       code: code
     });
@@ -65,6 +63,31 @@ tributary.Tributary = (function() {
   };
   return Tributary;
 })();
+tributary.Delta = (function() {
+  __extends(Delta, tributary.Tributary);
+  function Delta() {
+    this.execute = __bind(this.execute, this);
+    Delta.__super__.constructor.apply(this, arguments);
+  }
+  Delta.prototype.execute = function() {
+    $("#delta").empty();
+    try {
+      eval(this.get("code"));
+    } catch (_e) {}
+    if (tributary.bv) {
+      $('#clones').empty();
+      make_clones();
+    }
+    try {
+      tributary.append(tributary.g);
+    } catch (_e) {}
+    try {
+      tributary.run(tributary.t, tributary.g);
+    } catch (_e) {}
+    return true;
+  };
+  return Delta;
+})();
 tributary.TributaryView = (function() {
   __extends(TributaryView, Backbone.View);
   function TributaryView() {
@@ -76,6 +99,7 @@ tributary.TributaryView = (function() {
   }
   TributaryView.prototype.initialize = function() {
     var JavaScriptMode;
+    this.endpoint = this.options.endpoint || "tributary";
     this.aceEditor = this.model.aceEditor;
     this.chosenRow = 0;
     this.chosenColumn = 0;
@@ -160,18 +184,18 @@ tributary.TributaryView = (function() {
   TributaryView.prototype.init_gui = function() {
     var he, pulse, pulseNumerics;
     $('#tweet_this').append("tweet this");
-    $('#tweetPanel').on("click", function(e) {
-      return save_gist(function(newurl, newgist) {
+    $('#tweetPanel').on("click", __bind(function(e) {
+      return this.save_gist(function(newurl, newgist) {
         var tweetlink;
         tweetlink = "http://twitter.com/home/?status=See my latest %23tributary here " + "http://enjalot.com" + newurl;
         return window.location = tweetlink;
       });
-    });
-    $('#savePanel').on('click', function(e) {
-      return save_gist(function(newurl, newgist) {
+    }, this));
+    $('#savePanel').on('click', __bind(function(e) {
+      return this.save_gist(function(newurl, newgist) {
         return window.location = newurl;
       });
-    });
+    }, this));
     he = $('#hideEditor');
     he.on("click", function(e) {
       var txt;
@@ -223,6 +247,7 @@ tributary.TributaryView = (function() {
   };
   TributaryView.prototype.save_gist = function(callback) {
     var filename, gist, oldgist;
+    console.log("ENDPOINT", this.endpoint);
     oldgist = parseInt(this.model.get("gist"));
     filename = this.model.get("filename");
     if (filename === "") {
@@ -241,15 +266,15 @@ tributary.TributaryView = (function() {
     d3.select("#saveButton").style("top", "0px");
     return $.post('/tributary/save', {
       "gist": JSON.stringify(gist)
-    }, function(data) {
+    }, __bind(function(data) {
       var newgist, newurl;
       if (typeof data === "string") {
         data = JSON.parse(data);
       }
       newgist = data.id;
-      newurl = "/tributary/" + newgist + "/" + filename;
+      newurl = "/" + this.endpoint + "/" + newgist + "/" + filename;
       return callback(newurl, newgist);
-    });
+    }, this));
   };
   return TributaryView;
 })();

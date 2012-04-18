@@ -18,8 +18,9 @@
 
     </style>
     <script type="text/javascript">
-        window.tributary_gist = "{{gist}}";
-        window.tributary_filename = "{{filename}}";
+        window.tributary = {}
+        var tributary = window.tributary
+        var trib;
     </script>
 
     <script type="text/javascript">
@@ -127,6 +128,7 @@
     <script src='/static/trib.js'></script>
     -->
     <script src='/static/delta.js'></script>
+    <script src='/static/tributary.js'></script>
     <script src='/static/lib/ace/ace.js'></script>
     <script src='/static/lib/ace/theme-twilight.js'></script>
     <script src='/static/lib/ace/mode-javascript.js'></script>
@@ -158,94 +160,10 @@
     </script>
     <script type="text/javascript">
 
-    var save_gist = function(callback) {
-        var oldgist = parseInt(window.tributary_gist);
-            var filename = window.tributary_filename;
-            if(filename === "") {
-                filename = "inlet.js";
-            }
-            if(!oldgist === "NaN") {
-                //TODO:
-                //this gist already exists, so we can fill in some information
-                //like the description
-            }
-            //console.log("gist #", oldgist, "filename", filename)
-            var gist = {
-                description: 'just another inlet to tributary',
-                public: true,
-                files: {}
-            };
-            gist.files[filename] = {
-                content: window.aceEditor.getSession().getValue()
-            }
-
-            //turn the save button into a saving animation
-            d3.select("#saveButton").style("background-image", "url(/static/ajax-loader.gif)")
-            d3.select("#saveButton").style("background-repeat", "no-repeat")
-            d3.select("#saveButton").style("top", "0px")
-            //d3.select("#saveButton").text("Saving!")
-            
-            //console.log("gist", gist)
-            //$.post('https://api.github.com/gists', JSON.stringify(gist), function(data) {
-            $.post('/delta/save', {"gist":JSON.stringify(gist)}, function(data) {
-                //TODO: fix the flask headers to send back application/json and not text/html
-                if(typeof(data) === "string") {
-                    data = JSON.parse(data)
-                }
-                var newgist = data.id
-                var newurl = "/delta/" + newgist + "/" + filename;
-                //console.log("new url", newurl)
-                callback(newurl, newgist)
-                //window.location = newurl;
-            });
-
-    }
+    trib = new tributary.Delta({"gist":"{{gist}}", "filename":"{{filename}}"})
+    tribView = new tributary.TributaryView({"model":trib, "endpoint":"delta"})
 
 
-	$(document).ready(function(){
-		//var thisurl = window.location.protocol + "//" + window.location.host + "/" + window.location.pathname;
-		$('#tweet_this').append("Tweet:");
-        //$('#tweet_this').on("click", function(e) {
-        $('#tweetPanel').on("click", function(e) {
-            save_gist(function(newurl, newgist) {
-		        var tweetlink = "http://twitter.com/home/?status=See my latest %23tributary here "+"http://enjalot.com" + newurl
-                window.location = tweetlink
-                //window.open(tweetlink, 'twitte')
-                /*
-                setTimeout(funciton() {
-                    window.location = newurl;
-                    }, 500)
-                */
-            })
-        });
-		
-	})
-    //Save functionality. This just creates a new gist (no forking or saving for
-    //    now, that requires oauth)
-    //$('#saveButton').on('click', function(e) {
-    $('#savePanel').on('click', function(e) {
-            save_gist(function(newurl, newgist) {
-                window.location = newurl;
-            })
-
-    });
-
-    //Hide the editor
-    var he = $('#hideEditor')
-    he.on("click", function(e) {
-        $("#editor").toggle()
-	    $('#gui').toggle()
-        var txt = he.html()
-        console.log("txt", txt)
-        if(txt === "Hide") {
-            he.html("Show")
-	        $('#slider').css('visibility', 'hidden');
-        } else {
-            he.html("Hide")
-            //hide the slider if it's open
-        }
-
-    })
 
     </script>
 <!--
