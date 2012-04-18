@@ -27,13 +27,10 @@ tributary.Tributary = (function() {
     code: ""
   };
   Tributary.prototype.initialize = function() {
-    this.on("code", this.newcode);
-    this.set({
-      "code": "hi"
-    });
-    return console.log("GET", this.get("code"));
+    return this.on("code", this.newcode);
   };
   Tributary.prototype.newcode = function(code) {
+    console.log("newcode");
     $("svg").empty();
     try {
       eval(code);
@@ -77,8 +74,7 @@ tributary.TributaryView = (function() {
         if (!data) {
           data = "";
         }
-        this.aceEditor.getSession().setValue(data);
-        return this.model.trigger("code", data);
+        return this.aceEditor.getSession().setValue(data);
       }, this));
     }
     this.aceEditor.on("click", this.editor_click);

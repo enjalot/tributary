@@ -15,11 +15,10 @@ class tributary.Tributary extends Backbone.Model
         code: ""
     initialize: ->
         @on("code", @newcode)
-        @set({"code":"hi"})
-        console.log("GET", @get("code"))
 
     #TODO: move this to view?
     newcode: (code) =>
+        console.log("newcode")
         #empty the svg object
         $("svg").empty()
 
@@ -67,7 +66,7 @@ class tributary.TributaryView extends Backbone.View
                 if(!data)
                     data = ""
                 @aceEditor.getSession().setValue(data)
-                @model.trigger("code", data)
+                #@model.trigger("code", data)
             )
 
         @aceEditor.on("click", @editor_click)
