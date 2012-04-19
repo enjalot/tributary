@@ -82,11 +82,32 @@ tributary.Delta = (function() {
       tributary.append(tributary.g);
     } catch (_e) {}
     try {
-      tributary.run(tributary.t, tributary.g);
+      tributary.execute();
     } catch (_e) {}
     return true;
   };
   return Delta;
+})();
+tributary.Flow = (function() {
+  __extends(Flow, tributary.Tributary);
+  function Flow() {
+    this.execute = __bind(this.execute, this);
+    Flow.__super__.constructor.apply(this, arguments);
+  }
+  Flow.prototype.execute = function() {
+    $("#flow").empty();
+    try {
+      eval(this.get("code"));
+    } catch (_e) {}
+    try {
+      tributary.append(tributary.g);
+    } catch (_e) {}
+    try {
+      tributary.execute();
+    } catch (_e) {}
+    return true;
+  };
+  return Flow;
 })();
 tributary.TributaryView = (function() {
   __extends(TributaryView, Backbone.View);

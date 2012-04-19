@@ -68,7 +68,25 @@ class tributary.Delta extends tributary.Tributary
             tributary.append(tributary.g)
         try
             #then we run the user defined run function
-            tributary.run(tributary.t, tributary.g)
+            #tributary.run(tributary.t, tributary.g)
+            tributary.execute()
+
+        return true
+
+class tributary.Flow extends tributary.Tributary
+    execute: () =>
+        #empty the svg object
+        $("#flow").empty()
+        #run the code
+        try
+            eval(@get("code"))
+
+        try
+            #we exec the user defined append code
+            tributary.append(tributary.g)
+        try
+            #then we run the user defined run function
+            tributary.execute()
 
         return true
 

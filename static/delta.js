@@ -48,9 +48,9 @@ $(function() {
 
 
     //this is a wrapper 
-    tributary.execute = function(g) {
+    tributary.execute = function() {
         try {
-            tributary.run(tributary.ease(tributary.t), g)
+            tributary.run(tributary.ease(tributary.t), tributary.g)
         } catch (e) {}
     }
 
