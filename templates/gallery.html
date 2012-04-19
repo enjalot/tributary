@@ -13,7 +13,6 @@
     <script type="text/javascript">
 
     //collection of tributaries
-
     var Trib = Backbone.Model.extend({
         trib_base_url: "/tributary/",
         shore_base_url: "/shore/",
@@ -30,7 +29,6 @@
       model: Trib
     });
 
-    
     d3.json("/static/gallery.json", function(json) {
         var gallery = new Gallery()
         gallery.add(json)
@@ -46,10 +44,7 @@
                 })
                 .attr("width", 200)
                 .attr("height", 200)
-        
-        
     })
-
 
     </script>
   </body>
