@@ -226,6 +226,8 @@ class tributary.TributaryView extends Backbone.View
         he = $('#hideEditor')
         he.on("click", (e) ->
             $("#editor").toggle()
+            #toggle the gui for delta/flow
+            $('#gui').toggle()
             txt = he.html()
             #console.log("txt", txt)
             if(txt == "Hide")

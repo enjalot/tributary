@@ -200,6 +200,7 @@ tributary.TributaryView = (function() {
     he.on("click", function(e) {
       var txt;
       $("#editor").toggle();
+      $('#gui').toggle();
       txt = he.html();
       if (txt === "Hide") {
         he.html("Show");

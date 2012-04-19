@@ -153,7 +153,6 @@ body {
 
 
     #editor {
-        
     	position: fixed;
     	bottom: 10px;
     	right: 0;
@@ -278,10 +277,10 @@ body {
     #time_slider {
         position: fixed;
         bottom: 40%;
-        right: 5px;
+        right: 10px;
     	visibility: visible;
     	z-index: 14;
-    	width: 58%;
+    	width: 50%;
         margin-bottom: 10px;
         
         -webkit-box-shadow:inset 0 0 3px 1px rgba(0,0,0,0.1); /* Saf3.0+, Chrome */
@@ -296,10 +295,12 @@ body {
     #time_slider .ui-slider-handle {
     	background: #CB336E;
         border: 0px solid black;
-    	width: 35px;
+    	width: 25px;
     	margin-top: 6px;
+        /*
     	margin-left: 8px;
     	margin-right: 8px;
+        */
     }
     .selected-button {
 /*        background-color: rgba(0,0,0,0.3) !important; */
@@ -390,6 +391,16 @@ body {
     #fork-n-tweet button {
         padding-bottom: 14px !important;
     }
+    #gui2 {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 400px;
+        height: 40px;
+        padding-top: 10px;
+        z-index: 1001;
+    }
+
     #gui {
         position: fixed;
         top: 0;
@@ -403,7 +414,7 @@ body {
         position: fixed;
         display:block;
         bottom: 40%;
-        right: 60%;
+        right: 52%;
     	visibility: visible;
     	z-index: 14;
     	/*width: 58%;*/
