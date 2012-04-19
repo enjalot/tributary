@@ -10,6 +10,10 @@
     <script type="text/javascript" src="/static/lib/jwerty.js"></script>
     <script type="text/javascript" src="/static/lib/underscore-min.js"></script>
     <script type="text/javascript" src="/static/lib/backbone-min.js"></script>
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+
+	<script type="text/javascript" src="https://raw.github.com/shama/jmpress.js/master/dist/jmpress.js"></script>
+
     <script type="text/javascript">
 
     //collection of tributaries
@@ -33,19 +37,43 @@
         var gallery = new Gallery()
         gallery.add(json)
         //console.log(gallery);
-        var body = d3.select("body")
+        var body = d3.select("#container")
         var iframes = body.selectAll("iframe.trib")
             .data(gallery.models)
             .enter()
+			.append("div").attr("class", "impress step")
+			.attr("data-x", function(d,i){		
+					return d.get('x') || i*1400;						
+			})
+			.attr("data-y", function(d,i){
+				return d.get('y') || i*800;											
+			})
+			.attr("data-rotate", function(d,i){
+				return d.get('datarotate') || i*20*(Math.random()*5);											
+				
+			})
             .append("html:iframe")
                 .attr("class", "trib")
                 .attr("src", function(d,i) {
                     return d.shore_url()
                 })
-                .attr("width", 200)
-                .attr("height", 200)
+                .attr("width", function(){
+					return $(document).width();
+				})
+                .attr("height", 800)
+
+				$('#container').jmpress();
+
     })
 
     </script>
+	<div id="container">				
+		
+	</div>
+	
+	
+	<script type="text/javascript" charset="utf-8">
+		
+	</script>
   </body>
 </html>
