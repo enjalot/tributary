@@ -1,5 +1,5 @@
 tributary.enabled = false;
-$("#play_button").css("background-color", "rgba(255, 0, 0, .5)");
+//$("#play_button").css("opacity", "0.3");
 
 //for some reason i needed to move the audio stuff out into global namespace. could use some refactoring for sure
 var context;
@@ -135,9 +135,23 @@ play_button.on("click", function(event) {
     if(tributary.t < 1) {
         tributary.pause = !tributary.pause;
         if(!tributary.pause) {
+                        
+            
+            $("#play_button").css("background-color", "#FF3659");
+            $("#play_button").css("color", "white");
+            $("#play_button").text("Stop");
+            play_button.text("Stop");
+//            play_button.addClass("animated flash");
+            
+            
+            
             play(0)
         } else {
             stop(0)
+            $("#play_button").css("color", "black");            
+            $("#play_button").css("background-color", "");
+            $("#play_button").text("Play");
+            
         }
     }
 })
@@ -241,7 +255,8 @@ function finishLoad() {
     freqByteData = new Uint8Array(analyser.frequencyBinCount);
     console.log("ENABLED")
     tributary.enabled = true;
-    $("#play_button").css("background-color", "#0f0")
+//    $("#play_button").css("background-color", "#0f0")
+    $("#play_button").css("opacity", "1");
 
     //source.noteOn(0.0);
     //window.requestAnimationFrame(draw);
