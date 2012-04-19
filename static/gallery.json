@@ -1,0 +1,53 @@
+[
+    {
+        "gist":"2165875",
+        "filename":"sinwaves.js",
+        "description":"Sin Waves"
+    },
+    {
+        "gist":"2271952",
+        "filename":"squarecircle.js",
+        "description":"Square Circle Illusion"
+    },
+    {
+        "gist":"2165875",
+        "filename":"warp.js",
+        "description":"Warp"
+    },
+    {
+        "gist":"2271956",
+        "filename":"squarecircle.js",
+        "description":"Crazy Nest"
+    },
+    {
+        "gist":"2271954",
+        "filename":"squarecircle.js",
+        "description":"Rounded Corners"
+    },
+    {
+        "gist":"2330299",
+        "filename":"squarecircle.js",
+        "description":"Colors"
+    },
+    {
+        "gist":"2272533",
+        "filename":"squarecircle.js",
+        "description":"Color Tubes"
+    },
+    {
+        "gist":"2418851",
+        "filename":"icon.js",
+        "description":"Icons"
+    },
+    {
+        "gist":"2356706",
+        "filename":"squarecircle.js",
+        "description":"Rainbow Hand"
+    },
+    {
+        "gist":"2323185",
+        "filename":"euler.js",
+        "description":"Euler vs. RK4 Numerical Integration"
+    }
+]
+

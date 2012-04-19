@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+    <style type="text/css">
+    </style>
+  </head>
+  <body>
+    <script type="text/javascript" src="http://mbostock.github.com/d3/d3.v2.js"></script>
+    <script type="text/javascript" src="/static/lib/jwerty.js"></script>
+    <script type="text/javascript" src="/static/lib/underscore-min.js"></script>
+    <script type="text/javascript" src="/static/lib/backbone-min.js"></script>
+    <script type="text/javascript">
+
+    //collection of tributaries
+
+    var Trib = Backbone.Model.extend({
+        trib_base_url: "/tributary/",
+        shore_base_url: "/shore/",
+        initialize: function() { 
+        },
+        trib_url: function() {
+            return this.trib_base_url + this.get("gist") + "/" + this.get("filename");
+        },
+        shore_url: function() {
+            return this.shore_base_url + this.get("gist") + "/" + this.get("filename");
+        }
+    });
+    var Gallery = Backbone.Collection.extend({
+      model: Trib
+    });
+
+    
+    d3.json("/static/gallery.json", function(json) {
+        var gallery = new Gallery()
+        gallery.add(json)
+        //console.log(gallery);
+        var body = d3.select("body")
+        var iframes = body.selectAll("iframe.trib")
+            .data(gallery.models)
+            .enter()
+            .append("html:iframe")
+                .attr("class", "trib")
+                .attr("src", function(d,i) {
+                    return d.shore_url()
+                })
+                .attr("width", 200)
+                .attr("height", 200)
+        
+        
+    })
+
+
+    </script>
+  </body>
+</html>

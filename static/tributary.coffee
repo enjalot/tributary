@@ -29,10 +29,10 @@ class tributary.Tributary extends Backbone.Model
 
     #TODO: move this to view?
     newcode: (code) =>
-        @execute()
-        #TODO: check that things went well before saving?
         #save the code in the model
         @set({code:code})
+
+        @execute()
         #TODO: store code in local storage
 
         return true

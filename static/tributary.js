@@ -40,10 +40,10 @@ tributary.Tributary = (function() {
     return true;
   };
   Tributary.prototype.newcode = function(code) {
-    this.execute();
     this.set({
       code: code
     });
+    this.execute();
     return true;
   };
   Tributary.prototype.get_code = function(callback) {
