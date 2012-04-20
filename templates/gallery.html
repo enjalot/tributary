@@ -38,32 +38,45 @@
         gallery.add(json)
         //console.log(gallery);
         var body = d3.select("#container")
-        var iframes = body.selectAll("iframe.trib")
+        var divs = body.selectAll("iframe.trib")
             .data(gallery.models)
             .enter()
 			.append("div").attr("class", "impress step")
 			.attr("data-x", function(d,i){		
-					return d.get('x') || i*1400;						
+					return d.get('x') || i*1700;						
 			})
 			.attr("data-y", function(d,i){
-				return d.get('y') || i*800;											
+				return d.get('y') || i*1200;											
 			})
 			.attr("data-rotate", function(d,i){
-				return d.get('datarotate') || i*20*(Math.random()*5);											
+				return d.get('datarotate') || i*30*(Math.random()*5);											
 				
 			})
-            .append("html:iframe")
-                .attr("class", "trib")
-                .attr("src", function(d,i) {
-                    return d.shore_url()
-                })
-                .attr("width", function(){
-					return $(document).width();
-				})
-                .attr("height", 800)
+        var iframes = divs.append("html:iframe")
+            .attr("class", "trib")
+            .attr("src", function(d,i) {
+                return d.shore_url()
+            })
+            .attr("width", function(){
+                return $(document).width();
+            })
+            .attr("height", 800)
+        divs.append("div")
+            .attr("pointer-events", "all")
+            .on("click", function(d,i) {
+                window.open(d.trib_url());
+            })
+            .style("width", "100%")
+            .style("height", "100%")
+            .style("cursor", "pointer")
+            .style("position", "absolute")
+            .style("top", 0)
+            .style("left", 0)
+            .style("background-color", "rgb(255, 255, 255, 0.01)")
 
-				$('#container').jmpress();
 
+        //kick off impress.js
+		$('#container').jmpress();
     })
 
     </script>
