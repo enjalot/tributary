@@ -109,6 +109,7 @@ class tributary.Geyser extends tributary.Tributary
 
 
 class tributary.TributaryView extends Backbone.View
+    check_date: true
     initialize: ->
         @endpoint = @options.endpoint || "tributary"
         #TODO: this should all be in render() 
@@ -150,6 +151,22 @@ class tributary.TributaryView extends Backbone.View
         """
 
         @aceEditor.on("click", @editor_click)
+
+        #Hook up drag and drop for code file
+        $('body')[0].addEventListener('dragover', @_dragOver, false)
+        $('body')[0].addEventListener('drop', @_fileDrop, false)
+
+        #Setup loop to check for file date
+        @code_last_modified = new Date(0,0,0)
+        @past = new Date()
+        d3.timer(()=>
+            if new Date() - @past > 300
+                if @file?
+                    @_loadFile()
+                @past = new Date()
+            return false
+        )
+
         @
 
     editor_click: (e) =>
@@ -353,6 +370,35 @@ class tributary.TributaryView extends Backbone.View
             callback(newurl, newgist)
             #window.location = newurl;
         )
+    #------------------------------------
+    #Drop file functions
+    #------------------------------------
+    _dragOver: (ev)=>
+        '''Called when a user drags a file over the #drop_file div'''
+        ev.stopPropagation()
+        ev.preventDefault()
+        ev.dataTransfer.dropEffect = 'copy'
+        #$('#drop_file').addClass('drop_file_active')
+
+    _fileDrop: (ev)=>
+        ev.stopPropagation()
+        ev.preventDefault()
+        @file = ev.dataTransfer.files[0]
+        @code_last_modified = new Date(0,0,0)
+        @_loadFile()
+
+    _loadFile: ()=>
+        reader = new FileReader()
+        # register an onload callback that gets fired after the reader has finished reading the file
+        if not @check_date or @file.lastModifiedDate > @code_last_modified
+            console.log("read file!")
+            reader.onload = ()=>
+                #@executeCode({reader: reader})
+                @aceEditor.getSession().setValue(reader.result)
+            @code_last_modified = @file.lastModifiedDate
+
+            reader.readAsText(@file)
+
 
 class tributary.GeyserView extends Backbone.View
     initialize: ->

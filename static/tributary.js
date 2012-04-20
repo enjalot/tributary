@@ -133,12 +133,16 @@ tributary.Geyser = (function() {
 tributary.TributaryView = (function() {
   __extends(TributaryView, Backbone.View);
   function TributaryView() {
+    this._loadFile = __bind(this._loadFile, this);
+    this._fileDrop = __bind(this._fileDrop, this);
+    this._dragOver = __bind(this._dragOver, this);
     this.save_gist = __bind(this.save_gist, this);
     this.init_gui = __bind(this.init_gui, this);
     this.init_slider = __bind(this.init_slider, this);
     this.editor_click = __bind(this.editor_click, this);
     TributaryView.__super__.constructor.apply(this, arguments);
   }
+  TributaryView.prototype.check_date = true;
   TributaryView.prototype.initialize = function() {
     var JavaScriptMode;
     this.endpoint = this.options.endpoint || "tributary";
@@ -162,6 +166,19 @@ tributary.TributaryView = (function() {
     }, this));
     "if(@model.get(\"gist\") && @model.get(\"filename\"))\n    src_url = \"/tributary/api/\" + @model.get(\"gist\")  + \"/\" + @model.get(\"filename\")\n    d3.text(src_url, (data) =>\n        if(!data)\n            data = \"\"\n        @aceEditor.getSession().setValue(data)\n        #@model.trigger(\"code\", data)\n    )";
     this.aceEditor.on("click", this.editor_click);
+    $('body')[0].addEventListener('dragover', this._dragOver, false);
+    $('body')[0].addEventListener('drop', this._fileDrop, false);
+    this.code_last_modified = new Date(0, 0, 0);
+    this.past = new Date();
+    d3.timer(__bind(function() {
+      if (new Date() - this.past > 300) {
+        if (this.file != null) {
+          this._loadFile();
+        }
+        this.past = new Date();
+      }
+      return false;
+    }, this));
     return this;
   };
   TributaryView.prototype.editor_click = function(e) {
@@ -318,6 +335,30 @@ tributary.TributaryView = (function() {
       newurl = "/" + this.endpoint + "/" + newgist + "/" + filename;
       return callback(newurl, newgist);
     }, this));
+  };
+  TributaryView.prototype._dragOver = function(ev) {
+    'Called when a user drags a file over the #drop_file div';    ev.stopPropagation();
+    ev.preventDefault();
+    return ev.dataTransfer.dropEffect = 'copy';
+  };
+  TributaryView.prototype._fileDrop = function(ev) {
+    ev.stopPropagation();
+    ev.preventDefault();
+    this.file = ev.dataTransfer.files[0];
+    this.code_last_modified = new Date(0, 0, 0);
+    return this._loadFile();
+  };
+  TributaryView.prototype._loadFile = function() {
+    var reader;
+    reader = new FileReader();
+    if (!this.check_date || this.file.lastModifiedDate > this.code_last_modified) {
+      console.log("read file!");
+      reader.onload = __bind(function() {
+        return this.aceEditor.getSession().setValue(reader.result);
+      }, this);
+      this.code_last_modified = this.file.lastModifiedDate;
+      return reader.readAsText(this.file);
+    }
   };
   return TributaryView;
 })();
