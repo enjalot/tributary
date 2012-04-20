@@ -1,4 +1,6 @@
-tributary.enabled = false;
+//tributary.enabled = false;
+tributary.enabled = true;
+$("#play_button").css("opacity", "1");
 //$("#play_button").css("opacity", "0.3");
 
 //for some reason i needed to move the audio stuff out into global namespace. could use some refactoring for sure
@@ -17,7 +19,8 @@ $(function() {
     //we will keep track of our t parameter for the user
     tributary.t = 0.01; //start at .01 so we don't trigger a flip at the start
     //use this to control playback
-    tributary.pause = false;
+    //tributary.pause = false;
+    tributary.pause = true;
 
 
     //TODO: expose these with dat.GUI (especially for the easing functions)
@@ -109,9 +112,9 @@ $(function() {
     })
 
 
-
     tributary.update = function() {
         //update the bars showing the frequency
+        /*
         freq = getFreq();
         d3.selectAll(".geyserbar").data(freq)
             .attr("height", function(d, i) { return barh * d/255 })
@@ -128,6 +131,7 @@ $(function() {
                     return "#0000ff";
                 }
             }) 
+            */
 
         //update geyser pads?
 
@@ -174,9 +178,9 @@ $(function() {
                 
                 
                 
-                play(0)
+                //play(0)
             } else {
-                stop(0)
+                //stop(0)
                 $("#play_button").css("color", "black");            
                 $("#play_button").css("background-color", "");
                 $("#play_button").text("Play");
@@ -291,6 +295,6 @@ function finishLoad() {
     //window.requestAnimationFrame(draw);
 }
 
-initAudio()
+//initAudio()
 
 

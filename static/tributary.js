@@ -331,7 +331,7 @@ tributary.GeyserView = (function() {
     return this;
   };
   GeyserView.prototype.render = function() {
-    var geyserpad, pad_data, padgh, padgw, padh, padn, pads, padsg, padw, spacing, xn, yn;
+    var geyserpad, keys, pad_data, padgh, padgw, padh, padn, pads, padsg, padw, spacing, xn, yn;
     padn = 16;
     xn = 4;
     yn = 4;
@@ -354,6 +354,20 @@ tributary.GeyserView = (function() {
     }).on("mouseup", function(d, i) {
       d3.select(this).attr("fill", "#000");
       return tributary.pads[i].stop();
+    });
+    keys = ['4', '5', '6', '7', 'r', 't', 'y', 'u', 'f', 'g', 'h', 'j', 'v', 'b', 'n', 'm'];
+    _.each(pad_data, function(d) {
+      $('body').bind('keydown', jwerty.event(keys[d], function() {
+        return tributary.pads[d].start();
+      }));
+      return $('body').bind('keyup', jwerty.event(keys[d], function() {
+        return tributary.pads[d].stop();
+      }));
+    });
+    jwerty.key('a', function(e) {
+      console.log("up!", e);
+      tributary.pads[0].start();
+      return true;
     });
     return this;
   };

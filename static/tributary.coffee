@@ -405,6 +405,25 @@ class tributary.GeyserView extends Backbone.View
                 tributary.pads[i].stop()
             )
 
+        keys = ['4','5','6','7','r','t','y','u','f','g','h','j','v','b','n','m']
+        #$(@).bind('keydown', jwerty.event('caps-lock+4', ()->
+        _.each(pad_data, (d) ->
+            $('body').bind('keydown', jwerty.event(keys[d], ()->
+                tributary.pads[d].start()
+            ))
+            $('body').bind('keyup', jwerty.event(keys[d], ()->
+                tributary.pads[d].stop()
+            ))
+        )
+           
+        #$(document.body).bind('keydown.tributary', jwerty.event('a', (e)->
+        jwerty.key('a', (e)->
+            console.log("up!",e)
+            tributary.pads[0].start()
+            return true
+        )
+
+
         @
  
 
