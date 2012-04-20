@@ -383,6 +383,7 @@ tributary.GeyserView = (function() {
     padgh = parseInt(geyserpad.style("height"));
     padw = (padgw - spacing * xn) / xn;
     padh = (padgh - spacing * yn) / yn;
+    keys = ['4', '5', '6', '7', 'r', 't', 'y', 'u', 'f', 'g', 'h', 'j', 'v', 'b', 'n', 'm'];
     padsg = geyserpad.append("g").attr("id", "geyserpads");
     pads = padsg.selectAll("rect.geyserpad").data(pad_data).enter().append("rect").attr("class", "geyserpad").attr("width", padw).attr("height", padh).attr("fill", "#000000").attr("stroke", "#000000").attr("stroke-width", 3).style("opacity", 0.3).attr("stroke-opacity", 1).attr("transform", __bind(function(d, i) {
       var x, y;
@@ -395,20 +396,24 @@ tributary.GeyserView = (function() {
     }).on("mouseup", function(d, i) {
       d3.select(this).attr("fill", "#000");
       return tributary.pads[i].stop();
+    }).each(function(d, i) {
+      $('body').bind('keydown', jwerty.event(keys[d], __bind(function() {
+        tributary.pads[d].start();
+        return d3.select(this).attr("fill", "#ffff00");
+      }, this)));
+      return $('body').bind('keyup', jwerty.event(keys[d], __bind(function() {
+        tributary.pads[d].stop();
+        return d3.select(this).attr("fill", "#000");
+      }, this)));
     });
-    keys = ['4', '5', '6', '7', 'r', 't', 'y', 'u', 'f', 'g', 'h', 'j', 'v', 'b', 'n', 'm'];
     _.each(pad_data, function(d) {
       $('body').bind('keydown', jwerty.event(keys[d], function() {
-        return tributary.pads[d].start();
+        tributary.pads[d].start();
+        return d3.select(this).attr("fill", "#ffff00");
       }));
       return $('body').bind('keyup', jwerty.event(keys[d], function() {
         return tributary.pads[d].stop();
       }));
-    });
-    jwerty.key('a', function(e) {
-      console.log("up!", e);
-      tributary.pads[0].start();
-      return true;
     });
     return this;
   };

@@ -421,6 +421,8 @@ class tributary.GeyserView extends Backbone.View
         padw = (padgw - spacing*xn)/xn
         padh = (padgh - spacing*yn)/yn
 
+        keys = ['4','5','6','7','r','t','y','u','f','g','h','j','v','b','n','m']
+
         padsg = geyserpad.append("g").attr("id", "geyserpads")
         pads = padsg.selectAll("rect.geyserpad")
             .data(pad_data)
@@ -450,25 +452,28 @@ class tributary.GeyserView extends Backbone.View
                 d3.select(@).attr("fill", "#000")
                 tributary.pads[i].stop()
             )
+            .each((d,i) ->
+                $('body').bind('keydown', jwerty.event(keys[d], ()=>
+                    tributary.pads[d].start()
+                    d3.select(@).attr("fill", "#ffff00")
+                ))
+                $('body').bind('keyup', jwerty.event(keys[d], ()=>
+                    tributary.pads[d].stop()
+                    d3.select(@).attr("fill", "#000")
+                ))
+            )
 
-        keys = ['4','5','6','7','r','t','y','u','f','g','h','j','v','b','n','m']
         #$(@).bind('keydown', jwerty.event('caps-lock+4', ()->
         _.each(pad_data, (d) ->
             $('body').bind('keydown', jwerty.event(keys[d], ()->
                 tributary.pads[d].start()
+                d3.select(@).attr("fill", "#ffff00")
             ))
             $('body').bind('keyup', jwerty.event(keys[d], ()->
                 tributary.pads[d].stop()
             ))
         )
            
-        #$(document.body).bind('keydown.tributary', jwerty.event('a', (e)->
-        jwerty.key('a', (e)->
-            console.log("up!",e)
-            tributary.pads[0].start()
-            return true
-        )
-
 
         @
  
