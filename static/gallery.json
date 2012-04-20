@@ -48,6 +48,11 @@
         "gist":"2323185",
         "filename":"euler.js",
         "description":"Euler vs. RK4 Numerical Integration"
+    },
+    {
+        "gist":"2426346",
+        "filename":"squarecircle.js",
+        "description":"More Colors"
     }
 ]
 
