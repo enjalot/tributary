@@ -109,6 +109,27 @@ tributary.Flow = (function() {
   };
   return Flow;
 })();
+tributary.Geyser = (function() {
+  __extends(Geyser, tributary.Tributary);
+  function Geyser() {
+    this.execute = __bind(this.execute, this);
+    Geyser.__super__.constructor.apply(this, arguments);
+  }
+  Geyser.prototype.execute = function() {
+    $("#geyser").empty();
+    try {
+      eval(this.get("code"));
+    } catch (_e) {}
+    try {
+      tributary.append(tributary.g);
+    } catch (_e) {}
+    try {
+      tributary.execute();
+    } catch (_e) {}
+    return true;
+  };
+  return Geyser;
+})();
 tributary.TributaryView = (function() {
   __extends(TributaryView, Backbone.View);
   function TributaryView() {
@@ -299,4 +320,42 @@ tributary.TributaryView = (function() {
     }, this));
   };
   return TributaryView;
+})();
+tributary.GeyserView = (function() {
+  __extends(GeyserView, Backbone.View);
+  function GeyserView() {
+    this.render = __bind(this.render, this);
+    GeyserView.__super__.constructor.apply(this, arguments);
+  }
+  GeyserView.prototype.initialize = function() {
+    return this;
+  };
+  GeyserView.prototype.render = function() {
+    var geyserpad, pad_data, padgh, padgw, padh, padn, pads, padsg, padw, spacing, xn, yn;
+    padn = 16;
+    xn = 4;
+    yn = 4;
+    spacing = 10;
+    pad_data = d3.range(padn);
+    geyserpad = d3.select("#geyserpad");
+    padgw = parseInt(geyserpad.style("width"));
+    padgh = parseInt(geyserpad.style("height"));
+    padw = (padgw - spacing * xn) / xn;
+    padh = (padgh - spacing * yn) / yn;
+    padsg = geyserpad.append("g").attr("id", "geyserpads");
+    pads = padsg.selectAll("rect.geyserpad").data(pad_data).enter().append("rect").attr("class", "geyserpad").attr("width", padw).attr("height", padh).attr("fill", "#000000").attr("stroke", "#000000").attr("stroke-width", 3).style("opacity", 0.3).attr("stroke-opacity", 1).attr("transform", __bind(function(d, i) {
+      var x, y;
+      x = i % xn * (padw + spacing) + spacing / 2;
+      y = parseInt(i / yn) * (padh + spacing) + spacing / 2;
+      return "translate(" + [x, y] + ")";
+    }, this)).on("click", function() {}).on("mousedown", function(d, i) {
+      d3.select(this).attr("fill", "#ffff00");
+      return tributary.pads[i].start();
+    }).on("mouseup", function(d, i) {
+      d3.select(this).attr("fill", "#000");
+      return tributary.pads[i].stop();
+    });
+    return this;
+  };
+  return GeyserView;
 })();

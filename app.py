@@ -25,6 +25,10 @@ def delta():
 def flow():
     return render_template("flow.html", base_url=base_url)
 
+@app.route("/geyser/")
+def geyser():
+    return render_template("geyser.html", base_url=base_url)
+
 
 
 
@@ -65,6 +69,14 @@ def flow_gist(gist=None, filename=None):
     #print gist, filename
     #return render_template("water.html", code=code, base_url=base_url) 
     return render_template("flow.html", gist=gist, filename=filename, base_url=base_url) 
+
+@app.route("/geyser/<gist>/<filename>")
+def geyser_gist(gist=None, filename=None):
+    #print gist, filename
+    #return render_template("water.html", code=code, base_url=base_url) 
+    return render_template("geyser.html", gist=gist, filename=filename, base_url=base_url) 
+
+
 
 @app.route("/shore/<gist>/<filename>")
 def shore_gist(gist=None, filename=None):

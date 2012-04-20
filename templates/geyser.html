@@ -1,0 +1,167 @@
+<!doctype html>
+<html>
+<head>
+    <link href='http://fonts.googleapis.com/css?family=Ubuntu:400,700' rel='stylesheet' type='text/css'>
+    
+    <meta charset='utf-8' />
+    <title>Geyser</title>
+    <link rel='stylesheet' type='text/css' href='http://yui.yahooapis.com/2.9.0/build/reset/reset-min.css' />
+    <link rel='stylesheet' type='text/css' href='/static/lib/slider/css/humanity/jquery-ui-slider.css' />
+    <link rel='stylesheet' type='text/css' href='/static/css/style.css' />
+    <link rel='stylesheet' type='text/css' href='/static/css/geyser.css' />
+    <link rel="shortcut icon" href="/static/img/favicon.ico">
+    <style>
+
+    #saveButton {
+        background-image: url('/static/img/floppy.png');
+    }
+
+    </style>
+    <script type="text/javascript">
+        window.tributary = {}
+        var tributary = window.tributary
+        var trib;
+    </script>
+
+    <script type="text/javascript">
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-30237258-1']);
+        _gaq.push(['_trackPageview']);
+
+        (function() {
+            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        })();
+    </script>
+
+    </head>
+<body>
+
+    <div id="branding">
+        <img src="/static/img/visually_logo_solo.png" width="208" height="51" alt="Visually Logo Solo">
+        <br />
+        <!--
+        <h1>Powered by Visual.ly</h1>
+        -->
+    </div> 
+
+<div id="fork-n-tweet">
+        <button id='savePanel' class="minimal">
+            Fork: <img src="/static/css/floppy.png" width="24" height="24" alt="Floppy">&nbsp;
+            <!--
+            <div class='address'><a href='#'>https://gist.github.com/b9ab9418af567e575b3e</a></div>
+            -->
+		</button>
+		
+		<button id="tweetPanel" class="minimal">
+			Tweet:
+			<img id="twiticon" src="/static/css/twitter.png"></img>
+            
+		</button>
+    </div>
+
+
+    <div id="hideEditor">Hide</div>
+    <div id='page'>
+
+        
+        <div id='display'>
+            <svg id="geysersvg" style='width: 96%; height: 96%; padding: 2%'></svg>
+        </div>
+
+        <svg id="geysergram"></svg>
+
+        <svg id="geyserpad"></svg>
+
+        <div id="gui">
+            <button class="minimal" id="play_button" style="opacity: 0.3;">Play</div>
+
+<!--            
+            <div id="bv_button" >BV</div>
+            <div id="off_button" class="select">Off</div>
+            <div id="loop_button" class="select">Loop</div>
+            <div id="pingpong_button" class="select">PingPong</div>
+            <div id="time_slider"></div> -->
+        </div>
+        <div id='editor'>
+        </div>
+        <div>
+            <a class='increase font-control' href='#'>+</a>
+            <a class='decrease font-control' href='#'>-</a>
+        </div>
+        <div id="slider"></div>
+
+        <div id='aboutAndAttribution'>
+            <p id="about">further inspired by 
+            <a href="http://bl.ocks.org"> bl.ocks.org </a>
+            and
+            <a href='http://gabrielflor.it/blog-water'>water</a>
+            </p>
+            <div id='attribution'>
+                <p>100% totally based on Bret Victor's genius <a href='http://vimeo.com/36579366'>Inventing on Principle</a> talk<p>
+                <p><a href='https://github.com/enjalot/tributary'>source code</a> on github</p>
+            </div>
+        </div>
+    </div>
+
+    <div id='instructions'>
+        click a number and hold down the <span id='sliderKey'></span> key:
+    </div>
+
+
+    <script src="/static/lib/jquery-1.7.min.js"></script>
+    <script src="/static/lib/jquery-ui.1.8.16.custom.min.js"></script>
+    <script src='/static/lib/jquery.hotkeys.js'></script>
+    <script src='/static/lib/slider/js/jquery.ui.slider.js'></script>
+
+    <!-- 3rd party libraries -->
+    <script src="/static/lib/d3.v2.min.js"></script>
+    <script src="/static/lib/underscore-min.js"></script>
+    <script src="/static/lib/backbone-min.js"></script>
+    <script src="/static/lib/jwerty.js"></script>
+
+    <script src='/static/tributary.js'></script>
+    <script src='/static/geyser.js'></script>
+    <script src='/static/lib/ace/ace.js'></script>
+    <script src='/static/lib/ace/theme-twilight.js'></script>
+    <script src='/static/lib/ace/mode-javascript.js'></script>
+
+
+    <script type="text/javascript">
+        //from the SO thread: http://stackovergeyser.com/questions/950087/include-javascript-file-inside-javascript-file
+        //caching so we don't download every keystroke
+        var required_scripts = []
+        function script(src) {
+            if(_.include(required_scripts, src))
+                return true;
+
+            $.ajax({
+                url: src,
+                dataType: "script",
+                async: false,           // this is the key
+                success: function () {
+                    // all good...
+                    //console.log("success")
+                    required_scripts.push(src)
+                },
+                error: function () {
+                    throw new Error("Could not load script " + src);
+                }
+            });
+        }
+    </script>
+    <script type="text/javascript">
+    trib = new tributary.Geyser({"gist":"{{gist}}", "filename":"{{filename}}"})
+    tribView = new tributary.TributaryView({"model":trib, "endpoint":"geyser"})
+    window.onresize = function(event) {
+        trib.trigger("execute")
+    }
+
+
+    </script>
+<!--
+<script>document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1"></' + 'script>')</script>
+    -->
+</body>
+</html>
