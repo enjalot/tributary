@@ -1,5 +1,5 @@
 //tributary.enabled = false;
-tributary.enabled = true;
+tributary.enabled = false;
 $("#play_button").css("opacity", "1");
 //$("#play_button").css("opacity", "0.3");
 
@@ -20,6 +20,26 @@ $(function() {
     });
     */
 
+    $(document).ready(function() { 
+        midiBridge.init({ 
+            connectAllInputs: true,
+            ready: function(msg){
+                //console.log(msg)
+                tributary.enabled = true;
+            },
+            error: function(msg) {
+                console.log(msg);
+            },
+            data: function(midiEvent) {
+                var m = midiEvent;
+                try {
+                    console.log(m.noteName, m.data1, m.data2);
+                } catch (e) {}
+            }
+        });
+    });
+
+
     
     //time slider
     //we will keep track of our t parameter for the user
@@ -27,14 +47,9 @@ $(function() {
     //use this to control playback
     //tributary.pause = false;
     tributary.pause = true;
-
-
     //TODO: expose these with dat.GUI (especially for the easing functions)
     //default duration for playback
     tributary.duration = 3000;
-
-
-
     //default easing function
     tributary.ease = d3.ease("linear")
 
@@ -59,44 +74,16 @@ $(function() {
         } catch (e) {}
     }
 
-
     var gview = new tributary.FountainView();
     gview.render()
 
-
     tributary.findex = 41;
 
-    var barw = 1024;
-    var barn = 1024
-    var barh = 50;
-    //create fountain bars for showing the frequency
-    var fountaingram = d3.select("#fountaingram")
-    var barg = fountaingram.append("g").attr("id", "fountainbars")
-    var empty = _.map(d3.range(1024), function(d) { return 0 }) 
-    var bars = barg.selectAll("rect.fountainbar")
-        .data(empty)
-        .enter()
-        .append("rect")
-            .attr("class", "fountainbar")
-            .attr("width", (barw)/barn)
-            .attr("height", 0)
-            .attr("fill", "#0000dd")
-            .attr("opacity", 0.5)
-            .attr("transform", function(d,i) {
-                var x = i * barw/barn
-                var y = 0
-                return "translate(" + [x, y]  + ")";
-            })
+    
 
-    $("#fountaingram").on("click", function(e) {
-        //console.log(e.offsetX, e.offsetY)
-        tributary.findex = e.offsetX;
-    })
-
-
-
+    //TODO: make this learning function
     tributary.pads = _.map(d3.range(16), function(d) {
-        return {
+        var pad = {
             id: d,
             f: 0,
             start: function() {
@@ -113,56 +100,16 @@ $(function() {
                 //TODO: implement a pulse or any other easing function
                 //for holding down the pad longer
             }
-
         }
+
+
+        return pad;
     })
 
 
     tributary.update = function() {
-        //update the bars showing the frequency
-        /*
-        freq = getFreq();
-        d3.selectAll(".fountainbar").data(freq)
-            .attr("height", function(d, i) { return barh * d/255 })
-            .attr("transform", function(d,i) {
-                var x = i * barw/barn
-                //var y = barh - barh * d/255
-                var y = 0;
-                return "translate(" + [x, y]  + ")";
-            })
-            .attr("fill", function(d,i) {
-                if(i === tributary.findex) {
-                    return "#ff0000";
-                } else {
-                    return "#0000ff";
-                }
-            }) 
-            */
-
-        //update fountain pads?
-
 
     }
-
-
-    // create fountain's time slider
-    /*
-    var time_slider = $('#time_slider');
-    time_slider.slider({
-        slide: function(event, ui) {
-            //console.log("ui.value", ui.value);
-            //set the current t to the slider's value
-            tributary.t = ui.value
-            //call the run function with the current t
-            run(tributary.g)
-        },
-        min: 0,
-        max: 1,
-        step: .01,
-        value: tributary.t
-    });
-    */
-
 
 
     var play_button = $("#play_button")
@@ -174,16 +121,11 @@ $(function() {
         if(tributary.t < 1) {
             tributary.pause = !tributary.pause;
             if(!tributary.pause) {
-                            
-                
                 $("#play_button").css("background-color", "#FF3659");
                 $("#play_button").css("color", "white");
                 $("#play_button").text("Stop");
                 play_button.text("Stop");
     //            play_button.addClass("animated flash");
-                
-                
-                
                 //play(0)
             } else {
                 //stop(0)
@@ -203,8 +145,6 @@ $(function() {
         tributary.execute()
 
     })
-
-
 
 });
 
