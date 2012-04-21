@@ -29,8 +29,9 @@ def flow():
 def geyser():
     return render_template("geyser.html", base_url=base_url)
 
-
-
+@app.route("/fountain/")
+def fountain():
+    return render_template("fountain.html", base_url=base_url)
 
 
 
@@ -75,6 +76,12 @@ def geyser_gist(gist=None, filename=None):
     #print gist, filename
     #return render_template("water.html", code=code, base_url=base_url) 
     return render_template("geyser.html", gist=gist, filename=filename, base_url=base_url) 
+
+@app.route("/fountain/<gist>/<filename>")
+def fountain_gist(gist=None, filename=None):
+    #print gist, filename
+    #return render_template("water.html", code=code, base_url=base_url) 
+    return render_template("fountain.html", gist=gist, filename=filename, base_url=base_url) 
 
 
 

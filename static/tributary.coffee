@@ -106,6 +106,22 @@ class tributary.Geyser extends tributary.Tributary
 
         return true
 
+class tributary.Fountain extends tributary.Tributary
+    execute: () =>
+        #empty the svg object
+        $("#geyser").empty()
+        #run the code
+        try
+            eval(@get("code"))
+        try
+            #we exec the user defined append code
+            tributary.append(tributary.g)
+        try
+            #then we run the user defined run function
+            tributary.execute()
+
+        return true
+
 
 
 class tributary.TributaryView extends Backbone.View
@@ -429,6 +445,83 @@ class tributary.GeyserView extends Backbone.View
             .enter()
             .append("rect")
             .attr("class", "geyserpad")
+            .attr("width", padw)
+            .attr("height", padh)
+            .attr("fill", "#000000")
+            .attr("stroke", "#000000")
+            .attr("stroke-width", 3)
+            .style("opacity", 0.3)
+            .attr("stroke-opacity", 1)
+            .attr("transform", (d,i)=>
+                x = i % xn * (padw + spacing) + spacing/2
+                y = parseInt(i / yn) * (padh + spacing) + spacing/2
+                return "translate(" + [x, y]  + ")"
+            )
+            .on("click", ()->
+                #d3.select(@)
+            )
+            .on("mousedown", (d,i)->
+                d3.select(@).attr("fill", "#ffff00")
+                tributary.pads[i].start()
+            )
+            .on("mouseup", (d,i)->
+                d3.select(@).attr("fill", "#000")
+                tributary.pads[i].stop()
+            )
+            .each((d,i) ->
+                $('body').bind('keydown', jwerty.event(keys[d], ()=>
+                    tributary.pads[d].start()
+                    d3.select(@).attr("fill", "#ffff00")
+                ))
+                $('body').bind('keyup', jwerty.event(keys[d], ()=>
+                    tributary.pads[d].stop()
+                    d3.select(@).attr("fill", "#000")
+                ))
+            )
+
+        #$(@).bind('keydown', jwerty.event('caps-lock+4', ()->
+        _.each(pad_data, (d) ->
+            $('body').bind('keydown', jwerty.event(keys[d], ()->
+                tributary.pads[d].start()
+                d3.select(@).attr("fill", "#ffff00")
+            ))
+            $('body').bind('keyup', jwerty.event(keys[d], ()->
+                tributary.pads[d].stop()
+            ))
+        )
+           
+
+        @
+ 
+class tributary.FountainView extends Backbone.View
+    initialize: ->
+        @
+    render: =>
+        #draw the 16 pads
+        #Generate pads for fountain
+        #TODO: use a backbone collection and don't embed all the logic in the elements
+        
+        padn = 16   #16 pads
+        xn = 4      #4 in the x direction
+        yn = 4      #4 in the y direction
+        spacing = 10
+        pad_data = d3.range(padn)
+
+        fountainpad = d3.select("#fountainpad")
+
+        padgw = parseInt(fountainpad.style("width"))
+        padgh = parseInt(fountainpad.style("height"))
+        padw = (padgw - spacing*xn)/xn
+        padh = (padgh - spacing*yn)/yn
+
+        keys = ['4','5','6','7','r','t','y','u','f','g','h','j','v','b','n','m']
+
+        padsg = fountainpad.append("g").attr("id", "fountainpads")
+        pads = padsg.selectAll("rect.fountainpad")
+            .data(pad_data)
+            .enter()
+            .append("rect")
+            .attr("class", "fountainpad")
             .attr("width", padw)
             .attr("height", padh)
             .attr("fill", "#000000")

@@ -1,0 +1,138 @@
+     #play_button{
+        position: fixed;
+        display:block;
+        bottom: 40%;
+        right: 10px;
+    	visibility: visible;
+    	z-index: 14;
+    	/*width: 58%;*/
+        width: 40px;
+    	border: 1px solid black;
+        cursor: pointer;
+
+        -webkit-transition:all 1s linear ;       
+           -moz-transition:all 1s linear ;
+             -o-transition:all 1s linear ;
+                transition:all 1s linear ; 
+    }
+
+     #fountaingram{
+        position: fixed;
+        /*display:block;*/
+        top: 80px;
+        left: 10px;
+    	visibility: visible;
+    	z-index: 20;
+        width: 1024px;
+        height: 50px;
+    	/*border: 1px solid black;*/
+        cursor: pointer;
+        background-color:rgba(255,255,255,0.0);
+    }
+
+    #fountainpad{
+        position: fixed;
+        /*display:block;*/
+        bottom: 7px;
+        left: 10px;
+    	visibility: visible;
+    	z-index: 20;
+        width: 39%;
+        height: 300px;
+    	/*border: 1px solid black;*/
+        /*cursor: pointer;*/
+        background-color:rgba(255,255,255,0.1);
+    }
+
+
+    body {
+    	-webkit-transform: translate3d(0,0,0);
+    }
+
+    .animated {
+    	-webkit-animation-fill-mode: both;
+    	-moz-animation-fill-mode: both;
+    	-ms-animation-fill-mode: both;
+    	-o-animation-fill-mode: both;
+    	animation-fill-mode: both;
+    	-webkit-animation-duration: 1s;
+    	-moz-animation-duration: 1s;
+    	-ms-animation-duration: 1s;
+    	-o-animation-duration: 1s;
+    	animation-duration: 1s;
+    }
+
+    .animated.hinge {
+    	-webkit-animation-duration: 2s;
+    	-moz-animation-duration: 2s;
+    	-ms-animation-duration: 2s;
+    	-o-animation-duration: 2s;
+    	animation-duration: 2s;
+    }
+
+    @-webkit-keyframes flash {
+    	0%, 50%, 100% {opacity: 1;}	
+    	25%, 75% {opacity: 0;}
+    }
+
+    @-moz-keyframes flash {
+    	0%, 50%, 100% {opacity: 1;}	
+    	25%, 75% {opacity: 0;}
+    }
+
+    @-ms-keyframes flash {
+    	0%, 50%, 100% {opacity: 1;}	
+    	25%, 75% {opacity: 0;}
+    }
+
+    @-o-keyframes flash {
+    	0%, 50%, 100% {opacity: 1;}	
+    	25%, 75% {opacity: 0;}
+    }
+
+    @keyframes flash {
+    	0%, 50%, 100% {opacity: 1;}	
+    	25%, 75% {opacity: 0;}
+    }
+
+    .flash {
+    	-webkit-animation-name: flash;
+    	-moz-animation-name: flash;
+    	-ms-animation-name: flash;
+    	-o-animation-name: flash;
+    	animation-name: flash;
+    }
+
+
+/* Button styling */
+
+button.minimal {
+  background: #e3e3e3;
+  border: 1px solid #bbb;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  -webkit-box-shadow: inset 0 0 1px 1px #f6f6f6;
+  -moz-box-shadow: inset 0 0 1px 1px #f6f6f6;
+  box-shadow: inset 0 0 1px 1px #f6f6f6;
+  color: #333;
+  font: bold 12px "helvetica neue", helvetica, arial, sans-serif;
+  line-height: 1;
+  padding: 8px 0 9px 0;
+  text-align: center;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.7);
+  width: 100px;
+  }
+button.minimal:hover {
+    background: #d9d9d9;
+    -webkit-box-shadow: inset 0 0 1px 1px #eaeaea;
+    -moz-box-shadow: inset 0 0 1px 1px #eaeaea;
+    box-shadow: inset 0 0 1px 1px #eaeaea;
+    color: #222;
+    cursor: pointer; }
+button.minimal:active {
+    background: #d0d0d0;
+    -webkit-box-shadow: inset 0 0 1px 1px #e3e3e3;
+    -moz-box-shadow: inset 0 0 1px 1px #e3e3e3;
+    box-shadow: inset 0 0 1px 1px #e3e3e3;
+    color: #000; }
