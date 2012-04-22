@@ -2,7 +2,9 @@
     {
         "gist":"2165875",
         "filename":"sinwaves.js",
-        "description":"Sin Waves"
+        "description":"Sin Waves",
+        "rotate": "90",
+        "rotatex": "180"
     },
     {
         "gist":"2271952",

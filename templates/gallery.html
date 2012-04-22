@@ -3,6 +3,36 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
     <style type="text/css">
+	body {
+		font-family: Verdana, Helvetica, Arial, "MS Trebuchet", sans-serif;
+		background: transparent url(http://subtlepatterns.com/patterns/worn_dots.png) repeat fixed center center;
+	}
+	iframe {
+		border: 0;
+	}
+	.sectiontitle {
+		text-align: center;
+		background-color: white;
+		margin: 0;
+		opacity: 0.88;
+		border-radius: 6px;
+		
+		padding: 6px 0;
+		
+background-image: linear-gradient(bottom,         rgba(235,235,235,0.8) 8%, rgb(250,250,250,0.6) 49%);
+background-image: -o-linear-gradient(bottom,      rgba(235,235,235,0.8) 8%, rgb(250,250,250,0.6) 49%);
+background-image: -moz-linear-gradient(bottom,    rgba(235,235,235,0.8) 8%, rgb(250,250,250,0.6) 49%);
+background-image: -webkit-linear-gradient(bottom, rgba(235,235,235,0.8) 8%, rgb(250,250,250,0.6) 49%);
+background-image: -ms-linear-gradient(bottom,     rgba(235,235,235,0.8) 8%, rgb(250,250,250,0.6) 49%);
+
+		background-image: -webkit-gradient(
+			linear,
+			left bottom,
+			left top,
+			color-stop(0.08, rgba(235,235,235,0.8)),
+			color-stop(0.49, rgba(250,250,250,0.6))
+		);
+	}
     </style>
   </head>
   <body>
@@ -42,6 +72,12 @@
             .data(gallery.models)
             .enter()
 			.append("div").attr("class", "impress step")
+			.html(function(d,i){ 
+					
+					var text = d.get('description') || i;
+					return "<h2 class='sectiontitle' id='title"+i+"'>"+text+"</h2>";
+					
+			})
 			.attr("data-x", function(d,i){		
 					return d.get('x') || i*1700;						
 			})
@@ -49,7 +85,11 @@
 				return d.get('y') || i*1200;											
 			})
 			.attr("data-rotate", function(d,i){
-				return d.get('datarotate') || i*30*(Math.random()*5);											
+				return d.get('datarotate') || i*10;											
+//				return d.get('datarotate') || i*20*(Math.random()*5);															
+			})
+			.attr("data-rotate-x", function(d,i){
+				return d.get('datarotatex') || 20*(Math.random()*25);											
 				
 			})
         var iframes = divs.append("html:iframe")
@@ -60,7 +100,7 @@
             .attr("width", function(){
                 return $(document).width();
             })
-            .attr("height", 800)
+            .attr("height", 600)
         divs.append("div")
             .attr("pointer-events", "all")
             .on("click", function(d,i) {
