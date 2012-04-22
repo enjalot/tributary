@@ -4,7 +4,8 @@
         "filename":"sinwaves.js",
         "description":"Sin Waves",
         "rotate": "90",
-        "rotatex": "180"
+        "rotatex": "180",
+        "scale": "10"
     },
     {
         "gist":"2271952",

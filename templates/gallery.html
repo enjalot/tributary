@@ -89,8 +89,10 @@ background-image: -ms-linear-gradient(bottom,     rgba(235,235,235,0.8) 8%, rgb(
 //				return d.get('datarotate') || i*20*(Math.random()*5);															
 			})
 			.attr("data-rotate-x", function(d,i){
-				return d.get('datarotatex') || 20*(Math.random()*25);											
-				
+				return d.get('datarotatex') || 20*(Math.random()*25);															
+			})
+			.attr("data-scale", function(d,i){
+				return d.get('scale') || 1;															
 			})
         var iframes = divs.append("html:iframe")
             .attr("class", "trib")
