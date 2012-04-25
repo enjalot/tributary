@@ -33,9 +33,55 @@ background-image: -ms-linear-gradient(bottom,     rgba(235,235,235,0.8) 8%, rgb(
 			color-stop(0.49, rgba(250,250,250,0.6))
 		);
 	}
+	.navbutton {
+		padding-top: 25%;
+		color: white;
+		height: 100%;
+		width: 50px;
+		background-color: rgba(0,0,0,0.6);
+		text-align: center;
+		position: fixed;
+		z-index: 99999999;
+		opacity: 0.3;
+		
+		
+		-webkit-transition:all 1s ease ;		
+		   -moz-transition:all 1s ease ;
+		     -o-transition:all 1s ease ;
+		        transition:all 1s ease ; 
+	}
+	.navbutton:hover {
+		opacity: 1;
+	}
+	#prev {
+		padding-left: 25px;
+		padding-right: 5px;
+		left: -20px;
+		top: 0;
+	}
+	#prev:hover {
+		left: 0;
+	}
+	#next {
+		padding-right: 25px;
+		padding-left: 5px;
+		right: -20px;
+		top: 0;
+	}
+	#next:hover {
+		right: 0;
+	}
+
     </style>
   </head>
   <body>
+	<div id="prev" class="navbutton">
+		Prev
+	</div>
+	
+	<div id="next" class="navbutton">
+		Next
+	</div>
     <script type="text/javascript" src="http://mbostock.github.com/d3/d3.v2.js"></script>
     <script type="text/javascript" src="/static/lib/jwerty.js"></script>
     <script type="text/javascript" src="/static/lib/underscore-min.js"></script>
@@ -45,6 +91,7 @@ background-image: -ms-linear-gradient(bottom,     rgba(235,235,235,0.8) 8%, rgb(
 	<script type="text/javascript" src="https://raw.github.com/shama/jmpress.js/master/dist/jmpress.js"></script>
 
     <script type="text/javascript">
+
 
     //collection of tributaries
     var Trib = Backbone.Model.extend({
@@ -79,17 +126,17 @@ background-image: -ms-linear-gradient(bottom,     rgba(235,235,235,0.8) 8%, rgb(
 					
 			})
 			.attr("data-x", function(d,i){		
-					return d.get('x') || i*1700;						
+					return d.get('x') || i*1800;						
 			})
 			.attr("data-y", function(d,i){
-				return d.get('y') || i*1200;											
+				return d.get('y') || i*1600;											
 			})
 			.attr("data-rotate", function(d,i){
 				return d.get('datarotate') || i*10;											
 //				return d.get('datarotate') || i*20*(Math.random()*5);															
 			})
 			.attr("data-rotate-x", function(d,i){
-				return d.get('datarotatex') || 20*(Math.random()*25);															
+				return d.get('datarotatex') || 18*(Math.random()*22);															
 			})
 			.attr("data-scale", function(d,i){
 				return d.get('scale') || 1;															
@@ -100,7 +147,7 @@ background-image: -ms-linear-gradient(bottom,     rgba(235,235,235,0.8) 8%, rgb(
                 return d.shore_url()
             })
             .attr("width", function(){
-                return $(document).width();
+                return $(document).width()-120;
             })
             .attr("height", 600)
         divs.append("div")
@@ -119,6 +166,14 @@ background-image: -ms-linear-gradient(bottom,     rgba(235,235,235,0.8) 8%, rgb(
 
         //kick off impress.js
 		$('#container').jmpress();
+		
+		$('#next').click(function(){
+			$('#container').jmpress("next")
+		})
+
+		$('#prev').click(function(){
+			$('#container').jmpress("prev")
+		})
     })
 
     </script>
