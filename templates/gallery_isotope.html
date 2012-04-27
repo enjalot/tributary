@@ -3,6 +3,8 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
     <style type="text/css">
+	* { -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box; } /* Pardon me, just hacking the planet here */
+
 	body {
 		font-family: Verdana, Helvetica, Arial, "MS Trebuchet", sans-serif;
 		font-size: 13px;
@@ -14,7 +16,7 @@
 		font-size: 14px;
 	}
 	#container {
-		border: 1px solid black;
+/*		border: 1px solid black; */
 		height: 1900px !important;
 		
 		margin-left: auto;
@@ -66,6 +68,9 @@
 		-webkit-transform: scale(1);
 */	}
 	#intro {
+		padding: 18px;
+	}
+	#features {
 		padding: 18px;
 	}
     </style>
@@ -210,15 +215,20 @@
 		<strong>Filter: </strong>
 		<button id="artsy">Artsy</button>
 		<button id="visualization">Visualization</button>
+		<button id="text">Text</button>
+		
 		|
 		<button id="reset">Reset</button>
 		
 	</div>
 	<div id="container">				
-		<div id="intro" class="tributary" style="width: 900px; height: 150px;">
-			Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-			
-
+		<div id="intro" class="tributary text" style="width: 450px; height: 150px; border: 1px solid black;">
+			Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.			
+		</div>
+		
+		<div id="features" class="tributary text" style="width: 450px; height: 150px; border: 1px solid black;">
+			<h3>Features</h3>
+			Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco.			
 		</div>
 	</div>
 	
@@ -252,6 +262,9 @@
 			})
 			$('#artsy').click(function(){
 				$('#container').isotope({ filter: '.artsy' });				
+			})
+			$('#text').click(function(){
+				$('#container').isotope({ filter: '.text' });				
 			})
 			$('#reset').click(function(){
 				$('#container').isotope({ filter: '*' });
