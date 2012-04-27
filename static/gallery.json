@@ -3,7 +3,7 @@
         "gist":"2165875",
         "filename":"sinwaves.js",
         "description":"Sin Waves"
-        ,"tags": "artsy",
+        ,"tags": "artsy color",
         "width":  450,
         "height": 710
     },
@@ -19,7 +19,7 @@
         "gist":"2165875",
         "filename":"warp.js",
         "description":"Warp"
-        ,"tags": "artsy",
+        ,"tags": "artsy color",
         "width": 450,
         "height": 350
     },
@@ -42,7 +42,8 @@
         "filename":"squarecircle.js",
         "description":"Colors",
         "width": 900,
-        "height": 450
+        "height": 450,
+        "tags": "color"
     },
     {
         "gist":"2272533",
@@ -50,6 +51,7 @@
         "description":"Color Tubes",
         "width": 450,
         "height": 450
+        ,"tags": "color"
     },
     {
         "gist":"2418851",
@@ -64,6 +66,7 @@
         "description":"Rainbow Hand"
         ,"width": 450
         ,"height": 225
+        ,"tags": "color"
     },
     {
         "gist":"2323185",
