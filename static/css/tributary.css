@@ -23,11 +23,8 @@ body {
     }
 
     #tributarysvg {
-        top: 100px;
-        left: 0;
-        width: 96%; 
-        height: 96%; 
-        padding: 2%;
+        width: 100%;
+        height: 700px!important;
     }
 
     #page {
@@ -119,7 +116,6 @@ body {
     }
 
     #display {
-    	height: 125%;
     	width: 100%;
     	background: white;
 /*    	border: solid black 2px;*/
@@ -359,9 +355,7 @@ body {
     }
         
     #fork-n-tweet {
-        position: absolute;
-        top: 10px;
-        right: 24%;
+        display: inline-block;
     }
     #fork-n-tweet button {
         padding-bottom: 14px !important;
