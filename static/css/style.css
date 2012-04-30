@@ -110,7 +110,7 @@ body {
     }
 
     #display {
-    	height: 125%;
+        height: 110%;
     	width: 100%;
     	background: white;
 /*    	border: solid black 2px;*/
@@ -384,9 +384,10 @@ body {
         }
         
     #fork-n-tweet {
-        position: absolute;
-        top: 10px;
-        right: 24%;
+        padding-left: 24px;
+        padding-top: 24px;
+        float: right;
+        padding-right: 24px;
     }
     #fork-n-tweet button {
         padding-bottom: 14px !important;
@@ -492,6 +493,8 @@ body {
 /*    	color: white; */
     	text-decoration: none;
 /*    	font-family: Arial, sans-serif; */
+        padding-left: 18px;
+        padding-bottom: 18px;
     }
 
     #aboutAndAttribution a {
@@ -525,10 +528,13 @@ body {
     h1 {
         display: inline-block;
     }
+    #header {
+        height: 175px;
+        display: block;
+    }
     #branding {
-        padding-top: 10px;
-        padding-right: 10px;
-        margin-left: auto;
+        float: left;
+        padding-left: 10px;
         display: block;
         width: 200px; 
     }
