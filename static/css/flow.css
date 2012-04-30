@@ -1,4 +1,13 @@
-     #play_button{
+     
+#flowsvg {
+    top: 0;
+    left: 0;
+    width: 96%; 
+    height: 96%; 
+    padding: 2%;
+}    
+
+#play_button{
         position: fixed;
         display:block;
         bottom: 40%;

@@ -5,6 +5,7 @@
 {% block title %}Delta{% endblock %}
 
 {% block style %}
+    <link rel='stylesheet' type='text/css' href='/static/css/delta.css' />
 {% endblock %}
 
 {% block scripts %}
@@ -31,7 +32,7 @@
         <div id="time_slider"></div>
     </div>
     <div id='display'>
-        <svg style='width: 96%; height: 96%; padding: 2%'></svg>
+        <svg id="deltasvg"></svg>
     </div>
 
 {% endblock %}

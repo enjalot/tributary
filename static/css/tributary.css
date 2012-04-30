@@ -21,6 +21,15 @@ body {
         float: left;
         font-size: 42px;
     }
+
+    #tributarysvg {
+        top: 100px;
+        left: 0;
+        width: 96%; 
+        height: 96%; 
+        padding: 2%;
+    }
+
     #page {
 /*    	position: absolute; */
     	height: 100%;
