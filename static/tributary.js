@@ -258,7 +258,6 @@ tributary.TributaryView = (function() {
         this.sliding = true;
         cursor = this.code_editor.getCursor();
         token = this.code_editor.getTokenAt(cursor);
-        console.log("SLIDING", ui.value + "", token.start, token.end);
         start = {
           "line": cursor.line,
           "ch": token.start

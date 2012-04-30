@@ -275,7 +275,7 @@ class tributary.TributaryView extends Backbone.View
                 #set the cursor to desired location
                 cursor = @code_editor.getCursor()
                 token = @code_editor.getTokenAt(cursor)
-                console.log("SLIDING", ui.value+"", token.start, token.end)
+                #console.log("SLIDING", ui.value+"", token.start, token.end)
                 start = {"line":cursor.line, "ch":token.start}
                 end = {"line":cursor.line, "ch":token.end}
                 @code_editor.replaceRange(ui.value+"", start, end)
