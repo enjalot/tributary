@@ -159,6 +159,7 @@ tributary.TributaryView = (function() {
     this._dragOver = __bind(this._dragOver, this);
     this.save_gist = __bind(this.save_gist, this);
     this.init_gui = __bind(this.init_gui, this);
+    this.init_picker = __bind(this.init_picker, this);
     this.init_slider = __bind(this.init_slider, this);
     this.editor_click = __bind(this.editor_click, this);
     TributaryView.__super__.constructor.apply(this, arguments);
@@ -170,7 +171,12 @@ tributary.TributaryView = (function() {
     this.chosenColumn = 0;
     this.onNumeric = false;
     d3.select("#editor").on("click", __bind(function() {
-      return this.sliding = false;
+      this.sliding = false;
+      return this.picking = false;
+    }, this));
+    d3.select(".CodeMirror").on("click", __bind(function() {
+      this.sliding = false;
+      return this.picking = false;
     }, this));
     this.code_editor = CodeMirror(d3.select("#editor").node(), {
       mode: "javascript",
@@ -186,10 +192,8 @@ tributary.TributaryView = (function() {
         return "cursor = @code_editor.getCursor(true)\ntoken = @code_editor.getTokenAt(cursor)\nif token.className != \"number\"\n    @slider.css('visibility', 'hidden')";
       }, this)
     });
-    d3.select(".CodeMirror").on("click", __bind(function() {
-      return this.sliding = false;
-    }, this));
     this.init_slider();
+    this.init_picker();
     this.init_gui();
     this.model.get_code(__bind(function(error, code) {
       return this.code_editor.setValue(code);
@@ -211,9 +215,13 @@ tributary.TributaryView = (function() {
     return this;
   };
   TributaryView.prototype.editor_click = function() {
-    var cursor, cursorOffset, match, sliderLeft, sliderRange, sliderTop, token, value;
+    var color, cursor, cursorOffset, left, match, sliderLeft, sliderRange, sliderTop, token, top, value;
     if (this.sliding) {
       this.sliding = false;
+      return false;
+    }
+    if (this.picking) {
+      this.picking = false;
       return false;
     }
     cursor = this.code_editor.getCursor(true);
@@ -243,14 +251,26 @@ tributary.TributaryView = (function() {
         left: sliderLeft
       });
       this.slider.css('visibility', 'visible');
+      this.picker.element.style.display = "none";
     } else {
-      match = token.string.match(/"#?(([a-fA-F0-9]){3}){1,2}"/);
-      if (match) {
-        console.log(token.string, match);
+      match = token.string.match(/["']#?(([a-fA-F0-9]){3}){1,2}["']/);
+      if (match && !this.picking) {
+        color = match[0];
+        color = color.slice(2, color.length - 1);
+        this.picker.update(color);
+        cursorOffset = this.code_editor.cursorCoords(true, "page");
+        top = cursorOffset.y - 210 + "px";
+        left = cursorOffset.x - 75 + "px";
+        $('#ColorPicker').css('top', top);
+        $('#ColorPicker').css('left', left);
+        this.picker.element.style.display = "";
+      } else {
+        this.picker.element.style.display = "none";
       }
       this.slider.css('visibility', 'hidden');
     }
     this.sliding = false;
+    this.picking = false;
     return true;
   };
   TributaryView.prototype.init_slider = function() {
@@ -270,6 +290,29 @@ tributary.TributaryView = (function() {
           "ch": token.end
         };
         return this.code_editor.replaceRange(ui.value + "", start, end);
+      }, this)
+    });
+  };
+  TributaryView.prototype.init_picker = function() {
+    return this.picker = new Color.Picker({
+      color: "#643263",
+      display: false,
+      size: 150,
+      callback: __bind(function(rgba, state, type) {
+        var cursor, end, newcolor, start, token;
+        newcolor = Color.Space(rgba, "RGB>STRING");
+        this.picking = true;
+        cursor = this.code_editor.getCursor();
+        token = this.code_editor.getTokenAt(cursor);
+        start = {
+          "line": cursor.line,
+          "ch": token.start
+        };
+        end = {
+          "line": cursor.line,
+          "ch": token.end
+        };
+        return this.code_editor.replaceRange('"#' + newcolor.toUpperCase() + '"', start, end);
       }, this)
     });
   };
@@ -296,7 +339,8 @@ tributary.TributaryView = (function() {
       txt = he.html();
       if (txt === "Hide") {
         he.html("Show");
-        return $('#slider').css('visibility', 'hidden');
+        $('#slider').css('visibility', 'hidden');
+        return $('#ColorPicker').css('display', 'none');
       } else {
         return he.html("Hide");
       }

@@ -136,10 +136,22 @@ class tributary.TributaryView extends Backbone.View
         @chosenColumn = 0
         @onNumeric = false
 
+
+        #why do we have these here? idk, should only have 1 if anything
+        #but can't be certain the clicks are going through
+        #it seems cursor activity can trigger before these clicks do
         d3.select("#editor").on("click", () =>
             #@editor_click()
             @sliding = false
+            @picking = false
         )
+        d3.select(".CodeMirror").on("click", () =>
+            #@editor_click()
+            @sliding = false
+            @picking = false
+        )
+
+
 
         @code_editor = CodeMirror(d3.select("#editor").node(), {
             #value: "function myScript(){return 100;}\n",
@@ -159,24 +171,11 @@ class tributary.TributaryView extends Backbone.View
                 """
             })
 
-        d3.select(".CodeMirror").on("click", () =>
-            #@editor_click()
-            @sliding = false
-        )
-
         #@editor_click
-        
-
-
-        
-        #@aceEditor = ace.edit("editor")
-        #@aceEditor.setTheme("ace/theme/twilight")
-        #JavaScriptMode = require("ace/mode/javascript").Mode
-        #@aceEditor.getSession().setMode(new JavaScriptMode())
-        #everytime the code changes, we trigger this event
-
+       
         #setup functions
         @init_slider()
+        @init_picker()
         @init_gui()
         
         #fill in the editor with text we get back from the gist
@@ -217,6 +216,9 @@ class tributary.TributaryView extends Backbone.View
         if @sliding
             @sliding = false
             return false
+        if @picking
+            @picking = false
+            return false
         cursor = @code_editor.getCursor(true)
         token = @code_editor.getTokenAt(cursor)
         if token.className == "number"
@@ -256,18 +258,35 @@ class tributary.TributaryView extends Backbone.View
 
             #lets turn on the slider no matter what (no alt/ctrl key necessary)
             @slider.css('visibility', 'visible')
+            @picker.element.style.display = "none"
 
         #else if #use regex to check for color
         else
-
-            match = token.string.match(/"#?(([a-fA-F0-9]){3}){1,2}"/)
-            if match
+            match = token.string.match(/["']#?(([a-fA-F0-9]){3}){1,2}["']/)
+            if match and not @picking
                 #turn on color picker
-                console.log(token.string, match)
+                #console.log(token.string, match)
 
+                color = match[0]
+                color = color.slice(2, color.length-1)
+                @picker.update(color)
+                cursorOffset = @code_editor.cursorCoords(true, "page")
+                #console.log("co", cursorOffset)
+                #TODO: don't hardcode the pickers dimensions
+                top = cursorOffset.y - 210 + "px"
+                left = cursorOffset.x - 75 + "px"
+                $('#ColorPicker').css('top', top)
+                $('#ColorPicker').css('left', left)
+                #$('#ColorPicker').offset({top: 10, left: 100})
+                #@picker.element.style.top = cursorOffset.top + "px"
+                #@picker.element.style.left = cursorOffset.left + "px"
+                @picker.element.style.display = ""
+            else
+                @picker.element.style.display = "none"
             @slider.css('visibility', 'hidden')
 
         @sliding = false
+        @picking = false
         return true
 
     
@@ -285,6 +304,26 @@ class tributary.TributaryView extends Backbone.View
                 end = {"line":cursor.line, "ch":token.end}
                 @code_editor.replaceRange(ui.value+"", start, end)
             )
+
+    init_picker: =>
+        @picker = new Color.Picker({
+            color: "#643263", # accepts rgba(), or #hex
+            display: false,
+            size: 150,
+            callback: (rgba, state, type) =>
+                newcolor = Color.Space(rgba, "RGB>STRING")
+                #console.log("newcolor", newcolor)
+
+                @picking = true
+                #set the cursor to desired location
+                cursor = @code_editor.getCursor()
+                token = @code_editor.getTokenAt(cursor)
+                #console.log("SLIDING", ui.value+"", token.start, token.end)
+                start = {"line":cursor.line, "ch":token.start}
+                end = {"line":cursor.line, "ch":token.end}
+                @code_editor.replaceRange('"#' + newcolor.toUpperCase() + '"', start, end)
+        })
+ 
 
     init_gui: =>
         #Setup the gui elements for this page
@@ -317,7 +356,8 @@ class tributary.TributaryView extends Backbone.View
             #console.log("txt", txt)
             if(txt == "Hide")
                 he.html("Show")
-                $('#slider').css('visibility', 'hidden');
+                $('#slider').css('visibility', 'hidden')
+                $('#ColorPicker').css('display', 'none')
             else
                 he.html("Hide")
                 #hide the slider if it's open
