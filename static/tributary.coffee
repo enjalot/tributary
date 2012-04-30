@@ -131,20 +131,49 @@ class tributary.TributaryView extends Backbone.View
         #TODO: this should all be in render() 
         #but we assume that the #editor div is present when this class is
         #instanciated. move it once the code is on more solid ground
-        @aceEditor = @model.aceEditor
+        #@aceEditor = @model.aceEditor
         @chosenRow = 0
         @chosenColumn = 0
         @onNumeric = false
-        
-        @aceEditor = ace.edit("editor")
-        @aceEditor.setTheme("ace/theme/twilight")
-        JavaScriptMode = require("ace/mode/javascript").Mode
-        @aceEditor.getSession().setMode(new JavaScriptMode())
-        #everytime the code changes, we trigger this event
-        @aceEditor.getSession().on('change', () =>
-            thisCode = @aceEditor.getSession().getValue()
-            @model.trigger("code", @aceEditor.getSession().getValue())
+
+        d3.select("#editor").on("click", () =>
+            #@editor_click()
+            @sliding = false
         )
+
+        @code_editor = CodeMirror(d3.select("#editor").node(), {
+            #value: "function myScript(){return 100;}\n",
+            mode:  "javascript",
+            theme: "lesser-dark",
+            lineNumbers: true,
+            onChange: () =>
+                thisCode = @code_editor.getValue()
+                @model.trigger("code", thisCode)
+            onCursorActivity: () =>
+                @editor_click()
+                """
+                cursor = @code_editor.getCursor(true)
+                token = @code_editor.getTokenAt(cursor)
+                if token.className != "number"
+                    @slider.css('visibility', 'hidden')
+                """
+            })
+
+        d3.select(".CodeMirror").on("click", () =>
+            #@editor_click()
+            @sliding = false
+        )
+
+        #@editor_click
+        
+
+
+        
+        #@aceEditor = ace.edit("editor")
+        #@aceEditor.setTheme("ace/theme/twilight")
+        #JavaScriptMode = require("ace/mode/javascript").Mode
+        #@aceEditor.getSession().setMode(new JavaScriptMode())
+        #everytime the code changes, we trigger this event
 
         #setup functions
         @init_slider()
@@ -153,7 +182,7 @@ class tributary.TributaryView extends Backbone.View
         #fill in the editor with text we get back from the gist
         #console.log(@get("gist"), @get("filename"))
         @model.get_code((error, code) =>
-            @aceEditor.getSession().setValue(code)
+            @code_editor.setValue(code)
         )
         """
         if(@model.get("gist") && @model.get("filename"))
@@ -166,7 +195,6 @@ class tributary.TributaryView extends Backbone.View
             )
         """
 
-        @aceEditor.on("click", @editor_click)
 
         #Hook up drag and drop for code file
         $('body')[0].addEventListener('dragover', @_dragOver, false)
@@ -185,27 +213,22 @@ class tributary.TributaryView extends Backbone.View
 
         @
 
-    editor_click: (e) =>
-        #most of this code originally comes from the water project by Gabriel Florit
-        editor = e.editor
-        pos = editor.getCursorPosition()
-        token = editor.session.getTokenAt(pos.row, pos.column)
-        @onNumeric = false
-
-        #did we click on a number?
-        if (token && /\bconstant.numeric\b/.test(token.type))
-            # stop pulsing numerics
-            if (pulseNumerics)
-                window.clearInterval(pulse)
-                pulseNumerics = false
-
+    editor_click: () =>
+        if @sliding
+            @sliding = false
+            return false
+        cursor = @code_editor.getCursor(true)
+        token = @code_editor.getTokenAt(cursor)
+        if token.className == "number"
+            #parse the number out
+            value = parseFloat(token.string)
+            #console.log("token", token, value)
+            # this comes from water project:
             # set the slider params based on the token's numeric value
-            # TODO: there has to be a better way of setting this up
-            # TODO: feels pretty silly at the moment
-            if (token.value == 0)
+            if (value == 0)
                 sliderRange = [-100, 100]
             else
-                sliderRange = [-token.value * 3, token.value * 5]
+                sliderRange = [-value * 3, value * 5]
 
             @slider.slider('option', 'max', d3.max(sliderRange))
             @slider.slider('option', 'min', d3.min(sliderRange))
@@ -215,36 +238,32 @@ class tributary.TributaryView extends Backbone.View
                 @slider.slider('option', 'step', 1)
             else
                 @slider.slider('option', 'step', (d3.max(sliderRange) - d3.min(sliderRange))/200)
-            @slider.slider('option', 'value', token.value)
+            @slider.slider('option', 'value', value)
 
+            #setup slider position
             # position slider centered above the cursor
-            scrollerOffset = $('.ace_scroller').offset()
-            cursorOffset = editor.renderer.$cursorLayer.pixelPos
-            sliderTop = scrollerOffset.top + cursorOffset.top - Number($('#editor').css('font-size').replace('px', ''))*0.8
-            sliderLeft = scrollerOffset.left + cursorOffset.left - @slider.width()/2
+            #scrollerOffset = $('.ace_scroller').offset()
+            ##cursorOffset = editor.renderer.$cursorLayer.pixelPos
+            cursorOffset = @code_editor.cursorCoords(true, "page")
+            sliderTop = cursorOffset.y - Number($('#editor').css('font-size').replace('px', ''))*0.8
+            sliderLeft = cursorOffset.x - @slider.width()/2
+
 
             # sync the slider size with the editor size
             @slider.css('font-size', $('#editor').css('font-size'))
             @slider.css('font-size', '-=4')
             @slider.offset({top: sliderTop - 10, left: sliderLeft})
 
+            console.log("visible!")
             #lets turn on the slider no matter what (no alt/ctrl key necessary)
             @slider.css('visibility', 'visible')
 
-            # allow the slider to be shown
-            @onNumeric = true
-
-            # make this position globally scoped
-            @chosenRow = pos.row
-            @chosenColumn = token.start
-
-            # prevent click event from bubbling up to body, which
-            # would then trigger an event to hide the slider
-            e.stopPropagation()
+        #else if #use regex to check for color
         else
-            #if they click anywhere else turn off the slider
-            #TODO: also do this when the hide button is clicked
             @slider.css('visibility', 'hidden')
+
+        @sliding = false
+        return true
 
     
     init_slider: =>
@@ -252,21 +271,15 @@ class tributary.TributaryView extends Backbone.View
         @slider = $('#slider')
         @slider.slider(
             slide: (event, ui) =>
+                @sliding = true
                 #set the cursor to desired location
-                cursorPosition = @aceEditor.getCursorPosition()
-                if (!(cursorPosition.row == @chosenRow && cursorPosition.column == @chosenColumn))
-                    @aceEditor.getSelection().moveCursorTo(@chosenRow, @chosenColumn)
-
-                    #clear selection
-                    @aceEditor.clearSelection()
-
-                #get token
-                token = @aceEditor.session.getTokenAt(@chosenRow, @chosenColumn + 1)
-
-                #find and replace
-                @aceEditor.find(String(token.value))
-                @aceEditor.replace(String(ui.value))
-        )
+                cursor = @code_editor.getCursor()
+                token = @code_editor.getTokenAt(cursor)
+                console.log("SLIDING", ui.value+"", token.start, token.end)
+                start = {"line":cursor.line, "ch":token.start}
+                end = {"line":cursor.line, "ch":token.end}
+                @code_editor.replaceRange(ui.value+"", start, end)
+            )
 
     init_gui: =>
         #Setup the gui elements for this page
@@ -307,9 +320,9 @@ class tributary.TributaryView extends Backbone.View
 
         #Setup editor settings
         #turn off horizontal scrollbar
-        @aceEditor.renderer.setHScrollBarAlwaysVisible(false)
+        ##@aceEditor.renderer.setHScrollBarAlwaysVisible(false)
         #turn off print margin visibility
-        @aceEditor.setShowPrintMargin(false)
+        ##@aceEditor.setShowPrintMargin(false)
         # load font-size from local storage
         if (getLocalStorageValue('font-size'))
             $('#editor').css('font-size', getLocalStorageValue('font-size'))
@@ -328,6 +341,7 @@ class tributary.TributaryView extends Backbone.View
         # replace just replaces the current selection with the replacement text,
         # and highlights the replacement text
         # it does not go to the next selection (which the default version does)
+        """
         @aceEditor.replace = (replacement) ->
             range = this.getSelectionRange()
             if (range != null)
@@ -339,6 +353,7 @@ class tributary.TributaryView extends Backbone.View
         $('body').on('focus click', (e) =>
             @onNumeric = false
         )
+        """
 
         # pulse numeric constants (until user clicks on them)
         pulseNumerics = true
@@ -348,7 +363,7 @@ class tributary.TributaryView extends Backbone.View
         @
 
     save_gist: (callback) =>
-        console.log("ENDPOINT", @endpoint)
+        #console.log("ENDPOINT", @endpoint)
         #Save the current code to a public gist
         oldgist = parseInt(@model.get("gist"))
         filename = @model.get("filename")
