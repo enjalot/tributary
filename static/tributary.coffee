@@ -259,6 +259,12 @@ class tributary.TributaryView extends Backbone.View
 
         #else if #use regex to check for color
         else
+
+            match = token.string.match(/"#?(([a-fA-F0-9]){3}){1,2}"/)
+            if match
+                #turn on color picker
+                console.log(token.string, match)
+
             @slider.css('visibility', 'hidden')
 
         @sliding = false

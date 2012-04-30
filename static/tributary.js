@@ -211,7 +211,7 @@ tributary.TributaryView = (function() {
     return this;
   };
   TributaryView.prototype.editor_click = function() {
-    var cursor, cursorOffset, sliderLeft, sliderRange, sliderTop, token, value;
+    var cursor, cursorOffset, match, sliderLeft, sliderRange, sliderTop, token, value;
     if (this.sliding) {
       this.sliding = false;
       return false;
@@ -244,6 +244,10 @@ tributary.TributaryView = (function() {
       });
       this.slider.css('visibility', 'visible');
     } else {
+      match = token.string.match(/"#?(([a-fA-F0-9]){3}){1,2}"/);
+      if (match) {
+        console.log(token.string, match);
+      }
       this.slider.css('visibility', 'hidden');
     }
     this.sliding = false;
