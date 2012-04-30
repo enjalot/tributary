@@ -165,28 +165,36 @@ tributary.TributaryView = (function() {
   }
   TributaryView.prototype.check_date = true;
   TributaryView.prototype.initialize = function() {
-    var JavaScriptMode;
     this.endpoint = this.options.endpoint || "tributary";
-    this.aceEditor = this.model.aceEditor;
     this.chosenRow = 0;
     this.chosenColumn = 0;
     this.onNumeric = false;
-    this.aceEditor = ace.edit("editor");
-    this.aceEditor.setTheme("ace/theme/twilight");
-    JavaScriptMode = require("ace/mode/javascript").Mode;
-    this.aceEditor.getSession().setMode(new JavaScriptMode());
-    this.aceEditor.getSession().on('change', __bind(function() {
-      var thisCode;
-      thisCode = this.aceEditor.getSession().getValue();
-      return this.model.trigger("code", this.aceEditor.getSession().getValue());
+    d3.select("#editor").on("click", __bind(function() {
+      return this.sliding = false;
+    }, this));
+    this.code_editor = CodeMirror(d3.select("#editor").node(), {
+      mode: "javascript",
+      theme: "lesser-dark",
+      lineNumbers: true,
+      onChange: __bind(function() {
+        var thisCode;
+        thisCode = this.code_editor.getValue();
+        return this.model.trigger("code", thisCode);
+      }, this),
+      onCursorActivity: __bind(function() {
+        this.editor_click();
+        return "cursor = @code_editor.getCursor(true)\ntoken = @code_editor.getTokenAt(cursor)\nif token.className != \"number\"\n    @slider.css('visibility', 'hidden')";
+      }, this)
+    });
+    d3.select(".CodeMirror").on("click", __bind(function() {
+      return this.sliding = false;
     }, this));
     this.init_slider();
     this.init_gui();
     this.model.get_code(__bind(function(error, code) {
-      return this.aceEditor.getSession().setValue(code);
+      return this.code_editor.setValue(code);
     }, this));
     "if(@model.get(\"gist\") && @model.get(\"filename\"))\n    src_url = \"/tributary/api/\" + @model.get(\"gist\")  + \"/\" + @model.get(\"filename\")\n    d3.text(src_url, (data) =>\n        if(!data)\n            data = \"\"\n        @aceEditor.getSession().setValue(data)\n        #@model.trigger(\"code\", data)\n    )";
-    this.aceEditor.on("click", this.editor_click);
     $('body')[0].addEventListener('dragover', this._dragOver, false);
     $('body')[0].addEventListener('drop', this._fileDrop, false);
     this.code_last_modified = new Date(0, 0, 0);
@@ -202,21 +210,20 @@ tributary.TributaryView = (function() {
     }, this));
     return this;
   };
-  TributaryView.prototype.editor_click = function(e) {
-    var cursorOffset, editor, pos, pulseNumerics, scrollerOffset, sliderLeft, sliderRange, sliderTop, token;
-    editor = e.editor;
-    pos = editor.getCursorPosition();
-    token = editor.session.getTokenAt(pos.row, pos.column);
-    this.onNumeric = false;
-    if (token && /\bconstant.numeric\b/.test(token.type)) {
-      if (pulseNumerics) {
-        window.clearInterval(pulse);
-        pulseNumerics = false;
-      }
-      if (token.value === 0) {
+  TributaryView.prototype.editor_click = function() {
+    var cursor, cursorOffset, sliderLeft, sliderRange, sliderTop, token, value;
+    if (this.sliding) {
+      this.sliding = false;
+      return false;
+    }
+    cursor = this.code_editor.getCursor(true);
+    token = this.code_editor.getTokenAt(cursor);
+    if (token.className === "number") {
+      value = parseFloat(token.string);
+      if (value === 0) {
         sliderRange = [-100, 100];
       } else {
-        sliderRange = [-token.value * 3, token.value * 5];
+        sliderRange = [-value * 3, value * 5];
       }
       this.slider.slider('option', 'max', d3.max(sliderRange));
       this.slider.slider('option', 'min', d3.min(sliderRange));
@@ -225,39 +232,42 @@ tributary.TributaryView = (function() {
       } else {
         this.slider.slider('option', 'step', (d3.max(sliderRange) - d3.min(sliderRange)) / 200);
       }
-      this.slider.slider('option', 'value', token.value);
-      scrollerOffset = $('.ace_scroller').offset();
-      cursorOffset = editor.renderer.$cursorLayer.pixelPos;
-      sliderTop = scrollerOffset.top + cursorOffset.top - Number($('#editor').css('font-size').replace('px', '')) * 0.8;
-      sliderLeft = scrollerOffset.left + cursorOffset.left - this.slider.width() / 2;
+      this.slider.slider('option', 'value', value);
+      cursorOffset = this.code_editor.cursorCoords(true, "page");
+      sliderTop = cursorOffset.y - Number($('#editor').css('font-size').replace('px', '')) * 0.8;
+      sliderLeft = cursorOffset.x - this.slider.width() / 2;
       this.slider.css('font-size', $('#editor').css('font-size'));
       this.slider.css('font-size', '-=4');
       this.slider.offset({
         top: sliderTop - 10,
         left: sliderLeft
       });
+      console.log("visible!");
       this.slider.css('visibility', 'visible');
-      this.onNumeric = true;
-      this.chosenRow = pos.row;
-      this.chosenColumn = token.start;
-      return e.stopPropagation();
     } else {
-      return this.slider.css('visibility', 'hidden');
+      this.slider.css('visibility', 'hidden');
     }
+    this.sliding = false;
+    return true;
   };
   TributaryView.prototype.init_slider = function() {
     this.slider = $('#slider');
     return this.slider.slider({
       slide: __bind(function(event, ui) {
-        var cursorPosition, token;
-        cursorPosition = this.aceEditor.getCursorPosition();
-        if (!(cursorPosition.row === this.chosenRow && cursorPosition.column === this.chosenColumn)) {
-          this.aceEditor.getSelection().moveCursorTo(this.chosenRow, this.chosenColumn);
-          this.aceEditor.clearSelection();
-        }
-        token = this.aceEditor.session.getTokenAt(this.chosenRow, this.chosenColumn + 1);
-        this.aceEditor.find(String(token.value));
-        return this.aceEditor.replace(String(ui.value));
+        var cursor, end, start, token;
+        this.sliding = true;
+        cursor = this.code_editor.getCursor();
+        token = this.code_editor.getTokenAt(cursor);
+        console.log("SLIDING", ui.value + "", token.start, token.end);
+        start = {
+          "line": cursor.line,
+          "ch": token.start
+        };
+        end = {
+          "line": cursor.line,
+          "ch": token.end
+        };
+        return this.code_editor.replaceRange(ui.value + "", start, end);
       }, this)
     });
   };
@@ -289,8 +299,6 @@ tributary.TributaryView = (function() {
         return he.html("Hide");
       }
     });
-    this.aceEditor.renderer.setHScrollBarAlwaysVisible(false);
-    this.aceEditor.setShowPrintMargin(false);
     if (getLocalStorageValue('font-size')) {
       $('#editor').css('font-size', getLocalStorageValue('font-size'));
     }
@@ -303,19 +311,7 @@ tributary.TributaryView = (function() {
       }
       return setLocalStorageValue('font-size', $('#editor').css('font-size'));
     });
-    this.aceEditor.replace = function(replacement) {
-      var range;
-      range = this.getSelectionRange();
-      if (range !== null) {
-        this.$tryReplace(range, replacement);
-        if (range !== null) {
-          return this.selection.setSelectionRange(range);
-        }
-      }
-    };
-    $('body').on('focus click', __bind(function(e) {
-      return this.onNumeric = false;
-    }, this));
+    "@aceEditor.replace = (replacement) ->\n    range = this.getSelectionRange()\n    if (range != null)\n        this.$tryReplace(range, replacement)\n        if (range != null)\n            this.selection.setSelectionRange(range)\n# we're not a numeric, by default\n# if we are, the editor click will handle it\n$('body').on('focus click', (e) =>\n    @onNumeric = false\n)";
     pulseNumerics = true;
     pulse = setInterval(function() {
       return $('.ace_numeric').animate({
@@ -328,7 +324,6 @@ tributary.TributaryView = (function() {
   };
   TributaryView.prototype.save_gist = function(callback) {
     var filename, gist, oldgist;
-    console.log("ENDPOINT", this.endpoint);
     oldgist = parseInt(this.model.get("gist"));
     filename = this.model.get("filename");
     if (filename === "") {
