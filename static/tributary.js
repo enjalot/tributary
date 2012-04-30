@@ -242,7 +242,6 @@ tributary.TributaryView = (function() {
         top: sliderTop - 10,
         left: sliderLeft
       });
-      console.log("visible!");
       this.slider.css('visibility', 'visible');
     } else {
       this.slider.css('visibility', 'hidden');
@@ -369,7 +368,7 @@ tributary.TributaryView = (function() {
     if (!this.check_date || this.file.lastModifiedDate > this.code_last_modified) {
       console.log("read file!");
       reader.onload = __bind(function() {
-        return this.aceEditor.getSession().setValue(reader.result);
+        return this.code_editor.setValue(reader.result);
       }, this);
       this.code_last_modified = this.file.lastModifiedDate;
       return reader.readAsText(this.file);

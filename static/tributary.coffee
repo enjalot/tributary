@@ -254,7 +254,6 @@ class tributary.TributaryView extends Backbone.View
             @slider.css('font-size', '-=4')
             @slider.offset({top: sliderTop - 10, left: sliderLeft})
 
-            console.log("visible!")
             #lets turn on the slider no matter what (no alt/ctrl key necessary)
             @slider.css('visibility', 'visible')
 
@@ -425,7 +424,7 @@ class tributary.TributaryView extends Backbone.View
             console.log("read file!")
             reader.onload = ()=>
                 #@executeCode({reader: reader})
-                @aceEditor.getSession().setValue(reader.result)
+                @code_editor.setValue(reader.result)
             @code_last_modified = @file.lastModifiedDate
 
             reader.readAsText(@file)
