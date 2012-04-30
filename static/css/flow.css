@@ -1,13 +1,8 @@
      
-#flowsvg {
-    top: 0;
-    left: 0;
-    width: 96%; 
-    height: 96%; 
-    padding: 2%;
-}    
+    #flowsvg {
+    }    
 
-#play_button{
+    #play_button{
         position: fixed;
         display:block;
         bottom: 40%;
@@ -28,7 +23,7 @@
      #flowgram{
         position: fixed;
         /*display:block;*/
-        top: 80px;
+        top: 85px;
         left: 10px;
     	visibility: visible;
     	z-index: 20;
@@ -40,64 +35,6 @@
     }
 
 
-
-    body {
-    	-webkit-transform: translate3d(0,0,0);
-    }
-
-    .animated {
-    	-webkit-animation-fill-mode: both;
-    	-moz-animation-fill-mode: both;
-    	-ms-animation-fill-mode: both;
-    	-o-animation-fill-mode: both;
-    	animation-fill-mode: both;
-    	-webkit-animation-duration: 1s;
-    	-moz-animation-duration: 1s;
-    	-ms-animation-duration: 1s;
-    	-o-animation-duration: 1s;
-    	animation-duration: 1s;
-    }
-
-    .animated.hinge {
-    	-webkit-animation-duration: 2s;
-    	-moz-animation-duration: 2s;
-    	-ms-animation-duration: 2s;
-    	-o-animation-duration: 2s;
-    	animation-duration: 2s;
-    }
-
-    @-webkit-keyframes flash {
-    	0%, 50%, 100% {opacity: 1;}	
-    	25%, 75% {opacity: 0;}
-    }
-
-    @-moz-keyframes flash {
-    	0%, 50%, 100% {opacity: 1;}	
-    	25%, 75% {opacity: 0;}
-    }
-
-    @-ms-keyframes flash {
-    	0%, 50%, 100% {opacity: 1;}	
-    	25%, 75% {opacity: 0;}
-    }
-
-    @-o-keyframes flash {
-    	0%, 50%, 100% {opacity: 1;}	
-    	25%, 75% {opacity: 0;}
-    }
-
-    @keyframes flash {
-    	0%, 50%, 100% {opacity: 1;}	
-    	25%, 75% {opacity: 0;}
-    }
-
-    .flash {
-    	-webkit-animation-name: flash;
-    	-moz-animation-name: flash;
-    	-ms-animation-name: flash;
-    	-o-animation-name: flash;
-    	animation-name: flash;
-    }
 
 
 /* Button styling */

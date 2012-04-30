@@ -1,7 +1,4 @@
  #deltasvg {
-    top: 0;
-    left: 0;
-    width: 96%; 
+    width: 100%; 
     height: 96%; 
-    padding: 2%;
 }

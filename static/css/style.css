@@ -1,4 +1,4 @@
-body {
+    body {
         font-family: 'Ubuntu', Helvetica, Georgia, serif !important;
     	position: absolute;
     	width: 100%;
@@ -15,11 +15,11 @@ body {
         color: #262626;
         text-decoration: none;
     }
-    h1 {
-        padding-left: 10px;
-        padding-top: 8px;
-        float: left;
-        font-size: 42px;
+    
+    .tributary_svg {
+        width: 100%;
+        height: 96%;
+        left: 0px;
     }
     #page {
 /*    	position: absolute; */
@@ -91,11 +91,15 @@ body {
         width: 24px;
         height: 24px;
         cursor: pointer;
-*/        border: none;
+        border: none;
+*/
         /*background-color: "#aaaaaa";*/
 /*        float:right;
     }
 */
+    #saveButton {
+        background-image: url('/static/img/floppy.png');
+    }
     #savePanel .address {
         font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Droid Sans Mono', 'Consolas', monospace;
         font-size: 0.8em;
@@ -110,7 +114,7 @@ body {
     }
 
     #display {
-        height: 110%;
+        height: 100%;
     	width: 100%;
     	background: white;
 /*    	border: solid black 2px;*/
@@ -127,8 +131,9 @@ body {
     	border-bottom-left-radius: 5px;
     	border-top-right-radius: 40px 10px;
     	border-bottom-right-radius: 40px 10px;
-    	*/
     	margin-bottom: 15%;
+    	margin-bottom: 75px;
+    	*/
     }
 
     #hideEditor {
@@ -540,7 +545,12 @@ body {
     }
     #branding h1 {
         margin-left: 18px;
+        font-size: 42px;
     }
-    .ace_warning {
-        display: none;
-    }
+    /*
+    #branding h1 {
+        padding-left: 10px;
+        padding-top: 8px;
+        float: left;
+    }*/
+

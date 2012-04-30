@@ -21,14 +21,6 @@
     <link rel="shortcut icon" href="/static/img/favicon.ico">
 
     <link rel='stylesheet' type='text/css' href='/static/css/style.css' />
-    <style>
-
-    #saveButton {
-        background-image: url('/static/img/floppy.png');
-    }
-
-    </style>
-
 
     {% block style %}
     {% endblock %}
@@ -82,31 +74,31 @@
     <div id="hideEditor">Hide</div>
     <div id='page'>
 
-    {% block gui %}
-    {% endblock %}
- 
+        {% block gui %}
+        {% endblock %}
+     
         <div id='editor'>
         </div>
         <div id="slider"></div>
 
-        <div id='aboutAndAttribution'>
-                <p>100% totally based on Bret Victor's genius <a href='http://vimeo.com/36579366'>Inventing on Principle</a> talk<p>
-                <p><a href='https://github.com/enjalot/tributary'>source code</a> on github</p>
-                <br/>
-            <p>further inspired by 
-            <a href="http://bl.ocks.org"> bl.ocks.org </a>
-            and
-            <a href='http://gabrielflor.it/blog-water'>water</a>
-            </p>
-
-        </div>
     </div>
 
-    <div id='instructions'>
+    <div id='aboutAndAttribution'>
+        <p>100% totally based on Bret Victor's genius <a href='http://vimeo.com/36579366'>Inventing on Principle</a> talk<p>
+        <p>further inspired by 
+        <a href="http://bl.ocks.org"> bl.ocks.org </a>
+        and
+        <a href='http://gabrielflor.it/blog-water'>water</a>
+        </p>
 
+        <p><a href='https://github.com/enjalot/tributary'>source code</a> on github</p>
+        <p><a href='https://enjalot.com'>gallery</a></p>
+        <br/>
+    
     </div>
 
 
+    
     <script src="/static/lib/jquery-1.7.min.js"></script>
     <script src="/static/lib/jquery-ui.1.8.16.custom.min.js"></script>
     <script src='/static/lib/jquery.hotkeys.js'></script>
