@@ -7,6 +7,17 @@
     <link rel='stylesheet' type='text/css' href='/static/css/tributary.css' />
 {% endblock %}
 
+{% block gui %}
+    <div id='display'>
+        <svg style='width: 96%; height: 96%; padding: 2%'></svg>
+    </div>
+{% endblock %}
+
+
+{% block branding %}
+	<h1>Tributary</h1>
+{% endblock %}
+
 {% block scripts %}
     <script src='/static/tributary.js'></script>
     <script type="text/javascript">

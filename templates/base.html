@@ -55,8 +55,10 @@
 <body>
 
     <div id="branding">
-		<h1>Tributary</h1>
+    {% block branding%}
+    {% endblock %}
     </div> 
+
 
 <div id="fork-n-tweet">
         <button id='savePanel' class="minimal">
@@ -79,12 +81,7 @@
 
     {% block gui %}
     {% endblock %}
-
-
-        
-        <div id='display'>
-            <svg style='width: 96%; height: 96%; padding: 2%'></svg>
-        </div>
+ 
         <div id='editor'>
         </div>
         <div>
