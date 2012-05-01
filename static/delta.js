@@ -1,4 +1,22 @@
 $(function() {
+    tributary.make_clones = function() {
+        //make n frames with lowered opacity
+        var svg = d3.select("#clones")
+        var frames = d3.range(tributary.nclones)
+        var gf = svg.selectAll("g.bvclone")
+            .data(frames).enter()
+            .append("g")
+                .attr("class", "bvclone")
+                .style("opacity", tributary.clone_opacity)
+
+        gf.each(function(d, i) {
+            var frame = d3.select(this)
+            tributary.append(frame)
+            tributary.run(i/tributary.nclones, frame)
+        })
+    }
+
+
 
     //time slider
     //window.delta = {}
@@ -138,31 +156,13 @@ $(function() {
          $("#pingpong_button").addClass("selected-button")
     })
      
-    var make_clones = function() {
-        //make n frames with lowered opacity
-        var svg = d3.select("#clones")
-        var frames = d3.range(tributary.nclones)
-        var gf = svg.selectAll("g.bvclone")
-            .data(frames).enter()
-            .append("g")
-                .attr("class", "bvclone")
-                .style("opacity", tributary.clone_opacity)
-
-        gf.each(function(d, i) {
-            var frame = d3.select(this)
-            tributary.append(frame)
-            tributary.run(i/tributary.nclones, frame)
-        })
-        console.log("clones made")
-    }
-
     tributary.bv = false;
     $("#bv_button").on("click", function(event) {
         tributary.bv = !tributary.bv;
         if(tributary.bv)
         {
             d3.select("#bv_button").style("background-color", "#e3e3e3")
-            make_clones();
+            tributary.make_clones();
         }
         else
         {

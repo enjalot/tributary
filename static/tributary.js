@@ -76,7 +76,7 @@ tributary.Delta = (function() {
     } catch (_e) {}
     if (tributary.bv) {
       $('#clones').empty();
-      make_clones();
+      tributary.make_clones();
     }
     try {
       tributary.append(tributary.g);

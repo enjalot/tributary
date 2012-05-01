@@ -397,15 +397,7 @@
     #fork-n-tweet button {
         padding-bottom: 14px !important;
     }
-    #gui2 {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 400px;
-        height: 40px;
-        padding-top: 10px;
-        z-index: 1001;
-    }
+    
 
     #gui {
         position: fixed;
@@ -500,6 +492,7 @@
 /*    	font-family: Arial, sans-serif; */
         padding-left: 18px;
         padding-bottom: 18px;
+        margin-top: 15px;
     }
 
     #aboutAndAttribution a {
@@ -542,6 +535,7 @@
         padding-left: 10px;
         display: block;
         width: 200px; 
+        margin-top: 29px;
     }
     #branding h1 {
         margin-left: 18px;

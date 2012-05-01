@@ -61,7 +61,7 @@ class tributary.Delta extends tributary.Tributary
         if(tributary.bv)
             #d3.selectAll(".bvclone").remove(); 
             $('#clones').empty()
-            make_clones()
+            tributary.make_clones()
 
         try
             #we exec the user defined append code
