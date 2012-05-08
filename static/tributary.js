@@ -33,8 +33,10 @@ tributary.Tributary = (function() {
     return this.on("execute", this.execute);
   };
   Tributary.prototype.execute = function() {
+    var svg;
     $("svg").empty();
     try {
+      svg = d3.select("svg");
       eval(this.get("code"));
     } catch (_e) {}
     return true;
@@ -70,8 +72,10 @@ tributary.Delta = (function() {
     Delta.__super__.constructor.apply(this, arguments);
   }
   Delta.prototype.execute = function() {
+    var svg;
     $("#delta").empty();
     try {
+      svg = d3.select(".tributary_svg");
       eval(this.get("code"));
     } catch (_e) {}
     if (tributary.bv) {
@@ -79,7 +83,7 @@ tributary.Delta = (function() {
       tributary.make_clones();
     }
     try {
-      tributary.append(tributary.g);
+      tributary.init(tributary.g);
     } catch (_e) {}
     try {
       tributary.execute();
@@ -95,8 +99,10 @@ tributary.Flow = (function() {
     Flow.__super__.constructor.apply(this, arguments);
   }
   Flow.prototype.execute = function() {
+    var svg;
     $("#flow").empty();
     try {
+      svg = d3.select("#flow");
       eval(this.get("code"));
     } catch (_e) {}
     try {
@@ -116,8 +122,10 @@ tributary.Geyser = (function() {
     Geyser.__super__.constructor.apply(this, arguments);
   }
   Geyser.prototype.execute = function() {
+    var svg;
     $("#geyser").empty();
     try {
+      svg = d3.select("#geyser");
       eval(this.get("code"));
     } catch (_e) {}
     try {
@@ -137,8 +145,10 @@ tributary.Fountain = (function() {
     Fountain.__super__.constructor.apply(this, arguments);
   }
   Fountain.prototype.execute = function() {
-    $("#geyser").empty();
+    var svg;
+    $("#fountain").empty();
     try {
+      svg = d3.select("#fountain");
       eval(this.get("code"));
     } catch (_e) {}
     try {

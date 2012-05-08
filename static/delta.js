@@ -11,7 +11,7 @@ $(function() {
 
         gf.each(function(d, i) {
             var frame = d3.select(this)
-            tributary.append(frame)
+            tributary.init(frame)
             tributary.run(i/tributary.nclones, frame)
         })
     }
@@ -27,8 +27,8 @@ $(function() {
     tributary.pause = true
     //default loop mode
     //tributary.loop = "off";
-    //tributary.loop = "period";
-    tributary.loop = "pingpong";
+    tributary.loop = "period";
+    //tributary.loop = "pingpong";
     //d3.select("#pingpong_button").style("background-color", "#e3e3e3")
     $("#"+tributary.loop+"_button").addClass("selected-button")
 

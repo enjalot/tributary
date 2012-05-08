@@ -22,6 +22,7 @@ class tributary.Tributary extends Backbone.Model
         $("svg").empty()
         #run the code
         try
+            svg = d3.select("svg")
             eval(@get("code"))
 
         return true
@@ -56,6 +57,7 @@ class tributary.Delta extends tributary.Tributary
         $("#delta").empty()
         #run the code
         try
+            svg = d3.select(".tributary_svg")
             eval(@get("code"))
 
         if(tributary.bv)
@@ -65,7 +67,7 @@ class tributary.Delta extends tributary.Tributary
 
         try
             #we exec the user defined append code
-            tributary.append(tributary.g)
+            tributary.init(tributary.g)
         try
             #then we run the user defined run function
             #tributary.run(tributary.t, tributary.g)
@@ -79,6 +81,7 @@ class tributary.Flow extends tributary.Tributary
         $("#flow").empty()
         #run the code
         try
+            svg = d3.select("#flow")
             eval(@get("code"))
 
         try
@@ -96,6 +99,7 @@ class tributary.Geyser extends tributary.Tributary
         $("#geyser").empty()
         #run the code
         try
+            svg = d3.select("#geyser")
             eval(@get("code"))
         try
             #we exec the user defined append code
@@ -109,9 +113,10 @@ class tributary.Geyser extends tributary.Tributary
 class tributary.Fountain extends tributary.Tributary
     execute: () =>
         #empty the svg object
-        $("#geyser").empty()
+        $("#fountain").empty()
         #run the code
         try
+            svg = d3.select("#fountain")
             eval(@get("code"))
         try
             #we exec the user defined append code
