@@ -14,14 +14,21 @@
         ,"tags": "artsy",
         "width": 450,
         "height": 350
-    },
-    {
-        "gist":"2165875",
-        "filename":"warp.js",
-        "description":"Warp"
-        ,"tags": "artsy color",
+    }
+    ,{
+        "gist": "2632465",
+        "filename": "sinwaves.js",
+        "description": "Basics"
+        ,"tags": "basics",
         "width": 450,
         "height": 350
+    } 
+    ,{
+        "gist":"2632648",
+        "filename":"rgb.js",
+        "description":"RGB",
+        "width": 900,
+        "height": 400
     },
     {
         "gist":"2271956",
@@ -98,13 +105,13 @@
         "width": 450,
         "height": 450
     }
-    ,{
-        "gist": "2632465",
-        "filename": "sinwaves.js",
-        "description": "Basics"
-        ,"tags": "basics",
+    , {
+        "gist":"2165875",
+        "filename":"warp.js",
+        "description":"Warp"
+        ,"tags": "artsy color",
         "width": 450,
-        "height": 450
+        "height": 350
     }
 ]
 
