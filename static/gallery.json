@@ -3,7 +3,7 @@
         "gist":"2165875",
         "filename":"sinwaves.js",
         "description":"Sin Waves"
-        ,"tags": "artsy color",
+        ,"tags": "art color",
         "width":  450,
         "height": 710
     },
@@ -11,7 +11,7 @@
         "gist":"2271952",
         "filename":"squarecircle.js",
         "description":"Square Circle Illusion"
-        ,"tags": "artsy",
+        ,"tags": "art",
         "width": 450,
         "height": 350
     }
@@ -19,7 +19,7 @@
         "gist": "2632465",
         "filename": "sinwaves.js",
         "description": "Basics"
-        ,"tags": "basics",
+        ,"tags": "learn basic",
         "width": 450,
         "height": 350
     } 
@@ -27,6 +27,7 @@
         "gist":"2632648",
         "filename":"rgb.js",
         "description":"RGB",
+        "tags": "learn color",
         "width": 900,
         "height": 400
     },
@@ -93,7 +94,7 @@
         "gist": "2504820",
         "filename": "inlet.js",
         "description": "Basic bar chart example"
-        ,"tags": "visualization",
+        ,"tags": "learn visualization",
         "width": 450,
         "height": 150
     }
@@ -101,7 +102,7 @@
         "gist": "2632399",
         "filename": "sinwaves.js",
         "description": "Kerning example"
-        ,"tags": "design artsy",
+        ,"tags": "learn design art",
         "width": 450,
         "height": 450
     }
@@ -109,7 +110,7 @@
         "gist":"2165875",
         "filename":"warp.js",
         "description":"Warp"
-        ,"tags": "artsy color",
+        ,"tags": "art color",
         "width": 450,
         "height": 350
     }

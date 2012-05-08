@@ -289,7 +289,8 @@
 
 	<div id="controls">
 		<strong>Filter: </strong>
-		<button class="minimal" id="artsy">Artsy</button>
+		<button class="minimal" id="art">Art</button>
+		<button class="minimal" id="learn">Learn</button>
 		<button class="minimal" id="visualization">Visualization</button>
 		<button class="minimal" id="text">Text</button>
 		<button class="minimal" id="color">Color</button>
@@ -350,8 +351,11 @@
 			$('#visualization').click(function(){
 				$('#container').isotope({ filter: '.visualization' });				
 			})
-			$('#artsy').click(function(){
-				$('#container').isotope({ filter: '.artsy' });				
+			$('#art').click(function(){
+				$('#container').isotope({ filter: '.art' });				
+			})
+			$('#learn').click(function(){
+				$('#container').isotope({ filter: '.learn' });				
 			})
 			$('#text').click(function(){
 				$('#container').isotope({ filter: '.text' });				
