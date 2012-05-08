@@ -162,6 +162,8 @@ class tributary.TributaryView extends Backbone.View
                 thisCode = @code_editor.getValue()
                 @model.trigger("code", thisCode)
             onCursorActivity: () =>
+                @sliding = false
+                @picking = false
                 @editor_click()
                 """
                 cursor = @code_editor.getCursor(true)
@@ -280,9 +282,11 @@ class tributary.TributaryView extends Backbone.View
                 #$('#ColorPicker').offset({top: 10, left: 100})
                 #@picker.element.style.top = cursorOffset.top + "px"
                 #@picker.element.style.left = cursorOffset.left + "px"
-                @picker.element.style.display = ""
+                #@picker.element.style.display = ""
+                @picker.toggle(true)
             else
-                @picker.element.style.display = "none"
+                #@picker.element.style.display = "none"
+                @picker.toggle(false)
             @slider.css('visibility', 'hidden')
 
         @sliding = false

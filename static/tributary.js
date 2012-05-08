@@ -188,6 +188,8 @@ tributary.TributaryView = (function() {
         return this.model.trigger("code", thisCode);
       }, this),
       onCursorActivity: __bind(function() {
+        this.sliding = false;
+        this.picking = false;
         this.editor_click();
         return "cursor = @code_editor.getCursor(true)\ntoken = @code_editor.getTokenAt(cursor)\nif token.className != \"number\"\n    @slider.css('visibility', 'hidden')";
       }, this)
@@ -263,9 +265,9 @@ tributary.TributaryView = (function() {
         left = cursorOffset.x - 75 + "px";
         $('#ColorPicker').css('top', top);
         $('#ColorPicker').css('left', left);
-        this.picker.element.style.display = "";
+        this.picker.toggle(true);
       } else {
-        this.picker.element.style.display = "none";
+        this.picker.toggle(false);
       }
       this.slider.css('visibility', 'hidden');
     }
