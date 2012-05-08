@@ -351,13 +351,13 @@ class tributary.TributaryView extends Backbone.View
         he.on("click", (e) ->
             $("#editor").toggle()
             #toggle the gui for delta/flow
-            $('#gui').toggle()
+            #$('#gui').toggle()
             txt = he.html()
             #console.log("txt", txt)
             if(txt == "Hide")
                 he.html("Show")
-                $('#slider').css('visibility', 'hidden')
-                $('#ColorPicker').css('display', 'none')
+                #$('#slider').css('visibility', 'hidden')
+                #$('#ColorPicker').css('display', 'none')
             else
                 he.html("Hide")
                 #hide the slider if it's open

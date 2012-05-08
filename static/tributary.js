@@ -335,12 +335,9 @@ tributary.TributaryView = (function() {
     he.on("click", function(e) {
       var txt;
       $("#editor").toggle();
-      $('#gui').toggle();
       txt = he.html();
       if (txt === "Hide") {
-        he.html("Show");
-        $('#slider').css('visibility', 'hidden');
-        return $('#ColorPicker').css('display', 'none');
+        return he.html("Show");
       } else {
         return he.html("Hide");
       }
