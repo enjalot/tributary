@@ -98,5 +98,13 @@
         "width": 450,
         "height": 450
     }
+    ,{
+        "gist": "2632465",
+        "filename": "sinwaves.js",
+        "description": "Basics"
+        ,"tags": "basics",
+        "width": 450,
+        "height": 450
+    }
 ]
 
