@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+    <style type="text/css">
+	* { -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box; } /* Pardon me, just hacking the planet here */
+
+	body {
+		font-family: Verdana, Helvetica, Arial, "MS Trebuchet", sans-serif;
+		font-size: 13px;
+		width: 920px;
+		margin-left: auto;
+		margin-right: auto;
+/*		background: transparent url('http://subtlepatterns.com/patterns/purty_wood.png') repeat scroll top right; */
+		background: transparent url('/static/css/leather_bg.png') repeat scroll top right; 
+		
+		
+	}
+	a:link {
+		color: black;
+		padding-left: 3px;
+		padding-right: 3px;
+		background-color: rgba(0,0,0,0.1);
+		border-radius: 3px;
+		-webkit-transition:all .2s ease ;		
+		   -moz-transition:all .2s ease ;
+		     -o-transition:all .2s ease ;
+		        transition:all .2s ease ; 
+	}
+	a:hover, a:visited {
+		color: #242326;
+		background-color: transparent !important;
+	}
+	h2 {
+		font-size: 14px;
+	}
+	#container {
+/*		border: 1px solid black; */
+		height: 4700px !important;
+		
+		margin-left: auto;
+		margin-right: auto;
+	}
+	iframe {
+		border: 0;
+		border-radius: 4px;
+		overflow: hidden;
+	}
+	.sectiontitle {
+		text-align: center;
+		background-color: rgba(255,255,255,0.6);
+		margin: 0;
+		width: 100%;
+		opacity: 0.7;
+		
+		-webkit-transition:opacity .8s ease ;		
+		   -moz-transition:opacity .8s ease ;
+		     -o-transition:opacity .8s ease ;
+		        transition:opacity .8s ease ; 
+	}
+	.sectiontitle:hover {
+		opacity: 1;
+	}
+	.tributary h2 {
+		padding: 2px 5px;
+		position: absolute;
+		top: 0;
+	}
+	.tributary {
+		border-radius: 4px;
+		position: relative;
+		overflow: hidden;
+		display: inline-block;
+/*		border: 1px dotted black; 
+		width:  250px;
+		height: 250px; */
+		margin: 4px;
+		/*
+	  -moz-transform:    scale(0.75);
+	  -webkit-transform: scale(0.75);
+	*/
+	
+	-webkit-transition:all .8s ease ;		
+	   -moz-transition:all .8s ease ;
+	     -o-transition:all .8s ease ;
+	        transition:all .8s ease ; 
+	
+	-webkit-box-shadow:0 0px 2px 1px rgba(0,0,0,0.16); /* Saf3.0+, Chrome */
+	   -moz-box-shadow:0 0px 2px 1px rgba(0,0,0,0.16); /* FF3.5+ */
+	        box-shadow:0 0px 2px 1px rgba(0,0,0,0.16); /* Opera 10.5, IE 9.0 */
+\
+	}
+	.tributary:hover {
+/*		-moz-transform: scale(1);
+		-webkit-transform: scale(1);
+*/	}
+	
+	#intro, #features {
+		border: 1px solid #999;
+		background-color: rgba(255,255,255,0.7);
+	}
+	#intro {
+		padding: 18px;
+	}
+	#features {
+		padding: 18px;
+	}
+	
+	#controls {
+		margin-top: 25px;
+		margin-bottom: 25px;
+		padding-bottom: 8px;
+		border-bottom: 2px solid #CFCFCF;
+	}
+	#reset {
+		border: 1px solid black;
+	}
+	
+	/* Button styling */
+
+	button.minimal {
+	  background: #e3e3e3;
+	  border: 1px solid #bbb;
+	  -webkit-border-radius: 3px;
+	  -moz-border-radius: 3px;
+	  border-radius: 3px;
+	  -webkit-box-shadow: inset 0 0 1px 1px #f6f6f6;
+	  -moz-box-shadow: inset 0 0 1px 1px #f6f6f6;
+	  box-shadow: inset 0 0 1px 1px #f6f6f6;
+	  color: #333;
+	  font: bold 11px "helvetica neue", helvetica, arial, sans-serif;
+	  line-height: 1;
+	  padding: 8px 0 9px 0;
+	  text-align: center;
+	  text-shadow: 0 1px 0 rgba(255,255,255,0.7);
+	  width: 80px;
+	  }
+	button.minimal:hover {
+	    background: #d9d9d9;
+	    -webkit-box-shadow: inset 0 0 1px 1px #eaeaea;
+	    -moz-box-shadow: inset 0 0 1px 1px #eaeaea;
+	    box-shadow: inset 0 0 1px 1px #eaeaea;
+	    color: #222;
+	    cursor: pointer; }
+	button.minimal:active {
+	    background: #d0d0d0;
+	    -webkit-box-shadow: inset 0 0 1px 1px #e3e3e3;
+	    -moz-box-shadow: inset 0 0 1px 1px #e3e3e3;
+	    box-shadow: inset 0 0 1px 1px #e3e3e3;
+	    color: #000; }
+    </style>
+
+	<style type="text/css" media="screen">
+		/* Isotope stuff */
+		
+		/**** Isotope Filtering ****/
+
+		.isotope-item {
+		  z-index: 2;
+		}
+
+		.isotope-hidden.isotope-item {
+		  pointer-events: none;
+		  z-index: 1;
+		}
+
+		/**** Isotope CSS3 transitions ****/
+
+		.isotope,
+		.isotope .isotope-item {
+		  -webkit-transition-duration: 0.8s;
+		     -moz-transition-duration: 0.8s;
+		      -ms-transition-duration: 0.8s;
+		       -o-transition-duration: 0.8s;
+		          transition-duration: 0.8s;
+		}
+
+		.isotope {
+		  -webkit-transition-property: height, width;
+		     -moz-transition-property: height, width;
+		      -ms-transition-property: height, width;
+		       -o-transition-property: height, width;
+		          transition-property: height, width;
+		}
+
+		.isotope .isotope-item {
+		  -webkit-transition-property: -webkit-transform, opacity;
+		     -moz-transition-property:    -moz-transform, opacity;
+		      -ms-transition-property:     -ms-transform, opacity;
+		       -o-transition-property:         top, left, opacity;
+		          transition-property:         transform, opacity;
+		}
+	</style>
+  </head>
+  <body>
+
+    <script type="text/javascript" src="http://mbostock.github.com/d3/d3.v2.js"></script>
+    <script type="text/javascript" src="/static/lib/jwerty.js"></script>
+    <script type="text/javascript" src="/static/lib/underscore-min.js"></script>
+    <script type="text/javascript" src="/static/lib/backbone-min.js"></script>
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+
+    <script type="text/javascript" src="/static/lib/base64.js"></script>
+    <script type="text/javascript" src="/static/lib/canvas2image.js"></script>
+
+    <script type="text/javascript" src="http://canvg.googlecode.com/svn/trunk/rgbcolor.js"></script> 
+    <script type="text/javascript" src="http://canvg.googlecode.com/svn/trunk/canvg.js"></script> 
+        
+	
+    <script type="text/javascript">
+
+    //collection of tributaries
+    var Trib = Backbone.Model.extend({
+        trib_base_url: "/tributary/",
+        shore_base_url: "/shore/",
+        initialize: function() { 
+        },
+        _url: function(base_url) {
+            return base_url + this.get("gist") + "/" + this.get("filename");
+        },
+        trib_url: function() {
+            return this._url(this.trib_base_url);
+        },
+        shore_url: function() {
+            return this._url(this.shore_base_url);
+        }
+    });
+    var Gallery = Backbone.Collection.extend({
+      model: Trib
+    });
+
+    d3.json("/static/gallery.json", function(json) {
+        var gallery = new Gallery()
+        gallery.add(json)
+        //console.log(gallery);
+        var body = d3.select("#container")
+        var divs = body.selectAll("iframe.trib")
+            .data(gallery.models)
+            .enter()
+			.append("div")
+			.attr("class", function(d,i){
+				var tags = d.get('tags') || '';
+				return "tributary item example "+tags;
+			})
+			.attr("data-tribtype", function(d,i){
+				
+			})
+			.html(function(d,i){ 
+					
+					var text = d.get('description') || i;
+					return "<h2 class='sectiontitle' id='title"+i+"'>"+text+"</h2>";
+					
+			})
+/*			.attr("data-x", function(d,i){		
+					return d.get('x') || i*1800;						
+			})
+*/        var iframes = divs.append("html:iframe")
+            .attr("class", "trib")
+            .attr("src", function(d,i) {
+                if(d.get("delta")) {
+                    return d._url("/carbonite/")
+                } else {
+                    return d.shore_url();
+                }
+            })
+            .attr("width", function(d,i){                
+				return d.get('width') || 100;											
+            })
+            .attr("height", function(d,i){	
+				return d.get('height') || 100;															
+			})
+        var canvas = divs.append("html:canvas")
+            .attr("id", function(d,i) {
+                return "trib_canvas_" + d.get("gist") + "_" + i;
+            })
+            .attr("width", function(d,i){                
+				return d.get('width') || 100;											
+            })
+            .attr("height", function(d,i){	
+				return d.get('height') || 100;															
+			})
+            .style("display", "none")
+
+        divs.append("div")
+            .attr("pointer-events", "all")
+            .on("click", function(d,i) {
+                //console.log(d3.select(this.parentNode).select("iframe").node())
+
+                var svg_node = $(this.parentNode).find("iframe").contents().find("svg")[0]
+
+                console.log("serializing the svg")
+                var svg_xml = (new XMLSerializer()).serializeToString(svg_node)
+                console.log("converting svg to canvas")
+                var canvas_id = "trib_canvas_" + d.get("gist") + "_" + i;
+                canvg(canvas_id, svg_xml);
+                console.log("saving canvas as png")
+                var canvas = $(this.parentNode).find("canvas")[0]
+                Canvas2Image.saveAsPNG(canvas); 
+                //nice mix of js libraries eh?
+                d3.select(canvas).remove()
+            })
+            .style("width", "100%")
+            .style("height", "100%")
+            .style("cursor", "pointer")
+            .style("position", "absolute")
+            .style("top", 0)
+            .style("left", 0)
+            .style("background-color", "rgb(255, 255, 255, 0.01)")
+
+
+				$('#container').isotope({
+					itemSelector: '.tributary'
+					,'layoutMode': 'masonry'
+					,masonry: {
+						columnWidth: 460
+					}
+					,masonryHorizontal: {
+						rowHeight: 150
+					}
+				})
+    })
+
+    </script>
+	<button class="minimal" id="reset" style="position: fixed; top: 0; right: 0;">Reset</button>
+
+	<div id="controls">
+		<strong>Filter: </strong>
+		<button class="minimal" id="art">Art</button>
+		<button class="minimal" id="learn">Learn</button>
+		<button class="minimal" id="visualization">Visualization</button>
+		<button class="minimal" id="text">Text</button>
+		<button class="minimal" id="color">Color</button>
+		<button class="minimal" id="all" style="border: 2px solid black;">All</button>	
+		
+		|
+		<button class="minimal" id="reorder">Glance</button>
+			
+	</div>
+	<div id="container">				
+		<div id="intro" class="tributary text" style="width: 450px; height: 200px;">
+			<h3><a href="https://github.com/enjalot/tributary" title="Fork it on Github!">Tributary</a></h3>
+            Tributary started with the idea of making responsive code easier to share. We started with <a href="http://gabrielflor.it/water">Gabriel Florit's implementation</a> of 
+            <a href="http://www.youtube.com/watch?v=PUv66718DII">Bret Victor's talk</a>. 
+            The use of gists to drive the code in the view comes from Mike Bostock's <a href="htt://bl.ocks.org">bl.ocks.org</a>. 
+            Tributary works by evaluating your code, providing a few things such as an svg element and a few libraries for the code to use. <!-- More assumptions are made in the experimental sub projects Delta, Flow and Geyser.-->
+		</div>
+		
+		<div id="features" class="tributary text" style="width: 450px; height: 200px;">
+			<h3>Features</h3>
+            Tributary comes with <a href="http://jquery.com/">jQuery</a>, 
+            <a href="http://mbostock.github.com/d3/"> d3</a>, 
+            <a href="http://documentcloud.github.com/underscore/">underscore</a> and 
+            <a href="http://backbonejs.org/">backbone</a> available in the code editor. The editor is powered by 
+            <a href="http://codemirror.net/">CodeMirror</a>, jQuery UI and <a href="https://github.com/mudcube/Color-Picker">ColorPicker</a>
+
+            <br>
+            <!--
+            Delta:
+
+            <br>
+            Flow:
+
+            <br>
+            Geyser:
+
+            <br>
+            -->
+		</div>
+	</div>
+	
+    <script type="text/javascript" src="/static/lib/isotope.min.js"></script>
+	
+	<script type="text/javascript" charset="utf-8">
+		$(document).ready(function(){
+			
+			$('#reorder').click(function(){
+				$('.example').each(function(){
+					$(this).width("100px")
+					$(this).height("100px")
+				})
+				$('#container').isotope({ layoutMode: 'fitRows'})
+				
+				$('#container').isotope('reLayout', console.log("Re-layed-out!"))							
+				
+			})
+			
+			$('#visualization').click(function(){
+				$('#container').isotope({ filter: '.visualization' });				
+			})
+			$('#art').click(function(){
+				$('#container').isotope({ filter: '.art' });				
+			})
+			$('#learn').click(function(){
+				$('#container').isotope({ filter: '.learn' });				
+			})
+			$('#text').click(function(){
+				$('#container').isotope({ filter: '.text' });				
+			})
+			$('#color').click(function(){
+				$('#container').isotope({ filter: '.color' });				
+			})
+			$('#all').click(function(){
+				$('#container').isotope({ filter: '*' });				
+			})
+			$('#reset').click(function(){
+				$('.example').each(function(){
+					$(this).width ("")
+					$(this).height("")
+				})
+				$('#container').isotope({ filter: '*' });
+				
+				$('#container').isotope('reLayout', console.log("Re-layed-out!"))							
+				
+			})
+		})
+	</script>
+  </body>
+</html>

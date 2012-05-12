@@ -6,12 +6,18 @@ import json
 app = Flask(__name__)
 app.debug = True
 
-base_url = "/static/water/"
+base_url = "/"
 
 @app.route("/")
 def hello():
     #return render_template("index.html", base_url=base_url)
     return render_template("gallery.html", base_url=base_url)
+
+@app.route("/creator")
+def creator():
+    #return render_template("index.html", base_url=base_url)
+    return render_template("gallery_creator.html", base_url=base_url)
+
 
 @app.route("/tributary/")
 def tributary():
