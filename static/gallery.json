@@ -5,7 +5,8 @@
         "description":"Sin Waves"
         ,"tags": "art color",
         "width":  450,
-        "height": 710
+        "height": 710,
+        "splash": "http://tributary-gallery.s3.amazonaws.com/sinwaves.png"
     }
     ,{
         "gist":"2637876",
@@ -14,7 +15,8 @@
         "tags": "delta animation",
         "width": 450,
         "height": 350,
-        "delta": true
+        "delta": true,
+        "splash": "http://tributary-gallery.s3.amazonaws.com/simplesquare.png"
     }
     ,{
         "gist": "2636157",
@@ -22,7 +24,8 @@
         "description": "Basics"
         ,"tags": "learn basic",
         "width": 450,
-        "height": 350
+        "height": 350,
+        "splash": "http://tributary-gallery.s3.amazonaws.com/basics.png"
     } 
     ,{
         "gist":"2632648",
@@ -30,14 +33,16 @@
         "description":"RGB",
         "tags": "learn color",
         "width": 900,
-        "height": 400
+        "height": 400,
+        "splash": "http://tributary-gallery.s3.amazonaws.com/rgb.png"
     }
     , {
         "gist":"2271956",
         "filename":"squarecircle.js",
         "description":"Crazy Nest",
         "width": 900,
-        "height": 100
+        "height": 100,
+        "splash": "http://tributary-gallery.s3.amazonaws.com/crazynest.png"
     }
     , {
         "gist":"2637883",
@@ -45,14 +50,16 @@
         "description":"Dancing Dots",
         "width": 900,
         "height": 300,
-        "delta": true
+        "delta": true,
+        "splash": "http://tributary-gallery.s3.amazonaws.com/dots.png"
     }
     , {
         "gist":"2271954",
         "filename":"squarecircle.js",
         "description":"Rounded Corners",
         "width": 900,
-        "height": 100
+        "height": 100,
+        "splash": "http://tributary-gallery.s3.amazonaws.com/roundedcorners.png"
     },
     {
         "gist":"2330299",
@@ -60,7 +67,8 @@
         "description":"Colors",
         "width": 900,
         "height": 450,
-        "tags": "color"
+        "tags": "color",
+        "splash": "http://tributary-gallery.s3.amazonaws.com/colors.png"
     },
     {
         "gist":"2272533",
@@ -69,6 +77,7 @@
         "width": 450,
         "height": 450
         ,"tags": "color"
+        ,"splash": "http://tributary-gallery.s3.amazonaws.com/colortubes.png"
     }
     ,{
         "gist":"2271952",
@@ -77,6 +86,7 @@
         ,"tags": "art",
         "width": 450,
         "height": 350
+        ,"splash": "http://tributary-gallery.s3.amazonaws.com/squarecircle.png"
     },
     {
         "gist":"2418851",
@@ -84,6 +94,7 @@
         "description":"Icons",
         "width": 450,
         "height": 225
+        ,"splash": "http://tributary-gallery.s3.amazonaws.com/icons.png"
     },
     {
         "gist":"2356706",
@@ -92,6 +103,7 @@
         ,"width": 450
         ,"height": 225
         ,"tags": "color"
+        ,"splash": "http://tributary-gallery.s3.amazonaws.com/rainbowhand.png"
     },
     {
         "gist":"2637864",
@@ -101,6 +113,7 @@
         ,"height": 325
         ,"tags": "animation example"
         ,"delta": true
+        ,"splash": "http://tributary-gallery.s3.amazonaws.com/arctween.png"
     },
     {
         "gist":"2323185",
@@ -108,6 +121,7 @@
         "description":"Euler vs. RK4 Numerical Integration",
         "width": 450
         ,"height": 150
+        ,"splash": "http://tributary-gallery.s3.amazonaws.com/euler.png"
     },
     {
         "gist":"2426346",
@@ -115,6 +129,7 @@
         "description":"More Colors",
         "width": 450
         ,"height": 450
+        ,"splash": "http://tributary-gallery.s3.amazonaws.com/morecolors.png"
     },
     {
         "gist": "2504820",
@@ -123,6 +138,7 @@
         ,"tags": "learn visualization",
         "width": 450,
         "height": 150
+        ,"splash": "http://tributary-gallery.s3.amazonaws.com/bars.png"
     }
     ,{
         "gist": "2636144",
@@ -130,7 +146,8 @@
         "description": "Kerning example"
         ,"tags": "learn design art",
         "width": 450,
-        "height": 450
+        "height": 150
+        ,"splash": "http://tributary-gallery.s3.amazonaws.com/kerning.png"
     }
     , {
         "gist":"2165875",
@@ -139,6 +156,7 @@
         ,"tags": "art color",
         "width": 450,
         "height": 350
+        ,"splash": "http://tributary-gallery.s3.amazonaws.com/warp.png"
     }
 ]
 

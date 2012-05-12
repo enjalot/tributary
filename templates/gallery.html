@@ -230,7 +230,7 @@
         gallery.add(json)
         //console.log(gallery);
         var body = d3.select("#container")
-        var divs = body.selectAll("iframe.trib")
+        var divs = body.selectAll("div.trib")
             .data(gallery.models)
             .enter()
 			.append("div")
@@ -238,6 +238,7 @@
 				var tags = d.get('tags') || '';
 				return "tributary item example "+tags;
 			})
+            .classed("trib", true)
 			.attr("data-tribtype", function(d,i){
 				
 			})
@@ -250,7 +251,22 @@
 /*			.attr("data-x", function(d,i){		
 					return d.get('x') || i*1800;						
 			})
-*/        var iframes = divs.append("html:iframe")
+ */        
+        var images = divs.append("html:img")
+            .attr("src", function(d,i) {
+                if(d.get("splash")) {
+                    return d.get("splash")
+                }
+            })
+            .attr("width", function(d,i){                
+				return d.get('width') || 100;											
+            })
+            .attr("height", function(d,i){	
+				return d.get('height') || 100;															
+			})
+
+        /*
+        var iframes = divs.append("html:iframe")
             .attr("class", "trib")
             .attr("src", function(d,i) {
                 if(d.get("delta")) {
@@ -265,6 +281,7 @@
             .attr("height", function(d,i){	
 				return d.get('height') || 100;															
 			})
+        */
         divs.append("div")
             .attr("pointer-events", "all")
             .on("click", function(d,i) {
