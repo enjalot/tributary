@@ -91,6 +91,13 @@ def shore_gist(gist=None, filename=None):
     #return render_template("water.html", code=code, base_url=base_url) 
     return render_template("shore.html", gist=gist, filename=filename, base_url=base_url) 
 
+@app.route("/carbonite/<gist>/<filename>")
+def carbonite_gist(gist=None, filename=None):
+    #print gist, filename
+    #return render_template("water.html", code=code, base_url=base_url) 
+    return render_template("carbonite.html", gist=gist, filename=filename, base_url=base_url) 
+
+
 @app.route("/embed/<gist>/<filename>")
 def embed_gist(gist=None, filename=None):
     #print gist, filename

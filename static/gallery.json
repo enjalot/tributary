@@ -6,14 +6,15 @@
         ,"tags": "art color",
         "width":  450,
         "height": 710
-    },
-    {
-        "gist":"2271952",
-        "filename":"squarecircle.js",
-        "description":"Square Circle Illusion"
-        ,"tags": "art",
+    }
+    ,{
+        "gist":"2637876",
+        "filename":"square.js",
+        "description":"Simple Square Transition",
+        "tags": "delta animation",
         "width": 450,
-        "height": 350
+        "height": 350,
+        "delta": true
     }
     ,{
         "gist": "2636157",
@@ -30,15 +31,23 @@
         "tags": "learn color",
         "width": 900,
         "height": 400
-    },
-    {
+    }
+    , {
         "gist":"2271956",
         "filename":"squarecircle.js",
         "description":"Crazy Nest",
         "width": 900,
         "height": 100
-    },
-    {
+    }
+    , {
+        "gist":"2637883",
+        "filename":"circles.js",
+        "description":"Dancing Dots",
+        "width": 900,
+        "height": 300,
+        "delta": true
+    }
+    , {
         "gist":"2271954",
         "filename":"squarecircle.js",
         "description":"Rounded Corners",
@@ -60,6 +69,14 @@
         "width": 450,
         "height": 450
         ,"tags": "color"
+    }
+    ,{
+        "gist":"2271952",
+        "filename":"squarecircle.js",
+        "description":"Square Circle Illusion"
+        ,"tags": "art",
+        "width": 450,
+        "height": 350
     },
     {
         "gist":"2418851",
@@ -75,6 +92,15 @@
         ,"width": 450
         ,"height": 225
         ,"tags": "color"
+    },
+    {
+        "gist":"2637864",
+        "filename":"arctween.js",
+        "description":"Arc Tween Example"
+        ,"width": 450
+        ,"height": 325
+        ,"tags": "animation example"
+        ,"delta": true
     },
     {
         "gist":"2323185",

@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+
+{% block title %}Delta{% endblock %}
+
+{% block default_style %}
+{% endblock %}
+
+{% block style %}
+    <link rel='stylesheet' type='text/css' href='/static/css/delta.css' />
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}
+
+{% block branding %}
+	<h1>Delta</h1>
+{% endblock %}
+
+{% block gui %}
+<div id='display'>
+        <svg id="deltasvg" class="tributary_svg"></svg>
+</div>
+{% endblock %}
+
+{% block chrome %}
+{% endblock %}
+
+{% block attribution %}
+{% endblock %}
+
+{% block jsinit %}
+    tributary.bv = true;
+    tributary.nclones = 5;
+    tributary.t = 0;
+
+    tributary.make_clones = function() {
+        //make n frames with lowered opacity
+        var svg = d3.select("#clones")
+        var frames = d3.range(tributary.nclones)
+        var gf = svg.selectAll("g.bvclone")
+            .data(frames).enter()
+            .append("g")
+                .attr("class", "bvclone")
+                .style("opacity", tributary.clone_opacity)
+
+        gf.each(function(d, i) {
+            var frame = d3.select(this)
+            tributary.init(frame)
+            tributary.run(i/tributary.nclones, frame)
+        })
+    }
+    tributary.clones = d3.select("svg").append("g").attr("id", "clones")
+    tributary.g = d3.select("svg").append("g").attr("id", "delta")
+    //this is a wrapper 
+    tributary.execute = function() {
+        try {
+            tributary.run(tributary.ease(tributary.t), tributary.g)
+        } catch (e) {}
+    }
+    trib = new tributary.Delta({"gist":"{{gist}}", "filename":"{{filename}}"})
+
+    //get the code
+    trib.get_code(function(error, code) {
+        //execute the new code onse we get it
+        trib.newcode(code);         
+    })
+
+    window.onresize = function(event) {
+        trib.trigger("execute")
+    }
+{% endblock %}
+
+
+
+

@@ -36,7 +36,7 @@
 	}
 	#container {
 /*		border: 1px solid black; */
-		height: 3200px !important;
+		height: 4700px !important;
 		
 		margin-left: auto;
 		margin-right: auto;
@@ -211,11 +211,14 @@
         shore_base_url: "/shore/",
         initialize: function() { 
         },
+        _url: function(base_url) {
+            return base_url + this.get("gist") + "/" + this.get("filename");
+        },
         trib_url: function() {
-            return this.trib_base_url + this.get("gist") + "/" + this.get("filename");
+            return this._url(this.trib_base_url);
         },
         shore_url: function() {
-            return this.shore_base_url + this.get("gist") + "/" + this.get("filename");
+            return this._url(this.shore_base_url);
         }
     });
     var Gallery = Backbone.Collection.extend({
@@ -250,7 +253,11 @@
 */        var iframes = divs.append("html:iframe")
             .attr("class", "trib")
             .attr("src", function(d,i) {
-                return d.shore_url()
+                if(d.get("delta")) {
+                    return d._url("/carbonite/")
+                } else {
+                    return d.shore_url();
+                }
             })
             .attr("width", function(d,i){                
 				return d.get('width') || 100;											
@@ -261,7 +268,11 @@
         divs.append("div")
             .attr("pointer-events", "all")
             .on("click", function(d,i) {
-                window.open(d.trib_url());
+                if(d.get("delta")) {
+                    window.open(d._url("/delta/"));
+                } else {
+                    window.open(d.trib_url());
+                }
             })
             .style("width", "100%")
             .style("height", "100%")
