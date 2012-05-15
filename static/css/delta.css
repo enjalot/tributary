@@ -22,9 +22,10 @@
 
 #bv_button{
     float:left;
+    visibility: visible;
     z-index: 14;
-    border: 0 !important;
     cursor: pointer;
+    border: 0 !important;
     width: 40px;
     opacity: 0.6;
 }

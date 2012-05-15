@@ -135,6 +135,7 @@ $(function() {
             }
         }
     })
+    /*
      $("#off_button").on("click", function(event) {
         tributary.loop = "off"
          d3.selectAll(".select").style("background-color", null)
@@ -155,18 +156,22 @@ $(function() {
           $('.select').removeClass("selected-button");
          $("#pingpong_button").addClass("selected-button")
     })
+    */
      
     tributary.bv = false;
-    $("#bv_button").on("click", function(event) {
+    var bv_button = $("#bv_button");
+    bv_button.on("click", function(event) {
         tributary.bv = !tributary.bv;
         if(tributary.bv)
         {
-            d3.select("#bv_button").style("background-color", "#e3e3e3")
+            //d3.select("#bv_button").style("background-color", "#e3e3e3")
+            bv_button.addClass("playing")
             tributary.make_clones();
         }
         else
         {
-            d3.select("#bv_button").style("background-color", null)
+            //d3.select("#bv_button").style("background-color", null)
+            bv_button.removeClass("playing")
             d3.selectAll(".bvclone").remove()
         }
     })
