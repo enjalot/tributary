@@ -278,35 +278,7 @@
     	width: 35px;
     }
     
-    /* delta time slider */
-    #time_slider {
-        position: fixed;
-        bottom: 40%;
-        right: 10px;
-    	visibility: visible;
-    	z-index: 14;
-    	width: 50%;
-        margin-bottom: 10px;
-        
-        -webkit-box-shadow:inset 0 0 3px 1px rgba(0,0,0,0.1); /* Saf3.0+, Chrome */
-           -moz-box-shadow:inset 0 0 3px 1px rgba(0,0,0,0.1); /* FF3.5+ */
-                box-shadow:inset 0 0 3px 1px rgba(0,0,0,0.1); /* Opera 10.5, IE 9.0 */
-    	
-/*    	border: 4px solid white; */
-        height: 20px;
-/*    	border-bottom: 5px solid white; */
-}
 
-    #time_slider .ui-slider-handle {
-    	background: #CB336E;
-        border: 0px solid black;
-    	width: 25px;
-    	margin-top: 6px;
-        /*
-    	margin-left: 8px;
-    	margin-right: 8px;
-        */
-    }
     .selected-button {
 /*        background-color: rgba(0,0,0,0.3) !important; */
         background-color: white !important;
@@ -397,79 +369,7 @@
     #fork-n-tweet button {
         padding-bottom: 14px !important;
     }
-    
-
-    #gui {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 400px;
-        height: 40px;
-        padding-top: 10px;
-        z-index: 1000;
-    }
-     #play_button{
-        position: fixed;
-        display:block;
-        bottom: 40%;
-        right: 52%;
-    	visibility: visible;
-    	z-index: 14;
-    	/*width: 58%;*/
-
-        cursor: pointer;
-        text-align: center;
-    }
-
-     #bv_button{
-/*        position: fixed;
-        display:block;
-        bottom: 44%;
-        right: 760px;
-    	visibility: visible;
-*/    	z-index: 14;
-    	/*width: 58%;*/
-        border: 0 !important;
-        cursor: pointer;
-        width: 40px;
-        opacity: 0.6;
-    }
-    #bv_button:hover {
-        opacity: 1;
-    }
- 
-
-      #loop_button{
-/*        position: absolute;
-        display:block;
-        bottom: 44%;
-        right: 10px;
-    	visibility: visible;
-*/    	z-index: 14;
-    	/*width: 58%;*/
-    }       
-     #pingpong_button{
-/*        position: absolute;
-        display:block;
-        bottom: 48%;
-        right: 10px;
-    	visibility: visible;
-    	z-index: 14;
-*/   	/*width: 58%;*/
-        width: 70px;
-    }
-
-     #off_button{
-/*        position: absolute;
-        display:block;
-        bottom: 52%;
-        right: 10px;
-    	visibility: visible;
-    	z-index: 14;
-*/    	/*width: 58%;*/
-    }
-
-
+     
 
     #instructions {
     	top: 50px;
