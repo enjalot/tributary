@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>New</title>
+    <script type="text/javascript" src="../../d3/d3.js"></script>
+    <script type="text/javascript" src="../../dvl.js"></script>
+    <style type="text/css">
+      line.ticks,
+      circle {
+        stroke: #ccc;
+        fill: none;
+      }
+
+      line.hour,
+      line.min,
+      line.sec {
+        stroke: black;
+      }
+    </style>
+  </head>
+  <body>
+  </body>
+
+  <script>
+    var now = dvl.def(new Date())
+    var numClocks = dvl.def(1)
+
+    setInterval(function() {
+      now.set(new Date).notify()
+    }, 1000)
+
+    var time = dvl.apply([now, numClocks], function(now, num) {
+      var time = now.valueOf();
+      return d3.range(num).map(function(o) { return new Date(time - o * 60*60*1000); });
+    })
+
+    var clock = dvl.bind({
+      parent: d3.select('body'),
+      self: 'svg.clock',
+      data: time,
+      attr: {
+        width: 200,
+        height: 200
+      }
+    })
+
+    dvl.bind({
+      parent: clock,
+      self: 'circle',
+      data: [8, 100],
+      attr: {
+        cx: 100,
+        cy: 100,
+        r: function(d) { return d; }
+      }
+    })
+
+    dvl.bind({
+      parent: clock,
+      self: 'line.ticks',
+      data: d3.range(12),
+      attr: {
+        x1: function(d) { return 100 + 80 * Math.sin(2 * Math.PI * d/12); },
+        y1: function(d) { return 100 - 80 * Math.cos(2 * Math.PI * d/12); },
+        x2: function(d) { return 100 + 99 * Math.sin(2 * Math.PI * d/12); },
+        y2: function(d) { return 100 - 99 * Math.cos(2 * Math.PI * d/12); }
+      }
+    })
+
+    dvl.bind({
+      parent: clock,
+      self: 'line.hour',
+      attr: {
+        x1: function(d) { return 100 - 10 * Math.sin(2 * Math.PI * (d.getHours() + d.getMinutes()/60)/24); },
+        y1: function(d) { return 100 - 10 * Math.cos(2 * Math.PI * (d.getHours() + d.getMinutes()/60)/24); },
+        x2: function(d) { return 100 - 80 * Math.sin(2 * Math.PI * (d.getHours() + d.getMinutes()/60)/24); },
+        y2: function(d) { return 100 - 80 * Math.cos(2 * Math.PI * (d.getHours() + d.getMinutes()/60)/24); }
+      }
+    })
+
+    dvl.bind({
+      parent: clock,
+      self: 'line.min',
+      attr: {
+        x1: function(d) { return 100 + 10 * Math.sin(2 * Math.PI * d.getMinutes()/60); },
+        y1: function(d) { return 100 - 10 * Math.cos(2 * Math.PI * d.getMinutes()/60); },
+        x2: function(d) { return 100 + 99 * Math.sin(2 * Math.PI * d.getMinutes()/60); },
+        y2: function(d) { return 100 - 99 * Math.cos(2 * Math.PI * d.getMinutes()/60); }
+      }
+    })
+
+    dvl.bind({
+      parent: clock,
+      self: 'line.sec',
+      attr: {
+        x1: function(d) { return 100 + 10 * Math.sin(2 * Math.PI * d.getSeconds()/60); },
+        y1: function(d) { return 100 - 10 * Math.cos(2 * Math.PI * d.getSeconds()/60); },
+        x2: function(d) { return 100 + 99 * Math.sin(2 * Math.PI * d.getSeconds()/60); },
+        y2: function(d) { return 100 - 99 * Math.cos(2 * Math.PI * d.getSeconds()/60); }
+      },
+      transition: {
+        duration: 900
+      }
+    })
+
+
+  </script>
+</html>

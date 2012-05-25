@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>DVL Random Walk</title>
+    <script type="text/javascript" src="../../d3/d3.js"></script>
+    <script type="text/javascript" src="../../protovis-r3.2.js"></script>
+    <script type="text/javascript" src="../../dvl.js"></script>
+    <style type="text/css">
+
+body {
+  font: 12px sans-serif;
+}
+
+.background {
+  fill: #ccc;
+}
+
+line {
+  shape-rendering: crispEdges;
+  stroke: gray;
+}
+
+path {
+  stroke: red;
+  fill: none;
+}
+
+    </style>
+
+  </head>
+  <body>
+    <div>
+    </div>
+  </body>
+  <script>
+
+  var random = dvl.random({
+    walk: 0.1,
+    min: 10000,
+    max: 80000,
+    interval: 1000
+  });
+
+  var data = dvl.recorder({
+    data: random,
+    value: 'value',
+    timestamp: 'time',
+    max: 20
+  })
+
+	var getX = dvl.acc('time');
+	var getY = dvl.acc('value');
+
+	var margin = { top: 30, bottom: 70, left: 30, right: 70 };
+
+  var width = dvl.def(800);
+  var height = dvl.def(500);
+  var innerWidth = dvl.op.sub(width, margin.left, margin.right);
+  var innerHeight = dvl.op.sub(height, margin.top, margin.bottom);
+
+  var transition = { duration: 300 }
+
+  var svg = dvl.bind({
+    parent: d3.select('body'),
+    self: 'svg',
+    attr: {
+      width: width,
+      height: height
+    }
+  });
+
+  var panel = dvl.bind({
+    parent: svg,
+    self: 'g.main',
+    attr: {
+      transform: 'translate(' + margin.left + ',' + margin.top + ')'
+    }
+  });
+
+  dvl.bind({
+    parent: panel,
+    self: 'rect.background',
+    attr: {
+      width:  innerWidth,
+      height: innerHeight
+    }
+  });
+
+  var sx = dvl.scale.linear({
+    name: "scale_x",
+    domain: { data:data, acc:getX, sorted:true },
+    rangeFrom: 0,
+    rangeTo: innerWidth
+  })
+
+  var sy = dvl.scale.linear({
+    name: "scale_y",
+    domain: { data:data, acc:getY },
+    rangeFrom: innerHeight,
+    rangeTo: 0
+  });
+
+  dvl.bind({
+    parent: panel,
+    self: 'line.x_ticks',
+    data: sx.ticks,
+    join: String,
+    attr: {
+      x1: sx.scale,
+      y1: 0,
+      x2: sx.scale,
+      y2: innerHeight
+    },
+    transition: transition
+  });
+
+  dvl.bind({
+    parent: panel,
+    self: 'text.x_ticks',
+    data: sx.ticks,
+    join: String,
+    attr: {
+      x: sx.scale,
+      y: innerHeight,
+      dy: '1.2em'
+    },
+    text: sx.format,
+    transition: transition
+  });
+
+  dvl.bind({
+    parent: panel,
+    self: 'line.y_ticks',
+    data: sy.ticks,
+    join: String,
+    attr: {
+      x1: 0,
+      y1: sy.scale,
+      x2: innerWidth,
+      y2: sy.scale
+    },
+    transition: transition
+  });
+
+  dvl.bind({
+    parent: panel,
+    self: 'text.y_ticks',
+    data: sy.ticks,
+    join: String,
+    attr: {
+      x: innerWidth,
+      y: sy.scale,
+      dx: '4px',
+      dy: '.35em'
+    },
+    text: sy.format,
+    transition: transition
+  });
+
+  var lineFn = dvl.apply(
+    [sx.scale, getX, sy.scale, getY],
+    function(sx, ax, sy, ay) {
+      return d3.svg.line()
+        .x(function(d) { return sx(ax(d)); })
+        .y(function(d) { return sy(ay(d)); })
+    }
+  );
+
+  dvl.bind({
+    parent: panel,
+    self: 'path',
+    data: dvl.op.list(data),
+    attr: {
+      d: lineFn
+    },
+    transition: transition
+  });
+
+  </script>
+</html>

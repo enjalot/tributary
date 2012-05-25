@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>New</title>
+    <script type="text/javascript" src="../../d3/d3.js"></script>
+    <script type="text/javascript" src="../../dvl.js"></script>
+    <style type="text/css">
+
+    </style>
+  </head>
+  <body>
+  </body>
+
+  <script>
+    var data = dvl.def([2,6,8,3,2])
+
+    setInterval(function() {
+      var _data = data.get()
+      _data.shift()
+      _data.push(Math.round(Math.random()*9+1))
+      data.set(_data).notify()
+    }, 1000)
+
+    var w = dvl.def(1, 'w');
+    var width = dvl.apply({
+      args: w,
+      fn: function(x) { return 20*x; }
+    })
+    var xFn = dvl.def(function(d,i) { return i*50 }, 'x_fn');
+
+    var svg = d3.select('body').append('svg')
+
+    dvl.bind({
+      parent: svg,
+      self: 'rect.myclass',
+      data: data,
+      join: String,
+      attr: {
+        x: xFn,
+        y: 0,
+        height: function(d) { return d * 10 },
+        width: width
+      },
+    })
+
+  </script>
+</html>
