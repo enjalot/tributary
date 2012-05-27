@@ -33,9 +33,9 @@
 
 
 {% block jsinit %}
-    trib = new tributary.Flow({"gist":"{{gist}}", "filename":"{{filename}}"})
-    tribView = new tributary.TributaryView({"model":trib, "endpoint":"flow"})
+    var model = new tributary.Flow({"gist":"{{gist}}", "filename":"{{filename}}"})
+    tribView = new tributary.TributaryView({"model":model, "endpoint":"flow"})
     window.onresize = function(event) {
-        trib.trigger("execute")
+        model.trigger("execute")
     }
 {% endblock %}

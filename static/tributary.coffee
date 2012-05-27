@@ -18,8 +18,6 @@ class tributary.Tributary extends Backbone.Model
         @on("execute", @execute)
 
     execute: () =>
-        #empty the svg object
-        #run the code
         try
             svg = d3.select("svg")
             #delete tributary.initialize
@@ -29,16 +27,29 @@ class tributary.Tributary extends Backbone.Model
             code += @get("code")
             code += "};"
             eval(code)
+            trib = window.trib  #access global trib object
+            trib_options = window.trib_options  #access global trib object
             tributary.initialize(d3.select("svg"))
-            @trigger("noerror")
+        catch e
+            @trigger("error", e)
+            return false
+        
+        #we don't want it to nuke the svg if there is an error
+        try
+            #for the datGUI stuff
+            window.trib = {}    #reset global trib object
+            window.trib_options = {}    #reset global trib_options object
+            trib = window.trib
+            trib_options = window.trib_options
+
+            $("svg").empty()
+            tributary.initialize(d3.select("svg"))
         catch e
             @trigger("error", e)
             return false
 
-        #we don't want it to nuke the svg if there is an error
-        try
-            $("svg").empty()
-            tributary.initialize(d3.select("svg"))
+
+        @trigger("noerror")
 
         return true
 
@@ -247,20 +258,32 @@ class tributary.TributaryView extends Backbone.View
                 @model.trigger("code", thisCode)
             })
 
-        ###
-        datgui things 
-        
+
+        #datgui things 
+
+        @dating = false
         @gui =  new dat.GUI()
-
-        @make_ui = (tribFunction, variables) =>            
-            for key in trib_options
-                console.log trib_options[key]
-                gui.add(trib, 'var'+key, trib_options[key].min, trib_options[key].max)    
-
-        ### 
-            
-            
-            
+        @make_ui = () =>
+            #we only need to remake the ui if we are not using it
+            if not @dating
+                @gui.destroy()
+                @gui =  new dat.GUI()
+                for key of trib
+                    console.log key, trib[key]
+                    if trib_options? and trib_options[key]?
+                        @gui.add(trib, key, trib_options[key].min, trib_options[key].max)
+                    else
+                        #automatically make the range for the slider since its not provided
+                        val = trib[key]
+                        if typeof(val) == "number"
+                            if val == 0
+                                min = -100
+                                max = 100
+                            else
+                                min = -3 * val
+                                max = 5 * val
+                        @gui.add(trib, key, min, max)
+                
             
             
         @inlet = Inlet(@code_editor)
@@ -371,6 +394,7 @@ class tributary.TributaryView extends Backbone.View
         )
         @model.on("noerror", () =>
             @editor_handle.style("background-color", "rgba(50, 250, 50, .4)")
+            @make_ui()
         )
 
         #Setup Hide the editor button

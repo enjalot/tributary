@@ -156,10 +156,10 @@
         }
     </script>
     <script type="text/javascript">
-    trib = new tributary.Fountain({"gist":"{{gist}}", "filename":"{{filename}}"})
-    tribView = new tributary.TributaryView({"model":trib, "endpoint":"fountain"})
+    var model = new tributary.Fountain({"gist":"{{gist}}", "filename":"{{filename}}"})
+    tribView = new tributary.TributaryView({"model":model, "endpoint":"fountain"})
     window.onresize = function(event) {
-        trib.trigger("execute")
+        model.trigger("execute")
     }
 
     </script>

@@ -39,23 +39,32 @@ tributary.Tributary = (function(_super) {
   };
 
   Tributary.prototype.execute = function() {
-    var code, svg;
+    var code, svg, trib, trib_options;
     try {
       svg = d3.select("svg");
       code = "tributary.initialize = function(g) {";
       code += this.get("code");
       code += "};";
       eval(code);
+      trib = window.trib;
+      trib_options = window.trib_options;
       tributary.initialize(d3.select("svg"));
-      this.trigger("noerror");
     } catch (e) {
       this.trigger("error", e);
       return false;
     }
     try {
+      window.trib = {};
+      window.trib_options = {};
+      trib = window.trib;
+      trib_options = window.trib_options;
       $("svg").empty();
       tributary.initialize(d3.select("svg"));
-    } catch (_error) {}
+    } catch (e) {
+      this.trigger("error", e);
+      return false;
+    }
+    this.trigger("noerror");
     return true;
   };
 
@@ -329,6 +338,35 @@ tributary.TributaryView = (function(_super) {
         return _this.model.trigger("code", thisCode);
       }
     });
+    this.dating = false;
+    this.gui = new dat.GUI();
+    this.make_ui = function() {
+      var key, max, min, val, _results;
+      if (!_this.dating) {
+        _this.gui.destroy();
+        _this.gui = new dat.GUI();
+        _results = [];
+        for (key in trib) {
+          console.log(key, trib[key]);
+          if ((typeof trib_options !== "undefined" && trib_options !== null) && (trib_options[key] != null)) {
+            _results.push(_this.gui.add(trib, key, trib_options[key].min, trib_options[key].max));
+          } else {
+            val = trib[key];
+            if (typeof val === "number") {
+              if (val === 0) {
+                min = -100;
+                max = 100;
+              } else {
+                min = -3 * val;
+                max = 5 * val;
+              }
+            }
+            _results.push(_this.gui.add(trib, key, min, max));
+          }
+        }
+        return _results;
+      }
+    };
     this.inlet = Inlet(this.code_editor);
     this.init_gui();
     if (this.model.get("code") != null) {
@@ -397,7 +435,8 @@ tributary.TributaryView = (function(_super) {
       return _this.editor_handle.style("background-color", "rgba(250, 50, 50, .7)");
     });
     this.model.on("noerror", function() {
-      return _this.editor_handle.style("background-color", "rgba(50, 250, 50, .4)");
+      _this.editor_handle.style("background-color", "rgba(50, 250, 50, .4)");
+      return _this.make_ui();
     });
     he = $('#hideEditor');
     return he.on("click", function(e) {

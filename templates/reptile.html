@@ -38,15 +38,15 @@
 
 
 {% block jsinit %}
-    trib = new tributary.Reptile({"gist":"{{gist}}", "filename":"{{filename}}"})
-    tribView = new tributary.TributaryView({"model":trib, "endpoint":"reptile"})
+    model = new tributary.Reptile({"gist":"{{gist}}", "filename":"{{filename}}"})
+    tribView = new tributary.TributaryView({"model":model, "endpoint":"reptile"})
 
     tributary.g_width = tributary.sw/3;
     tributary.g_height = tributary.sh/3;
 
 
     window.onresize = function(event) {
-        trib.trigger("execute")
+        model.trigger("execute")
         tributary.layout()
     }
 {% endblock %}

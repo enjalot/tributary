@@ -89,16 +89,16 @@
     </script>
     <script type="text/javascript">
 
-    trib = new tributary.Tributary({"gist":"{{gist}}", "filename":"{{filename}}"})
+    var model = new tributary.Tributary({"gist":"{{gist}}", "filename":"{{filename}}"})
 
     //get the code
-    trib.get_code(function(error, code) {
+    model.get_code(function(error, code) {
         //execute the new code onse we get it
-        trib.newcode(code);         
+        model.newcode(code);         
     })
 
     window.onresize = function(event) {
-        trib.trigger("execute")
+        model.trigger("execute")
     }
 
     //tribView = new tributary.TributaryView({"model":trib})

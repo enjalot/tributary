@@ -31,9 +31,9 @@
     <script type="text/javascript">
         window.tributary = {}
         var tributary = window.tributary
-        var trib;
-        //window.tributary.gist = "{{gist}}";
-        //window.tributary.filename = "{{filename}}";
+        //provide global trib object
+        window.trib = {};
+        window.trib_options = {};
     </script>
 
     <script type="text/javascript">
@@ -144,17 +144,23 @@
 
     <script type="text/javascript">
 
-if(typeof document.body.style.MozUserSelect!="undefined")
-    document.body.style.MozUserSelect="none";
-else if(typeof document.body.onselectstart!="undefined")
-    document.body.onselectstart=function(){return false};
-else
-    document.body.onmousedown=function(){return false};
-document.body.style.cursor = "default";
+    //get rid of selection when dragging things
+    if(typeof document.body.style.MozUserSelect!="undefined")
+        document.body.style.MozUserSelect="none";
+    else if(typeof document.body.onselectstart!="undefined")
+        document.body.onselectstart=function(){return false};
+    else
+        document.body.onmousedown=function(){return false};
+    document.body.style.cursor = "default";
 
-
+    //always have the screen width and height
     tributary.sw = window.screen.width;
     tributary.sh = window.screen.height;
+
+    window.onresize = function(event) {
+        tributary.sw = window.screen.width;
+        tributary.sh = window.screen.height;
+    }
 
     {% block jsinit %}
     {% endblock %}

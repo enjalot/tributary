@@ -34,9 +34,9 @@
 
 
 {% block jsinit %}
-    trib = new tributary.Geyser({"gist":"{{gist}}", "filename":"{{filename}}"})
-    tribView = new tributary.TributaryView({"model":trib, "endpoint":"geyser"})
+    var model = new tributary.Geyser({"gist":"{{gist}}", "filename":"{{filename}}"})
+    tribView = new tributary.TributaryView({"model":model, "endpoint":"geyser"})
     window.onresize = function(event) {
-        trib.trigger("execute")
+        model.trigger("execute")
     }
 {% endblock %}

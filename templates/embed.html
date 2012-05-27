@@ -46,10 +46,10 @@
 {% endblock %}
 
 {% block jsinit %}
-    trib = new tributary.Tributary({"gist":"{{gist}}", "filename":"{{filename}}"})
-    tribView = new tributary.TributaryView({"model":trib})
+    var model = new tributary.Tributary({"gist":"{{gist}}", "filename":"{{filename}}"})
+    tribView = new tributary.TributaryView({"model":model})
 
     window.onresize = function(event) {
-        trib.trigger("execute")
+        model.trigger("execute")
     }
 {% endblock %}
