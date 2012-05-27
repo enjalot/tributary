@@ -35,7 +35,7 @@ tributary.g = d3.select("#flowsvg").append("g").attr("id", "flow")
 //by default we just show simple text
 tributary.run = function(t, g) {
 	//$('svg').empty();
-	$('#flow').empty();
+	$('#flowsvg').empty();
     g.append("text")
         .text("t: " + t)
         .attr("font-size", 60)
@@ -244,7 +244,6 @@ function getFreq() {
         freqByteData = empty
     }
     */
-    //console.log(freqByteData[10])
     return freqByteData;
 }
 

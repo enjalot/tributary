@@ -19,7 +19,6 @@ class tributary.Tributary extends Backbone.Model
 
     execute: () =>
         #empty the svg object
-        $("svg").empty()
         delete tributary.initialize
         #run the code
         try
@@ -30,7 +29,11 @@ class tributary.Tributary extends Backbone.Model
             code += @get("code")
             code += "};"
             eval(code)
+            $("svg").empty()
             tributary.initialize(d3.select("svg"))
+            @trigger("noerror")
+        catch e
+            @trigger("error", e)
 
         return true
 
@@ -65,6 +68,9 @@ class tributary.Tributary extends Backbone.Model
             )
 
 class tributary.Reptile extends tributary.Tributary
+    ###
+    #   For making tiles with tributary code
+    ###
     initialize: ->
         super
         @set({code: """g.append("rect").attr("width", 100).attr("height", 100)"""})
@@ -73,7 +79,6 @@ class tributary.Reptile extends tributary.Tributary
     execute: () =>
         #empty the svg object
         #$("svg").empty()
-        $('#clones').empty()
         delete tributary.initialize
         #run the code
         try
@@ -85,57 +90,79 @@ class tributary.Reptile extends tributary.Tributary
             code += @get("code")
             code += "};"
             eval(code)
+            $('#clones').empty()
             #tributary.initialize(d3.select("svg"))
             tributary.make_clones()
             tributary.layout()
-
+            @trigger("noerror")
+        catch e
+            @trigger("error",e)
         return true
 
 
 
 class tributary.Delta extends tributary.Tributary
+    ###
+    #   For exploring transitions
+    ###
+
     execute: () =>
-        #empty the svg object
-        $("#delta").empty()
-        #run the code
         try
             svg = d3.select(".tributary_svg")
             eval(@get("code"))
+            @trigger("noerror")
+        catch e
+            @trigger("error", e)
+
 
         if(tributary.bv)
             #d3.selectAll(".bvclone").remove(); 
-            $('#clones').empty()
-            tributary.make_clones()
+            try
+                $('#clones').empty()
+                tributary.make_clones()
 
         try
+            $("#delta").empty()
             #we exec the user defined append code
             tributary.init(tributary.g)
-        try
             #then we run the user defined run function
             #tributary.run(tributary.t, tributary.g)
             tributary.execute()
+        catch e
+            @trigger("error", e)
 
         return true
 
 class tributary.Flow extends tributary.Tributary
+    ###
+    #   Music visualization exploration
+    ###
+
     execute: () =>
-        #empty the svg object
-        $("#flow").empty()
-        #run the code
         try
-            svg = d3.select("#flow")
             eval(@get("code"))
+            @trigger("noerror")
+        catch e
+            @trigger("error", e)
 
         try
+            $("#flow").empty()
             #we exec the user defined append code
-            tributary.append(tributary.g)
-        try
+            tributary.init(tributary.g)
             #then we run the user defined run function
             tributary.execute()
+            @trigger("noerror")
+        catch e
+            @trigger("error", e)
 
         return true
 
 class tributary.Geyser extends tributary.Tributary
+    ###
+    #   Music visualization with controls for mapping frequencies to viz params
+    ###
+
+
     execute: () =>
         #empty the svg object
         $("#geyser").empty()
@@ -145,7 +172,7 @@ class tributary.Geyser extends tributary.Tributary
             eval(@get("code"))
         try
             #we exec the user defined append code
-            tributary.append(tributary.g)
+            tributary.init(tributary.g)
         try
             #then we run the user defined run function
             tributary.execute()
@@ -153,6 +180,11 @@ class tributary.Geyser extends tributary.Tributary
         return true
 
 class tributary.Fountain extends tributary.Tributary
+    ###
+    #   Music visualization with MIDI controls for mapping frequencies to viz params
+    ###
+
+
     execute: () =>
         #empty the svg object
         $("#fountain").empty()
@@ -162,7 +194,7 @@ class tributary.Fountain extends tributary.Tributary
             eval(@get("code"))
         try
             #we exec the user defined append code
-            tributary.append(tributary.g)
+            tributary.init(tributary.g)
         try
             #then we run the user defined run function
             tributary.execute()
@@ -311,7 +343,13 @@ class tributary.TributaryView extends Backbone.View
             .style("background-color", "rgba(50, 50, 50, .4)")
             .style("z-index", 999)
             .call(editor_drag)
-                
+
+        @model.on("error", () =>
+            @editor_handle.style("background-color", "rgba(250, 50, 50, .7)")
+        )
+        @model.on("noerror", () =>
+            @editor_handle.style("background-color", "rgba(50, 250, 50, .4)")
+        )
 
         #Setup Hide the editor button
         he = $('#hideEditor')
@@ -330,9 +368,8 @@ class tributary.TributaryView extends Backbone.View
                 he.html("Hide")
                 #hide the slider if it's open
         )
-        
-        @
 
+    
     save_gist: (callback) =>
         #console.log("ENDPOINT", @endpoint)
         #Save the current code to a public gist
@@ -372,9 +409,11 @@ class tributary.TributaryView extends Backbone.View
             callback(newurl, newgist)
             #window.location = newurl;
         )
+
     #------------------------------------
     #Drop file functions
     #------------------------------------
+
     _dragOver: (ev)=>
         '''Called when a user drags a file over the #drop_file div'''
         ev.stopPropagation()
