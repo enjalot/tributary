@@ -95,13 +95,10 @@ tributary.Reptile = (function() {
     $('#clones').empty();
     delete tributary.initialize;
     try {
-      console.log("ASDF", this.get("code"));
       code = "tributary.initialize = function(g) {";
       code += this.get("code");
       code += "};";
       eval(code);
-      console.log("MAKE THE CLONES?");
-      console.log("trib", tributary);
       tributary.make_clones();
       tributary.layout();
     } catch (_e) {}
@@ -264,7 +261,7 @@ tributary.TributaryView = (function() {
     return this;
   };
   TributaryView.prototype.init_gui = function() {
-    var editor, he;
+    var editor, editor_drag, handle_data, he;
     $('#tweet_this').append("tweet this");
     $('#tweetPanel').on("click", __bind(function(e) {
       return this.save_gist(function(newurl, newgist) {
@@ -278,10 +275,34 @@ tributary.TributaryView = (function() {
         return window.location = newurl;
       });
     }, this));
+    this.editor_width = 600;
+    this.editor_height = 300;
+    editor = $('#editor');
+    editor.css('width', this.editor_width);
+    editor.css('height', this.editor_height);
+    editor_drag = d3.behavior.drag().on("drag", __bind(function(d, i) {
+      var dx, dy;
+      dx = d3.event.dx;
+      dy = d3.event.dy;
+      d.x -= dx;
+      d.y -= dy;
+      this.editor_handle.style("bottom", this.editor_height + d.y + "px");
+      this.editor_handle.style("right", -10 + this.editor_width + d.x + "px");
+      editor.css('width', this.editor_width + d.x + "px");
+      editor.css('height', this.editor_height + d.y + "px");
+      editor.find('.CodeMirror-scroll').css('height', this.editor_height + d.y + "px");
+      return editor.find('.CodeMirror-gutter').css('height', this.editor_height + d.y + "px");
+    }, this));
+    handle_data = {
+      x: 0,
+      y: 0
+    };
+    this.editor_handle = d3.select("body").append("div").attr("id", "editor_handle").data([handle_data]).style("position", "fixed").style("display", "block").style("float", "left").style("bottom", this.editor_height + "px").style("right", -11 + this.editor_width + "px").style("width", "20px").style("height", "20px").style("background-color", "rgba(50, 50, 50, .4)").style("z-index", 999).call(editor_drag);
     he = $('#hideEditor');
     he.on("click", function(e) {
       var txt;
       $("#editor").toggle();
+      $("#editor_handle").toggle();
       txt = he.html();
       if (txt === "Hide") {
         return he.html("Show");
@@ -289,23 +310,6 @@ tributary.TributaryView = (function() {
         return he.html("Hide");
       }
     });
-    if (getLocalStorageValue('font-size')) {
-      $('#editor').css('font-size', getLocalStorageValue('font-size'));
-    }
-    $('.font-control').on('click', function(e) {
-      e.preventDefault();
-      if ($(this).attr('class').indexOf('decrease') !== -1) {
-        $('#editor').css('font-size', '-=1');
-      } else {
-        $('#editor').css('font-size', '+=1');
-      }
-      return setLocalStorageValue('font-size', $('#editor').css('font-size'));
-    });
-    this.editor_width = 800;
-    this.editor_height = 300;
-    editor = $('#editor');
-    editor.css('width', this.editor_width);
-    editor.css('height', this.editor_height);
     return this;
   };
   TributaryView.prototype.save_gist = function(callback) {

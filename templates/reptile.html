@@ -2,7 +2,7 @@
 {% extends "base.html" %}
 
 
-{% block title %}Delta{% endblock %}
+{% block title %}RepTile{% endblock %}
 
 {% block style %}
     <link rel='stylesheet' type='text/css' href='/static/css/tributary.css' />
@@ -41,10 +41,8 @@
     trib = new tributary.Reptile({"gist":"{{gist}}", "filename":"{{filename}}"})
     tribView = new tributary.TributaryView({"model":trib, "endpoint":"tributary"})
 
-    var sw = window.screen.width;
-    var sh = window.screen.height;
-    tributary.g_width = sw/3;
-    tributary.g_height = sh/3;
+    tributary.g_width = tributary.sw/3;
+    tributary.g_height = tributary.sh/3;
 
 
     window.onresize = function(event) {

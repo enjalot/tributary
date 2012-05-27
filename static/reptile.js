@@ -1,18 +1,14 @@
 //$(function() {
-    console.log("hgoogogog")
     tributary.make_clones = function() {
         //make n frames with lowered opacity
-        console.log("hmm")
         var svg = d3.select("#clones");
         var frames = d3.range(tributary.nclones);
-        console.log("hiii")
         var gf = svg.selectAll("g.tileclone")
             .data(frames).enter()
             .append("g")
                 .attr("class", "tileclone");
                 //.style("opacity", tributary.clone_opacity);
         
-console.log("???")
         gf.each(function(d, i) {
             var frame = d3.select(this);
             tributary.initialize(frame);

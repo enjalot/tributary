@@ -77,7 +77,6 @@ class tributary.Reptile extends tributary.Tributary
         delete tributary.initialize
         #run the code
         try
-            console.log("ASDF", @get("code"))
             #tributary.make_clones() 
             #svg = d3.select("svg")
             #eval(@get("code"))
@@ -87,8 +86,6 @@ class tributary.Reptile extends tributary.Tributary
             code += "};"
             eval(code)
             #tributary.initialize(d3.select("svg"))
-            console.log("MAKE THE CLONES?")
-            console.log("trib", tributary)
             tributary.make_clones()
             tributary.layout()
 
@@ -271,10 +268,56 @@ class tributary.TributaryView extends Backbone.View
             )
         )
 
+        #Setup editor controls
+        @editor_width = 600
+        @editor_height = 300
+        editor = $('#editor')
+        editor.css('width', @editor_width)
+        editor.css('height', @editor_height)
+        
+        editor_drag = d3.behavior.drag()
+            .on("drag", (d,i) =>
+                dx = d3.event.dx
+                dy = d3.event.dy
+                d.x -= dx
+                d.y -= dy
+                @editor_handle.style("bottom", @editor_height + d.y + "px")
+                @editor_handle.style("right", -10 + @editor_width + d.x + "px")
+
+                editor.css('width', @editor_width + d.x + "px")
+                editor.css('height', @editor_height + d.y + "px")
+                editor.find('.CodeMirror-scroll').css('height', @editor_height + d.y + "px")
+                editor.find('.CodeMirror-gutter').css('height', @editor_height + d.y + "px")
+ 
+            )
+
+            
+        handle_data = {
+            x: 0
+            y: 0
+        }
+        #d3.select("#editor").append("div")
+        #TODO: make this not append to body, but @el (need @el)
+        @editor_handle = d3.select("body").append("div")
+            .attr("id", "editor_handle")
+            .data([handle_data])
+            .style("position", "fixed")
+            .style("display", "block")
+            .style("float", "left")
+            .style("bottom", @editor_height + "px")
+            .style("right", -11 + @editor_width + "px")
+            .style("width", "20px")
+            .style("height", "20px")
+            .style("background-color", "rgba(50, 50, 50, .4)")
+            .style("z-index", 999)
+            .call(editor_drag)
+                
+
         #Setup Hide the editor button
         he = $('#hideEditor')
         he.on("click", (e) ->
             $("#editor").toggle()
+            $("#editor_handle").toggle()
             #toggle the gui for delta/flow
             #$('#gui').toggle()
             txt = he.html()
@@ -287,36 +330,6 @@ class tributary.TributaryView extends Backbone.View
                 he.html("Hide")
                 #hide the slider if it's open
         )
-
-        #Setup editor settings
-        #turn off horizontal scrollbar
-        ##@aceEditor.renderer.setHScrollBarAlwaysVisible(false)
-        #turn off print margin visibility
-        ##@aceEditor.setShowPrintMargin(false)
-        # load font-size from local storage
-        if (getLocalStorageValue('font-size'))
-            $('#editor').css('font-size', getLocalStorageValue('font-size'))
-        # increase/decrease font
-        $('.font-control').on('click', (e) ->
-            e.preventDefault()
-            if ($(this).attr('class').indexOf('decrease') != -1)
-                $('#editor').css('font-size', '-=1')
-            else
-                $('#editor').css('font-size', '+=1')
-            setLocalStorageValue('font-size', $('#editor').css('font-size'))
-        )
-
-
-        
-        #Setup editor controls
-        @editor_width = 800
-        @editor_height = 300
-        editor = $('#editor')
-        editor.css('width', @editor_width)
-        editor.css('height', @editor_height)
-        #editor.find('.CodeMirror-scroll').css('background', 'rgba(1,1,1,0.5)')
-        
-        
         
         @
 

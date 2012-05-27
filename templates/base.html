@@ -141,6 +141,18 @@
 
     <script type="text/javascript">
 
+if(typeof document.body.style.MozUserSelect!="undefined")
+    document.body.style.MozUserSelect="none";
+else if(typeof document.body.onselectstart!="undefined")
+    document.body.onselectstart=function(){return false};
+else
+    document.body.onmousedown=function(){return false};
+document.body.style.cursor = "default";
+
+
+    tributary.sw = window.screen.width;
+    tributary.sh = window.screen.height;
+
     {% block jsinit %}
     {% endblock %}
 
