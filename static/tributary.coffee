@@ -354,7 +354,7 @@ class tributary.TributaryView extends Backbone.View
         $('#tweet_this').append("tweet this")
         $('#tweetPanel').on("click", (e) =>
             @save_gist((newurl, newgist) ->
-                tweetlink = "http://twitter.com/home/?status=See my latest %23tributary here "+"http://enjalot.com" + newurl
+                tweetlink = "http://twitter.com/home/?status=See my latest %23tributary here "+"http://mainstem.org" + newurl
                 window.location = tweetlink
                 #window.open(tweetlink, 'twitte')
             )
