@@ -12,7 +12,7 @@
         "gist":"2637876",
         "filename":"square.js",
         "description":"Simple Square Transition",
-        "tags": "delta animation",
+        "tags": "delta animation color",
         "width": 450,
         "height": 350,
         "delta": true,
@@ -144,7 +144,7 @@
         "gist": "2636144",
         "filename": "kerning.js",
         "description": "Kerning example"
-        ,"tags": "learn design art",
+        ,"tags": "learn design art text",
         "width": 450,
         "height": 150
         ,"splash": "http://tributary-gallery.s3.amazonaws.com/kerning.png"
