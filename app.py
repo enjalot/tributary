@@ -23,6 +23,11 @@ def creator():
 def tributary():
     return render_template("tributary.html", base_url=base_url)
 
+@app.route("/reptile/")
+def reptile():
+    return render_template("reptile.html", base_url=base_url)
+
+
 @app.route("/delta/")
 def delta():
     return render_template("delta.html", base_url=base_url)

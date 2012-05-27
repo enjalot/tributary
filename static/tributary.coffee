@@ -49,13 +49,47 @@ class tributary.Tributary extends Backbone.Model
         if(@get("gist") && @get("filename"))
             src_url = "/tributary/api/" + @get("gist")  + "/" + @get("filename")
             d3.text(src_url, (data) =>
-                if(!data)
-                   data=""
-                console.log("get code")
-                @set({code: data})
+                #if(!data)
+                #   data=""
+                if(data)
+                    code = data
+                    @set({code: data})
+                else
+                    code = @get("code")
+                    console.log("codeee?", code)
+                    if(!code)
+                        code = ""
                 #TODO: add error checking
-                callback(null, data)
+                #callback(null, data)
+                callback(null, code)
             )
+
+class tributary.Reptile extends tributary.Tributary
+    initialize: ->
+        @set({code: """g.append("rect").attr("width", 100).attr("height", 100)"""})
+        super
+        @
+        
+    execute: () =>
+        #empty the svg object
+        #$("svg").empty()
+        $('#clones').empty()
+        delete tributary.initialize
+        #run the code
+        try
+            #tributary.make_clones() 
+            #svg = d3.select("svg")
+            #eval(@get("code"))
+            #wrap the code in a closure
+            code = "tributary.initialize = function(g) {"
+            code += @get("code")
+            code += "};"
+            eval(code)
+            #tributary.initialize(d3.select("svg"))
+            tributary.make_clones()
+            tributary.layout()
+
+        return true
 
 
 
@@ -193,6 +227,11 @@ class tributary.TributaryView extends Backbone.View
         @init_picker()
         @init_gui()
         
+        if @model.get("code")
+            @code_editor.setValue(@model.get("code"))
+            @model.trigger("code", @model.get("code"))
+            @model.execute()
+
         #fill in the editor with text we get back from the gist
         #console.log(@get("gist"), @get("filename"))
         @model.get_code((error, code) =>

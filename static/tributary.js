@@ -58,18 +58,53 @@ tributary.Tributary = (function() {
     if (this.get("gist") && this.get("filename")) {
       src_url = "/tributary/api/" + this.get("gist") + "/" + this.get("filename");
       return d3.text(src_url, __bind(function(data) {
-        if (!data) {
-          data = "";
+        var code;
+        if (data) {
+          code = data;
+          this.set({
+            code: data
+          });
+        } else {
+          code = this.get("code");
+          console.log("codeee?", code);
+          if (!code) {
+            code = "";
+          }
         }
-        console.log("get code");
-        this.set({
-          code: data
-        });
-        return callback(null, data);
+        return callback(null, code);
       }, this));
     }
   };
   return Tributary;
+})();
+tributary.Reptile = (function() {
+  __extends(Reptile, tributary.Tributary);
+  function Reptile() {
+    this.execute = __bind(this.execute, this);
+    Reptile.__super__.constructor.apply(this, arguments);
+  }
+  Reptile.prototype.initialize = function() {
+    this.set({
+      code: "g.append(\"rect\").attr(\"width\", 100).attr(\"height\", 100)"
+    });
+    Reptile.__super__.initialize.apply(this, arguments);
+    return this;
+  };
+  Reptile.prototype.execute = function() {
+    var code;
+    $('#clones').empty();
+    delete tributary.initialize;
+    try {
+      code = "tributary.initialize = function(g) {";
+      code += this.get("code");
+      code += "};";
+      eval(code);
+      tributary.make_clones();
+      tributary.layout();
+    } catch (_e) {}
+    return true;
+  };
+  return Reptile;
 })();
 tributary.Delta = (function() {
   __extends(Delta, tributary.Tributary);
@@ -213,6 +248,11 @@ tributary.TributaryView = (function() {
     this.init_slider();
     this.init_picker();
     this.init_gui();
+    if (this.model.get("code")) {
+      this.code_editor.setValue(this.model.get("code"));
+      this.model.trigger("code", this.model.get("code"));
+      this.model.execute();
+    }
     this.model.get_code(__bind(function(error, code) {
       return this.code_editor.setValue(code);
     }, this));
