@@ -157,18 +157,23 @@
     }
 
 
+    .CodeMirror-scroll  {
+
+        background: rgba(38,38,38,0.9);
+    }
+
     #editor {
     	position: fixed;
     	bottom: 10px;
     	right: 0;
-
-    	height: 36%;
-    	width: 59%;
+    	/*height: 36%;
+    	width: 59%;*/
         /*width: 800px; */
     	border: solid black 2px;
     	border-left: none;
+        /*
     	background: white;
-/*    	border-top-right-radius: 5px;
+    	border-top-right-radius: 5px;
     	border-bottom-right-radius: 5px;
     	border-top-left-radius: 40px 10px;
     	border-bottom-left-radius: 40px 10px;
@@ -275,8 +280,6 @@
         width: 25px;
         height: 15px;
     }
-
-
     
 
     .selected-button {

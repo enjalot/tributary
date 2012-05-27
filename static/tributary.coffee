@@ -66,8 +66,8 @@ class tributary.Tributary extends Backbone.Model
 
 class tributary.Reptile extends tributary.Tributary
     initialize: ->
-        @set({code: """g.append("rect").attr("width", 100).attr("height", 100)"""})
         super
+        @set({code: """g.append("rect").attr("width", 100).attr("height", 100)"""})
         @
         
     execute: () =>
@@ -77,6 +77,7 @@ class tributary.Reptile extends tributary.Tributary
         delete tributary.initialize
         #run the code
         try
+            console.log("ASDF", @get("code"))
             #tributary.make_clones() 
             #svg = d3.select("svg")
             #eval(@get("code"))
@@ -86,6 +87,8 @@ class tributary.Reptile extends tributary.Tributary
             code += "};"
             eval(code)
             #tributary.initialize(d3.select("svg"))
+            console.log("MAKE THE CLONES?")
+            console.log("trib", tributary)
             tributary.make_clones()
             tributary.layout()
 
@@ -219,9 +222,9 @@ class tributary.TributaryView extends Backbone.View
         #@init_picker()
         @init_gui()
         
-        if @model.get("code")
+        if @model.get("code")?
             @code_editor.setValue(@model.get("code"))
-            @model.trigger("code", @model.get("code"))
+            #@model.trigger("code", @model.get("code"))
             @model.execute()
 
         #fill in the editor with text we get back from the gist
@@ -303,30 +306,18 @@ class tributary.TributaryView extends Backbone.View
             setLocalStorageValue('font-size', $('#editor').css('font-size'))
         )
 
-        # from https://github.com/ajaxorg/ace/issues/305
-        # this replaces the current replace functionality
-        # replace just replaces the current selection with the replacement text,
-        # and highlights the replacement text
-        # it does not go to the next selection (which the default version does)
-        """
-        @aceEditor.replace = (replacement) ->
-            range = this.getSelectionRange()
-            if (range != null)
-                this.$tryReplace(range, replacement)
-                if (range != null)
-                    this.selection.setSelectionRange(range)
-        # we're not a numeric, by default
-        # if we are, the editor click will handle it
-        $('body').on('focus click', (e) =>
-            @onNumeric = false
-        )
-        """
 
-        # pulse numeric constants (until user clicks on them)
-        pulseNumerics = true
-        pulse = setInterval(() ->
-            $('.ace_numeric').animate({opacity: 0.5}).animate({opacity: 1})
-        , 1000)
+        
+        #Setup editor controls
+        @editor_width = 800
+        @editor_height = 300
+        editor = $('#editor')
+        editor.css('width', @editor_width)
+        editor.css('height', @editor_height)
+        #editor.find('.CodeMirror-scroll').css('background', 'rgba(1,1,1,0.5)')
+        
+        
+        
         @
 
     save_gist: (callback) =>

@@ -84,10 +84,10 @@ tributary.Reptile = (function() {
     Reptile.__super__.constructor.apply(this, arguments);
   }
   Reptile.prototype.initialize = function() {
+    Reptile.__super__.initialize.apply(this, arguments);
     this.set({
       code: "g.append(\"rect\").attr(\"width\", 100).attr(\"height\", 100)"
     });
-    Reptile.__super__.initialize.apply(this, arguments);
     return this;
   };
   Reptile.prototype.execute = function() {
@@ -95,10 +95,13 @@ tributary.Reptile = (function() {
     $('#clones').empty();
     delete tributary.initialize;
     try {
+      console.log("ASDF", this.get("code"));
       code = "tributary.initialize = function(g) {";
       code += this.get("code");
       code += "};";
       eval(code);
+      console.log("MAKE THE CLONES?");
+      console.log("trib", tributary);
       tributary.make_clones();
       tributary.layout();
     } catch (_e) {}
@@ -238,9 +241,8 @@ tributary.TributaryView = (function() {
     });
     this.inlet = Inlet(this.code_editor);
     this.init_gui();
-    if (this.model.get("code")) {
+    if (this.model.get("code") != null) {
       this.code_editor.setValue(this.model.get("code"));
-      this.model.trigger("code", this.model.get("code"));
       this.model.execute();
     }
     this.model.get_code(__bind(function(error, code) {
@@ -262,7 +264,7 @@ tributary.TributaryView = (function() {
     return this;
   };
   TributaryView.prototype.init_gui = function() {
-    var he, pulse, pulseNumerics;
+    var editor, he;
     $('#tweet_this').append("tweet this");
     $('#tweetPanel').on("click", __bind(function(e) {
       return this.save_gist(function(newurl, newgist) {
@@ -299,15 +301,11 @@ tributary.TributaryView = (function() {
       }
       return setLocalStorageValue('font-size', $('#editor').css('font-size'));
     });
-    "@aceEditor.replace = (replacement) ->\n    range = this.getSelectionRange()\n    if (range != null)\n        this.$tryReplace(range, replacement)\n        if (range != null)\n            this.selection.setSelectionRange(range)\n# we're not a numeric, by default\n# if we are, the editor click will handle it\n$('body').on('focus click', (e) =>\n    @onNumeric = false\n)";
-    pulseNumerics = true;
-    pulse = setInterval(function() {
-      return $('.ace_numeric').animate({
-        opacity: 0.5
-      }).animate({
-        opacity: 1
-      });
-    }, 1000);
+    this.editor_width = 800;
+    this.editor_height = 300;
+    editor = $('#editor');
+    editor.css('width', this.editor_width);
+    editor.css('height', this.editor_height);
     return this;
   };
   TributaryView.prototype.save_gist = function(callback) {

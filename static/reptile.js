@@ -1,17 +1,22 @@
-$(function() {
+//$(function() {
+    console.log("hgoogogog")
     tributary.make_clones = function() {
         //make n frames with lowered opacity
+        console.log("hmm")
         var svg = d3.select("#clones");
         var frames = d3.range(tributary.nclones);
+        console.log("hiii")
         var gf = svg.selectAll("g.tileclone")
             .data(frames).enter()
             .append("g")
                 .attr("class", "tileclone");
                 //.style("opacity", tributary.clone_opacity);
         
+console.log("???")
         gf.each(function(d, i) {
             var frame = d3.select(this);
             tributary.initialize(frame);
+            console.log("initing!")
             //tributary.run(i/tributary.nclones, frame);
         });
     };
@@ -43,7 +48,7 @@ $(function() {
     tributary.loop = "period";
     //tributary.loop = "pingpong";
     //d3.select("#pingpong_button").style("background-color", "#e3e3e3")
-    $("#"+tributary.loop+"_button").addClass("selected-button");
+    //$("#"+tributary.loop+"_button").addClass("selected-button");
 
     tributary.reverse = false;
 
@@ -70,7 +75,7 @@ $(function() {
     tributary.run = function(t, g) {
         
         //$('svg').empty();
-        $('#reptile').empty();
+        $('#reptilesvg').empty();
         g.append("text")
             .text("t: " + t)
             .attr("font-size", 60)
@@ -86,7 +91,5 @@ $(function() {
     }
 
 
-})
-
-
+//})
 
