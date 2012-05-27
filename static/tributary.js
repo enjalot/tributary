@@ -338,6 +338,7 @@ tributary.TributaryView = (function(_super) {
         return _this.model.trigger("code", thisCode);
       }
     });
+    this.controls = {};
     this.dating = false;
     this.gui = new dat.GUI();
     this.make_ui = function() {
@@ -347,9 +348,11 @@ tributary.TributaryView = (function(_super) {
         _this.gui = new dat.GUI();
         _results = [];
         for (key in trib) {
-          console.log(key, trib[key]);
+          if (_this.controls[key] != null) {
+            delete _this.controls[key];
+          }
           if ((typeof trib_options !== "undefined" && trib_options !== null) && (trib_options[key] != null)) {
-            _results.push(_this.gui.add(trib, key, trib_options[key].min, trib_options[key].max));
+            _this.controls[key] = _this.gui.add(trib, key, trib_options[key].min, trib_options[key].max);
           } else {
             val = trib[key];
             if (typeof val === "number") {
@@ -361,8 +364,20 @@ tributary.TributaryView = (function(_super) {
                 max = 5 * val;
               }
             }
-            _results.push(_this.gui.add(trib, key, min, max));
+            _this.controls[key] = _this.gui.add(trib, key, min, max);
           }
+          _results.push(_this.controls[key].onChange((function(key) {
+            return function(value) {
+              var cursor, newtxt, txt;
+              _this.dating = true;
+              txt = new RegExp("trib\." + key + "\\s*=(\\s*)[-+]?(?:\\d+\\.?\\d*|\\.?\\d+)(?:[eE][-+]?\\d+)?");
+              cursor = _this.code_editor.getSearchCursor(txt);
+              if (cursor.findNext()) {
+                newtxt = "trib." + key + " = " + value;
+                return cursor.replace(newtxt);
+              }
+            };
+          })(key)));
         }
         return _results;
       }
@@ -436,7 +451,8 @@ tributary.TributaryView = (function(_super) {
     });
     this.model.on("noerror", function() {
       _this.editor_handle.style("background-color", "rgba(50, 250, 50, .4)");
-      return _this.make_ui();
+      _this.make_ui();
+      return _this.dating = false;
     });
     he = $('#hideEditor');
     return he.on("click", function(e) {

@@ -261,17 +261,23 @@ class tributary.TributaryView extends Backbone.View
 
         #datgui things 
 
+        @controls = {}
         @dating = false
         @gui =  new dat.GUI()
         @make_ui = () =>
             #we only need to remake the ui if we are not using it
             if not @dating
+                #reset everything
                 @gui.destroy()
                 @gui =  new dat.GUI()
+
                 for key of trib
-                    console.log key, trib[key]
+                    if @controls[key]?
+                        delete @controls[key]
+                    #console.log key, trib[key]
+
                     if trib_options? and trib_options[key]?
-                        @gui.add(trib, key, trib_options[key].min, trib_options[key].max)
+                        @controls[key] = @gui.add(trib, key, trib_options[key].min, trib_options[key].max)
                     else
                         #automatically make the range for the slider since its not provided
                         val = trib[key]
@@ -282,7 +288,23 @@ class tributary.TributaryView extends Backbone.View
                             else
                                 min = -3 * val
                                 max = 5 * val
-                        @gui.add(trib, key, min, max)
+                        @controls[key] = @gui.add(trib, key, min, max)
+
+
+                    @controls[key].onChange(do (key) =>
+                        (value) =>
+                            #console.log("args", arguments)
+                            @dating = true
+                            #console.log(value)
+                            #search for this in the code and replace
+                            #number regex taken from d3 source
+                            txt = new RegExp("trib\." + key + "\\s*=(\\s*)[-+]?(?:\\d+\\.?\\d*|\\.?\\d+)(?:[eE][-+]?\\d+)?")
+                            #console.log("TXT", txt)
+                            cursor = @code_editor.getSearchCursor(txt)
+                            if cursor.findNext()
+                                newtxt = "trib." + key + " = " + value
+                                cursor.replace(newtxt)
+                    )
                 
             
             
@@ -395,6 +417,7 @@ class tributary.TributaryView extends Backbone.View
         @model.on("noerror", () =>
             @editor_handle.style("background-color", "rgba(50, 250, 50, .4)")
             @make_ui()
+            @dating = false
         )
 
         #Setup Hide the editor button
