@@ -70,6 +70,13 @@ def tributary_gist(gist=None, filename=None):
     #return render_template("water.html", code=code, base_url=base_url) 
     return render_template("tributary.html", gist=gist, filename=filename, base_url=base_url) 
 
+@app.route("/reptile/<gist>/<filename>")
+def reptile_gist(gist=None, filename=None):
+    #print gist, filename
+    #return render_template("water.html", code=code, base_url=base_url) 
+    return render_template("reptile.html", gist=gist, filename=filename, base_url=base_url) 
+
+
 @app.route("/delta/<gist>/<filename>")
 def delta_gist(gist=None, filename=None):
     #print gist, filename
