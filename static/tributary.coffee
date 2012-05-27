@@ -208,23 +208,15 @@ class tributary.TributaryView extends Backbone.View
             onChange: () =>
                 thisCode = @code_editor.getValue()
                 @model.trigger("code", thisCode)
-            onCursorActivity: () =>
-                @sliding = false
-                @picking = false
-                @editor_click()
-                """
-                cursor = @code_editor.getCursor(true)
-                token = @code_editor.getTokenAt(cursor)
-                if token.className != "number"
-                    @slider.css('visibility', 'hidden')
-                """
             })
+        @inlet = Inlet(@code_editor)
+
 
         #@editor_click
        
         #setup functions
-        @init_slider()
-        @init_picker()
+        #@init_slider()
+        #@init_picker()
         @init_gui()
         
         if @model.get("code")
@@ -237,17 +229,6 @@ class tributary.TributaryView extends Backbone.View
         @model.get_code((error, code) =>
             @code_editor.setValue(code)
         )
-        """
-        if(@model.get("gist") && @model.get("filename"))
-            src_url = "/tributary/api/" + @model.get("gist")  + "/" + @model.get("filename")
-            d3.text(src_url, (data) =>
-                if(!data)
-                    data = ""
-                @aceEditor.getSession().setValue(data)
-                #@model.trigger("code", data)
-            )
-        """
-
 
         #Hook up drag and drop for code file
         $('body')[0].addEventListener('dragover', @_dragOver, false)
@@ -265,121 +246,6 @@ class tributary.TributaryView extends Backbone.View
         )
 
         @
-
-    editor_click: () =>
-        if @sliding
-            @sliding = false
-            return false
-        if @picking
-            @picking = false
-            return false
-        cursor = @code_editor.getCursor(true)
-        token = @code_editor.getTokenAt(cursor)
-        if token.className == "number"
-            #parse the number out
-            value = parseFloat(token.string)
-            #console.log("token", token, value)
-            # this comes from water project:
-            # set the slider params based on the token's numeric value
-            if (value == 0)
-                sliderRange = [-100, 100]
-            else
-                sliderRange = [-value * 3, value * 5]
-
-            @slider.slider('option', 'max', d3.max(sliderRange))
-            @slider.slider('option', 'min', d3.min(sliderRange))
-
-            # slider range needs to be evenly divisible by the step
-            if ((d3.max(sliderRange) - d3.min(sliderRange)) > 20)
-                @slider.slider('option', 'step', 1)
-            else
-                @slider.slider('option', 'step', (d3.max(sliderRange) - d3.min(sliderRange))/200)
-            @slider.slider('option', 'value', value)
-
-            #setup slider position
-            # position slider centered above the cursor
-            #scrollerOffset = $('.ace_scroller').offset()
-            ##cursorOffset = editor.renderer.$cursorLayer.pixelPos
-            cursorOffset = @code_editor.cursorCoords(true, "page")
-            sliderTop = cursorOffset.y - Number($('#editor').css('font-size').replace('px', ''))*0.8
-            sliderLeft = cursorOffset.x - @slider.width()/2
-
-
-            # sync the slider size with the editor size
-            @slider.css('font-size', $('#editor').css('font-size'))
-            @slider.css('font-size', '-=4')
-            @slider.offset({top: sliderTop - 10, left: sliderLeft})
-
-            #lets turn on the slider no matter what (no alt/ctrl key necessary)
-            @slider.css('visibility', 'visible')
-            @picker.element.style.display = "none"
-
-        #else if #use regex to check for color
-        else
-            match = token.string.match(/["']#?(([a-fA-F0-9]){3}){1,2}["']/)
-            if match and not @picking
-                #turn on color picker
-                #console.log(token.string, match)
-
-                color = match[0]
-                color = color.slice(2, color.length-1)
-                @picker.update(color)
-                cursorOffset = @code_editor.cursorCoords(true, "page")
-                #console.log("co", cursorOffset)
-                #TODO: don't hardcode the pickers dimensions
-                top = cursorOffset.y - 210 + "px"
-                left = cursorOffset.x - 75 + "px"
-                $('#ColorPicker').css('top', top)
-                $('#ColorPicker').css('left', left)
-                #$('#ColorPicker').offset({top: 10, left: 100})
-                #@picker.element.style.top = cursorOffset.top + "px"
-                #@picker.element.style.left = cursorOffset.left + "px"
-                #@picker.element.style.display = ""
-                @picker.toggle(true)
-            else
-                #@picker.element.style.display = "none"
-                @picker.toggle(false)
-            @slider.css('visibility', 'hidden')
-
-        @sliding = false
-        @picking = false
-        return true
-
-    
-    init_slider: =>
-        #create slider
-        @slider = $('#slider')
-        @slider.slider(
-            slide: (event, ui) =>
-                @sliding = true
-                #set the cursor to desired location
-                cursor = @code_editor.getCursor()
-                token = @code_editor.getTokenAt(cursor)
-                #console.log("SLIDING", ui.value+"", token.start, token.end)
-                start = {"line":cursor.line, "ch":token.start}
-                end = {"line":cursor.line, "ch":token.end}
-                @code_editor.replaceRange(ui.value+"", start, end)
-            )
-
-    init_picker: =>
-        @picker = new Color.Picker({
-            color: "#643263", # accepts rgba(), or #hex
-            display: false,
-            size: 150,
-            callback: (rgba, state, type) =>
-                newcolor = Color.Space(rgba, "RGB>STRING")
-                #console.log("newcolor", newcolor)
-
-                @picking = true
-                #set the cursor to desired location
-                cursor = @code_editor.getCursor()
-                token = @code_editor.getTokenAt(cursor)
-                #console.log("SLIDING", ui.value+"", token.start, token.end)
-                start = {"line":cursor.line, "ch":token.start}
-                end = {"line":cursor.line, "ch":token.end}
-                @code_editor.replaceRange('"#' + newcolor.toUpperCase() + '"', start, end)
-        })
- 
 
     init_gui: =>
         #Setup the gui elements for this page

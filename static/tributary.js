@@ -210,9 +210,6 @@ tributary.TributaryView = (function() {
     this._dragOver = __bind(this._dragOver, this);
     this.save_gist = __bind(this.save_gist, this);
     this.init_gui = __bind(this.init_gui, this);
-    this.init_picker = __bind(this.init_picker, this);
-    this.init_slider = __bind(this.init_slider, this);
-    this.editor_click = __bind(this.editor_click, this);
     TributaryView.__super__.constructor.apply(this, arguments);
   }
   TributaryView.prototype.check_date = true;
@@ -237,16 +234,9 @@ tributary.TributaryView = (function() {
         var thisCode;
         thisCode = this.code_editor.getValue();
         return this.model.trigger("code", thisCode);
-      }, this),
-      onCursorActivity: __bind(function() {
-        this.sliding = false;
-        this.picking = false;
-        this.editor_click();
-        return "cursor = @code_editor.getCursor(true)\ntoken = @code_editor.getTokenAt(cursor)\nif token.className != \"number\"\n    @slider.css('visibility', 'hidden')";
       }, this)
     });
-    this.init_slider();
-    this.init_picker();
+    this.inlet = Inlet(this.code_editor);
     this.init_gui();
     if (this.model.get("code")) {
       this.code_editor.setValue(this.model.get("code"));
@@ -256,7 +246,6 @@ tributary.TributaryView = (function() {
     this.model.get_code(__bind(function(error, code) {
       return this.code_editor.setValue(code);
     }, this));
-    "if(@model.get(\"gist\") && @model.get(\"filename\"))\n    src_url = \"/tributary/api/\" + @model.get(\"gist\")  + \"/\" + @model.get(\"filename\")\n    d3.text(src_url, (data) =>\n        if(!data)\n            data = \"\"\n        @aceEditor.getSession().setValue(data)\n        #@model.trigger(\"code\", data)\n    )";
     $('body')[0].addEventListener('dragover', this._dragOver, false);
     $('body')[0].addEventListener('drop', this._fileDrop, false);
     this.code_last_modified = new Date(0, 0, 0);
@@ -271,108 +260,6 @@ tributary.TributaryView = (function() {
       return false;
     }, this));
     return this;
-  };
-  TributaryView.prototype.editor_click = function() {
-    var color, cursor, cursorOffset, left, match, sliderLeft, sliderRange, sliderTop, token, top, value;
-    if (this.sliding) {
-      this.sliding = false;
-      return false;
-    }
-    if (this.picking) {
-      this.picking = false;
-      return false;
-    }
-    cursor = this.code_editor.getCursor(true);
-    token = this.code_editor.getTokenAt(cursor);
-    if (token.className === "number") {
-      value = parseFloat(token.string);
-      if (value === 0) {
-        sliderRange = [-100, 100];
-      } else {
-        sliderRange = [-value * 3, value * 5];
-      }
-      this.slider.slider('option', 'max', d3.max(sliderRange));
-      this.slider.slider('option', 'min', d3.min(sliderRange));
-      if ((d3.max(sliderRange) - d3.min(sliderRange)) > 20) {
-        this.slider.slider('option', 'step', 1);
-      } else {
-        this.slider.slider('option', 'step', (d3.max(sliderRange) - d3.min(sliderRange)) / 200);
-      }
-      this.slider.slider('option', 'value', value);
-      cursorOffset = this.code_editor.cursorCoords(true, "page");
-      sliderTop = cursorOffset.y - Number($('#editor').css('font-size').replace('px', '')) * 0.8;
-      sliderLeft = cursorOffset.x - this.slider.width() / 2;
-      this.slider.css('font-size', $('#editor').css('font-size'));
-      this.slider.css('font-size', '-=4');
-      this.slider.offset({
-        top: sliderTop - 10,
-        left: sliderLeft
-      });
-      this.slider.css('visibility', 'visible');
-      this.picker.element.style.display = "none";
-    } else {
-      match = token.string.match(/["']#?(([a-fA-F0-9]){3}){1,2}["']/);
-      if (match && !this.picking) {
-        color = match[0];
-        color = color.slice(2, color.length - 1);
-        this.picker.update(color);
-        cursorOffset = this.code_editor.cursorCoords(true, "page");
-        top = cursorOffset.y - 210 + "px";
-        left = cursorOffset.x - 75 + "px";
-        $('#ColorPicker').css('top', top);
-        $('#ColorPicker').css('left', left);
-        this.picker.toggle(true);
-      } else {
-        this.picker.toggle(false);
-      }
-      this.slider.css('visibility', 'hidden');
-    }
-    this.sliding = false;
-    this.picking = false;
-    return true;
-  };
-  TributaryView.prototype.init_slider = function() {
-    this.slider = $('#slider');
-    return this.slider.slider({
-      slide: __bind(function(event, ui) {
-        var cursor, end, start, token;
-        this.sliding = true;
-        cursor = this.code_editor.getCursor();
-        token = this.code_editor.getTokenAt(cursor);
-        start = {
-          "line": cursor.line,
-          "ch": token.start
-        };
-        end = {
-          "line": cursor.line,
-          "ch": token.end
-        };
-        return this.code_editor.replaceRange(ui.value + "", start, end);
-      }, this)
-    });
-  };
-  TributaryView.prototype.init_picker = function() {
-    return this.picker = new Color.Picker({
-      color: "#643263",
-      display: false,
-      size: 150,
-      callback: __bind(function(rgba, state, type) {
-        var cursor, end, newcolor, start, token;
-        newcolor = Color.Space(rgba, "RGB>STRING");
-        this.picking = true;
-        cursor = this.code_editor.getCursor();
-        token = this.code_editor.getTokenAt(cursor);
-        start = {
-          "line": cursor.line,
-          "ch": token.start
-        };
-        end = {
-          "line": cursor.line,
-          "ch": token.end
-        };
-        return this.code_editor.replaceRange('"#' + newcolor.toUpperCase() + '"', start, end);
-      }, this)
-    });
   };
   TributaryView.prototype.init_gui = function() {
     var he, pulse, pulseNumerics;
