@@ -246,6 +246,23 @@ class tributary.TributaryView extends Backbone.View
                 thisCode = @code_editor.getValue()
                 @model.trigger("code", thisCode)
             })
+
+        ###
+        datgui things 
+        
+        @gui =  new dat.GUI()
+
+        @make_ui = (tribFunction, variables) =>            
+            for key in trib_options
+                console.log trib_options[key]
+                gui.add(trib, 'var'+key, trib_options[key].min, trib_options[key].max)    
+
+        ### 
+            
+            
+            
+            
+            
         @inlet = Inlet(@code_editor)
 
 
