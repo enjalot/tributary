@@ -40,19 +40,22 @@ tributary.Tributary = (function(_super) {
 
   Tributary.prototype.execute = function() {
     var code, svg;
-    delete tributary.initialize;
     try {
       svg = d3.select("svg");
       code = "tributary.initialize = function(g) {";
       code += this.get("code");
       code += "};";
       eval(code);
-      $("svg").empty();
       tributary.initialize(d3.select("svg"));
       this.trigger("noerror");
     } catch (e) {
       this.trigger("error", e);
+      return false;
     }
+    try {
+      $("svg").empty();
+      tributary.initialize(d3.select("svg"));
+    } catch (_error) {}
     return true;
   };
 

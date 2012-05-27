@@ -19,21 +19,26 @@ class tributary.Tributary extends Backbone.Model
 
     execute: () =>
         #empty the svg object
-        delete tributary.initialize
         #run the code
         try
             svg = d3.select("svg")
+            #delete tributary.initialize
             #eval(@get("code"))
             #wrap the code in a closure
             code = "tributary.initialize = function(g) {"
             code += @get("code")
             code += "};"
             eval(code)
-            $("svg").empty()
             tributary.initialize(d3.select("svg"))
             @trigger("noerror")
         catch e
             @trigger("error", e)
+            return false
+
+        #we don't want it to nuke the svg if there is an error
+        try
+            $("svg").empty()
+            tributary.initialize(d3.select("svg"))
 
         return true
 
