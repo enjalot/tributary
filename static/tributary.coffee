@@ -20,10 +20,17 @@ class tributary.Tributary extends Backbone.Model
     execute: () =>
         #empty the svg object
         $("svg").empty()
+        delete tributary.initialize
         #run the code
         try
             svg = d3.select("svg")
-            eval(@get("code"))
+            #eval(@get("code"))
+            #wrap the code in a closure
+            code = "tributary.initialize = function(g) {"
+            code += @get("code")
+            code += "};"
+            eval(code)
+            tributary.initialize(d3.select("svg"))
 
         return true
 
@@ -43,7 +50,8 @@ class tributary.Tributary extends Backbone.Model
             src_url = "/tributary/api/" + @get("gist")  + "/" + @get("filename")
             d3.text(src_url, (data) =>
                 if(!data)
-                    data = ""
+                   data=""
+                console.log("get code")
                 @set({code: data})
                 #TODO: add error checking
                 callback(null, data)

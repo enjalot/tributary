@@ -33,11 +33,16 @@ tributary.Tributary = (function() {
     return this.on("execute", this.execute);
   };
   Tributary.prototype.execute = function() {
-    var svg;
+    var code, svg;
     $("svg").empty();
+    delete tributary.initialize;
     try {
       svg = d3.select("svg");
-      eval(this.get("code"));
+      code = "tributary.initialize = function(g) {";
+      code += this.get("code");
+      code += "};";
+      eval(code);
+      tributary.initialize(d3.select("svg"));
     } catch (_e) {}
     return true;
   };
@@ -56,6 +61,7 @@ tributary.Tributary = (function() {
         if (!data) {
           data = "";
         }
+        console.log("get code");
         this.set({
           code: data
         });
