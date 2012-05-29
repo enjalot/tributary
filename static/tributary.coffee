@@ -139,7 +139,7 @@ class tributary.Delta extends tributary.Tributary
         try
             $("#delta").empty()
             #we exec the user defined append code
-            tributary.init(tributary.g)
+            tributary.init(tributary.g, 0)
             #then we run the user defined run function
             #tributary.run(tributary.t, tributary.g)
             tributary.execute()

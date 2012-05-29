@@ -178,7 +178,7 @@ tributary.Delta = (function(_super) {
     }
     try {
       $("#delta").empty();
-      tributary.init(tributary.g);
+      tributary.init(tributary.g, 0);
       tributary.execute();
     } catch (e) {
       this.trigger("error", e);

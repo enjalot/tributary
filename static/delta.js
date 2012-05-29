@@ -1,20 +1,23 @@
 $(function() {
     tributary.make_clones = function() {
         //make n frames with lowered opacity
-        var svg = d3.select("#clones")
-        var frames = d3.range(tributary.nclones)
+        var svg = d3.select("#clones");
+        var frames = d3.range(tributary.nclones);
         var gf = svg.selectAll("g.bvclone")
             .data(frames).enter()
             .append("g")
                 .attr("class", "bvclone")
-                .style("opacity", tributary.clone_opacity)
+                .style("opacity", tributary.clone_opacity);
 
         gf.each(function(d, i) {
-            var frame = d3.select(this)
-            tributary.init(frame)
-            tributary.run(i/tributary.nclones, frame)
-        })
-    }
+            var j = i+1;
+            var frame = d3.select(this);
+            tributary.init(frame, j);
+            //tributary.run(i/tributary.nclones, frame, i);
+            var t = tributary.ease(j/(tributary.nclones+1));
+            tributary.run(frame, t, j);
+        });
+    };
 
 
 
@@ -22,15 +25,15 @@ $(function() {
     //window.delta = {}
     //var delta = window.delta;
     //we will keep track of our t parameter for the user
-    tributary.t = 0.01  //start at .01 so we don't trigger a flip at the start
+    tributary.t = 0.01;  //start at .01 so we don't trigger a flip at the start
     //use this to control playback
-    tributary.pause = true
+    tributary.pause = true;
     //default loop mode
     //tributary.loop = "off";
     tributary.loop = "period";
     //tributary.loop = "pingpong";
     //d3.select("#pingpong_button").style("background-color", "#e3e3e3")
-    $("#"+tributary.loop+"_button").addClass("selected-button")
+    $("#"+tributary.loop+"_button").addClass("selected-button");
 
     tributary.reverse = false;
 
@@ -40,7 +43,7 @@ $(function() {
 
 
     //default easing function
-    tributary.ease = d3.ease("linear")
+    tributary.ease = d3.ease("linear");
 
     //default opacity for clones
     tributary.clone_opacity = 0.4;
@@ -49,28 +52,28 @@ $(function() {
     //default number of clones to use for BV mode
     tributary.nclones = 10;
 
-    tributary.clones = d3.select("svg").append("g").attr("id", "clones")
-    tributary.g = d3.select("svg").append("g").attr("id", "delta")
+    tributary.clones = d3.select("svg").append("g").attr("id", "clones");
+    tributary.g = d3.select("svg").append("g").attr("id", "delta");
 
     //user is responsible for defining this
     //by default we just show simple text
-    tributary.run = function(t, g) {
-        
+    tributary.run = function(g,t,i) {
         //$('svg').empty();
         $('#delta').empty();
         g.append("text")
             .text("t: " + t)
             .attr("font-size", 60)
             .attr("dy", "1em");
-    }
+    };
 
 
     //this is a wrapper 
     tributary.execute = function() {
         try {
-            tributary.run(tributary.ease(tributary.t), tributary.g)
+            //tributary.run(tributary.ease(tributary.t), tributary.g, 0)
+            tributary.run(tributary.g, tributary.ease(tributary.t), 0);
         } catch (e) {}
-    }
+    };
 
     /*
     var pause = false;
@@ -89,7 +92,7 @@ $(function() {
             //set the current t to the slider's value
             tributary.t = ui.value
             //call the run function with the current t
-            tributary.execute(tributary.g)
+            tributary.execute()
         /*
             try {
                 tributary.run(tributary.t)
@@ -165,16 +168,22 @@ $(function() {
         if(tributary.bv)
         {
             //d3.select("#bv_button").style("background-color", "#e3e3e3")
-            bv_button.addClass("playing")
+            bv_button.addClass("playing");
             tributary.make_clones();
+            //re-init tributary (appending a bunch of defs can be problematic)
+            $("#delta").empty();
+            tributary.init(tributary.g, 0);
+            tributary.execute();
+
         }
         else
         {
             //d3.select("#bv_button").style("background-color", null)
-            bv_button.removeClass("playing")
-            d3.selectAll(".bvclone").remove()
+            bv_button.removeClass("playing");
+            //d3.selectAll(".bvclone").remove();
+            $('#clones').empty();
         }
-    })
+    });
 
 
 
@@ -224,7 +233,7 @@ $(function() {
         time_slider.slider('option', 'value', tributary.t);
         //update the function (there is probably a way to have the slider's
         //function get called programmatically)
-        tributary.execute(tributary.g)
+        tributary.execute()
         /*
         try {
             tributary.run(tributary.t)

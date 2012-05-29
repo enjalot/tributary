@@ -27,9 +27,9 @@ tributary.duration = 3000;
 
 
 //default easing function
-tributary.ease = d3.ease("linear")
+tributary.ease = d3.ease("linear");
 
-tributary.g = d3.select("#flowsvg").append("g").attr("id", "flow")
+tributary.g = d3.select("#flowsvg").append("g").attr("id", "flow");
 
 //user is responsible for defining this
 //by default we just show simple text
@@ -46,7 +46,8 @@ tributary.run = function(t, g) {
 
 tributary.execute = function() {
     try {
-        tributary.run(tributary.ease(tributary.t), tributary.g)
+        //tributary.run(tributary.ease(tributary.t), tributary.g)
+        tributary.run(tributary.g)
     } catch (e) {}
 }
 

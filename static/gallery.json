@@ -1,6 +1,6 @@
 [
     {
-        "gist":"2636296",
+        "gist":"2815753",
         "filename":"sinwaves.js",
         "description":"Sin Waves"
         ,"tags": "art color",
@@ -9,7 +9,7 @@
         "splash": "http://tributary-gallery.s3.amazonaws.com/sinwaves.png"
     }
     ,{
-        "gist":"2637876",
+        "gist":"2822408",
         "filename":"square.js",
         "description":"Simple Square Transition",
         "tags": "delta animation color",
@@ -45,7 +45,7 @@
         "splash": "http://tributary-gallery.s3.amazonaws.com/crazynest.png"
     }
     , {
-        "gist":"2637883",
+        "gist":"2822417",
         "filename":"circles.js",
         "description":"Dancing Dots",
         "width": 900,
@@ -106,7 +106,7 @@
         ,"splash": "http://tributary-gallery.s3.amazonaws.com/rainbowhand.png"
     },
     {
-        "gist":"2637864",
+        "gist":"2822704",
         "filename":"arctween.js",
         "description":"Arc Tween Example"
         ,"width": 450
