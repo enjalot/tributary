@@ -41,12 +41,13 @@
     model = new tributary.Reptile({"gist":"{{gist}}", "filename":"{{filename}}"})
     tribView = new tributary.TributaryView({"model":model, "endpoint":"reptile"})
 
-    tributary.g_width = tributary.sw/3;
-    tributary.g_height = tributary.sh/3;
+    tributary.g_width = 400;//tributary.sw/3;
+    tributary.g_height = 400;//tributary.sh/3;
 
 
     window.onresize = function(event) {
         model.trigger("execute")
-        tributary.layout()
+        //tributary.layout()
+        tributary.make_clones();
     }
 {% endblock %}

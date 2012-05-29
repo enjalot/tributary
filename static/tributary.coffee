@@ -109,12 +109,11 @@ class tributary.Reptile extends tributary.Tributary
             $('#clones').empty()
             #tributary.initialize(d3.select("svg"))
             tributary.make_clones()
-            tributary.layout()
+            #tributary.layout()
             @trigger("noerror")
         catch e
             @trigger("error",e)
         return true
-
 
 
 class tributary.Delta extends tributary.Tributary
@@ -286,8 +285,8 @@ class tributary.TributaryView extends Backbone.View
                                 min = -100
                                 max = 100
                             else
-                                min = -3 * val
-                                max = 5 * val
+                                min = -10 * val
+                                max = 10 * val
                         @controls[key] = @gui.add(trib, key, min, max)
 
 
@@ -354,7 +353,7 @@ class tributary.TributaryView extends Backbone.View
         $('#tweet_this').append("tweet this")
         $('#tweetPanel').on("click", (e) =>
             @save_gist((newurl, newgist) ->
-                tweetlink = "http://twitter.com/home/?status=See my latest %23tributary here "+"http://enjalot.com" + newurl
+                tweetlink = "http://twitter.com/home/?status=See my latest %23tributary here "+"http://mainstem.org" + newurl
                 window.location = tweetlink
                 #window.open(tweetlink, 'twitte')
             )

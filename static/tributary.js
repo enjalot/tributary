@@ -136,7 +136,6 @@ tributary.Reptile = (function(_super) {
       eval(code);
       $('#clones').empty();
       tributary.make_clones();
-      tributary.layout();
       this.trigger("noerror");
     } catch (e) {
       this.trigger("error", e);
@@ -360,8 +359,8 @@ tributary.TributaryView = (function(_super) {
                 min = -100;
                 max = 100;
               } else {
-                min = -3 * val;
-                max = 5 * val;
+                min = -10 * val;
+                max = 10 * val;
               }
             }
             _this.controls[key] = _this.gui.add(trib, key, min, max);
@@ -414,7 +413,7 @@ tributary.TributaryView = (function(_super) {
     $('#tweetPanel').on("click", function(e) {
       return _this.save_gist(function(newurl, newgist) {
         var tweetlink;
-        tweetlink = "http://twitter.com/home/?status=See my latest %23tributary here " + "http://enjalot.com" + newurl;
+        tweetlink = "http://twitter.com/home/?status=See my latest %23tributary here " + "http://mainstem.org" + newurl;
         return window.location = tweetlink;
       });
     });

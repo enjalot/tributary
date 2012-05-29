@@ -1,35 +1,34 @@
 //$(function() {
     tributary.make_clones = function() {
-        //make n frames with lowered opacity
         var svg = d3.select("#clones");
-        var frames = d3.range(tributary.nclones);
-        var gf = svg.selectAll("g.tileclone")
-            .data(frames).enter()
-            .append("g")
-                .attr("class", "tileclone");
-                //.style("opacity", tributary.clone_opacity);
-        
-        gf.each(function(d, i) {
-            var frame = d3.select(this);
-            tributary.initialize(frame);
-            console.log("initing!")
-            //tributary.run(i/tributary.nclones, frame);
-        });
-    };
 
-    tributary.layout = function() {
-        var svg = d3.select("#clones");
+        //this is screen width not browser width...
+        //might work out better anyway (largest potential pattern)
         var sw = window.screen.width;
         var sh = window.screen.height;
-        tributary.g_width = sw/3;
-        tributary.g_height = sh/3;
-        var tileclones = svg.selectAll("g.tileclone")
-            .attr("transform", function(d,i) {
-                var x = tributary.g_width * (i % 3);
-                //console.log("x", i, x)
-                var y = tributary.g_height * parseInt(i/3);
-                return "translate(" + [x,y] + ")";
-            });
+        var nx = parseInt(sw/tributary.g_width, 10)+2;
+        var ny = parseInt(sh/tributary.g_height, 10)+2;
+        var data = d3.range(nx*ny);
+
+        var gf = svg.selectAll("g.tileclone")
+            .data(data);
+
+        gf.enter()
+            .append("g")
+            .attr("class", "tileclone");
+
+        gf.exit().remove();
+        
+        gf.each(function(d, i) {
+            var tile = d3.select(this);
+            tributary.initialize(tile);
+        })
+        .attr("transform", function(d,i) {
+            var x = tributary.g_width * (i % nx);
+            var y = tributary.g_height * parseInt(i/nx, 10);
+            return "translate(" + [x,y] + ")";
+        });
+
     };
 
     //time slider
