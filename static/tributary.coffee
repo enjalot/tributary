@@ -29,7 +29,7 @@ class tributary.Tributary extends Backbone.Model
             eval(code)
             trib = window.trib  #access global trib object
             trib_options = window.trib_options  #access global trib object
-            tributary.initialize(d3.select("svg"))
+            tributary.initialize(d3.select("svg.tributary_svg"))
         catch e
             @trigger("error", e)
             return false
@@ -42,8 +42,8 @@ class tributary.Tributary extends Backbone.Model
             trib = window.trib
             trib_options = window.trib_options
 
-            $("svg").empty()
-            tributary.initialize(d3.select("svg"))
+            $("svg.tributary_svg").empty()
+            tributary.initialize(d3.select("svg.tributary_svg"))
         catch e
             @trigger("error", e)
             return false
@@ -253,8 +253,9 @@ class tributary.TributaryView extends Backbone.View
             theme: "lesser-dark",
             lineNumbers: true,
             onChange: () =>
-                thisCode = @code_editor.getValue()
-                @model.trigger("code", thisCode)
+                if not @dating
+                    thisCode = @code_editor.getValue()
+                    @model.trigger("code", thisCode)
             })
 
 
