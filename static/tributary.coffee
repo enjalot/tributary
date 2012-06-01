@@ -27,9 +27,9 @@ class tributary.Tributary extends Backbone.Model
             code += @get("code")
             code += "};"
             eval(code)
-            trib = window.trib  #access global trib object
-            trib_options = window.trib_options  #access global trib object
-            tributary.initialize(d3.select("svg.tributary_svg"))
+            #trib = window.trib  #access global trib object
+            #trib_options = window.trib_options  #access global trib object
+            #tributary.initialize(d3.select("svg.tributary_svg"))
         catch e
             @trigger("error", e)
             return false
@@ -246,16 +246,14 @@ class tributary.TributaryView extends Backbone.View
         )
 
 
-
         @code_editor = CodeMirror(d3.select("#editor").node(), {
             #value: "function myScript(){return 100;}\n",
             mode:  "javascript",
             theme: "lesser-dark",
             lineNumbers: true,
             onChange: () =>
-                if not @dating
-                    thisCode = @code_editor.getValue()
-                    @model.trigger("code", thisCode)
+                thisCode = @code_editor.getValue()
+                @model.trigger("code", thisCode)
             })
 
 

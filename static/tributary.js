@@ -46,9 +46,6 @@ tributary.Tributary = (function(_super) {
       code += this.get("code");
       code += "};";
       eval(code);
-      trib = window.trib;
-      trib_options = window.trib_options;
-      tributary.initialize(d3.select("svg.tributary_svg"));
     } catch (e) {
       this.trigger("error", e);
       return false;
@@ -333,10 +330,8 @@ tributary.TributaryView = (function(_super) {
       lineNumbers: true,
       onChange: function() {
         var thisCode;
-        if (!_this.dating) {
-          thisCode = _this.code_editor.getValue();
-          return _this.model.trigger("code", thisCode);
-        }
+        thisCode = _this.code_editor.getValue();
+        return _this.model.trigger("code", thisCode);
       }
     });
     this.controls = {};
