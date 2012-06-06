@@ -286,7 +286,10 @@ class tributary.TributaryView extends Backbone.View
                             else
                                 min = -10 * val
                                 max = 10 * val
-                        @controls[key] = @gui.add(trib, key, min, max)
+                                slider_min = _.min([min, max])
+                                slider_max = _.max([min, max])
+
+                        @controls[key] = @gui.add(trib, key, slider_min, slider_max)
 
 
                     @controls[key].onChange(do (key) =>

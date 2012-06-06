@@ -338,7 +338,7 @@ tributary.TributaryView = (function(_super) {
     this.dating = false;
     this.gui = new dat.GUI();
     this.make_ui = function() {
-      var key, max, min, val, _results;
+      var key, max, min, slider_max, slider_min, val, _results;
       if (!_this.dating) {
         _this.gui.destroy();
         _this.gui = new dat.GUI();
@@ -358,9 +358,11 @@ tributary.TributaryView = (function(_super) {
               } else {
                 min = -10 * val;
                 max = 10 * val;
+                slider_min = _.min([min, max]);
+                slider_max = _.max([min, max]);
               }
             }
-            _this.controls[key] = _this.gui.add(trib, key, min, max);
+            _this.controls[key] = _this.gui.add(trib, key, slider_min, slider_max);
           }
           _results.push(_this.controls[key].onChange((function(key) {
             return function(value) {
