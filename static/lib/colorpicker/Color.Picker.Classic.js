@@ -47,7 +47,8 @@ Color.Picker = function (props) {
 
 	/// Creating our color picker.
 	var plugin = document.createElement("div");
-	plugin.id = "ColorPicker";
+	plugin.id = props.id || "ColorPicker";
+    plugin.className = "ColorPicker";
 	var pickerWidth = this.size + this.hueWidth * (this.doAlpha ? 2 : 1) + this.margin - 6;
 	var pickerHeight = this.size + this.margin * 2;
 	plugin.style.height = pickerHeight + "px";
