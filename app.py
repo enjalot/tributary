@@ -32,6 +32,11 @@ def reptile():
 def delta():
     return render_template("delta.html", base_url=base_url)
 
+@app.route("/hourglass/")
+def hourglass():
+    return render_template("hourglass.html", base_url=base_url)
+
+
 @app.route("/flow/")
 def flow():
     return render_template("flow.html", base_url=base_url)
@@ -83,6 +88,12 @@ def delta_gist(gist=None, filename=None):
     #return render_template("water.html", code=code, base_url=base_url) 
     return render_template("delta.html", gist=gist, filename=filename, base_url=base_url) 
 
+@app.route("/hourglass/<gist>/<filename>")
+def hourglass_gist(gist=None, filename=None):
+    #print gist, filename
+    return render_template("hourglass.html", gist=gist, filename=filename, base_url=base_url) 
+
+
 @app.route("/flow/<gist>/<filename>")
 def flow_gist(gist=None, filename=None):
     #print gist, filename
@@ -128,6 +139,7 @@ def embed_gist(gist=None, filename=None):
 import urllib
 @app.route("/tributary/save", methods=["POST"])
 @app.route("/delta/save", methods=["POST"])
+@app.route("/hourglass/save", methods=["POST"])
 @app.route("/flow/save", methods=["POST"])
 def save():
     #gistobj = json.loads(request.values.get("gist"))

@@ -1,4 +1,4 @@
-//$(function() {
+$(function() {
     tributary.make_clones = function() {
         var svg = d3.select("#clones");
 
@@ -62,6 +62,7 @@
     //default number of clones to use for BV mode
     tributary.nclones = 9;
 
+    //TODO: switch to use elements!
     tributary.clones = d3.select("svg").append("g").attr("id", "clones");
     tributary.g = d3.select("svg").append("g").attr("id", "reptile");
 
@@ -86,5 +87,5 @@
     }
 
 
-//})
+})()
 

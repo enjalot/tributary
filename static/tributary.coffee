@@ -120,7 +120,20 @@ class tributary.Delta extends tributary.Tributary
     ###
     #   For exploring transitions
     ###
-
+    initialize: ->
+        super
+        @set({code: """
+        var txt;
+        tributary.init = function(g) {
+            txt = g.append("text")
+              .attr("transform", "translate(" + [100, 100] + ")");
+        };
+        tributary.run = function(g,t) {
+            txt.text(t);
+        };
+        """})
+        @
+ 
     execute: () =>
         try
             svg = d3.select(".tributary_svg")
@@ -147,6 +160,47 @@ class tributary.Delta extends tributary.Tributary
             @trigger("error", e)
 
         return true
+
+    
+class tributary.HourGlass extends tributary.Tributary
+    ###
+    #   For exploring animations, run loops 
+    ###
+    initialize: ->
+        super
+        @set({code: """
+        var txt;
+        tributary.init = function(g) {
+            txt = g.append("text")
+              .attr("transform", "translate(" + [100, 100] + ")");
+        };
+        tributary.run = function(g,t) {
+            txt.text(t);
+        };
+        """})
+        @
+
+
+    execute: () =>
+        try
+            svg = d3.select(".tributary_svg")
+            eval(@get("code"))
+            @trigger("noerror")
+        catch e
+            @trigger("error", e)
+
+        try
+            $("#hourglass").empty()
+            #we exec the user defined append code
+            tributary.init(tributary.g)
+            #then we run the user defined run function
+            #tributary.run(tributary.t, tributary.g)
+            tributary.execute()
+        catch e
+            @trigger("error", e)
+
+        return true
+
 
 class tributary.Flow extends tributary.Tributary
     ###

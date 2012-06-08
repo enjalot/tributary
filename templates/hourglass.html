@@ -1,0 +1,45 @@
+
+{% extends "base.html" %}
+
+
+{% block title %}HourGlass{% endblock %}
+
+{% block style %}
+    <link rel='stylesheet' type='text/css' href='/static/css/hourglass.css' />
+{% endblock %}
+
+{% block scripts %}
+    <script src='/static/hourglass.js'></script>
+{% endblock %}
+
+{% block branding %}
+	<h1>HourGlass</h1>
+{% endblock %}
+
+
+
+{% block gui %}
+    <div id="gui">
+        <button id="play_button" class="button minimal">Play</button>
+
+<!--        <div id="off_button" class="select button">Off</div> 
+        Temporarily hiding "off" button- unless it serves a purpose I'm unaware of, user should probably use the "play/stop" button instead
+        <button id="period_button" class="select button minimal">Loop</button>
+        <button id="pingpong_button" class="select button minimal">PingPong</button>
+-->
+    </div>
+    <div id='display'>
+        <svg id="hourglasssvg" class="tributary_svg"></svg>
+    </div>
+
+{% endblock %}
+
+
+{% block jsinit %}
+    var model = new tributary.HourGlass({"gist":"{{gist}}", "filename":"{{filename}}"})
+    tribView = new tributary.TributaryView({"model":model, "endpoint":"hourglass"})
+
+    window.onresize = function(event) {
+        model.trigger("execute")
+    }
+{% endblock %}

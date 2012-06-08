@@ -1,4 +1,4 @@
-$(function() {
+(function() {
     tributary.make_clones = function() {
         //make n frames with lowered opacity
         var svg = d3.select("#clones");
@@ -214,14 +214,14 @@ $(function() {
                 //tributary.pause = false;
             } else if (tributary.loop === "pingpong") {
                 //this sets tributary.t to 0 when we get to 0 and 1 when we get to 1 (because of the direction we were going)
-                tributary.t = !tributary.reverse
+                tributary.t = !tributary.reverse;
                 tributary.timer.then = new Date();
                 tributary.timer.duration = tributary.duration;
                 tributary.timer.ctime = tributary.t;
                 tributary.reverse = !tributary.reverse;
             }
             else {
-                if (tributary.t != 0)
+                if (tributary.t !== 0)
                 {
                     tributary.t = 1;
                     tributary.pause = true;
@@ -233,17 +233,17 @@ $(function() {
         time_slider.slider('option', 'value', tributary.t);
         //update the function (there is probably a way to have the slider's
         //function get called programmatically)
-        tributary.execute()
+        tributary.execute();
         /*
         try {
             tributary.run(tributary.t)
         } catch (e) {}
         */
-    })
+    });
 
 
 
-})
+}());
 
 
 

@@ -158,6 +158,14 @@ tributary.Delta = (function(_super) {
   */
 
 
+  Delta.prototype.initialize = function() {
+    Delta.__super__.initialize.apply(this, arguments);
+    this.set({
+      code: "var txt;\ntributary.init = function(g) {\n    txt = g.append(\"text\")\n      .attr(\"transform\", \"translate(\" + [100, 100] + \")\");\n};\ntributary.run = function(g,t) {\n    txt.text(t);\n};"
+    });
+    return this;
+  };
+
   Delta.prototype.execute = function() {
     var svg;
     try {
@@ -184,6 +192,51 @@ tributary.Delta = (function(_super) {
   };
 
   return Delta;
+
+})(tributary.Tributary);
+
+tributary.HourGlass = (function(_super) {
+
+  __extends(HourGlass, _super);
+
+  function HourGlass() {
+    this.execute = __bind(this.execute, this);
+    return HourGlass.__super__.constructor.apply(this, arguments);
+  }
+
+  /*
+      #   For exploring animations, run loops
+  */
+
+
+  HourGlass.prototype.initialize = function() {
+    HourGlass.__super__.initialize.apply(this, arguments);
+    this.set({
+      code: "var txt;\ntributary.init = function(g) {\n    txt = g.append(\"text\")\n      .attr(\"transform\", \"translate(\" + [100, 100] + \")\");\n};\ntributary.run = function(g,t) {\n    txt.text(t);\n};"
+    });
+    return this;
+  };
+
+  HourGlass.prototype.execute = function() {
+    var svg;
+    try {
+      svg = d3.select(".tributary_svg");
+      eval(this.get("code"));
+      this.trigger("noerror");
+    } catch (e) {
+      this.trigger("error", e);
+    }
+    try {
+      $("#hourglass").empty();
+      tributary.init(tributary.g);
+      tributary.execute();
+    } catch (e) {
+      this.trigger("error", e);
+    }
+    return true;
+  };
+
+  return HourGlass;
 
 })(tributary.Tributary);
 
