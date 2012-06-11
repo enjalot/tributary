@@ -16,6 +16,12 @@ class tributary.Tributary extends Backbone.Model
     initialize: ->
         @on("code", @newcode)
         @on("execute", @execute)
+        @on("error", @handle_error)
+
+    handle_error: (e) =>
+        if tributary.trace
+            console.log(e)
+            console.trace()
 
     execute: () =>
         try

@@ -26,6 +26,8 @@ tributary.Tributary = (function(_super) {
     this.newcode = __bind(this.newcode, this);
 
     this.execute = __bind(this.execute, this);
+
+    this.handle_error = __bind(this.handle_error, this);
     return Tributary.__super__.constructor.apply(this, arguments);
   }
 
@@ -35,7 +37,15 @@ tributary.Tributary = (function(_super) {
 
   Tributary.prototype.initialize = function() {
     this.on("code", this.newcode);
-    return this.on("execute", this.execute);
+    this.on("execute", this.execute);
+    return this.on("error", this.handle_error);
+  };
+
+  Tributary.prototype.handle_error = function(e) {
+    if (tributary.trace) {
+      console.log(e);
+      return console.trace();
+    }
   };
 
   Tributary.prototype.execute = function() {
