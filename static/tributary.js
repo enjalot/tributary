@@ -2,10 +2,13 @@ tributary.Tributary = Backbone.Model.extend({
     defaults: {
         code: ""
     },
-    initialize: function() {
+    binder: function() {
         this.on("code", this.newcode);
         this.on("execute", this.execute);
         this.on("error", this.handle_error);
+    },
+    initialize: function() {
+        this.binder();
     },
     handle_error: function(e) {
         if(tributary.trace) {

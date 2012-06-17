@@ -1,4 +1,57 @@
 (function() {
+
+    tributary.Delta = tributary.Tributary.extend({
+        //For exploring transitions
+        initialize: function() {
+            this.binder();
+
+            this.set({
+                code: '\
+var txt;\n\
+tributary.init = function(g) {\n\
+    txt = g.append("text")\n\
+      .attr("transform", "translate(" + [100, 100] + ")");\n\
+};\n\
+tributary.run = function(g,t) {\n\
+    txt.text(t);\n\
+};'
+            });
+        },
+        execute: function() {
+            try {
+                var svg = d3.select(".tributary_svg");
+                eval(this.get("code"));
+                this.trigger("noerror");
+            } catch (e) {
+                this.trigger("error", e);
+            }
+
+            if(tributary.bv) {
+                //d3.selectAll(".bvclone").remove(); 
+                try {
+                    $('#clones').empty();
+                    tributary.make_clones();
+                } catch (er) {
+                    this.trigger("error", er);
+                }
+            }
+            try {
+                $("#delta").empty();
+                //we exec the user defined append code
+                tributary.init(tributary.g, 0);
+                //then we run the user defined run function
+                //tributary.run(tributary.t, tributary.g)
+                tributary.execute();
+            } catch (err) {
+                this.trigger("error", err);
+            }
+            return true;
+        }
+    });
+    
+
+
+
     tributary.make_clones = function() {
         //make n frames with lowered opacity
         var svg = d3.select("#clones");
@@ -90,9 +143,9 @@
         slide: function(event, ui) {
             //console.log("ui.value", ui.value);
             //set the current t to the slider's value
-            tributary.t = ui.value
+            tributary.t = ui.value;
             //call the run function with the current t
-            tributary.execute()
+            tributary.execute();
         /*
             try {
                 tributary.run(tributary.t)
@@ -101,7 +154,7 @@
         },
         min: 0,
         max: 1,
-        step: .01,
+        step: 0.01,
         value: tributary.t
     });
 
@@ -111,17 +164,17 @@
         then: new Date(),
         duration: tributary.duration,
         ctime: tributary.t
-    }
+    };
 
-    var play_button = $("#play_button")
+    var play_button = $("#play_button");
     play_button.on("click", function(event) {
         if($("#play_button").hasClass("playing")){
                 $("#play_button").removeClass("playing");
-                play_button.text("Play")
+                play_button.text("Play");
         }
         else if(!$("#play_button").hasClass("playing")){
-            play_button.addClass("playing")
-            play_button.text("Stop")
+            play_button.addClass("playing");
+            play_button.text("Stop");
             
         }
 
@@ -133,11 +186,11 @@
             if(!tributary.pause) {
                 //unpausing, so we setup our timer to run
                 tributary.timer.then = new Date();
-                tributary.timer.duration = (1 - tributary.t) * tributary.duration
-                tributary.timer.ctime = tributary.t
+                tributary.timer.duration = (1 - tributary.t) * tributary.duration;
+                tributary.timer.ctime = tributary.t;
             }
         }
-    })
+    });
     /*
      $("#off_button").on("click", function(event) {
         tributary.loop = "off"
@@ -189,15 +242,16 @@
 
     d3.timer(function() {
         //if paused lets not execute
-        if(tributary.pause) return false;
+        if(tributary.pause) { return false; }
 
         var now = new Date();
         var dtime = now - tributary.timer.then;
+        var dt;
         if (tributary.reverse) {
-            var dt = tributary.timer.ctime * dtime / tributary.timer.duration * -1;
+            dt = tributary.timer.ctime * dtime / tributary.timer.duration * -1;
         }
         else {
-            var dt = (1 - tributary.timer.ctime) * dtime / tributary.timer.duration;
+            dt = (1 - tributary.timer.ctime) * dtime / tributary.timer.duration;
         }
         tributary.t = tributary.timer.ctime + dt;
         

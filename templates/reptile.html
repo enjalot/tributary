@@ -42,6 +42,8 @@
     tributary.g_height = 400;//tributary.sh/3;
 
 
+    tributary.make_clones();
+
     window.onresize = function(event) {
         model.trigger("execute")
         //tributary.layout()

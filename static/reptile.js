@@ -1,4 +1,27 @@
-$(function() {
+(function() {
+    tributary.Reptile = tributary.Tributary.extend({
+        //For making tiles with tributary code
+        initialize: function() {
+            this.binder();
+            this.set({code: 'g.append("rect").attr("width", 100).attr("height", 100);'});
+        },
+        execute: function() {
+            delete tributary.initialize;
+            try {
+                code = "tributary.initialize = function(g) {";
+                code += this.get("code");
+                code += "};";
+                eval(code);
+                $('#clones').empty();
+                tributary.make_clones();
+                this.trigger("noerror");
+            } catch (e) {
+                this.trigger("error",e);
+            }
+            return true;
+        }
+    });
+
     tributary.make_clones = function() {
         var svg = d3.select("#clones");
 
@@ -69,23 +92,20 @@ $(function() {
     //user is responsible for defining this
     //by default we just show simple text
     tributary.run = function(t, g) {
-        
         //$('svg').empty();
         $('#reptilesvg').empty();
         g.append("text")
             .text("t: " + t)
             .attr("font-size", 60)
             .attr("dy", "1em");
-    }
-
+    };
 
     //this is a wrapper 
     tributary.execute = function() {
         try {
-            tributary.run(tributary.ease(tributary.t), tributary.g)
+            tributary.run(tributary.ease(tributary.t), tributary.g);
         } catch (e) {}
-    }
+    };
 
-
-})()
+}());
 
