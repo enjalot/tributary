@@ -224,6 +224,17 @@ tributary.TributaryView = Backbone.View.extend({
                 window.location = newurl;
             });
         });
+        //Setup the login button
+        $('#loginPanel').on('click', function(e) {
+            //TODO: use next parameter to redirect
+            if(window.loggedin) {
+                window.location = "/github-logout";
+            } else {
+                window.location = "/github-login";
+            }
+        });
+
+
 
         //Setup editor controls
         this.editor_width = 600;

@@ -34,6 +34,7 @@
         //provide global trib object
         window.trib = {};
         window.trib_options = {};
+        window.loggedin = "{{ loggedin }}" === "True";
     </script>
 
     <script type="text/javascript">
@@ -60,6 +61,19 @@
 
 
     <div id="fork-n-tweet">
+            <button id='loginPanel' class="minimal">
+                {% if not loggedin %}
+                Login: 
+                {% else %}
+                Logout:
+                {% endif %}
+                <img src="/static/css/floppy.png" width="24" height="24" alt="Floppy">&nbsp;
+                <!--
+                <div class='address'><a href='#'>https://gist.github.com/b9ab9418af567e575b3e</a></div>
+                -->
+            </button>
+            
+     
             <button id='savePanel' class="minimal">
                 Fork: <img src="/static/css/floppy.png" width="24" height="24" alt="Floppy">&nbsp;
                 <!--
