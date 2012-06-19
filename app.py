@@ -8,52 +8,64 @@ app.debug = True
 
 base_url = "/"
 
+#We assume a default filename of inlet.js to grab from the gist
+default_filename = "inlet.js"
+
 @app.route("/")
 def hello():
     #return render_template("index.html", base_url=base_url)
     return render_template("gallery.html", base_url=base_url)
 
-@app.route("/creator")
-def creator():
-    #return render_template("index.html", base_url=base_url)
-    return render_template("gallery_creator.html", base_url=base_url)
 
-
+#Live editing d3 for exploring parameter spaces
 @app.route("/tributary/")
-def tributary():
-    return render_template("tributary.html", base_url=base_url)
+@app.route("/tributary/<gist>/")
+def tributary_gist(gist=None):
+    return render_template("tributary.html", gist=gist, filename=default_filename, base_url=base_url) 
 
-@app.route("/reptile/")
-def reptile():
-    return render_template("reptile.html", base_url=base_url)
-
-
+#Live editing transitions
 @app.route("/delta/")
-def delta():
-    return render_template("delta.html", base_url=base_url)
+@app.route("/delta/<gist>/")
+def delta_gist(gist=None):
+    return render_template("delta.html", gist=gist, filename=default_filename, base_url=base_url) 
 
+#Live editing run loops
 @app.route("/hourglass/")
-def hourglass():
-    return render_template("hourglass.html", base_url=base_url)
+@app.route("/hourglass/<gist>/")
+def hourglass_gist(gist=None):
+    return render_template("hourglass.html", gist=gist, filename=default_filename, base_url=base_url) 
 
-
+#Live editing music visualization
 @app.route("/flow/")
-def flow():
-    return render_template("flow.html", base_url=base_url)
+@app.route("/flow/<gist>/")
+def flow_gist(gist=None):
+    return render_template("flow.html", gist=gist, filename=default_filename, base_url=base_url) 
 
-@app.route("/geyser/")
-def geyser():
-    return render_template("geyser.html", base_url=base_url)
-
-@app.route("/fountain/")
-def fountain():
-    return render_template("fountain.html", base_url=base_url)
-
+#Experimenting with tiling and patterns
+@app.route("/reptile/")
+@app.route("/reptile/<gist>/")
+def reptile_gist(gist=None):
+    return render_template("reptile.html", gist=gist, filename=default_filename, base_url=base_url) 
 
 
-@app.route("/tributary/api/<gist>/<filename>")
-def internal_gist(gist, filename):
+#Embedded view for Tributary
+@app.route("/embed/<gist>/")
+def embed_gist(gist=None):
+    return render_template("embed.html", gist=gist, filename=default_filename, base_url=base_url) 
+
+#Embedded view for Delta
+@app.route("/shore/<gist>/")
+def shore_gist(gist=None):
+    return render_template("shore.html", gist=gist, filename=default_filename, base_url=base_url) 
+
+
+#@app.route("/tributary/api/<gist>/<filename>")
+@app.route("/tributary/api/<gist>/")
+def internal_gist(gist, filename=None):
     code = ""
+
+    if filename is None:
+        filename = default_filename
 
     #print gist, filename
     url = "https://raw.github.com/gist/" #1569370/boid.js
@@ -66,96 +78,45 @@ def internal_gist(gist, filename):
         code = obj.read()
     except URLError, e:
         print "ERROR", e.code
-
     return code
 
-@app.route("/tributary/<gist>/<filename>")
-def tributary_gist(gist=None, filename=None):
-    #print gist, filename
-    #return render_template("water.html", code=code, base_url=base_url) 
-    return render_template("tributary.html", gist=gist, filename=filename, base_url=base_url) 
 
-@app.route("/reptile/<gist>/<filename>")
-def reptile_gist(gist=None, filename=None):
-    #print gist, filename
-    #return render_template("water.html", code=code, base_url=base_url) 
-    return render_template("reptile.html", gist=gist, filename=filename, base_url=base_url) 
-
-
-@app.route("/delta/<gist>/<filename>")
-def delta_gist(gist=None, filename=None):
-    #print gist, filename
-    #return render_template("water.html", code=code, base_url=base_url) 
-    return render_template("delta.html", gist=gist, filename=filename, base_url=base_url) 
-
-@app.route("/hourglass/<gist>/<filename>")
-def hourglass_gist(gist=None, filename=None):
-    #print gist, filename
-    return render_template("hourglass.html", gist=gist, filename=filename, base_url=base_url) 
-
-
-@app.route("/flow/<gist>/<filename>")
-def flow_gist(gist=None, filename=None):
-    #print gist, filename
-    #return render_template("water.html", code=code, base_url=base_url) 
-    return render_template("flow.html", gist=gist, filename=filename, base_url=base_url) 
-
-@app.route("/geyser/<gist>/<filename>")
-def geyser_gist(gist=None, filename=None):
-    #print gist, filename
-    #return render_template("water.html", code=code, base_url=base_url) 
-    return render_template("geyser.html", gist=gist, filename=filename, base_url=base_url) 
-
-@app.route("/fountain/<gist>/<filename>")
-def fountain_gist(gist=None, filename=None):
-    #print gist, filename
-    #return render_template("water.html", code=code, base_url=base_url) 
-    return render_template("fountain.html", gist=gist, filename=filename, base_url=base_url) 
-
-
-
-@app.route("/shore/<gist>/<filename>")
-def shore_gist(gist=None, filename=None):
-    #print gist, filename
-    #return render_template("water.html", code=code, base_url=base_url) 
-    return render_template("shore.html", gist=gist, filename=filename, base_url=base_url) 
-
-@app.route("/carbonite/<gist>/<filename>")
-def carbonite_gist(gist=None, filename=None):
-    #print gist, filename
-    #return render_template("water.html", code=code, base_url=base_url) 
-    return render_template("carbonite.html", gist=gist, filename=filename, base_url=base_url) 
-
-
-@app.route("/embed/<gist>/<filename>")
-def embed_gist(gist=None, filename=None):
-    #print gist, filename
-    #return render_template("water.html", code=code, base_url=base_url) 
-    return render_template("embed.html", gist=gist, filename=filename, base_url=base_url) 
-
-
-
-
-import urllib
+#Save a tributary to a gist
 @app.route("/tributary/save", methods=["POST"])
-@app.route("/delta/save", methods=["POST"])
-@app.route("/hourglass/save", methods=["POST"])
-@app.route("/flow/save", methods=["POST"])
 def save():
-    #gistobj = json.loads(request.values.get("gist"))
     data = request.values.get("gist")
-    #data = urllib.urlencode(gistobj)
-    #print "gistobj", data
 
+    #TODO: use github auth for logged in users
     url = 'https://api.github.com/gists'
     req = urllib2.Request(url, data)
     ret = urllib2.urlopen(req).read()
     #print "ret", ret
     resp = make_response(ret, 200)
-    #TODO: get this working behind apache
-    #resp.headers['Conent-Type'] = 'application/json'
+    resp.headers['Content-Type'] = 'application/json'
 
     return resp
+
+
+#An experimental view that allowed creating screenshots from the gallery
+@app.route("/creator")
+def creator():
+    return render_template("gallery_creator.html", base_url=base_url)
+
+#EXPIREMENTAL: these don't work with the rewrite, will need to be resurrected
+"""
+@app.route("/geyser/<gist>/<filename>")
+def geyser_gist(gist=None, filename=None):
+    return render_template("geyser.html", gist=gist, filename=default_filename, base_url=base_url) 
+
+@app.route("/fountain/<gist>/<filename>")
+def fountain_gist(gist=None, filename=None):
+    return render_template("fountain.html", gist=gist, filename=default_filename, base_url=base_url) 
+
+@app.route("/carbonite/<gist>/<filename>")
+def carbonite_gist(gist=None, filename=None):
+    return render_template("carbonite.html", gist=gist, filename=default_filename, base_url=base_url) 
+"""
+
 
 
 if __name__ == "__main__":

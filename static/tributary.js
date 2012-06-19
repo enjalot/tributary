@@ -51,21 +51,22 @@ tributary.Tributary = Backbone.Model.extend({
     },
     newcode: function(code) {
         //save the code in the model
-        this.set({code:code})
-        this.execute()
+        this.set({code:code});
+        this.execute();
         //TODO: store code in local storage
 
-        return true
+        return true;
     },
     get_code: function(callback) {
+        var that = this;
         if(this.get("gist") && this.get("filename")) {
-            src_url = "/tributary/api/" + this.get("gist")  + "/" + this.get("filename");
+            src_url = "/tributary/api/" + this.get("gist");//  + "/" + this.get("filename");
             d3.text(src_url, function(data) { 
                 if(data) {
                     code = data;
-                    this.set({code: data});
+                    that.set({code: data});
                 } else {
-                    code = this.get("code");
+                    code = that.get("code");
                     if(!code) {
                         code = "";
                     }
@@ -171,17 +172,17 @@ tributary.TributaryView = Backbone.View.extend({
             
         this.inlet = Inlet(this.code_editor);
 
-        that.init_gui();
+        this.init_gui();
         
         var code = this.model.get("code");
         //check if we already have the code
-        if(code !== undefined) {
+        if(code !== undefined && code !== "") {
             this.code_editor.setValue(code);
             this.model.execute();
         } else {
             //fill in the editor with text we get back from the gist
             this.model.get_code(function(error, got_code) {
-                this.code_editor.setValue(got_code);
+                that.code_editor.setValue(got_code);
             });
         }
 
@@ -206,7 +207,7 @@ tributary.TributaryView = Backbone.View.extend({
         var that = this;
         //Setup the gui elements for this page
         //Setup tweet link
-        //var thisurl = window.location.protocol + "//" + window.location.host + "/" + window.location.pathname;
+        /*
         $('#tweet_this').append("tweet this");
         $('#tweetPanel').on("click", function(e) {
             that.save_gist(function(newurl, newgist) {
@@ -215,6 +216,7 @@ tributary.TributaryView = Backbone.View.extend({
                 //window.open(tweetlink, 'twitte')
             });
         });
+        */
 
         //Setup the save panel
         $('#savePanel').on('click', function(e) {
@@ -294,6 +296,9 @@ tributary.TributaryView = Backbone.View.extend({
         //console.log("ENDPOINT", @endpoint)
         //Save the current code to a public gist
         var oldgist = parseInt(this.model.get("gist"), 10);
+
+        //We now assume all tributaries will be saved as inlet.js
+        //so this code is a bit redundant, but it might be useful in the future
         filename = this.model.get("filename");
         if(filename === ""){
             filename = "inlet.js";
@@ -314,12 +319,11 @@ tributary.TributaryView = Backbone.View.extend({
         
         var that = this;
         $.post('/tributary/save', {"gist":JSON.stringify(gist)}, function(data) {
-            //TODO: fix the flask headers to send back application/json and not text/html
             if(typeof(data) === "string") {
                 data = JSON.parse(data);
             }
             var newgist = data.id;
-            var newurl = "/" + that.endpoint + "/" + newgist + "/" + filename;
+            var newurl = "/" + that.endpoint + "/" + newgist;// + "/" + filename;
             callback(newurl, newgist);
             //window.location = newurl;
         });

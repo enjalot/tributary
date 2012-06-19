@@ -1,5 +1,43 @@
 (function() {
 
+    tributary.HourGlass  = tributary.Tributary.extend({
+        //For exploring animations, run loops 
+        initialize: function() {
+            this.binder();
+            this.set({
+                code: '\
+var txt;\n\
+tributary.init = function(g) {\n\
+    txt = g.append("text")\n\
+      .attr("transform", "translate(" + [100, 100] + ")");\n\
+};\n\
+tributary.run = function(g,t) {\n\
+    txt.text(t);\n\
+};'
+            });
+        },
+        execute: function() {
+            try {
+                eval(this.get("code"));
+                this.trigger("noerror");
+            } catch (e) {
+                this.trigger("error", e);
+            }
+
+            try {
+                $("#hourglass").empty();
+                //we exec the user defined append code
+                tributary.init(tributary.g);
+                //then we run the user defined run function
+                tributary.execute();
+                this.trigger("noerror");
+            } catch (er) {
+                this.trigger("error", er);
+            }
+
+            return true;
+        }
+    })
     //time slider
     //window.delta = {}
     //var delta = window.delta;

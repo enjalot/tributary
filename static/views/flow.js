@@ -10,7 +10,32 @@ var audioBuffer;
 
 
 
-$(function() {
+(function() {
+
+tributary.Flow  = tributary.Tributary.extend({
+    //Music visualization exploration
+    execute: function() {
+        try {
+            eval(this.get("code"));
+            this.trigger("noerror");
+        } catch (e) {
+            this.trigger("error", e);
+        }
+
+        try {
+            $("#flow").empty();
+            //we exec the user defined append code
+            tributary.init(tributary.g);
+            //then we run the user defined run function
+            tributary.execute();
+            this.trigger("noerror");
+        } catch (er) {
+            this.trigger("error", er);
+        }
+
+        return true;
+    }
+});
 
 
 //time slider
@@ -168,7 +193,7 @@ d3.timer(function() {
 
 
 
-});
+}());
 
 
 
