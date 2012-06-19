@@ -1,6 +1,7 @@
 tributary.Tributary = Backbone.Model.extend({
     defaults: {
-        code: ""
+        code: "",
+        coffee: false
     },
     binder: function() {
         this.on("code", this.newcode);
@@ -16,12 +17,23 @@ tributary.Tributary = Backbone.Model.extend({
             console.trace();
         }
     },
-    execute: function() {
+    handle_coffee: function() {
+        //This checks if coffeescript is being used
+        //and returns compiled javascript
+        var js = this.get("code");
+        if(this.get("coffee")) {
+            //compile the coffee
+            js = CoffeeScript.compile(js, {"bare":true});
+        }
+        return js;
+    },
+    execute: function() {   
+        var js = this.handle_coffee();
         try {
             svg = d3.select("svg");
             //wrap the code in a closure
-            code = "tributary.initialize = function(g) {";
-            code += this.get("code");
+            var code = "tributary.initialize = function(g) {";
+            code += js;
             code += "};";
             eval(code);
             //trib = window.trib  #access global trib object
