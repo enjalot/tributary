@@ -71,7 +71,8 @@ tributary.Tributary = Backbone.Model.extend({
     },
     get_code: function(callback) {
         var that = this;
-        if(this.get("gist") && this.get("filename")) {
+        //if(this.get("gist") && this.get("filename")) {
+        if(this.get("gist")) {
             src_url = "/tributary/api/" + this.get("gist");//  + "/" + this.get("filename");
             d3.text(src_url, function(data) { 
                 if(data) {
@@ -191,12 +192,11 @@ tributary.TributaryView = Backbone.View.extend({
         if(code !== undefined && code !== "") {
             this.code_editor.setValue(code);
             this.model.execute();
-        } else {
-            //fill in the editor with text we get back from the gist
-            this.model.get_code(function(error, got_code) {
-                that.code_editor.setValue(got_code);
-            });
-        }
+        }// else {
+        //fill in the editor with text we get back from the gist
+        this.model.get_code(function(error, got_code) {
+            that.code_editor.setValue(got_code);
+        });
 
         //Hook up drag and drop for code file
         $('body')[0].addEventListener('dragover', this._dragOver, false);
