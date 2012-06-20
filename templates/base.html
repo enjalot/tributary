@@ -34,7 +34,11 @@
         //provide global trib object
         window.trib = {};
         window.trib_options = {};
-        window.loggedin = "{{ loggedin }}" === "True";
+        tributary.loggedin = "{{ loggedin }}" === "True";
+        tributary.username = "{{ username }}";
+        tributary.avatar = "{{ avatar }}";
+        tributary.userid = "{{ userid }}";
+        tributary.userurl = "{{ userurl }}";
     </script>
 
     <script type="text/javascript">
@@ -58,9 +62,9 @@
     {% block branding%}
     {% endblock %}
     </div> 
+    <div id="gist_info"></div>
 
-    <div id="fork-n-tweet">
-
+    <div id="save_gui">
             <button id='loginPanel' class="minimal">
                 {% if not loggedin %}
                 Login: 

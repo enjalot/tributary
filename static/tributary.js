@@ -244,13 +244,41 @@ tributary.TributaryView = Backbone.View.extend({
         //Setup the login button
         $('#loginPanel').on('click', function(e) {
             //TODO: use next parameter to redirect
-            if(window.loggedin) {
+            if(tributary.loggedin) {
                 window.location = "/github-logout";
             } else {
                 window.location = "/github-login";
             }
         });
 
+    
+        //setup ui related to the gist
+        $.get('https://api.github.com/gists/' + this.model.get("gist"), function(data) {
+            //console.log("GIST!", data);
+            if(data.user === null || data.user === undefined) {
+                data.user = {
+                    login: "anon",
+                    url: "",
+                    userid: -1
+                };
+            }
+            var gist_uid = data.user.userid;
+            /* TODO: setup editing of description as well as a save button
+            if(gist_uid === tributary.userid) {
+                //the loggedin user owns this gist
+            }
+            */
+            //make the description and attribution
+            var info_string = '"<a href="' + data.html_url + '">' + data.description + '</a>" by ';
+            if(data.user.url === "") {
+                info_string += data.user.login;
+            } else {
+                info_string += '<a href="' + data.user.url + '">' + data.user.login + '</a>';
+            }
+
+            $('#gist_info').html(info_string);
+
+        });
 
 
         //Setup editor controls

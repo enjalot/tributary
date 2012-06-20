@@ -113,6 +113,13 @@
         color: white;
     }
 
+    #gist_info {
+        position:absolute;
+        margin-top: 15px;
+        margin-left: 300px;
+        font-size: 18px;
+    }
+
     #display {
         height: 100%;
     	width: 100%;
@@ -366,13 +373,13 @@
             margin-bottom: -3px;
         }
         
-    #fork-n-tweet {
+    #save_gui {
         padding-left: 24px;
         padding-top: 24px;
         float: right;
         padding-right: 24px;
     }
-    #fork-n-tweet button {
+    #save_gui button {
         padding-bottom: 14px !important;
     }
      
@@ -439,6 +446,7 @@
     #branding {
         float: left;
         padding-left: 10px;
+        padding-top: 20px;
         display: block;
         width: 200px; 
         /*margin-top: 29px;*/

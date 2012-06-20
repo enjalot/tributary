@@ -35,7 +35,11 @@ def render_defaults(template, gist=None, filename=None):
         gist=gist, 
         filename=filename, 
         base_url=base_url,
-        loggedin=session.get("loggedin", False)
+        loggedin=session.get("loggedin", False),
+        userid=session.get("userid", ""),
+        username=session.get("username", ""),
+        avatar=session.get("avatar", ""),
+        userurl=session.get("userurl", "")
         ) 
 
 #Live editing d3 for exploring parameter spaces
@@ -118,7 +122,10 @@ def github_login():
 def github_logout():
     session["access_token"] = None
     session["loggedin"] = None
-    print "SUP?"
+    session["username"] = None
+    session["avatar"] = None
+    session["userid"] = None
+    session["userurl"] = None
     return redirect("/tributary")
 
 @app.route("/github-authenticated")
@@ -132,16 +139,21 @@ def github_authenticated():
 
     # request an access token
     req = urllib2.Request('https://github.com/login/oauth/access_token', data=json.dumps(data), headers=headers)
-    ret = urllib2.urlopen(req).read()
+    resp = json.loads(urllib2.urlopen(req).read())
 
     # save access token in session
-    try:
-        session['access_token'] = json.loads(ret)['access_token']
-    except:
-        pass
-
+    session['access_token'] = resp['access_token']
     # let client know we are logged in
     session['loggedin'] = True
+
+    #get info about the user
+    req = urllib2.Request("https://api.github.com/user?access_token=" + session['access_token'])
+    resp = json.loads(urllib2.urlopen(req).read())
+    print "RESP", resp
+    session['username'] = resp['login']
+    session['avatar'] = resp['avatar_url']
+    session['userid'] = resp['id']
+    session['userurl'] = resp['url']
 
     #TODO: redirect back to next parameter
     return redirect('/tributary')
