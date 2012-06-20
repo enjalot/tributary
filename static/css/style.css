@@ -162,6 +162,10 @@
         background: rgba(38,38,38,0.9);
     }
 
+    #coffee_check {
+        margin-left: 30px;
+    }
+
     #editor {
     	position: fixed;
     	bottom: 10px;
@@ -169,10 +173,9 @@
     	/*height: 36%;
     	width: 59%;*/
         /*width: 800px; */
-    	border: solid black 2px;
     	border-left: none;
         /*
-    	background: white;
+    	border: solid black 2px;
     	border-top-right-radius: 5px;
     	border-bottom-right-radius: 5px;
     	border-top-left-radius: 40px 10px;

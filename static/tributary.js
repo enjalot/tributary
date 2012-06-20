@@ -261,7 +261,7 @@ tributary.TributaryView = Backbone.View.extend({
                 var dy = d3.event.dy;
                 d.x -= dx;
                 d.y -= dy;
-                that.editor_handle.style("bottom", that.editor_height + d.y + "px");
+                that.editor_handle.style("bottom", -10 + that.editor_height + d.y + "px");
                 that.editor_handle.style("right", -10 + that.editor_width + d.x + "px");
 
                 editor.css('width', that.editor_width + d.x + "px");
@@ -282,7 +282,7 @@ tributary.TributaryView = Backbone.View.extend({
             .style("position", "fixed")
             .style("display", "block")
             .style("float", "left")
-            .style("bottom", this.editor_height + "px")
+            .style("bottom", -11 + this.editor_height + "px")
             .style("right", -11 + this.editor_width + "px")
             .style("width", "20px")
             .style("height", "20px")
@@ -313,6 +313,20 @@ tributary.TributaryView = Backbone.View.extend({
             } else {
                 he.html("Hide");
             }
+        });
+
+        //setup the coffeescript checkbox
+        var cs = $('#coffee_check');
+        cs.on("change", function(e) {
+            var coffee_on = cs.is(":checked");
+            that.model.set({"coffee": coffee_on});
+
+            if(coffee_on) {
+                that.code_editor.setOption("mode", "coffeescript");
+            } else {
+                that.code_editor.setOption("mode", "javascript");
+            }
+            that.model.execute();
         });
     },
     save_gist: function(callback) {
