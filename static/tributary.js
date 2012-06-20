@@ -73,7 +73,12 @@ tributary.Tributary = Backbone.Model.extend({
         var that = this;
         //if(this.get("gist") && this.get("filename")) {
         if(this.get("gist")) {
-            src_url = "/tributary/api/" + this.get("gist");//  + "/" + this.get("filename");
+            var filename = this.get("filename");
+            if(filename) {
+                src_url = "/tributary/api/" + this.get("gist")  + "/" + this.get("filename");
+            } else {
+                src_url = "/tributary/api/" + this.get("gist");
+            }
             d3.text(src_url, function(data) { 
                 if(data) {
                     code = data;
@@ -336,10 +341,10 @@ tributary.TributaryView = Backbone.View.extend({
 
         //We now assume all tributaries will be saved as inlet.js
         //so this code is a bit redundant, but it might be useful in the future
-        filename = this.model.get("filename");
-        if(filename === ""){
-            filename = "inlet.js";
-        }
+        //filename = this.model.get("filename");
+        //if(filename === ""){
+        filename = "inlet.js";
+        //}
         var gist = {
             description: 'just another inlet to tributary',
             public: true,

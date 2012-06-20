@@ -26,12 +26,14 @@ def hello():
     return render_template("index.html", base_url=base_url)
     #return render_template("gallery.html", base_url=base_url)
 
-def render_defaults(template, gist=None):
+def render_defaults(template, gist=None, filename=None):
     #TODO: add user info
+    if filename is None:
+        filename=default_filename
 
     return render_template(template, 
         gist=gist, 
-        filename=default_filename, 
+        filename=filename, 
         base_url=base_url,
         loggedin=session.get("loggedin", False)
         ) 
@@ -39,47 +41,54 @@ def render_defaults(template, gist=None):
 #Live editing d3 for exploring parameter spaces
 @app.route("/tributary/")
 @app.route("/tributary/<gist>/")
-def tributary_gist(gist=None):
-    return render_defaults("tributary.html", gist=gist)
+@app.route("/tributary/<gist>/<filename>")
+def tributary_gist(gist=None, filename=None):
+    return render_defaults("tributary.html", gist=gist, filename=filename)
 
 #Live editing transitions
 @app.route("/delta/")
 @app.route("/delta/<gist>/")
-def delta_gist(gist=None):
-    return render_defaults("delta.html", gist=gist)
+@app.route("/delta/<gist>/<filename>")
+def delta_gist(gist=None, filename=None):
+    return render_defaults("delta.html", gist=gist, filename=filename)
 
 #Live editing run loops
 @app.route("/hourglass/")
 @app.route("/hourglass/<gist>/")
-def hourglass_gist(gist=None):
-    return render_defaults("hourglass.html", gist=gist)
+@app.route("/hourglass/<gist>/<filename>")
+def hourglass_gist(gist=None, filename=None):
+    return render_defaults("hourglass.html", gist=gist, filename=filename)
 
 #Live editing music visualization
 @app.route("/flow/")
 @app.route("/flow/<gist>/")
-def flow_gist(gist=None):
-    return render_defaults("flow.html", gist=gist)
+@app.route("/flow/<gist>/<filename>")
+def flow_gist(gist=None, filename=None):
+    return render_defaults("flow.html", gist=gist, filename=filename)
 
 #Experimenting with tiling and patterns
 @app.route("/reptile/")
 @app.route("/reptile/<gist>/")
-def reptile_gist(gist=None):
-    return render_defaults("reptile.html", gist=gist)
+@app.route("/reptile/<gist>/<filename>")
+def reptile_gist(gist=None, filename=None):
+    return render_defaults("reptile.html", gist=gist, filename=filename)
 
 
 #Embedded view for Tributary
 @app.route("/embed/<gist>/")
-def embed_gist(gist=None):
-    return render_defaults("embed.html", gist=gist)
+@app.route("/embed/<gist>/<filename>")
+def embed_gist(gist=None, filename=None):
+    return render_defaults("embed.html", gist=gist, filename=filename)
 
 #Embedded view for Delta
 @app.route("/shore/<gist>/")
-def shore_gist(gist=None):
-    return render_defaults("shore.html", gist=gist)
+@app.route("/shore/<gist>/<filename>")
+def shore_gist(gist=None, filename=None):
+    return render_defaults("shore.html", gist=gist, filename=filename)
 
 
-#@app.route("/tributary/api/<gist>/<filename>")
 @app.route("/tributary/api/<gist>/")
+@app.route("/tributary/api/<gist>/<filename>")
 def internal_gist(gist, filename=None):
     code = ""
 
