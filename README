@@ -8,28 +8,21 @@ Florit which was in turn inspired by Bret Victor's genius and making it sharable
 Tributary is a labor of love by Ian '@enjalot' Johnson and EJ '@mrejfox' Fox.
 
 Usage:
-If you want to make a script sharable you can simply paste it into a gist at
-gist.github.com and compose a tributary link like so:
-
-http://enjalot.com/tributary/2165875/sinwaves.js
+Start typing into the code editor and watch your code come to life!
+If you want to save your work you can click the fork button and it will save into a gist.
+The url in your browser will update to something like:
+http://enjalot.com/tributary/2165875
 
 where the number: 2165875 is the gist id 
 (you can see it here: https://gist.github.com/2165875 ) 
 
-and the filename given to the gist is sinwaves.js
-
 
 Development:
-This was put together with great haste in order to allow people to share. As
-such we haven't taken much care to structure this well. 
+Tributary is an experimental environment and an experimental project. We are playing with
+different "views" on code which have different assumptions. Once you get into it you may
+find you want to make your own view. 
 
+It's not too hard, just adding one endpoint to the backend, making a new template html and a new view javascript file.
 
-Build instructions:
-npm install -d coffee
-cd static
-coffee -c tributary.coffee
-
-TODO: setup package.json and makefile
-
-
+If you want to have github authentication working you will need to setup a github app and fill out the local_settings.py (see local_settings_example.py)
 
