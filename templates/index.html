@@ -1,156 +1,30 @@
 <!DOCTYPE html>
 <html>
   <head>
+      <title>Tributary</title>
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
-    <style type="text/css">
 
-body {
-  background: #888;
-}
-
-rect {
-  stroke-width: 2.5px;
-}
-
-/*
-.square:nth-child(2n + 1) rect {
-}
-*/
-
-    </style>
   </head>
   <body>
-<script type="text/javascript" src="http://mbostock.github.com/d3/d3.v2.js"></script>
-    <script type="text/javascript" src="/static/lib/jwerty.js"></script>
-    <script type="text/javascript">
 
-//TODO: add input for colors, and ability to turn off
-//also control opacity and maybe sliders for rates of rotation
+    <div id="intro" class="tributary text" style="width: 450px; height: 200px;">
+        <h3><a href="https://github.com/enjalot/tributary" title="Fork it on Github!">Tributary</a></h3>
+        Tributary started with the idea of making responsive code easier to share. We started with <a href="http://gabrielflor.it/water">Gabriel Florit's implementation</a> of 
+        <a href="http://www.youtube.com/watch?v=PUv66718DII">Bret Victor's talk</a>. 
+        The use of gists to drive the code in the view comes from Mike Bostock's <a href="http://bl.ocks.org">bl.ocks.org</a>. 
+        Tributary works by evaluating your code, providing a few things such as an svg element and a few libraries for the code to use. <!-- More assumptions are made in the experimental sub projects Delta, Flow and Geyser.-->
+    </div>
+    
+    <div id="features" class="tributary text" style="width: 450px; height: 200px;">
+        <h3>Features</h3>
+        Tributary comes with <a href="http://jquery.com/">jQuery</a>, 
+        <a href="http://mbostock.github.com/d3/"> d3</a>, 
+        <a href="http://documentcloud.github.com/underscore/">underscore</a> and 
+        <a href="http://backbonejs.org/">backbone</a> available in the code editor. The editor is powered by 
+        <a href="http://codemirror.net/">CodeMirror</a>, jQuery UI and <a href="https://github.com/mudcube/Color-Picker">ColorPicker</a>
 
-var w = 500,
-    h = 500,
-    start = Date.now();
-
-var rings = [ ];
-
-var n = 6;
-for (i in d3.range(n))
-{
-    if(i < 3)
-        var speed = (i-3) * 1e-2;
-    else
-        var speed = (i-2) * 1e-2;
-    rings.push({ 
-        radius: 65*i, 
-        width: 16, 
-        speed: speed,
-        phase: i
-    })
-}
-
-var svg = d3.select("body").append("svg:svg")
-    .attr("width", w)
-    .attr("height", h)
-  .append("svg:g")
-    .attr("transform", "translate(" + w / 2 + "," + h / 2 + ")scale(.6)");
-
-var ring = svg.selectAll("g")
-    .data(rings)
-  .enter().append("svg:g")
-    .attr("class", "ring")
-    .each(ringEnter);
-
-var a = 1.
-
-//jwerty.key('↑', function () { 
-jwerty.key(',←', function () { 
-    a -= .1;
-});
-//jwerty.key('↓', function () { 
-jwerty.key('→', function () { 
-    a += .1;
-});
-var pause = false;
-jwerty.key('p', function () { 
-    pause = !pause;
-});
-
-
-
-var color = d3.scale.linear()
-    .domain([-1, 1])
-    .interpolate(d3.interpolateRgb)
-    .range(['#fff', '#000'])
-
-var opacity = d3.scale.linear()
-    .domain([-1, 1])
-    .range([.3, 1])
-
-b = 1;
-
-var updateRing = function(elapsed) {
-  rotate = function(d,i) { 
-    return "rotate(" + (a * d.speed * elapsed) + ")"; 
-  };
-
-  var damp = .3
-  var rings = svg.selectAll("g.ring")
-      .attr("transform", rotate)
-    .selectAll("rect")
-      .attr("transform", rotate)
-      .attr("fill", function(d,i) {
-          var eo = -1
-          if(i % 2 == 0) eo = 1;
-          var theta = damp * a * d.speed * elapsed * eo;
-          var sin = Math.sin(theta) 
-          return color( sin );
-      })
-      .attr("fill-opacity", 0)
-      /*
-      .attr("fill-opacity", function(d) {
-          var eo = -1
-          if(i % 2 == 0) eo = 1;
-          var theta = Math.sin(damp * a * d.speed * elapsed * eo) 
-          return opacity( theta );
-      })
-      .attr("stroke", function(d) {
-          var eo = -1
-          if(i % 2 == 0) eo = 1;
-          var theta = Math.cos(damp * a * d.speed * elapsed * eo) 
-          return color( theta );
-      })
-      */
-      .attr("stroke", function(d,i) {
-          var colors = ['#fff', '#000'];
-          return colors[i % 2];
-      })
-
-
-
-}
-function ringEnter(d, i) {
-  var n = Math.floor(2 * Math.PI * d.radius / d.width * Math.SQRT1_2),
-      k = 360 / n;
-
-  d3.select(this).selectAll("g")
-      .data(d3.range(n).map(function() { return d; }))
-    .enter().append("svg:g")
-      .attr("class", "square")
-      .attr("transform", function(_, i) { return "rotate(" + i * k + ")translate(" + d.radius + ")"; })
-    .append("svg:rect")
-      .attr("x", -d.width / 2)
-      .attr("y", -d.width / 2)
-      .attr("width", d.width)
-      .attr("height", d.width);
-}
-updateRing(1000)
-d3.timer(function() {
-  if(pause) return false;
-  var elapsed = Date.now() - start;
-  updateRing(elapsed);
-});
-
-
-    </script>
+        <br>
+    </div>
+	
   </body>
 </html>

@@ -23,8 +23,8 @@ default_filename = "inlet.js"
 #Index page
 @app.route("/")
 def hello():
-    #return render_template("index.html", base_url=base_url)
-    return render_template("gallery.html", base_url=base_url)
+    return render_template("index.html", base_url=base_url)
+    #return render_template("gallery.html", base_url=base_url)
 
 def render_defaults(template, gist=None):
     #TODO: add user info
