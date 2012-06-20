@@ -171,7 +171,6 @@ tributary.TributaryView = Backbone.View.extend({
                         return function(value) {
                             //console.log("args", arguments)
                             that.dating = true;
-                            //console.log(value)
                             //search for this in the code and replace
                             //number regex taken from d3 source
                             //var txt = new RegExp("trib\." + key + "\\s*=(\\s*)[-+]?(?:\\d+\\.?\\d*|\\.?\\d+)(?:[eE][-+]?\\d+)?");
@@ -183,7 +182,7 @@ tributary.TributaryView = Backbone.View.extend({
                                 cursor.replace(newtxt);
                             }
                         };
-                    });
+                    }(key));
                 });
             }
         };
