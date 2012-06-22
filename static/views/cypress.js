@@ -1,5 +1,13 @@
 (function() {
 
+    tributary.clear = function() {
+        var sw = parseInt(d3.select("#display").style("width"));
+        var sh = parseInt(d3.select("#display").style("height"));
+        tributary.canvas.width = sw;
+        tributary.canvas.height = sh;
+        tributary.ctx.clearRect(0, 0, sw, sh);
+
+    }
     tributary.Cypress = tributary.Tributary.extend({
         //For exploring animations, run loops 
         initialize: function() {
@@ -9,6 +17,7 @@
 tributary.init = function(ctx) {\n\
 };\n\
 tributary.run = function(ctx,t) {\n\
+    tributary.clear(); //helper function to clear the canvas \n\
 };'
             });
         },
@@ -21,11 +30,7 @@ tributary.run = function(ctx,t) {\n\
             }
 
             try {
-                var sw = parseInt(d3.select("#display").style("width"));
-                var sh = parseInt(d3.select("#display").style("height"));
-                tributary.canvas.width = sw;
-                tributary.canvas.height = sh;
-                tributary.ctx.clearRect(0, 0, sw, sh);
+                tributary.clear();
                 //we exec the user defined append code
                 tributary.init(tributary.ctx);
                 //then we run the user defined run function
