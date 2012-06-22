@@ -145,7 +145,7 @@ tributary.TributaryView = Backbone.View.extend({
                     if(that.controls[key] !== undefined) {
                         delete that.controls[key];
                     }
-                    //console.log key, trib[key]
+                    //console.log(key, trib[key])
 
                     if(trib_options !== undefined && trib_options[key] !== undefined) {
                         that.controls[key] = that.gui.add(trib, key, trib_options[key].min, trib_options[key].max);
@@ -163,6 +163,7 @@ tributary.TributaryView = Backbone.View.extend({
                                 slider_min = _.min([min, max]);
                                 slider_max = _.max([min, max]);
                             }
+                            //console.log("min max", slider_min, slider_max)
                             that.controls[key] = that.gui.add(trib, key, slider_min, slider_max);
                         }
                     }
@@ -328,7 +329,11 @@ tributary.TributaryView = Backbone.View.extend({
         this.model.on("noerror", function() {
             that.editor_handle.style("background-color", "rgba(50, 250, 50, .4)");
             that.make_ui();
-            that.dating = false;
+            //ugh, need to make sure datgui doesn't "overwrite" itself
+            setTimeout(function() {
+                that.dating = false;
+            }, 100);
+
         });
 
         //Setup Hide the editor button
