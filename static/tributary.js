@@ -203,17 +203,51 @@ tributary.TributaryView = Backbone.View.extend({
             that.code_editor.setValue(got_code);
         });
 
+
+        //------------------------------------
+        //Drop file functions
+        //------------------------------------
+        var _loadFile =  function() {
+            var reader = new FileReader();
+            // register an onload callback that gets fired after the reader has finished reading the file
+            if(!that.check_date || that.file.lastModifiedDate > that.code_last_modified) {
+                console.log("read file!");
+                reader.onload = function() {
+                    //@executeCode({reader: reader})
+                    that.code_editor.setValue(reader.result);
+                };
+                that.code_last_modified = that.file.lastModifiedDate;
+                reader.readAsText(that.file);
+            }
+        };
+        var _dragOver =  function(ev) {
+            //Called when a user drags a file over the #drop_file div
+            ev.stopPropagation();
+            ev.preventDefault();
+            ev.dataTransfer.dropEffect = 'copy';
+            //$('#drop_file').addClass('drop_file_active');
+        };
+        var _fileDrop =  function(ev) {
+            ev.stopPropagation();
+            ev.preventDefault();
+            that.file = ev.dataTransfer.files[0];
+            that.code_last_modified = new Date(0,0,0);
+            _loadFile();
+        };
+
+
         //Hook up drag and drop for code file
-        $('body')[0].addEventListener('dragover', this._dragOver, false);
-        $('body')[0].addEventListener('drop', this._fileDrop, false);
+        $('body')[0].addEventListener('dragover', _dragOver, false);
+        $('body')[0].addEventListener('drop', _fileDrop, false);
 
         //Setup loop to check for file date
         this.code_last_modified = new Date(0,0,0);
         this.past = new Date();
+        that = this;
         d3.timer(function() {
             if(new Date() - that.past > 300) {
                 if(that.file !== undefined) {
-                    that._loadFile();
+                    _loadFile();
                 }
                 that.past = new Date();
             }
@@ -401,39 +435,6 @@ tributary.TributaryView = Backbone.View.extend({
             callback(newurl, newgist);
             //window.location = newurl;
         });
-    },
-
-    //------------------------------------
-    //Drop file functions
-    //------------------------------------
-
-    _dragOver: function(ev) {
-        //Called when a user drags a file over the #drop_file div
-        ev.stopPropagation();
-        ev.preventDefault();
-        ev.dataTransfer.dropEffect = 'copy';
-        //$('#drop_file').addClass('drop_file_active');
-    },
-    _fileDrop: function(ev) {
-        ev.stopPropagation();
-        ev.preventDefault();
-        this.file = ev.dataTransfer.files[0];
-        this.code_last_modified = new Date(0,0,0);
-        this._loadFile();
-    },
-    _loadFile: function() {
-        var that = this;
-        var reader = new FileReader();
-        // register an onload callback that gets fired after the reader has finished reading the file
-        if(!this.check_date || this.file.lastModifiedDate > this.code_last_modified) {
-            console.log("read file!");
-            reader.onload = function() {
-                //@executeCode({reader: reader})
-                that.code_editor.setValue(reader.result);
-            };
-            this.code_last_modified = this.file.lastModifiedDate;
-            reader.readAsText(this.file);
-        }
     }
 });
 
