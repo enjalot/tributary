@@ -1,3 +1,4 @@
+#Tributary
 Tributary allows you to share live-editable code snippets. These snippets will
 most likely use d3.js and allow a user to play with code in a very responsive
 way.
@@ -7,7 +8,7 @@ Florit which was in turn inspired by Bret Victor's genius and making it sharable
 
 Tributary is a labor of love by Ian '@enjalot' Johnson and EJ '@mrejfox' Fox.
 
-Usage:
+#Usage:
 Start typing into the code editor and watch your code come to life!
 If you want to save your work you can click the fork button and it will save into a gist.
 The url in your browser will update to something like:
@@ -17,7 +18,7 @@ where the number: 2165875 is the gist id
 (you can see it here: https://gist.github.com/2165875 ) 
 
 
-Development:
+#Development:
 Tributary is an experimental environment and an experimental project. We are playing with
 different "views" on code which have different assumptions. Once you get into it you may
 find you want to make your own view. 
@@ -26,11 +27,23 @@ It's not too hard, just adding one endpoint to the backend, making a new templat
 
 If you want to have github authentication working you will need to setup a github app and fill out the local_settings.py (see local_settings_example.py)
 
-Tributary only depends on Flask:
+On the backend tributary only depends on Flask:
 sudo easy_install flask
 
 If you want to deploy behind apache, check out the sample apache config in server/sample_apache_config.txt
 
-The d3-plugins git repository is added as a submodule, if you want to give access to it (the cie plugin is included in tributary by default) you need to run:
+#Submodues:
+A couple of external (client side) libraries are included as submodules, to use them:
+```
 git submodule init
 git submodule update
+```
+
+The d3-plugins git repository is added mostly for the cie plugin for color spaces.
+
+Some useful and commonly used data (like US state and World country boundaries) are provided by Zack Maril's repo
+static/data
+https://github.com/zmaril/Visualization-Data
+
+
+

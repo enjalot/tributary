@@ -1,3 +1,6 @@
 [submodule "static/lib/d3plugins"]
 	path = static/lib/d3plugins
 	url = https://github.com/d3/d3-plugins.git
+[submodule "static/data"]
+	path = static/data
+	url = https://github.com/zmaril/Visualization-Data.git
