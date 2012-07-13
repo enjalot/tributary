@@ -30,3 +30,7 @@ Tributary only depends on Flask:
 sudo easy_install flask
 
 If you want to deploy behind apache, check out the sample apache config in server/sample_apache_config.txt
+
+The d3-plugins git repository is added as a submodule, if you want to give access to it (the cie plugin is included in tributary by default) you need to run:
+git submodule init
+git submodule update
