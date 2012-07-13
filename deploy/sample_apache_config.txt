@@ -1,0 +1,27 @@
+
+        DocumentRoot /home/ubuntu/tributary
+
+        WSGIDaemonProcess tributaryenj user=www-data group=www-data threads=15 display-name=%{GROUP}
+        WSGIScriptAlias / /home/ubuntu/tributary/tributary.wsgi
+
+        Alias /static /home/ubuntu/tributary/static
+
+        LogLevel warn
+        ErrorLog /var/log/apache2/error-enjalot.com.log
+        CustomLog /var/log/apache2/access-enjalot.com.log combined
+
+        <Directory /home/ubuntu/tributary >
+                Options -Indexes Multiviews
+                AllowOverride None
+                WSGIApplicationGroup %{GLOBAL}
+                WSGIProcessGroup tributaryenj
+                Order deny,allow
+                Allow from all
+        </Directory>
+
+
+        <Directory /home/ubuntu/tributary/static >
+                Options Indexes
+                Order deny,allow
+                Allow from all
+        </Directory>

@@ -26,3 +26,7 @@ It's not too hard, just adding one endpoint to the backend, making a new templat
 
 If you want to have github authentication working you will need to setup a github app and fill out the local_settings.py (see local_settings_example.py)
 
+Tributary only depends on Flask:
+sudo easy_install flask
+
+If you want to deploy behind apache, check out the sample apache config in server/sample_apache_config.txt
