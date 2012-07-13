@@ -45,6 +45,7 @@
     tributary.make_clones();
 
     window.onresize = function(event) {
+        resize();
         model.trigger("execute")
         //tributary.layout()
         tributary.make_clones();

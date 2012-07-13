@@ -113,6 +113,7 @@
 
 
     {% block attribution %}
+    <!--
     <div id='aboutAndAttribution'>
         <p>100% totally based on Bret Victor's genius <a href='http://vimeo.com/36579366'>Inventing on Principle</a> talk<p>
         <p>further inspired by 
@@ -126,6 +127,7 @@
         <br/>
     
     </div>
+    -->
     {% endblock %}
 
 
@@ -177,13 +179,19 @@
         document.body.onmousedown=function(){return false};
     document.body.style.cursor = "default";
 
+    var header_factor = 85;
     //always have the screen width and height
-    tributary.sw = window.screen.width;
-    tributary.sh = window.screen.height;
+    tributary.sw = window.innerWidth - header_factor;
+    tributary.sh = window.innerHeight - header_factor;
+    d3.select("svg").attr("height", tributary.sh);
 
+    function resize() {
+        tributary.sw = window.innerWidth - header_factor;
+        tributary.sh = window.innerHeight - header_factor;
+        d3.select("svg").attr("height", tributary.sh);
+    }
     window.onresize = function(event) {
-        tributary.sw = window.screen.width;
-        tributary.sh = window.screen.height;
+        resize();
     }
 
     {% block jsinit %}

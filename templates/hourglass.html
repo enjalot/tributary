@@ -40,6 +40,7 @@
     tribView = new tributary.TributaryView({"model":model, "endpoint":"hourglass"})
 
     window.onresize = function(event) {
+        resize();
         model.trigger("execute")
     }
 {% endblock %}

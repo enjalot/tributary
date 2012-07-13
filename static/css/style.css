@@ -2,7 +2,7 @@
         font-family: 'Ubuntu', Helvetica, Georgia, serif !important;
     	position: absolute;
     	width: 100%;
-    	height: 100%;
+    	/*height: 100%;*/
     	background: #EFEFEF; 
 /*    	background: #E3E3E3; */
     	color: black;
@@ -18,12 +18,12 @@
     
     .tributary_svg {
         width: 100%;
-        height: 96%;
+        /*height: 100%;*/
         left: 0px;
     }
     #page {
 /*    	position: absolute; */
-    	height: 100%;
+    	/*height: 100%;*/
     	width: 100%;
 /*    	left: 5%; */
     }
@@ -121,7 +121,7 @@
     }
 
     #display {
-        height: 100%;
+        /*height: 100%;*/
     	width: 100%;
     	background: white;
 /*    	border: solid black 2px;*/
@@ -200,40 +200,6 @@
         padding-bottom: 10px;
         padding-top: 4px;
         display: inline-block;
-    }
-
-    #editor .ace_gutter {
-    	top: -1px;
-/*    	border: solid black 2px;
-
-    	border-top-right-radius: 0px;
-    	border-bottom-right-radius: 0px;
-    	border-top-left-radius: 40px 10px;
-    	border-bottom-left-radius: 40px 10px;
-*/
-        background-color: black;
-        color: white;
-
-    }
-    #editor textarea {
-    }
-    .ace_scroller, .ace-twilight {
-        background-color: rgba(0,0,0,0.6) !important;  
-    }
-
-    svg {
-    	position: absolute;
-    	background: #FFF;
-/*    	
-    	border-top-left-radius: 5px;
-    	border-bottom-left-radius: 5px;
-    	border-top-right-radius: 40px 10px;
-    	border-bottom-right-radius: 40px 10px;
-*/
-/*    	-moz-box-shadow: 0 0 50px 10px rgba(255, 255, 255, 0.4);
-    	-webkit-box-shadow: 0 0 50px 10px rgba(255, 255, 255, 0.4);
-    	box-shadow: 0 0 50px 10px rgba(255, 255, 255, 0.4);
-*/
     }
 
     .font-control {
