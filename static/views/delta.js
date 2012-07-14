@@ -18,9 +18,10 @@ tributary.run = function(g,t) {\n\
             });
         },
         execute: function() {
+            var js = this.handle_coffee();
             try {
                 var svg = d3.select(".tributary_svg");
-                eval(this.get("code"));
+                eval(js);
                 this.trigger("noerror");
             } catch (e) {
                 this.trigger("error", e);
@@ -49,9 +50,6 @@ tributary.run = function(g,t) {\n\
         }
     });
     
-
-
-
     tributary.make_clones = function() {
         //make n frames with lowered opacity
         var svg = d3.select("#clones");

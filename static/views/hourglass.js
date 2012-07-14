@@ -17,8 +17,9 @@ tributary.run = function(g,t) {\n\
             });
         },
         execute: function() {
+            var js = this.handle_coffee();
             try {
-                eval(this.get("code"));
+                eval(js);
                 this.trigger("noerror");
             } catch (e) {
                 this.trigger("error", e);
