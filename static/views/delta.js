@@ -94,7 +94,7 @@ tributary.run = function(g,t) {\n\
 
 
     //default easing function
-    tributary.ease = d3.ease("linear");
+    tributary.ease = d3.ease("ease-in");
 
     //default opacity for clones
     tributary.clone_opacity = 0.4;
@@ -155,6 +155,18 @@ tributary.run = function(g,t) {\n\
         step: 0.01,
         value: tributary.t
     });
+
+    $('#slider').on('change', function() {
+        tributary.t = $('#slider').attr('value');
+        if($("#play_button").hasClass("playing")){
+
+        }
+        else {
+            tributary.execute();    
+        }
+        
+
+    })
 
     //we need to save state of timer so when we pause/unpause or manually change slider
     //we can finish a transition
@@ -283,6 +295,8 @@ tributary.run = function(g,t) {\n\
         
         //move the slider
         time_slider.slider('option', 'value', tributary.t);
+
+        $('#slider').attr('value', tributary.t);
         //update the function (there is probably a way to have the slider's
         //function get called programmatically)
         tributary.execute();
