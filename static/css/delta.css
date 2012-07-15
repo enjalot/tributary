@@ -3,13 +3,16 @@
     height: 100%; 
 }
 #gui {
+    padding: 12px;
+    border-radius: 6px;
     position: fixed;
-    top: 27px;
-    left: 140px;
-    width: 400px;
-    height: 40px;
+    bottom: 32px;
+    left: 48px;
     padding-top: 10px;
     z-index: 1000;
+
+    background-color: rgba(255,255,255,0.32);
+    border: 1px solid rgba(0,0,0,0.2);
 }
 
 #play_button{
@@ -35,11 +38,15 @@
 
 /* delta time slider */
 #time_slider {
-    top:-30px;
+/*    top:-30px;
     left:160px;
     visibility: visible;
+*/
+    display: inline-block;
+    float: right;
+    padding: 2px 18px;
     z-index: 14;
-    width: 500px;
+    width: 400px;
     height: 20px;
     -webkit-box-shadow:inset 0 0 3px 1px rgba(0,0,0,0.1); /* Saf3.0+, Chrome */
        -moz-box-shadow:inset 0 0 3px 1px rgba(0,0,0,0.1); /* FF3.5+ */
@@ -50,12 +57,12 @@
 #time_slider .ui-slider-handle {
     background: #CB336E;
     border: 0px solid black;
-    width: 25px;
+    width: 18px;
     margin-top: 6px;
-    /*
-    margin-left: 8px;
-    margin-right: 8px;
-    */
+    
+    margin-left: 4px;
+    margin-right: 24px;
+    
 }
 
 

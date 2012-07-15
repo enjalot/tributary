@@ -26,10 +26,10 @@ body {
     position: fixed;
     top: -36px;
 
-     -webkit-transition: all 1s ease-in-out;  /* Saf3.2+, Chrome */
-     -moz-transition:    all 1s ease-in-out;  /* FF4+ */
-       -o-transition:    all 1s ease-in-out;  /* Opera 10.5+ */
-          transition:    all 1s ease-in-out;
+     -webkit-transition: all .4s ease-in-out;  /* Saf3.2+, Chrome */
+     -moz-transition:    all .4s ease-in-out;  /* FF4+ */
+       -o-transition:    all .4s ease-in-out;  /* Opera 10.5+ */
+          transition:    all .4s ease-in-out;
 }
 #header:hover {
     top: 0;
@@ -87,5 +87,6 @@ body {
 
 button {
     border-radius: 6px;
-    padding: 4px 9px;
+    padding: 4px 12px;
+    margin-right: 8px;
 }
