@@ -10,10 +10,11 @@
     <link rel="stylesheet" href="/static/lib/CodeMirror2/lib/codemirror.css">
     <link rel="stylesheet" href="/static/lib/CodeMirror2/theme/night.css">
     <link rel="stylesheet" href="/static/lib/CodeMirror2/theme/lesser-dark.css">
-    <link rel="stylesheet" href="/static/lib/CodeMirror2/theme/monokai.css">
+ <!--   <link rel="stylesheet" href="/static/lib/CodeMirror2/theme/monokai.css">
     <link rel="stylesheet" href="/static/lib/CodeMirror2/theme/elegant.css">
     <link rel="stylesheet" href="/static/lib/CodeMirror2/theme/cobalt.css">
     <link rel="stylesheet" href="/static/lib/CodeMirror2/theme/eclipse.css">
+-->
 
     <link rel='stylesheet' type='text/css' href='http://yui.yahooapis.com/2.9.0/build/reset/reset-min.css' />
     <link rel='stylesheet' type='text/css' href='/static/lib/slider/css/humanity/jquery-ui-slider.css' />
@@ -65,13 +66,13 @@
     <div id="gist_info"></div>
 
     <div id="save_gui">
-            <button id='loginPanel' class="minimal">
+            
                 {% if not loggedin %}
-                Login: 
+                <button id='loginPanel' class="minimal loggedout"> Login 
                 {% else %}
-                Logout:
+                <button id='loginPanel' class="minimal loggedin"> Logout
                 {% endif %}
-                <img src="/static/css/floppy.png" width="24" height="24" alt="Floppy">&nbsp;
+                <!-- <img src="/static/css/floppy.png" width="24" height="24" alt="Floppy">&nbsp; -->
                 <!--
                 <div class='address'><a href='#'>https://gist.github.com/b9ab9418af567e575b3e</a></div>
                 -->
@@ -79,7 +80,7 @@
             
      
             <button id='savePanel' class="minimal">
-                Fork: <img src="/static/css/floppy.png" width="24" height="24" alt="Floppy">&nbsp;
+                Fork <!-- <img src="/static/css/floppy.png" width="24" height="24" alt="Floppy">&nbsp; -->
                 <!--
                 <div class='address'><a href='#'>https://gist.github.com/b9ab9418af567e575b3e</a></div>
                 -->
@@ -95,7 +96,6 @@
         </div>
     </div>
 
-    <div id="hideEditor">Hide</div>
 
 {% endblock %}
 
@@ -106,6 +106,9 @@
      
         <div id='editor'>
             <input type="checkbox" id="coffee_check">CoffeeScript</input>
+
+            <span id="hideEditor">Hide</span>
+
         </div>
         <div id="slider"></div>
 

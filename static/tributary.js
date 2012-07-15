@@ -348,15 +348,6 @@ tributary.TributaryView = Backbone.View.extend({
         this.editor_handle = d3.select("body").append("div")
             .attr("id", "editor_handle")
             .data([handle_data])
-            .style("position", "fixed")
-            .style("display", "block")
-            .style("float", "left")
-            .style("bottom", -11 + this.editor_height + "px")
-            .style("right", -11 + this.editor_width + "px")
-            .style("width", "20px")
-            .style("height", "20px")
-            .style("background-color", "rgba(50, 50, 50, .4)")
-            .style("z-index", 999)
             .call(editor_drag);
 
         this.model.on("error", function() {
