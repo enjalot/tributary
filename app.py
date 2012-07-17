@@ -77,6 +77,15 @@ def cypress_gist(gist=None, filename=None):
 def bigfish_gist(gist=None, filename=None):
     return render_defaults("bigfish.html", gist=gist, filename=filename)
 
+#Live editing boids (and other node based things) in canvas
+@app.route("/fly/")
+@app.route("/fly/<gist>/")
+@app.route("/fly/<gist>/<filename>")
+def fly_gist(gist=None, filename=None):
+    return render_defaults("fly.html", gist=gist, filename=filename)
+
+
+
 
 #Live editing music visualization
 @app.route("/flow/")
