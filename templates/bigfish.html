@@ -1,0 +1,52 @@
+
+{% extends "base.html" %}
+
+
+{% block title %}BigFish{% endblock %}
+
+{% block style %}
+    <link rel='stylesheet' type='text/css' href='/static/css/bigfish.css' />
+{% endblock %}
+
+{% block scripts %}
+    <script src='/static/views/bigfish.js'></script>
+{% endblock %}
+
+{% block branding %}
+	<h1>BigFish</h1>
+{% endblock %}
+
+
+
+{% block gui %}
+    <div id="gui">
+        <button id="play_button" class="button minimal">Play</button>
+        <button id="init_button" class="button minimal">Init</button>
+
+<!--        <div id="off_button" class="select button">Off</div> 
+        Temporarily hiding "off" button- unless it serves a purpose I'm unaware of, user should probably use the "play/stop" button instead
+        <button id="period_button" class="select button minimal">Loop</button>
+        <button id="pingpong_button" class="select button minimal">PingPong</button>
+-->
+    </div>
+    <div id='display'>
+        <svg id="bigfishsvg" class="tributary_svg"></svg>
+    </div>
+
+{% endblock %}
+
+
+{% block jsinit %}
+    var model = new tributary.BigFish({"gist":"{{gist}}", "filename":"{{filename}}"})
+    tribView = new tributary.TributaryView({"model":model, "endpoint":"bigfish"})
+
+    //initialize on page load
+    model.on("gotcode", function() {
+        tributary.initialize();
+    })
+
+    window.onresize = function(event) {
+        resize();
+        model.trigger("execute")
+    }
+{% endblock %}

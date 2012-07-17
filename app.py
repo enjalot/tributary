@@ -63,13 +63,19 @@ def delta_gist(gist=None, filename=None):
 def hourglass_gist(gist=None, filename=None):
     return render_defaults("hourglass.html", gist=gist, filename=filename)
 
-#Live editing run loops
+#Live editing run loops for canvas
 @app.route("/cypress/")
 @app.route("/cypress/<gist>/")
 @app.route("/cypress/<gist>/<filename>")
 def cypress_gist(gist=None, filename=None):
     return render_defaults("cypress.html", gist=gist, filename=filename)
 
+#Live editing boids (and other node based things)
+@app.route("/bigfish/")
+@app.route("/bigfish/<gist>/")
+@app.route("/bigfish/<gist>/<filename>")
+def bigfish_gist(gist=None, filename=None):
+    return render_defaults("bigfish.html", gist=gist, filename=filename)
 
 
 #Live editing music visualization
