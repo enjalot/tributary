@@ -62,10 +62,12 @@ tributary.run = function(g,t) {\n\
     tributary.initialize = function() {
         $("#bigfish").empty();
         delete tributary.nodes;
+        tributary.nodes = [];
         tributary.init(tributary.g);
         tributary.execute();
-    }
+    };
 
+    tributary.nodes = [];
 
     //user is responsible for defining this
     //by default we just show simple text

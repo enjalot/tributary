@@ -67,10 +67,12 @@ tributary.run = function(ctx,t) {\n\
     tributary.initialize = function() {
         tributary.clear();
         delete tributary.nodes;
+        tributary.nodes = [];
         tributary.init(tributary.ctx);
         tributary.execute();
-    }
+    };
 
+    tributary.nodes = [];
 
 
     //user is responsible for defining this
