@@ -91,6 +91,8 @@ tributary.Tributary = Backbone.Model.extend({
                 }
                 //TODO: add error checking
                 callback(null, code);
+
+                that.trigger("gotcode");
             });
         }
     }
