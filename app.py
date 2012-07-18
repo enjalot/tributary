@@ -131,7 +131,7 @@ def internal_gist(gist, filename=None):
     req = urllib2.Request(url)
     try:
         obj = urllib2.urlopen(req)
-        code = obj.read()
+        code = obj.read().decode('utf-8')
     except URLError, e:
         print "ERROR", e.code
     return code
@@ -185,19 +185,29 @@ def github_authenticated():
 #Save a tributary to a gist
 @app.route("/tributary/save", methods=["POST"])
 def save():
+    #code = json.loads(request.values.get("gist"))
     data = request.values.get("gist")
+    data = data.encode('utf-8')
+    #print "DATA", code
+    #data = urllib.urlencode(code)
+    #print data
     url = 'https://api.github.com/gists'
 
     token = session.get("access_token", None)
+    headers = {'content-type': 'application/json; charset=utf-8', 'accept': 'application/json', 'encoding':'UTF-8'}
     if token is not None:
         #print "LOGGED IN, using TOKEN", token
-        headers = {'content-type': 'application/json', 'accept': 'application/json'}
-        req = urllib2.Request(url + "?access_token="+token, data, headers=headers)
+        url += "?access_token="+token
+        url = url.encode('utf-8')
+        req = urllib2.Request(url, data, headers=headers)
+        #req = urllib2.Request(url, data)
     else: 
         #print "NOT LOGGED IN"
-        req = urllib2.Request(url, data)
+        req = urllib2.Request(url, data, headers=headers)
 
-    ret = urllib2.urlopen(req).read()
+    response = urllib2.urlopen(req)
+    #print "RESP", response
+    ret = response.read()
     #print "ret", ret
     resp = make_response(ret, 200)
     resp.headers['Content-Type'] = 'application/json'
