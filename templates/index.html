@@ -1,131 +1,149 @@
-<!DOCTYPE html>
-<html>
+<!DOCTYPE HTML>
+<html lang="en">
+  
   <head>
-    <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+    <meta charset="utf-8" />
     <title>Tributary</title>
-    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,800' rel='stylesheet' type='text/css'>
-
-    <style>
-        body {
-            background-image: url('/static/img/redox_01.png');
-            background-repeat:repeat;
-        }
-        h3 {
-            margin-left: auto;
-            margin-right: auto;
-            width: 200px;
-            text-align: center;
-            font-weight: 800;
-        }
-        #trib_title {
-            font-size: 40px;
-        }
-        .tributary {
-            font-family: "Open Sans";
-            margin-left: auto;
-            margin-right: auto;
-            margin-top: 70px;
-        }
-        .example {
-            float: left;
-        }
-        .example span {
-            text-align: center;
-        }
-    </style>
+    <link href='static/css/index.css' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Federo|Open+Sans:400,700' rel='stylesheet' type='text/css'>
   </head>
+  
   <body>
+    <div id="page-wrapper">
 
-    <div id="intro" class="tributary text" style="width: 450px;">
-        <!--<h3 id="trib_title"><a href="https://github.com/enjalot/tributary" title="Fork it on Github!">Tributary</a></h3> -->
-        <h3 id="trib_title">Tributary</h3>
-        <p>
-        Tributary is an experimental environment for rapidly prototyping
-        visualization code. The environment provides several libraries useful
-        for this kind of coding, as well as a simple interface for live code
-        editing.
-        </p>
-    </div>
-    <div id="examples" class="tributary text" style="width: 940px;">
-        <h3>Examples</h3>
+      <!-- intro -->
+      <img class="headerimg" src="/static/img/index/header.png" />
+      <div class="rectangle-1"></div>
+
+        <div class="headertxt">Tributary</div>
+        <div class="headertxt2">Tributary</div>
+
+        <img class="gallerybg" src="/static/img/index/gallerybg.png" />
+        <div class="gallery_top_rect"></div>
+
+
+
+      <div class="rectangle-4">
+          <a href="http://enjalot.com/tributary/3200444/">
+        <div class="text-3">Try!</div>
+        <div class="text-4"></div>
+        <div class="intro1_rect">
+          <img class="intro1" src="/static/img/index/intro1.png" />
+        </div>
+        <div class="text-5"></div>
+        <p class="textarea-1">Just start writing some d3 code and watch elements come to life with every keystroke!</p>
+    </a>
+      </div>
+
+      <div class="rectangle-6">
+
         <a href="http://enjalot.com/tributary/2958196/">
-        <p class="example">
-            <img src="http://tributary-gallery.s3.amazonaws.com/index/basics.png" width=300 height=300><img>
-            <br>
-            <span>SVG Basics</span>
-        </p></a>
-        <a href="http://enjalot.com/tributary/2958199/">
-        <p class="example">
-        <img src="http://tributary-gallery.s3.amazonaws.com/index/rgb.png" width=300 height=300><img>
-        <br>
-        <span>RGB Breakdown</span>
-        </p></a>
+        <div class="text-6">Play!</div>
+        <div class="intro2_rect">
+          <img class="intro2" src="/static/img/index/intro2.png" />
+        </div>
+        <p class="textarea-2">No need to code, open any existing tributary and just click on any number or color
+          you see to start playing!</p>
+      </a>
+      </div>
+
+      <div class="rectangle-2">
         <a href="http://enjalot.com/tributary/2958568/">
-        <p class="example">
-        <img src="http://tributary-gallery.s3.amazonaws.com/index/sinwaves.png" width=300 height=300><img>
-        <br>
-        <span>The Colors!</span>
-        </p></a>
-    </div>
+        <div class="text-2">Share!</div>
+        <div class="intro3_rect">
+          <img class="intro3" src="/static/img/index/intro3.png" />
+        </div>
+        <p class="textarea">Like what you see?
+          <br/>Click "Fork" and your code gets saved to a github gist.
+          <br/>Your URL will change, just copy, paste and share!</p>
+      </a>
+      </div>
 
-    <div id="sharing" class="tributary text" style="width: 450px;">
-        <h3>Sharing</h3>
-        <p>
-        The goal of Tributary is to reduce the friction involved in creating
-        something visual with code and sharing the result. Once you have
-        created something it should also be effortless to share, just click the
-        fork button and share the new URL with anyone. When you don't have to
-        worry about saving and tracking files, it becomes much easier to let go
-        and get creative, the fork button saves the code into a <a
-            href="https://gist.github.com/">gist</a> where you can always
-        access it.
+        
+      <!-- about -->
+        <div class="about_what">What is this?</div>
+        <div class="about_who">Who is involved?</div>
+        <p class="about_what_txt">Tributary is an experimental environment for rapidly prototyping visualization code.
+          The environment provides several libraries useful for this kind of coding, as well
+          as a simple interface for live code editing.
+          <br/>
         </p>
-    </div>
-    
-    <div id="features" class="tributary text" style="width: 450px;">
-        <h3>Features</h3>
-        Tributary comes with <a href="http://jquery.com/">jQuery</a>, 
-        <a href="http://mbostock.github.com/d3/"> d3</a>, 
-        <a href="http://documentcloud.github.com/underscore/">underscore</a> and 
-        <a href="http://backbonejs.org/">backbone</a> available in the code editor. 
-        It is also possible to use <a href="http://coffeescript.org/">CoffeeScript</a>. The editor is powered by 
-        <a href="http://codemirror.net/">CodeMirror</a>. The Bret Victor-like interactive slider and color picker are implemented in <a href="https://github.com/enjalot/Inlet">Inlet</a> and powered by <a href="http://jqueryui.com/">jQuery UI</a> and <a href="https://github.com/mudcube/Color-Picker">ColorPicker</a>.
-        <br>
-        Help us add more! Check out the <a href="https://github.com/enjalot/tributary">source on github!</a>
-    </div>
+        <p class="about_who_txt">Tributary is <a href="https://twitter.com/enjalot">@enjalot</a>'s digital laboratory.
+        <br/>Much of the design is <a href="https://twitter.com/mrejfox">@mrejfox</a>'s vision.
+        <br/>Power users that shape the projects direction include <a href="https://twitter.com/syntagmatic">@syntagmatic</a>, <a href="https://twitter.com/bausofthenauf">@bausofthenauf</a>,
+        <a href="https://twitter.com/ptvan">@ptvan</a> and <a href="https://twitter.com/poezn">@poezn</a>
+          <br/>
+        </p>
 
-    <div id="attribution" class="tributary text" style="width: 450px;">
-        <h3>Attribution</h3>
-        Tributary is possible thanks to much harder work done by other people. We started with <a href="http://gabrielflor.it/water">Gabriel Florit's implementation</a> of concepts introduced in
-        <a href="http://www.youtube.com/watch?v=PUv66718DII">Bret Victor's talk</a>. 
-        The use of gists to drive the code in the view comes from Mike Bostock's <a href="http://bl.ocks.org">bl.ocks.org</a>. 
-        Tributary is primarily the work of <a href="https://twitter.com/#!/enjalot">Ian Johnson</a> and <a href="https://twitter.com/#!/mrejfox">EJ Fox</a>, with contributions from <a href="http://exposedata.com">Kai Chang</a> and <a href="https://twitter.com/#!/BausOfTheNauf">Nils Schlomann</a>.
-    </div>
+      <!-- gallery -->
+        <div class="showmemore">Show me more!</div>
 
-    <div id="more_examples" class="tributary text" style="width: 940px;">
-        <h3>More Examples</h3>
-        <a href="http://enjalot.thenewhive.com/moreillusions">
-        <p class="example">
-            <img src="http://tributary-gallery.s3.amazonaws.com/index/illusions.png" width=300 height=300><img>
-            <br>
-            <span>Optical Illusions</span>
-        </p></a>
-        <a href="http://enjalot.thenewhive.com/delta">
-        <p class="example">
-            <img src="http://tributary-gallery.s3.amazonaws.com/index/arc.png" width=300 height=300><img>
-            <br>
-            <span>Playing with Time</span>
-        </p></a>
-        <a href="http://enjalot.thenewhive.com/squarecircle">
-        <p class="example">
-            <img src="http://tributary-gallery.s3.amazonaws.com/index/tubes.png" width=300 height=300><img>
-            <br>
-            <span>Same Code, Different Numbers</span>
-        </p></a>
+        <div class="gallery_bottom_rect"></div>
+
+        <a href="http://newhive.com/enjalot/moreillusions">
+            <img class="illusions" src="/static/img/index/gallery/illusions.png" />
+        </a>
+        <a href="http://newhive.com/enjalot/squarecircle">
+            <img class="tubes" src="/static/img/index/gallery/tubes.png" />
+        </a>
+        <a href="http://newhive.com/enjalot/delta">
+            <img class="arc" src="/static/img/index/gallery/arc.png" />
+        </a>
+        <a href="http://newhive.com/enjalot/orb">
+            <img class="orb" src="/static/img/index/gallery/orb.png" />
+        </a>
+        <a href="http://newhive.com/enjalot/turnaround-time">
+            <img class="rose" src="/static/img/index/gallery/rose.png" />
+        </a>
+        <a href="http://enjalot.com/tributary/2958196/">
+            <img class="basics" src="/static/img/index/gallery/basics.png" />
+        </a>
+        <a href="http://enjalot.com/tributary/2958199/">
+            <img class="rgb" src="/static/img/index/gallery/rgb.png" />
+        </a>
+        <a href="http://enjalot.com/tributary/2958568/">
+            <img class="sinwaves" src="/static/img/index/gallery/sinwaves.png" />
+        </a>
 
 
+        <p class="gallerytext">Some of these images take you to galleries of Tributary examples, don't be afraid
+          to click on images which take you to the actual live tributaries!</p>
+
+      <!-- documentation -->
+      <div class="documentation">Documentation</div>
+      <div class="rectangle-9">
+        <div class="text-11">Wiki</div>
+        <p class="textarea-6">
+        <a href="https://github.com/enjalot/tributary/wiki">Overview</a>
+        <br/><a href="https://github.com/enjalot/tributary/wiki/Tributary">Tributary</a>
+        <br/><a href="https://github.com/enjalot/tributary/wiki/Delta">Delta</a>
+          <br/>
+        </p>
+        <p class="textarea-7">Hour Glass
+          <br/>Flow
+          <br/>Big Fish</p>
+        <p class="textarea-8">Cypress
+          <br/>Flood
+          <br/>Fly</p>
+      </div>
+      <div class="rectangle-10">
+        <div class="blogposts">Blog Posts</div>
+        <p class="blogposts_txt">what a tool
+          <br/>in due time
+          <br/>navigating the rapids
+          <br/>bake that assumption
+          <br/>
+        </p>
+      </div>
+      <div class="attribution">Where did it come from?</div>
+      <p class="attribution_txt">Tributary is possible thanks to much harder work done by other people. We started
+        with <a href="http://gabrielflor.it/water">Gabriel Florit's implementation</a>  of concepts introduced in Bret Victor's <a href="http://www.youtube.com/watch?v=PUv66718DII">Inventing
+            on Principle talk</a>. Mike Bostock makes much of Tributary possible with his excellent
+        <a href="http://d3js.org/">d3.js library</a>. The use of gists to drive the code comes from his <a href="http://bl.ocks.org">bl.ocks.org project</a>.</p>
     </div>
-	
+
 <a href="https://github.com/enjalot/tributary"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"></a>
+
   </body>
+
 </html>
