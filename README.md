@@ -32,7 +32,7 @@ sudo easy_install flask
 
 If you want to deploy behind apache, check out the sample apache config in server/sample_apache_config.txt
 
-#Submodues:
+#Submodules:
 A couple of external (client side) libraries are included as submodules, to use them:
 ```
 git submodule init
