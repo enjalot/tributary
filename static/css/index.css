@@ -19,9 +19,9 @@ html, body {
 .headertxt {
   position:absolute;
   left:368px;
-  top:62px;
+  top:68px;
   color: #ffffff;
-  font-family:"Open Sans";
+  font-family:"federo";
   font-size: 42pt;
   font-weight: normal;
   font-style: normal;
@@ -32,7 +32,7 @@ html, body {
   left:365px;
   top:72px;
   color: #000000;
-  font-family:"Open Sans";
+  font-family:"federo";
   font-size: 42pt;
   font-weight: normal;
   font-style: normal;
