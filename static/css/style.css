@@ -172,6 +172,16 @@
     #coffee_check {
         margin-left: 30px;
     }
+    #vim_check {
+        margin-left: 30px;
+    }
+    #emacs_check {
+        margin-left: 30px;
+    }
+
+
+
+
 
     #editor {
     	position: fixed;

@@ -1,4 +1,5 @@
 *.swp
 *.un~
+*.pyc
 static/water
 npm-debug.log
