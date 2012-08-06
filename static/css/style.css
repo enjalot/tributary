@@ -26,47 +26,6 @@ footer, header, nav, section, audio, video {
 
 a img {border: 0;}
 
-
-
-/*  Typography presets
-    ------------------  */
-
-.gigantic {
-    font-size: 110px;
-    line-height: 120px;
-    letter-spacing: -2px;
-}
-
-.huge, h1 {
-    font-size: 68px;
-    line-height: 72px;
-    letter-spacing: -1px;
-}
-
-.large, h2 {
-    font-size: 42px;
-    line-height: 48px;
-}
-
-.bigger, h3 {
-    font-size: 26px;
-    line-height: 36px;
-}
-
-.big, h4 {
-    font-size: 22px;
-    line-height: 30px;
-}
-
-body {
-    font: 16px/24px Georgia, serif;
-}
-
-.small, small {
-    font-size: 13px;
-    line-height: 18px;
-}
-
 /* Selection colours (easy to forget) */
 
 ::selection         {background: rgb(255,255,158);}
@@ -86,8 +45,8 @@ cols    1     2      3      4      5      6      7      8      9      10
 px      68    160    252    344    436    528    620    712    804    896    */
 
 body {
-    width: 896px;
-    padding: 72px 48px 84px;
+/*    width: 896px;
+    padding: 72px 48px 84px; */
     background: rgb(232,232,232);
     color: rgb(60,60,60);
     -webkit-text-size-adjust: 100%; /* Stops Mobile Safari from auto-adjusting font-sizes */
@@ -108,7 +67,7 @@ body {
 }
 
 #header {
-    background-color: rgba(0,0,0,0.8);
+    background-color: rgba(25,25,25,0.8);
     padding-left: 24px;
     padding-right: 24px;
     padding-top: 12px;
