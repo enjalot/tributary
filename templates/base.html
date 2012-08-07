@@ -190,15 +190,15 @@
         document.body.onmousedown=function(){return false};
     document.body.style.cursor = "default";
 
-    var header_factor = 85;
+    var header_factor = 5;
     //always have the screen width and height
     tributary.sw = window.innerWidth;
-    tributary.sh = window.innerHeight;
+    tributary.sh = window.innerHeight - header_factor;
     d3.select("svg").attr("height", tributary.sh);
 
     function resize() {
         tributary.sw = window.innerWidth;
-        tributary.sh = window.innerHeight;
+        tributary.sh = window.innerHeight - header_factor;
         d3.select("svg").attr("height", tributary.sh);
     }
     window.onresize = function(event) {
