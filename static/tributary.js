@@ -99,6 +99,15 @@ tributary.Tributary = Backbone.Model.extend({
 
 });
 
+tributary.Config = Backbone.Model.extend({
+    defaults: {
+        coffee: false,
+        vim: false,
+        emacs: false,
+        editor_size: {x: 0, y:0}
+    },
+})
+
 tributary.TributaryView = Backbone.View.extend({
     check_date: true,
     initialize: function() {
@@ -315,7 +324,28 @@ tributary.TributaryView = Backbone.View.extend({
 
               $('#gist_info').html(info_string);
 
+
+              //load optional files here
+              //config.json
+              console.log(data.files)
+              var config = data.files["config.json"];
+              if(config) {
+                console.log("yay!", config)
+                try {
+                  that.config = new tributary.Config(JSON.parse(config.content))
+                } catch (e){
+                  that.config = new tributary.Config();
+                }
+              } else {
+                that.config = new tributary.Config();
+              }
+              //
+              //json files
+
           });
+        } else {
+          //setup empty config
+          that.config = new tributary.Config();
         }
 
 
@@ -339,6 +369,9 @@ tributary.TributaryView = Backbone.View.extend({
                 editor.css('height', that.editor_height + d.y + "px");
                 editor.find('.CodeMirror-scroll').css('height', that.editor_height + d.y + "px");
                 editor.find('.CodeMirror-gutter').css('height', that.editor_height + d.y + "px");
+
+                //TODO: update the editor size in the config
+                //that.config.set
             });
    
         var handle_data = {
@@ -395,6 +428,7 @@ tributary.TributaryView = Backbone.View.extend({
         cs.on("change", function(e) {
             var coffee_on = cs.is(":checked");
             that.model.set({"coffee": coffee_on});
+            that.config.set({"coffee": coffee_on});
                 that.code_editor.setOption("mode", "coffeescript");
             if(coffee_on) {
             } else {
@@ -409,6 +443,7 @@ tributary.TributaryView = Backbone.View.extend({
         vs.on("change", function(e) {
             var vim_on = vs.is(":checked");
             that.model.set({"vim": vim_on});
+            that.config.set({"vim": vim_on});
             //if vim is turned off, turn off emacs!
             if(vim_on) {
               that.model.set({"emacs": !vim_on});
@@ -426,6 +461,7 @@ tributary.TributaryView = Backbone.View.extend({
         es.on("change", function(e) {
             var emacs_on = es.is(":checked");
             that.model.set({"emacs": emacs_on});
+            that.config.set({"emacs": emacs_on});
             //if emacs is turned on, turn off vim!
             if(emacs_on) {
               that.model.set({"emacs": !emacs_on});
@@ -462,6 +498,11 @@ tributary.TributaryView = Backbone.View.extend({
         gist.files[filename] = {
             content: this.model.get("code")
         };
+
+        //save config
+        gist.files["config.json"] = {
+          content: JSON.stringify(this.config.toJSON())
+        }
 
         //turn the save button into a saving animation
         d3.select("#saveButton").style("background-image", "url(/static/img/ajax-loader.gif)");
