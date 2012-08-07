@@ -386,14 +386,53 @@ tributary.TributaryView = Backbone.View.extend({
         cs.on("change", function(e) {
             var coffee_on = cs.is(":checked");
             that.model.set({"coffee": coffee_on});
-
-            if(coffee_on) {
                 that.code_editor.setOption("mode", "coffeescript");
+            if(coffee_on) {
             } else {
                 that.code_editor.setOption("mode", "javascript");
             }
             that.model.execute();
         });
+        //setup the vim checkbox
+        var vs = $('#vim_check');
+        var es = $('#emacs_check');
+
+        vs.on("change", function(e) {
+            var vim_on = vs.is(":checked");
+            that.model.set({"vim": vim_on});
+            //if vim is turned off, turn off emacs!
+            if(vim_on) {
+              that.model.set({"emacs": !vim_on});
+              es.attr("checked", !vim_on);
+            }
+
+            if(vim_on) {
+                that.code_editor.setOption("keyMap", "vim");
+            } else {
+                that.code_editor.setOption("keyMap", "default");
+            }
+            that.model.execute();
+        });
+        //setup the emacs checkbox
+        es.on("change", function(e) {
+            var emacs_on = es.is(":checked");
+            that.model.set({"emacs": emacs_on});
+            //if emacs is turned on, turn off vim!
+            if(emacs_on) {
+              that.model.set({"emacs": !emacs_on});
+              vs.attr("checked", !emacs_on);
+            }
+
+            if(emacs_on) {
+                that.code_editor.setOption("keyMap", "emacs");
+            } else {
+                that.code_editor.setOption("keyMap", "default");
+            }
+            that.model.execute();
+        });
+
+
+
     },
     save_gist: function(callback) {
         //console.log("ENDPOINT", @endpoint)

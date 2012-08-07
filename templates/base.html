@@ -105,10 +105,14 @@
         {% endblock %}
      
         <div id='editor'>
-            <input type="checkbox" id="coffee_check"></input><button>CoffeeScript</button>
+
+
+            <input type="checkbox" id="coffee_check">CoffeeScript</input>
+            <input type="checkbox" id="vim_check">vim</input>
+            <input type="checkbox" id="emacs_check">emacs</input>
+
 
             <button id="hideEditor">Hide</span>
-
         </div>
         <div id="slider"></div>
 
@@ -157,11 +161,14 @@
     <script src="/static/lib/CodeMirror2/lib/util/searchcursor.js"></script>
     <script src="/static/lib/CodeMirror2/mode/javascript/javascript.js"></script>
     <script src="/static/lib/CodeMirror2/mode/coffeescript/coffeescript.js"></script>
+    <script src="/static/lib/CodeMirror2/keymap/vim.js"></script>
+    <script src="/static/lib/CodeMirror2/keymap/emacs.js"></script>
 
     <script src='/static/lib/dvl/dvl.js'></script>
 
     <script src="/static/lib/inlet.js"></script>
     <script src='/static/util.js'></script>
+    <script src='/static/components/dial.js'></script>
     <script src='/static/tributary.js'></script>
 
     
@@ -185,13 +192,13 @@
 
     var header_factor = 85;
     //always have the screen width and height
-    tributary.sw = window.innerWidth - header_factor;
-    tributary.sh = window.innerHeight - header_factor;
+    tributary.sw = window.innerWidth;
+    tributary.sh = window.innerHeight;
     d3.select("svg").attr("height", tributary.sh);
 
     function resize() {
-        tributary.sw = window.innerWidth - header_factor;
-        tributary.sh = window.innerHeight - header_factor;
+        tributary.sw = window.innerWidth;
+        tributary.sh = window.innerHeight;
         d3.select("svg").attr("height", tributary.sh);
     }
     window.onresize = function(event) {
@@ -202,6 +209,11 @@
     {% endblock %}
 
     </script>
+    <style>
+        .dg.ac {
+            right: 240px;
+        }
+    </style>
 <!--
 <script>document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1"></' + 'script>')</script>
 -->

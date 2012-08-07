@@ -26,13 +26,23 @@ find you want to make your own view.
 It's not too hard, just adding one endpoint to the backend, making a new template html and a new view javascript file.
 
 If you want to have github authentication working you will need to setup a github app and fill out the local_settings.py (see local_settings_example.py)
+The FLASK_SECRET_KEY is just a random string that's supposed to be unique to protect your sessions
 
 On the backend tributary only depends on Flask:
+```
 sudo easy_install flask
+```
+To deploy locally run
+```
+git clone https://github.com/enjalot/tributary
+cd ./tributary
+python app.py
+```
 
 If you want to deploy behind apache, check out the sample apache config in server/sample_apache_config.txt
 
-#Submodues:
+
+#Submodules:
 A couple of external (client side) libraries are included as submodules, to use them:
 ```
 git submodule init
