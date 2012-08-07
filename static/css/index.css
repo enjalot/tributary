@@ -4,6 +4,7 @@
     margin-left: auto;
     margin-right: auto;
     font-family: 'Open Sans', sans-serif;
+    padding-bottom: 72px;
     
 }
 p {
@@ -35,6 +36,14 @@ p {
 #gallery a:hover, #gallery a:visited {
     text-decoration: none;
 }
+.gallerytext {
+    opacity: 0.75;
+    display: block;
+    text-align: center;
+    width: 435px;
+    margin-left: auto;
+    margin-right: auto;
+}
 a:link {
     text-decoration: none;
     font-weight: 600;
@@ -57,9 +66,13 @@ a:hover {
     background-color: transparent !important;
 }
 h1 {
-    font-size: 128px;
+    font-family: 'Alegreya', serif;
+    font-size: 148px;
     margin: 0;
     padding: 0;
+    padding-bottom: 12px;
+    font-style: italic;
+    font-weight: 900;
 }
 h3 {
     margin: 0;
