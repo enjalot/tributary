@@ -1,6 +1,93 @@
 tributary.Tributary = Backbone.Model.extend({
     defaults: {
         code: "",
+        coffee: false,
+        filename: "inlet.js"
+    },
+    binder: function() {
+        this.on("code", this.newcode);
+        this.on("execute", this.execute);
+        this.on("error", this.handle_error);
+    },
+    initialize: function() {
+        this.binder();
+    },
+    handle_error: function(e) {
+        if(tributary.trace) {
+            console.log(e);
+            console.trace();
+        }
+    },
+    handle_coffee: function() {
+        //This checks if coffeescript is being used
+        //and returns compiled javascript
+        var js = this.get("code");
+        if(this.get("coffee")) {
+            //compile the coffee
+            js = CoffeeScript.compile(js, {"bare":true});
+        }
+        return js;
+    },
+    execute: function() {   
+        var js = this.handle_coffee();
+        try {
+            svg = d3.select("svg");
+            //wrap the code in a closure
+            var code = "tributary.initialize = function(g) {";
+            code += js;
+            code += "};";
+            eval(code);
+            //trib = window.trib  #access global trib object
+            //trib_options = window.trib_options  #access global trib object
+            //tributary.initialize(d3.select("svg.tributary_svg"))
+        } catch (e) {
+            this.trigger("error", e);
+            return false;
+        }
+        
+        //we don't want it to nuke the svg if there is an error
+        try {
+            //for the datGUI stuff
+            window.trib = {};               //reset global trib object
+            window.trib_options = {};       //reset global trib_options object
+            trib = window.trib;
+            trib_options = window.trib_options;
+            $("svg.tributary_svg").empty();
+            tributary.initialize(d3.select("svg.tributary_svg"));
+        } catch (er) {
+            this.trigger("error", er);
+            return false;
+        }
+        this.trigger("noerror");
+
+        return true;
+    },
+    newcode: function(code) {
+        //save the code in the model
+        this.set({code:code});
+        this.execute();
+        //TODO: store code in local storage
+
+        return true;
+    }
+});
+
+tributary.Config = Backbone.Model.extend({
+    defaults: {
+        coffee: false,
+        vim: false,
+        emacs: false,
+        editor_editor: {
+          width: 600,
+          height: 300,
+          hide: false
+        }
+    },
+});
+
+tributary.JSON = Backbone.Model.extend({
+    defaults: {
+        code: "",
         coffee: false
     },
     binder: function() {
@@ -68,49 +155,10 @@ tributary.Tributary = Backbone.Model.extend({
         //TODO: store code in local storage
 
         return true;
-    },
-    get_code: function(callback) {
-        var that = this;
-        //if(this.get("gist") && this.get("filename")) {
-        if(this.get("gist") && this.get("gist") !== "None") {
-            var filename = this.get("filename");
-            if(filename) {
-                src_url = "/tributary/api/" + this.get("gist")  + "/" + this.get("filename");
-            } else {
-                src_url = "/tributary/api/" + this.get("gist");
-            }
-            d3.text(src_url, function(data) { 
-                if(data) {
-                    code = data;
-                    that.set({code: data});
-                } else {
-                    code = that.get("code");
-                    if(!code) {
-                        code = "";
-                    }
-                }
-                //TODO: add error checking
-                callback(null, code);
-
-                that.trigger("gotcode");
-            });
-        }
     }
 
 });
 
-tributary.Config = Backbone.Model.extend({
-    defaults: {
-        coffee: false,
-        vim: false,
-        emacs: false,
-        editor_editor: {
-          width: 600,
-          height: 300,
-          hide: false
-        }
-    },
-});
 
 tributary.TributaryView = Backbone.View.extend({
     check_date: true,
@@ -301,6 +349,8 @@ tributary.TributaryView = Backbone.View.extend({
 
               $('#gist_info').html(info_string);
 
+              
+
 
               //load optional files here
               //config.json
@@ -317,6 +367,15 @@ tributary.TributaryView = Backbone.View.extend({
               }
               //
               //json files
+
+
+              //set the code
+              var code_file = data.files[that.model.get("filename")];
+              if(code_file)
+              {
+                that.model.set("code", code_file.content)
+                that.model.execute();
+              }
 
               that.setup_editor("editor");
 
@@ -387,13 +446,8 @@ tributary.TributaryView = Backbone.View.extend({
         var code = this.model.get("code");
         //check if we already have the code
         if(code !== undefined && code !== "") {
-            this.code_editor.setValue(code);
-            this.model.execute();
-        }// else {
-        //fill in the editor with text we get back from the gist
-        this.model.get_code(function(error, got_code) {
-            that.code_editor.setValue(got_code);
-        });
+          this.code_editor.setValue(code);
+        }
 
         /////////////////////////////////////////////////
 
@@ -533,6 +587,7 @@ tributary.TributaryView = Backbone.View.extend({
             //if vim is turned off, turn off emacs!
             if(vim_on) {
               that.model.set({"emacs": !vim_on});
+              that.config.set({"emacs": !vim_on});
               es.attr("checked", !vim_on);
             }
 
@@ -541,7 +596,7 @@ tributary.TributaryView = Backbone.View.extend({
             } else {
                 that.code_editor.setOption("keyMap", "default");
             }
-            that.model.execute();
+            //that.model.execute();
         });
         //setup the emacs checkbox
         es.on("change", function(e) {
@@ -550,7 +605,8 @@ tributary.TributaryView = Backbone.View.extend({
             that.config.set({"emacs": emacs_on});
             //if emacs is turned on, turn off vim!
             if(emacs_on) {
-              that.model.set({"emacs": !emacs_on});
+              that.model.set({"vim": !emacs_on});
+              that.config.set({"vim": !emacs_on});
               vs.attr("checked", !emacs_on);
             }
 
@@ -559,7 +615,7 @@ tributary.TributaryView = Backbone.View.extend({
             } else {
                 that.code_editor.setOption("keyMap", "default");
             }
-            that.model.execute();
+            //that.model.execute();
         });
 
 
