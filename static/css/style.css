@@ -143,11 +143,15 @@
     	*/
     }
 
-    #hideEditor {
-        color: white;
+    #hideEditors {
         position: fixed;
         right: 20px;
         bottom: 20px;
+        z-index: 1000;
+    }
+    .hide_editor {
+        float: left;
+        color: white;
         margin-top: 10px;
         padding: 8px;
         padding-top: 12px;

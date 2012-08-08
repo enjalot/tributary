@@ -74,10 +74,10 @@ tributary.Tributary = Backbone.Model.extend({
 
 tributary.Config = Backbone.Model.extend({
     defaults: {
-        coffee: false,
-        vim: false,
-        emacs: false,
         editor_editor: {
+          coffee: false,
+          vim: false,
+          emacs: false,
           width: 600,
           height: 300,
           hide: false
@@ -86,12 +86,16 @@ tributary.Config = Backbone.Model.extend({
 });
 
 tributary.JSON = Backbone.Model.extend({
+    //JSON model is like the base tributary class, but its for json
+    //we use "code" to store and catch events to match with the tributary
+    //class so we don't need to separate logic for the editors (same functionality anyway)
+    //hmm.. wonder if it should just extend Tributary...
     defaults: {
-        code: "",
-        coffee: false
+        name: "json",
+        code: "{}",
     },
     binder: function() {
-        this.on("code", this.newcode);
+        this.on("code", this.newjson);
         this.on("execute", this.execute);
         this.on("error", this.handle_error);
     },
@@ -104,53 +108,22 @@ tributary.JSON = Backbone.Model.extend({
             console.trace();
         }
     },
-    handle_coffee: function() {
-        //This checks if coffeescript is being used
-        //and returns compiled javascript
-        var js = this.get("code");
-        if(this.get("coffee")) {
-            //compile the coffee
-            js = CoffeeScript.compile(js, {"bare":true});
-        }
-        return js;
-    },
+
     execute: function() {   
-        var js = this.handle_coffee();
         try {
-            svg = d3.select("svg");
-            //wrap the code in a closure
-            var code = "tributary.initialize = function(g) {";
-            code += js;
-            code += "};";
-            eval(code);
-            //trib = window.trib  #access global trib object
-            //trib_options = window.trib_options  #access global trib object
-            //tributary.initialize(d3.select("svg.tributary_svg"))
+          var json = JSON.parse(this.get("code"));
+          tributary[this.get("name")] = json;
         } catch (e) {
             this.trigger("error", e);
-            return false;
-        }
-        
-        //we don't want it to nuke the svg if there is an error
-        try {
-            //for the datGUI stuff
-            window.trib = {};               //reset global trib object
-            window.trib_options = {};       //reset global trib_options object
-            trib = window.trib;
-            trib_options = window.trib_options;
-            $("svg.tributary_svg").empty();
-            tributary.initialize(d3.select("svg.tributary_svg"));
-        } catch (er) {
-            this.trigger("error", er);
             return false;
         }
         this.trigger("noerror");
 
         return true;
     },
-    newcode: function(code) {
+    newjson: function(json) {
         //save the code in the model
-        this.set({code:code});
+        this.set({code:json});
         this.execute();
         //TODO: store code in local storage
 
@@ -172,6 +145,102 @@ tributary.TributaryView = Backbone.View.extend({
         var that = this;
 
 
+        //we will manage several editors
+        this.editor = {};
+        this.editor_handle = {};
+        //we keep an array of json models
+        this.jsons = [];
+    
+        /////////////////////////////////////
+        //Here we setup all the model stuff
+        //really this should go in the initialization... and all the gui should follow
+        /////////////////////////
+        if(this.model.get("gist") && this.model.get("gist") !== "None") {
+          //setup ui related to the gist
+          $.get('https://api.github.com/gists/' + this.model.get("gist"), function(data) {
+              //console.log("GIST!", data);
+              if(data.user === null || data.user === undefined) {
+                  data.user = {
+                      login: "anon",
+                      url: "",
+                      userid: -1
+                  };
+              }
+              that.gist = data;
+                            
+
+
+              //load optional files here
+              //config.json
+              var config = data.files["config.json"];
+              if(config) {
+                //console.log("yay!", config)
+                try {
+                  that.config = new tributary.Config(JSON.parse(config.content))
+                } catch (e){
+                  that.config = new tributary.Config();
+                }
+              } else {
+                that.config = new tributary.Config();
+              }
+              //
+              //json files
+              var files = _.keys(data.files);
+              //console.log("files", files)
+              var fsplit, json, i = 0, jsonid;
+              files.forEach(function(f) {
+                fsplit = f.split("."); 
+                if(fsplit[fsplit.length-1] === "json" && f !== "config.json") {
+                  //found us a ripe json file!
+                  //setup the JSON model to store it
+                  json = new tributary.JSON({"name":fsplit[0], "code":data.files[f].content})
+                  //keep track of this json
+                  that.jsons.push(json);
+  
+                  jsonid = "json" + i;
+                  //this seems weird that we have to set up the config manually
+                  if(!that.config.get("editor_" + jsonid)) {
+                    that.config.set("editor_" + jsonid, {
+                      vim: that.config.get("editor_editor").vim,
+                      emacs: that.config.get("editor_editor").emacs,
+                      width: 600,
+                      height: 300,
+                      hide: false
+                    });
+                  }
+
+                  that.setup_editor(jsonid, json, {coffee_checkbox: false});
+                  json.execute();
+                  i++;
+                }
+              });
+
+
+              //set the code
+              var code_file = data.files[that.model.get("filename")];
+              if(code_file)
+              {
+                that.model.set("code", code_file.content)
+              }
+
+              that.init_gui();
+              //for the code we setup special code editor still
+              that.code_editor = that.setup_editor("editor", that.model);
+              //it hooks up to dat gui
+              that.make_datgui();
+
+              //yay all done, lets run the code we loaded in
+              that.model.execute();
+
+          });
+        } else {
+          //setup empty config
+          that.config = new tributary.Config();
+          
+          that.init_gui();
+          that.setup_editor("editor");
+        }
+
 
         //datgui things 
         this.controls = {};
@@ -179,7 +248,7 @@ tributary.TributaryView = Backbone.View.extend({
         this.dating = false;
         this.gui = new dat.GUI();
 
-        this.make_ui = function() {
+        this.make_datgui = function() {
             //we only need to remake the ui if we are not using it
             if(!that.dating) {
                 //reset everything
@@ -234,7 +303,7 @@ tributary.TributaryView = Backbone.View.extend({
         };
             
 
-        this.init_gui();
+        //TODO: make these work for each of the editors rather than just the code editor
 
         //------------------------------------
         //Drop file functions
@@ -285,6 +354,15 @@ tributary.TributaryView = Backbone.View.extend({
             }
             return false;
         });
+
+        this.model.on("noerror", function() {
+            that.make_datgui();
+            //ugh, need to make sure datgui doesn't "overwrite" itself
+            setTimeout(function() {
+                that.dating = false;
+            }, 100);
+        });
+
     },
     init_gui: function() {
         var that = this;
@@ -317,78 +395,33 @@ tributary.TributaryView = Backbone.View.extend({
             }
         });
 
-
-        //we will manage several editors
-        this.editor = {};
-        this.editor_handle = {};
-    
-        if(this.model.get("gist") && this.model.get("gist") !== "None") {
-          //setup ui related to the gist
-          $.get('https://api.github.com/gists/' + this.model.get("gist"), function(data) {
-              //console.log("GIST!", data);
-              if(data.user === null || data.user === undefined) {
-                  data.user = {
-                      login: "anon",
-                      url: "",
-                      userid: -1
-                  };
-              }
-              var gist_uid = data.user.userid;
-              /* TODO: setup editing of description as well as a save button
-              if(gist_uid === tributary.userid) {
-                  //the loggedin user owns this gist
-              }
-              */
-              //make the description and attribution
-              var info_string = '"<a href="' + data.html_url + '">' + data.description + '</a>" by ';
-              if(data.user.url === "") {
-                  info_string += data.user.login;
-              } else {
-                  info_string += '<a href="' + data.user.url + '">' + data.user.login + '</a>';
-              }
-
-              $('#gist_info').html(info_string);
-
-              
-
-
-              //load optional files here
-              //config.json
-              var config = data.files["config.json"];
-              if(config) {
-                //console.log("yay!", config)
-                try {
-                  that.config = new tributary.Config(JSON.parse(config.content))
-                } catch (e){
-                  that.config = new tributary.Config();
-                }
-              } else {
-                that.config = new tributary.Config();
-              }
-              //
-              //json files
-
-
-              //set the code
-              var code_file = data.files[that.model.get("filename")];
-              if(code_file)
-              {
-                that.model.set("code", code_file.content)
-                that.model.execute();
-              }
-
-              that.setup_editor("editor");
-
-          });
+        var gist_uid = this.gist.user.userid;
+        /* TODO: setup editing of description as well as a save button
+        if(gist_uid === tributary.userid) {
+            //the loggedin user owns this gist
+        }
+        */
+        //make the description and attribution
+        var info_string = '"<a href="' + this.gist.html_url + '">' + this.gist.description + '</a>" by ';
+        if(this.gist.user.url === "") {
+            info_string += this.gist.user.login;
         } else {
-          //setup empty config
-          that.config = new tributary.Config();
-          that.setup_editor("editor");
+            info_string += '<a href="' + this.gist.user.url + '">' + this.gist.user.login + '</a>';
         }
 
+        $('#gist_info').html(info_string);
+
+
     },
-    setup_editor: function(editor_id) {
+
+    setup_editor: function(editor_id, model, options) {
         var that = this;
+
+        if(!options) {
+          options = {"coffee_checkbox": true};
+        }
+        var coffee_checkbox = options.coffee_checkbox;
+
 
         //config id, how we reference this editor in the config
         var cid = "editor_" + editor_id;
@@ -401,11 +434,13 @@ tributary.TributaryView = Backbone.View.extend({
           .attr("id", editor_id);
 
         //<input type="checkbox" id="coffee_check">CoffeeScript</input>
-        editor_sel.append("input")
-          .attr("type", "checkbox")
-          .attr("class", "coffee_check");
-        editor_sel.append("span")
-          .text("CoffeeScript");
+        if(coffee_checkbox) {
+          editor_sel.append("input")
+            .attr("type", "checkbox")
+            .attr("class", "coffee_check");
+          editor_sel.append("span")
+            .text("CoffeeScript");
+        }
         //setup the vim and emacs checkboxs
         editor_sel.append("input")
           .attr("type", "checkbox")
@@ -431,22 +466,22 @@ tributary.TributaryView = Backbone.View.extend({
         });
 
         //CODE SPECIFIC
-        this.code_editor = CodeMirror(editor_sel.node(), {
+        var code_editor = CodeMirror(editor_sel.node(), {
             //value: "function myScript(){return 100;}\n",
             mode:  "javascript",
             theme: "lesser-dark",
             lineNumbers: true,
             onChange: function() {
-                thisCode = that.code_editor.getValue();
-                that.model.trigger("code", thisCode);
+                thisCode = code_editor.getValue();
+                model.trigger("code", thisCode);
             }
         });
 
-        this.inlet = Inlet(this.code_editor);
-        var code = this.model.get("code");
+        this.inlet = Inlet(code_editor);
+        var code = model.get("code");
         //check if we already have the code
         if(code !== undefined && code !== "") {
-          this.code_editor.setValue(code);
+          code_editor.setValue(code);
         }
 
         /////////////////////////////////////////////////
@@ -516,27 +551,25 @@ tributary.TributaryView = Backbone.View.extend({
             .call(editor_drag);
         var editor_handle = this.editor_handle[editor_id];
 
-        this.model.on("error", function() {
+        model.on("error", function() {
             editor_handle.style("background-color", "rgba(250, 50, 50, .7)");
         });
-        this.model.on("noerror", function() {
+        model.on("noerror", function() {
             editor_handle.style("background-color", "rgba(50, 250, 50, .4)");
-            that.make_ui();
-            //ugh, need to make sure datgui doesn't "overwrite" itself
-            setTimeout(function() {
-                that.dating = false;
-            }, 100);
-
+            
         });
 
         //Setup Hide the editor button
-        var he = $('#hideEditor');
+        var h_id = "hideEditor_" + editor_id
+        d3.select("#hideEditors").append("div").attr("id", h_id)
+          .classed("hide_editor", true);
+        var he = $('#' + h_id);
         var hide = editor.hide;
         showhide();
         
         function showhide() {
-            $("#editor").toggle(!hide);
-            $("#editor_handle").toggle(!hide);
+            editor_el.toggle(!hide);
+            $("#editor_handle_" + editor_id).toggle(!hide);
             if(hide) {
                 he.html("Show");
             } else {
@@ -552,73 +585,85 @@ tributary.TributaryView = Backbone.View.extend({
             
         });
 
-        //setup the coffeescript checkbox
-        var cs = editor_el.find('.coffee_check');
 
-        //set the use of coffeescript depending on the config
-        this.model.set({"coffee": this.config.get("coffee")});
-        cs.attr("checked", this.config.get("coffee"));
+        //TODO: clean up this checkbox related code. lots of redundant
+        //checks... 
+        //setup the coffeescript checkbox (if we want it)
+        if(coffee_checkbox) {
+          var cs = editor_el.find('.coffee_check');
 
-        cs.on("change", function(e) {
-            var coffee_on = cs.is(":checked");
-            that.model.set({"coffee": coffee_on});
-            that.config.set({"coffee": coffee_on});
-                that.code_editor.setOption("mode", "coffeescript");
-            if(coffee_on) {
-            } else {
-                that.code_editor.setOption("mode", "javascript");
-            }
-            that.model.execute();
-        });
+          //set the use of coffeescript depending on the config
+          model.set({"coffee": editor.coffee});
+          cs.attr("checked", editor.coffee);
+
+          if(editor.coffee) {
+              code_editor.setOption("mode", "coffeescript");
+          } else {
+              code_editor.setOption("mode", "javascript");
+          }
+
+          cs.on("change", function(e) {
+              var coffee_on = cs.is(":checked");
+              model.set({"coffee": coffee_on});
+              editor.coffee = coffee_on;
+              that.config.set(cid, editor);
+              if(coffee_on) {
+                  code_editor.setOption("mode", "coffeescript");
+              } else {
+                  code_editor.setOption("mode", "javascript");
+              }
+              model.execute();
+          });
+        }
          
         var vs = editor_el.find('.vim_check');
         var es = editor_el.find('.emacs_check');
 
-        vs.attr("checked", this.config.get("vim"));
-        es.attr("checked", this.config.get("emacs"));
+        vs.attr("checked", editor.vim);
+        es.attr("checked", editor.emacs);
 
-        this.model.set({"vim": this.config.get("vim")});
-        this.model.set({"emacs": this.config.get("emacs")});
+        if(editor.vim) {
+            code_editor.setOption("keyMap", "vim");
+        } else if (editor.emacs) {
+            code_editor.setOption("keyMap", "emacs");
+        } else {
+            code_editor.setOption("keyMap", "default");
+        }
 
         vs.on("change", function(e) {
             var vim_on = vs.is(":checked");
-            that.model.set({"vim": vim_on});
-            that.config.set({"vim": vim_on});
+            editor.vim = vim_on;
             //if vim is turned off, turn off emacs!
             if(vim_on) {
-              that.model.set({"emacs": !vim_on});
-              that.config.set({"emacs": !vim_on});
+              editor.emacs = !vim_on;
               es.attr("checked", !vim_on);
             }
-
+            that.config.set(cid, editor);
             if(vim_on) {
-                that.code_editor.setOption("keyMap", "vim");
+                code_editor.setOption("keyMap", "vim");
             } else {
-                that.code_editor.setOption("keyMap", "default");
+                code_editor.setOption("keyMap", "default");
             }
-            //that.model.execute();
         });
         //setup the emacs checkbox
         es.on("change", function(e) {
             var emacs_on = es.is(":checked");
-            that.model.set({"emacs": emacs_on});
-            that.config.set({"emacs": emacs_on});
+            editor.emacs = emacs_on;
             //if emacs is turned on, turn off vim!
             if(emacs_on) {
-              that.model.set({"vim": !emacs_on});
-              that.config.set({"vim": !emacs_on});
+              editor.vim = !emacs_on;
               vs.attr("checked", !emacs_on);
             }
-
+            that.config.set(cid, editor);
             if(emacs_on) {
-                that.code_editor.setOption("keyMap", "emacs");
+                code_editor.setOption("keyMap", "emacs");
             } else {
-                that.code_editor.setOption("keyMap", "default");
+                code_editor.setOption("keyMap", "default");
             }
-            //that.model.execute();
         });
 
 
+        return code_editor;
 
     },
     save_gist: function(callback) {
@@ -641,10 +686,16 @@ tributary.TributaryView = Backbone.View.extend({
             content: this.model.get("code")
         };
 
+        this.jsons.forEach(function(j) {
+          gist.files[j.get("name") + ".json"] = {
+            content: j.get("code")
+          };
+        });
+
         //save config
         gist.files["config.json"] = {
           content: JSON.stringify(this.config.toJSON())
-        }
+        };
 
         //turn the save button into a saving animation
         d3.select("#saveButton").style("background-image", "url(/static/img/ajax-loader.gif)");
