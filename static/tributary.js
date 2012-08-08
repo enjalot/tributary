@@ -104,7 +104,9 @@ tributary.Config = Backbone.Model.extend({
         coffee: false,
         vim: false,
         emacs: false,
-        editor_size: {x: 0, y:0}
+        editor_width: 600,
+        editor_height: 300,
+        editor_hide: false
     },
 })
 
@@ -327,10 +329,9 @@ tributary.TributaryView = Backbone.View.extend({
 
               //load optional files here
               //config.json
-              console.log(data.files)
               var config = data.files["config.json"];
               if(config) {
-                console.log("yay!", config)
+                //console.log("yay!", config)
                 try {
                   that.config = new tributary.Config(JSON.parse(config.content))
                 } catch (e){
@@ -342,19 +343,29 @@ tributary.TributaryView = Backbone.View.extend({
               //
               //json files
 
+              that.setup_editor();
+
           });
         } else {
           //setup empty config
           that.config = new tributary.Config();
+          that.setup_editor();
         }
 
+    },
+    setup_editor: function() {
+        var that = this;
 
         //Setup editor controls
-        this.editor_width = 600;
-        this.editor_height = 300;
+        this.editor_width = this.config.get("editor_width");
+        this.editor_height = this.config.get("editor_height");
         var editor = $('#editor');
         editor.css('width', this.editor_width);
         editor.css('height', this.editor_height);
+        editor.find('.CodeMirror-scroll').css('height', that.editor_height + "px");
+        editor.find('.CodeMirror-gutter').css('height', that.editor_height + "px");
+
+
         
         var editor_drag = d3.behavior.drag()
             .on("drag", function(d,i) {
@@ -371,7 +382,7 @@ tributary.TributaryView = Backbone.View.extend({
                 editor.find('.CodeMirror-gutter').css('height', that.editor_height + d.y + "px");
 
                 //TODO: update the editor size in the config
-                //that.config.set
+                that.config.set({"editor_width": that.editor_width + d.x, "editor_height": that.editor_height + d.y });
             });
    
         var handle_data = {
@@ -409,22 +420,33 @@ tributary.TributaryView = Backbone.View.extend({
 
         //Setup Hide the editor button
         var he = $('#hideEditor');
-        he.on("click", function(e) {
-            $("#editor").toggle();
-            $("#editor_handle").toggle();
-            //toggle the gui for delta/flow
-            //$('#gui').toggle()
-            var txt = he.html();
-            //console.log("txt", txt)
-            if(txt === "Hide") {
+        var hide = this.config.get("hide_editor");
+        showhide();
+        
+        function showhide() {
+            $("#editor").toggle(!hide);
+            $("#editor_handle").toggle(!hide);
+            if(hide) {
                 he.html("Show");
             } else {
                 he.html("Hide");
             }
+        }
+        
+        he.on("click", function(e) {
+            hide = !hide;
+            that.config.set({"hide_editor": hide});
+            showhide();
+            
         });
 
         //setup the coffeescript checkbox
         var cs = $('#coffee_check');
+
+        //set the use of coffeescript depending on the config
+        this.model.set({"coffee": this.config.get("coffee")});
+        cs.attr("checked", this.config.get("coffee"));
+
         cs.on("change", function(e) {
             var coffee_on = cs.is(":checked");
             that.model.set({"coffee": coffee_on});
@@ -439,6 +461,12 @@ tributary.TributaryView = Backbone.View.extend({
         //setup the vim checkbox
         var vs = $('#vim_check');
         var es = $('#emacs_check');
+
+        vs.attr("checked", this.config.get("vim"));
+        es.attr("checked", this.config.get("emacs"));
+
+        this.model.set({"vim": this.config.get("vim")});
+        this.model.set({"emacs": this.config.get("emacs")});
 
         vs.on("change", function(e) {
             var vim_on = vs.is(":checked");
