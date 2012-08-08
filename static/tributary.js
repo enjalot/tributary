@@ -172,7 +172,12 @@ tributary.TributaryView = Backbone.View.extend({
 
               //load optional files here
               //config.json
-              var config = data.files["config.json"];
+              var config;
+              try {
+                config = data.files["config.json"];
+              } catch (e) {
+                config = false;
+              }
               if(config) {
                 //console.log("yay!", config)
                 try {
