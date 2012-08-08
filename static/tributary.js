@@ -231,6 +231,7 @@ tributary.TributaryView = Backbone.View.extend({
 
               //yay all done, lets run the code we loaded in
               that.model.execute();
+              that.model.trigger("gotcode");
 
           });
         } else {
@@ -238,7 +239,9 @@ tributary.TributaryView = Backbone.View.extend({
           that.config = new tributary.Config();
           
           that.init_gui();
-          that.setup_editor("editor");
+          that.setup_editor("editor", this.model);
+          this.model.execute();
+          this.model.trigger("gotcode");
         }
 
 
@@ -395,21 +398,23 @@ tributary.TributaryView = Backbone.View.extend({
             }
         });
 
-        var gist_uid = this.gist.user.userid;
-        /* TODO: setup editing of description as well as a save button
-        if(gist_uid === tributary.userid) {
-            //the loggedin user owns this gist
-        }
-        */
-        //make the description and attribution
-        var info_string = '"<a href="' + this.gist.html_url + '">' + this.gist.description + '</a>" by ';
-        if(this.gist.user.url === "") {
-            info_string += this.gist.user.login;
-        } else {
-            info_string += '<a href="' + this.gist.user.url + '">' + this.gist.user.login + '</a>';
-        }
+        if(this.gist) {
+          var gist_uid = this.gist.user.userid;
+          /* TODO: setup editing of description as well as a save button
+          if(gist_uid === tributary.userid) {
+              //the loggedin user owns this gist
+          }
+          */
+          //make the description and attribution
+          var info_string = '"<a href="' + this.gist.html_url + '">' + this.gist.description + '</a>" by ';
+          if(this.gist.user.url === "") {
+              info_string += this.gist.user.login;
+          } else {
+              info_string += '<a href="' + this.gist.user.url + '">' + this.gist.user.login + '</a>';
+          }
 
-        $('#gist_info').html(info_string);
+          $('#gist_info').html(info_string);
+        }
 
 
     },
