@@ -169,13 +169,13 @@
         background: rgba(38,38,38,0.9);
     }
 
-    #coffee_check {
+    .coffee_check {
         margin-left: 30px;
     }
-    #vim_check {
+    .vim_check {
         margin-left: 30px;
     }
-    #emacs_check {
+    .emacs_check {
         margin-left: 30px;
     }
 
@@ -183,7 +183,7 @@
 
 
 
-    #editor {
+    .editor {
     	position: fixed;
     	bottom: 10px;
     	right: 0;

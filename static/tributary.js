@@ -104,11 +104,13 @@ tributary.Config = Backbone.Model.extend({
         coffee: false,
         vim: false,
         emacs: false,
-        editor_width: 600,
-        editor_height: 300,
-        editor_hide: false
+        editor_editor: {
+          width: 600,
+          height: 300,
+          hide: false
+        }
     },
-})
+});
 
 tributary.TributaryView = Backbone.View.extend({
     check_date: true,
@@ -121,25 +123,7 @@ tributary.TributaryView = Backbone.View.extend({
         //we will be using "that" a lot. it would have been fun to use "dat" instead.
         var that = this;
 
-        d3.select("#editor").on("click", function() {
-            that.sliding = false;
-            that.picking = false;
-        });
-        d3.select(".CodeMirror").on("click", function() {
-            that.sliding = false;
-            that.picking = false;
-        });
 
-        this.code_editor = CodeMirror(d3.select("#editor").node(), {
-            //value: "function myScript(){return 100;}\n",
-            mode:  "javascript",
-            theme: "lesser-dark",
-            lineNumbers: true,
-            onChange: function() {
-                thisCode = that.code_editor.getValue();
-                that.model.trigger("code", thisCode);
-            }
-        });
 
         //datgui things 
         this.controls = {};
@@ -201,21 +185,8 @@ tributary.TributaryView = Backbone.View.extend({
             }
         };
             
-        this.inlet = Inlet(this.code_editor);
 
         this.init_gui();
-        
-        var code = this.model.get("code");
-        //check if we already have the code
-        if(code !== undefined && code !== "") {
-            this.code_editor.setValue(code);
-            this.model.execute();
-        }// else {
-        //fill in the editor with text we get back from the gist
-        this.model.get_code(function(error, got_code) {
-            that.code_editor.setValue(got_code);
-        });
-
 
         //------------------------------------
         //Drop file functions
@@ -298,6 +269,10 @@ tributary.TributaryView = Backbone.View.extend({
             }
         });
 
+
+        //we will manage several editors
+        this.editor = {};
+        this.editor_handle = {};
     
         if(this.model.get("gist") && this.model.get("gist") !== "None") {
           //setup ui related to the gist
@@ -343,73 +318,155 @@ tributary.TributaryView = Backbone.View.extend({
               //
               //json files
 
-              that.setup_editor();
+              that.setup_editor("editor");
 
           });
         } else {
           //setup empty config
           that.config = new tributary.Config();
-          that.setup_editor();
+          that.setup_editor("editor");
         }
 
     },
-    setup_editor: function() {
+    setup_editor: function(editor_id) {
         var that = this;
 
+        //config id, how we reference this editor in the config
+        var cid = "editor_" + editor_id;
+
+        //this could probably be done better with templating
+        //add the editor element to the page
+        var editor_sel = d3.select("#page")
+          .append("div")
+          .classed("editor", true)
+          .attr("id", editor_id);
+
+        //<input type="checkbox" id="coffee_check">CoffeeScript</input>
+        editor_sel.append("input")
+          .attr("type", "checkbox")
+          .attr("class", "coffee_check");
+        editor_sel.append("span")
+          .text("CoffeeScript");
+        //setup the vim and emacs checkboxs
+        editor_sel.append("input")
+          .attr("type", "checkbox")
+          .attr("class", "vim_check");
+        editor_sel.append("span")
+          .text("vim");
+        editor_sel.append("input")
+          .attr("type", "checkbox")
+          .attr("class", "emacs_check");
+        editor_sel.append("span")
+          .text("emacs");
+
+
+        //some stuff we have to do to make sure we don't get into infinite change loops
+        //with slider and color picker
+        editor_sel.on("click", function() {
+            that.sliding = false;
+            that.picking = false;
+        });
+        editor_sel.select(".CodeMirror").on("click", function() {
+            that.sliding = false;
+            that.picking = false;
+        });
+
+        //CODE SPECIFIC
+        this.code_editor = CodeMirror(editor_sel.node(), {
+            //value: "function myScript(){return 100;}\n",
+            mode:  "javascript",
+            theme: "lesser-dark",
+            lineNumbers: true,
+            onChange: function() {
+                thisCode = that.code_editor.getValue();
+                that.model.trigger("code", thisCode);
+            }
+        });
+
+        this.inlet = Inlet(this.code_editor);
+        var code = this.model.get("code");
+        //check if we already have the code
+        if(code !== undefined && code !== "") {
+            this.code_editor.setValue(code);
+            this.model.execute();
+        }// else {
+        //fill in the editor with text we get back from the gist
+        this.model.get_code(function(error, got_code) {
+            that.code_editor.setValue(got_code);
+        });
+
+        /////////////////////////////////////////////////
+
         //Setup editor controls
-        this.editor_width = this.config.get("editor_width");
-        this.editor_height = this.config.get("editor_height");
-        var editor = $('#editor');
-        editor.css('width', this.editor_width);
-        editor.css('height', this.editor_height);
-        editor.find('.CodeMirror-scroll').css('height', that.editor_height + "px");
-        editor.find('.CodeMirror-gutter').css('height', that.editor_height + "px");
+        //This is like the windowing system for the code editor
+        //the configuration for each editor is stored in the this.editor object
+        //which gets saved to the config
+        var editor_el = $("#" + editor_id);
+        this.editor[editor_id] = this.config.get(cid);
+        var editor = this.editor[editor_id];
 
+        editor_el.css('width', editor.width);
+        editor_el.css('height', editor.height);
+        editor_el.find('.CodeMirror-scroll').css('height', editor.height + "px");
+        editor_el.find('.CodeMirror-gutter').css('height', editor.height + "px");
 
-        
+        //we store the current width and height in these variables
+        //to be able to calculate the resize position from the original w/h
+        var ew = editor.width;
+        var eh = editor.height;
         var editor_drag = d3.behavior.drag()
             .on("drag", function(d,i) {
                 var dx = d3.event.dx;
                 var dy = d3.event.dy;
                 d.x -= dx;
                 d.y -= dy;
-                that.editor_handle.style("bottom", -10 + that.editor_height + d.y + "px");
-                that.editor_handle.style("right", -10 + that.editor_width + d.x + "px");
+                //don't use latest editor w/h in calculation
+                var neww = ew + d.x;
+                var newh = eh + d.y;
+                editor_handle.style("right", -10 + neww + "px");
+                editor_handle.style("bottom", -10 + newh + "px");
 
-                editor.css('width', that.editor_width + d.x + "px");
-                editor.css('height', that.editor_height + d.y + "px");
-                editor.find('.CodeMirror-scroll').css('height', that.editor_height + d.y + "px");
-                editor.find('.CodeMirror-gutter').css('height', that.editor_height + d.y + "px");
+                editor_el.css('width', neww + "px");
+                editor_el.css('height', newh + "px");
+                editor_el.find('.CodeMirror-scroll').css('height', newh + "px");
+                editor_el.find('.CodeMirror-gutter').css('height', newh + "px");
+                
+                //we store the width height only for future config use
+                editor.width = neww;
+                editor.height = newh;
 
-                //TODO: update the editor size in the config
-                that.config.set({"editor_width": that.editor_width + d.x, "editor_height": that.editor_height + d.y });
+                that.config.set(cid, editor);
             });
    
         var handle_data = {
             x: 0,
             y: 0
         };
-        //d3.select("#editor").append("div")
-        //TODO: make this not append to body, but @el (need @el)
-        this.editor_handle = d3.select("body").append("div")
-            .attr("id", "editor_handle")
+
+        //TODO: update editor handle
+        //this editor handle is both indicator and drags around the editor
+        //should make the draggin part be something invisible over the gutter (line numbers)
+        //and have the indicator somewhere else
+        this.editor_handle[editor_id] = d3.select("body").append("div")
+            .attr("id", "editor_handle_" + editor_id)
             .data([handle_data])
             .style("position", "fixed")
             .style("display", "block")
             .style("float", "left")
-            .style("bottom", -11 + this.editor_height + "px")
-            .style("right", -11 + this.editor_width + "px")
+            .style("bottom", -11 + editor.height + "px")
+            .style("right", -11 + editor.width + "px")
             .style("width", "20px")
             .style("height", "20px")
             .style("background-color", "rgba(50, 50, 50, .4)")
             .style("z-index", 999)
             .call(editor_drag);
+        var editor_handle = this.editor_handle[editor_id];
 
         this.model.on("error", function() {
-            that.editor_handle.style("background-color", "rgba(250, 50, 50, .7)");
+            editor_handle.style("background-color", "rgba(250, 50, 50, .7)");
         });
         this.model.on("noerror", function() {
-            that.editor_handle.style("background-color", "rgba(50, 250, 50, .4)");
+            editor_handle.style("background-color", "rgba(50, 250, 50, .4)");
             that.make_ui();
             //ugh, need to make sure datgui doesn't "overwrite" itself
             setTimeout(function() {
@@ -420,7 +477,7 @@ tributary.TributaryView = Backbone.View.extend({
 
         //Setup Hide the editor button
         var he = $('#hideEditor');
-        var hide = this.config.get("hide_editor");
+        var hide = editor.hide;
         showhide();
         
         function showhide() {
@@ -435,13 +492,14 @@ tributary.TributaryView = Backbone.View.extend({
         
         he.on("click", function(e) {
             hide = !hide;
-            that.config.set({"hide_editor": hide});
+            editor.hide = hide;
+            that.config.set(cid, editor);
             showhide();
             
         });
 
         //setup the coffeescript checkbox
-        var cs = $('#coffee_check');
+        var cs = editor_el.find('.coffee_check');
 
         //set the use of coffeescript depending on the config
         this.model.set({"coffee": this.config.get("coffee")});
@@ -458,9 +516,9 @@ tributary.TributaryView = Backbone.View.extend({
             }
             that.model.execute();
         });
-        //setup the vim checkbox
-        var vs = $('#vim_check');
-        var es = $('#emacs_check');
+         
+        var vs = editor_el.find('.vim_check');
+        var es = editor_el.find('.emacs_check');
 
         vs.attr("checked", this.config.get("vim"));
         es.attr("checked", this.config.get("emacs"));
