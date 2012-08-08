@@ -157,7 +157,7 @@ tributary.TributaryView = Backbone.View.extend({
         /////////////////////////
         if(this.model.get("gist") && this.model.get("gist") !== "None") {
           //setup ui related to the gist
-          $.get('https://api.github.com/gists/' + this.model.get("gist"), function(data) {
+          d3.json('https://api.github.com/gists/' + this.model.get("gist"), function(data) {
               //console.log("GIST!", data);
               if(data.user === null || data.user === undefined) {
                   data.user = {
@@ -167,8 +167,6 @@ tributary.TributaryView = Backbone.View.extend({
                   };
               }
               that.gist = data;
-                            
-
 
               //load optional files here
               //config.json
