@@ -6,6 +6,13 @@
 
 /*  Resets
     ------  */
+    
+/* apply a natural box layout model to all elements */
+/* from http://paulirish.com/2012/box-sizing-border-box-ftw/ */
+* { -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box; }
+
+/* maxvoltar.com/archive/-webkit-font-smoothing */
+html { -webkit-font-smoothing: antialiased; }
 
 html, body, div, span, object, iframe, h1, h2, h3, h4, h5, h6, 
 p, blockquote, pre, a, abbr, address, cite, code, del, dfn, em, 
@@ -205,9 +212,40 @@ px      68    160    252    344    436    528    620    712    */
 @media only screen and (min-width: 768px) and (max-width: 991px) {
     
     body {
-        width: 712px;
-        padding: 48px 28px 60px;
+/*        width: 712px; */
+/*        padding: 48px 28px 60px; */
+        padding-top: 50px;
     }
+    #page {
+        width: 100%;
+    }
+    #header {
+/*        font-size: 14px; */
+        height: 50px;
+        padding: 10px 5px;
+        top: 0;
+        /*background-color: #212121;*/
+        background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(33, 33, 33, 1.00)), to(rgba(0, 0, 0, 0.91)));
+        background-image: -webkit-linear-gradient(top, rgba(33, 33, 33, 1.00), rgba(0, 0, 0, 0.91));
+        background-image: -moz-linear-gradient(top, rgba(33, 33, 33, 1.00), rgba(0, 0, 0, 0.91));
+        background-image: -o-linear-gradient(top, rgba(33, 33, 33, 1.00), rgba(0, 0, 0, 0.91));
+        background-image: -ms-linear-gradient(top, rgba(33, 33, 33, 1.00), rgba(0, 0, 0, 0.91));
+        background-image: linear-gradient(top, rgba(33, 33, 33, 1.00), rgba(0, 0, 0, 0.91));
+        filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,StartColorStr='#212121', EndColorStr='#000000');
+        
+    }
+    #header #branding {
+        position: static;
+        display: inline-block;
+        margin-right: 8px;
+    }
+    #header button {
+        margin-top: 5px;
+    }
+    #gist_info {
+        margin-left: 48px;
+    }
+    
 }
 
 
@@ -223,10 +261,47 @@ px      68    160    252    */
 @media only screen and (max-width: 767px) {
     
     body {
-        width: 252px;
-        padding: 48px 34px 60px;
+        width: 100%;
+/*        width: 252px; */
+/*        padding: 48px 34px 60px; */
     }
-    
+    #page {
+        width: 100%;
+    }
+    #header {
+/*        font-size: 14px; */
+        height: 50px;
+        padding: 10px 5px;
+        top: 0;
+        /*background-color: #212121;*/
+        background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(33, 33, 33, 1.00)), to(rgba(0, 0, 0, 0.91)));
+        background-image: -webkit-linear-gradient(top, rgba(33, 33, 33, 1.00), rgba(0, 0, 0, 0.91));
+        background-image: -moz-linear-gradient(top, rgba(33, 33, 33, 1.00), rgba(0, 0, 0, 0.91));
+        background-image: -o-linear-gradient(top, rgba(33, 33, 33, 1.00), rgba(0, 0, 0, 0.91));
+        background-image: -ms-linear-gradient(top, rgba(33, 33, 33, 1.00), rgba(0, 0, 0, 0.91));
+        background-image: linear-gradient(top, rgba(33, 33, 33, 1.00), rgba(0, 0, 0, 0.91));
+        filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,StartColorStr='#212121', EndColorStr='#000000');
+
+    }
+    #header #branding {
+        position: static;
+        display: inline-block;
+        margin-right: 8px;
+    }
+    #header button {
+        margin-top: 5px;
+    }
+    #gist_info {
+        margin-left: 28px;
+    }
+    #save_gui {
+        top: 14px;
+        right: 288px;
+    }
+    #save_gui button{
+        font-size: 11px !important;
+        padding: 2px 4px;
+    }
 }
 
 
@@ -242,8 +317,9 @@ px      68    160    252    344    436    */
 @media only screen and (min-width: 480px) and (max-width: 767px) {
     
     body {
-        width: 436px;
-        padding: 36px 22px 48px;
+/*        width: 436px; */
+        width: 100%;
+/*        padding: 36px 22px 48px; */
     }
     
 }
