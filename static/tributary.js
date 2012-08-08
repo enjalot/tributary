@@ -211,6 +211,9 @@ tributary.TributaryView = Backbone.View.extend({
 
                   that.setup_editor(jsonid, json, {coffee_checkbox: false});
                   json.execute();
+                  json.on("noerror", function() {
+                    that.model.execute();
+                  });
                   i++;
                 }
               });
