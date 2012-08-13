@@ -3,4 +3,7 @@
 	url = https://github.com/d3/d3-plugins.git
 [submodule "static/data"]
 	path = static/data
-	url = https://github.com/zmaril/Visualization-Data.git
+	url = git@github.com:enjalot/Visualization-Data.git
+[submodule "static/lib/d3-cloud"]
+	path = static/lib/d3-cloud
+	url = https://github.com/jasondavies/d3-cloud.git
