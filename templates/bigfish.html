@@ -39,13 +39,14 @@
 {% block jsinit %}
     var model = new tributary.BigFish({"gist":"{{gist}}", "filename":"{{filename}}"})
 
+    tribView = new tributary.TributaryView({"model":model, "endpoint":"bigfish"})
     //initialize on page load
     model.on("gotcode", function() {
         tributary.initialize();
     })
 
 
-    tribView = new tributary.TributaryView({"model":model, "endpoint":"bigfish"})
+    //tribView = new tributary.TributaryView({"model":model, "endpoint":"bigfish"})
 
     window.onresize = function(event) {
         resize();
