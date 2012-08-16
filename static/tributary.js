@@ -168,6 +168,28 @@ tributary.TributaryView = Backbone.View.extend({
               }
               that.gist = data;
 
+              //load markdown files here
+              // _.md
+              var markdown;
+              try {
+                markdown = data.files["_.md"];
+              } catch (e) {
+                markdown = false;
+              }
+              if(markdown) {
+                console.log("yay! fix the URL", markdown, that.gist, window.location.host)
+                try {
+                that.markdown = "<br /> [See Previous Inlet](http://" + window.location.host + "/" + that.endpoint + "/" + that.gist.id + ")"
+                + " [ [Gist](" + that.gist.html_url + ") ]"
+
+                } catch (e){
+                  that.markdown = "Unknown Error Recovering Gist History"
+                }
+              } else {
+                  that.markdown = "No Previous Gist"
+              }
+  
+
               //load optional files here
               //config.json
               var config;
@@ -243,6 +265,7 @@ tributary.TributaryView = Backbone.View.extend({
         } else {
           //setup empty config
           that.config = new tributary.Config();
+          that.markdown = "No parent Inlet"
           
           that.init_gui();
           that.setup_editor("editor", this.model);
@@ -703,10 +726,22 @@ tributary.TributaryView = Backbone.View.extend({
           };
         });
 
+//        this.mds.forEach(function(j) {
+//          gist.files[j.get("name") + ".md"] = {
+//            content: j.get("code")
+ //         };
+ //       });
+
         //save config
         gist.files["config.json"] = {
           content: JSON.stringify(this.config.toJSON())
         };
+
+        //save markdown
+        gist.files["_.md"] = {
+            content: this.markdown
+        };
+
 
         //turn the save button into a saving animation
         d3.select("#saveButton").style("background-image", "url(/static/img/ajax-loader.gif)");
