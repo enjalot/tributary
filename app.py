@@ -252,8 +252,10 @@ def fork_endpoint(id):
     userid = session.get("userid", None)
     gist_userid = json.loads(data).get("user", {}).get("id", None)
 
+    if(token is None):
+        return save(None, data)
     #if user doesn't own this gist, just fork it
-    if(userid == gist_userid):
+    elif(userid == gist_userid):
         newgist = fork(id, token)
         resp = make_response(json.dumps(newgist), 200)
         resp.headers['Content-Type'] = 'application/json'
