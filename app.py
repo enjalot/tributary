@@ -140,7 +140,7 @@ def internal_gist(gist, filename=None):
 @app.route('/github-login')
 def github_login():
     #take user to github for authentication
-    return redirect('https://github.com/login/oauth/authorize?client_id=' + GITHUB_CLIENT_ID + '&scope=gist')
+    return redirect('https://github.com/login/oauth/authorize?client_id=' + GITHUB_CLIENT_ID + '&scope=repo,gist')
 
 @app.route('/github-logout')
 def github_logout():
@@ -182,28 +182,45 @@ def github_authenticated():
     #TODO: redirect back to next parameter
     return redirect('/tributary')
 
-#Save a tributary to a gist
-@app.route("/tributary/save", methods=["POST"])
-def save():
+
+#TODO: make fork and save button different
+# make js send gist id for fork or save unless its a fresh gist
+# if fresh gist disable fork button
+
+
+def save(id, data, token=None):
+    print "ID", id
+    #if id, send a patch
+    if(id is not None):
+        #TODO: check id is a valid id?
+        url = 'https://api.github.com/gists/' + id
+    else:
+        #if not id create a new gist
+        url = 'https://api.github.com/gists'
+
     #code = json.loads(request.values.get("gist"))
-    data = request.values.get("gist")
     data = data.encode('utf-8')
     #print "DATA", code
     #data = urllib.urlencode(code)
     #print data
-    url = 'https://api.github.com/gists'
 
-    token = session.get("access_token", None)
     headers = {'content-type': 'application/json; charset=utf-8', 'accept': 'application/json', 'encoding':'UTF-8'}
     if token is not None:
+        headers['Authorization'] = 'token ' + token
         #print "LOGGED IN, using TOKEN", token
-        url += "?access_token="+token
+        #url += "?access_token="+token
+        #url += "?authenticity_token="+token
         url = url.encode('utf-8')
         req = urllib2.Request(url, data, headers=headers)
         #req = urllib2.Request(url, data)
     else: 
         #print "NOT LOGGED IN"
         req = urllib2.Request(url, data, headers=headers)
+
+    #to save over a gist
+    if(id is not None):
+        #print "PATCH", url
+        req.get_method = lambda: 'PATCH'
 
     response = urllib2.urlopen(req)
     #print "RESP", response
@@ -213,6 +230,77 @@ def save():
     resp.headers['Content-Type'] = 'application/json'
 
     return resp
+
+#Save a tributary to a gist
+@app.route("/tributary/save", methods=["POST"])
+@app.route("/tributary/save/<id>", methods=["POST"])
+def save_endpoint(id=None):
+    data = request.values.get("gist")
+    token = session.get("access_token", None)
+    return save(id, data, token)
+
+
+#Save a tributary to a gist
+@app.route("/tributary/fork/<id>", methods=["POST"])
+def fork_endpoint(id):
+    #TODO: check id is valid
+
+    data = request.values.get("gist")
+    data = data.encode('utf-8')
+
+    token = session.get("access_token", None)
+    userid = session.get("userid", None)
+    gist_userid = json.loads(data).get("user", {}).get("id", None)
+
+    #if user doesn't own this gist, just fork it
+    if(userid == gist_userid):
+        newgist = fork(id, token)
+        resp = make_response(json.dumps(newgist), 200)
+        resp.headers['Content-Type'] = 'application/json'
+        return resp
+    else:
+        #hacky shit. github won't let me fork a gist a user already owns
+        #first we make anon fork
+        anonid = fork(id)["id"]
+        #then we fork that with our account
+        newid = fork(anonid, token)["id"]
+        #then we save over with the original data
+        return save(newid, data, token)
+
+
+def fork(id, token=None):
+    #print "FORKING", id
+   
+    url = 'https://api.github.com/gists/' + id + '/fork'
+    #need data to make this a post request
+    #data = None
+    data = "{}"
+    headers = {
+            'content-type': 'application/json; charset=utf-8', 
+            'accept': 'application/json', 
+            'encoding':'UTF-8'
+    }
+    if token is not None:
+        #authenticate the request
+        headers['Authorization'] = 'token ' + token
+        #data = "{authenticity_token:" + token + "}"
+        #data = "{access_token:" + token + "}"
+        #print "LOGGED IN, using TOKEN", token
+        #url += "?access_token="+token
+        #url = url.encode('utf-8')
+        req = urllib2.Request(url, data, headers=headers)
+        #req = urllib2.Request(url, data)
+    else: 
+        #print "NOT LOGGED IN"
+        req = urllib2.Request(url, data, headers=headers)
+    
+    response = urllib2.urlopen(req)
+
+    ret = response.read()
+    gist = json.loads(ret)
+    #print "ret", gist["id"]
+    return gist
+
 
 
 #An experimental view that allowed creating screenshots from the gallery

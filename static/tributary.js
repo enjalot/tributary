@@ -155,9 +155,10 @@ tributary.TributaryView = Backbone.View.extend({
         //Here we setup all the model stuff
         //really this should go in the initialization... and all the gui should follow
         /////////////////////////
+        var cachebust = "?cachebust=" + Math.random() * 4242424242424242;
         if(this.model.get("gist") && this.model.get("gist") !== "None") {
           //setup ui related to the gist
-          d3.json('https://api.github.com/gists/' + this.model.get("gist"), function(data) {
+          d3.json('https://api.github.com/gists/' + this.model.get("gist") + cachebust, function(data) {
               //console.log("GIST!", data);
               if(data.user === null || data.user === undefined) {
                   data.user = {
@@ -165,6 +166,9 @@ tributary.TributaryView = Backbone.View.extend({
                       url: "",
                       userid: -1
                   };
+                  that.loggedin = false;
+              } else {
+                that.loggedin = true;
               }
               that.gist = data;
 
@@ -177,7 +181,7 @@ tributary.TributaryView = Backbone.View.extend({
                 markdown = false;
               }
               if(markdown) {
-                console.log("yay! fix the URL", markdown, that.gist, window.location.host)
+                //console.log("yay! fix the URL", markdown, that.gist, window.location.host)
                 try {
                 that.markdown = "<br /> [See Previous Inlet](http://" + window.location.host + "/" + that.endpoint + "/" + that.gist.id + ")"
                 + " [ [Gist](" + that.gist.html_url + ") ]"
@@ -413,7 +417,12 @@ tributary.TributaryView = Backbone.View.extend({
 
         //Setup the save panel
         $('#savePanel').on('click', function(e) {
-            that.save_gist(function(newurl, newgist) {
+            that.save_gist("save", function(newurl, newgist) {
+                window.location = newurl;
+            });
+        });
+        $('#forkPanel').on('click', function(e) {
+            that.save_gist("fork", function(newurl, newgist) {
                 window.location = newurl;
             });
         });
@@ -443,6 +452,17 @@ tributary.TributaryView = Backbone.View.extend({
           }
 
           $('#gist_info').html(info_string);
+
+          if(this.gist.user.userid === tributary.userid) {
+            $("#savePanel").attr("disabled", "true");
+            $("#savePanel").attr("class", "minimal_off");
+          }
+        }
+        if(!this.loggedin) {
+          $("#savePanel").attr("disabled", "true");
+          $("#savePanel").attr("class", "minimal_off");
+          //$("#forkPanel").attr("disabled", "true");
+          //$("#forkPanel").attr("class", "minimal_off");
         }
 
 
@@ -700,7 +720,7 @@ tributary.TributaryView = Backbone.View.extend({
         return code_editor;
 
     },
-    save_gist: function(callback) {
+    save_gist: function(saveorfork, callback) {
         //console.log("ENDPOINT", @endpoint)
         //Save the current code to a public gist
         var oldgist = parseInt(this.model.get("gist"), 10);
@@ -742,14 +762,38 @@ tributary.TributaryView = Backbone.View.extend({
             content: this.markdown
         };
 
+        var url;
+        if(saveorfork === "save") {
+          //turn the save button into a saving animation
+          /*
+          d3.select("#saveButton").style("background-image", "url(/static/img/ajax-loader.gif)");
+          d3.select("#saveButton").style("background-repeat", "no-repeat");
+          d3.select("#saveButton").style("top", "0px");
+          */
+          d3.select("#savePanel img").attr("src", "/static/img/ajax-loader.gif");
 
-        //turn the save button into a saving animation
-        d3.select("#saveButton").style("background-image", "url(/static/img/ajax-loader.gif)");
-        d3.select("#saveButton").style("background-repeat", "no-repeat");
-        d3.select("#saveButton").style("top", "0px");
-        
+          url = '/tributary/save';
+
+        } else if(saveorfork === "fork") {
+
+          /*
+          d3.select("#forkButton").style("background-image", "url(/static/img/ajax-loader.gif)");
+          d3.select("#forkButton").style("background-repeat", "no-repeat");
+          d3.select("#forkButton").style("top", "0px");
+          */
+          d3.select("#forkPanel img").attr("src", "/static/img/ajax-loader.gif");
+
+          url = '/tributary/fork';
+ 
+        }
+
+        //check if we have an existing gist number
+        if(oldgist > 0) {
+          url += '/' + oldgist;
+        }
+
         var that = this;
-        $.post('/tributary/save', {"gist":JSON.stringify(gist)}, function(data) {
+        $.post(url, {"gist":JSON.stringify(gist)}, function(data) {
             if(typeof(data) === "string") {
                 data = JSON.parse(data);
             }
