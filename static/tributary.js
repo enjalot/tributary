@@ -762,6 +762,20 @@ tributary.TributaryView = Backbone.View.extend({
             content: this.markdown
         };
 
+
+        //serialize the current svg and save it to gist
+        var node = d3.select("svg").node();
+        var svgxml = (new XMLSerializer()).serializeToString(node);
+
+        if($.browser.webkit){ 
+            svgxml = svgxml.replace(/ xlink/g, ' xmlns:xlink');
+            svgxml = svgxml.replace(/ href/g, ' xlink:href');
+        }
+        gist.files["inlet.svg"] = {
+          content: svgxml
+        };
+
+
         var url;
         if(saveorfork === "save") {
           //turn the save button into a saving animation
@@ -791,10 +805,13 @@ tributary.TributaryView = Backbone.View.extend({
         if(oldgist > 0) {
           url += '/' + oldgist;
         }
+        console.log("url", url)
+          console.log("JSON", JSON.stringify(gist))
 
         var that = this;
         $.post(url, {"gist":JSON.stringify(gist)}, function(data) {
             if(typeof(data) === "string") {
+              console.log("SUP", data)
                 data = JSON.parse(data);
             }
             var newgist = data.id;

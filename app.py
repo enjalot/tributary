@@ -241,8 +241,9 @@ def save_endpoint(id=None):
 
 
 #Save a tributary to a gist
+@app.route("/tributary/fork", methods=["POST"])
 @app.route("/tributary/fork/<id>", methods=["POST"])
-def fork_endpoint(id):
+def fork_endpoint(id=None):
     #TODO: check id is valid
 
     data = request.values.get("gist")
@@ -252,7 +253,7 @@ def fork_endpoint(id):
     userid = session.get("userid", None)
     gist_userid = json.loads(data).get("user", {}).get("id", None)
 
-    if(token is None):
+    if(id is None or token is None):
         return save(None, data)
     #if user doesn't own this gist, just fork it
     elif(userid == gist_userid):
