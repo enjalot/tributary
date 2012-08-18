@@ -10,7 +10,10 @@
 /* apply a natural box layout model to all elements */
 /* from http://paulirish.com/2012/box-sizing-border-box-ftw/ */
 * { -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box; }
-
+/*we don't do it for colorpicker*/
+#ColorPicker, #ColorPicker input, #ColorPicker canvas, #ColorPicker div {
+     -moz-box-sizing: content-box; -webkit-box-sizing: content-box; box-sizing: content-box;
+}
 /* maxvoltar.com/archive/-webkit-font-smoothing */
 html { -webkit-font-smoothing: antialiased; }
 
@@ -40,7 +43,6 @@ a img {border: 0;}
 img::selection      {background: transparent;}
 img::-moz-selection {background: transparent;}
 body {-webkit-tap-highlight-color: rgb(255,255,158);}
-
 
 
 /*      Default Layout: 992px. 
@@ -124,19 +126,25 @@ body {
     display: inline-block;
     margin-left: 148px;
 }
+#loggedin{
+    display: inline-block;
+    margin-left: 148px;
+    font-size: 10px;
+}
 #page {
 
 }
 #display {
     
 }
-#editor {
+
+.editor {
     width: 100%;
     position: fixed;
     right: 0;
     bottom: 0;
 }
-#editor_handle {
+.editor_handle {
     position: fixed; 
     display: block; 
     float: left; 
@@ -147,21 +155,58 @@ body {
     background-color: rgba(50, 250, 50, 0.398438); 
     z-index: 999; 
 }
-#editor-topbar {
+.editor-topbar {
     font-size: 12px !important;
     color: white;
     background-color: rgba(0,0,0,0.75);
     padding: 8px 16px;
 }
-#editor-topbar input {
+.editor-topbar input {
     margin-left: 20px;
     
 }
-#editor-topbar button {
+.editor-topbar button {
     margin-left: 20px;
 }
 
-button {
+.coffee_check {
+    margin-left: 30px;
+}
+.vim_check {
+    margin-left: 30px;
+}
+.emacs_check {
+    margin-left: 30px;
+}
+
+/* temp hide editors stuff */
+#hideEditors {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    z-index: 1000;
+}
+.show_editor {
+    float: left;
+    color: white;
+    margin-top: 10px;
+    margin-left: 5px;
+    padding: 8px;
+    padding-top: 12px;
+    border-radius: 8px;
+    background-color: rgba(0,0,0,0.4);
+    z-index: 1;
+    cursor: pointer;
+    border: 3px solid rgba(0,0,0,0.008);
+    -webkit-transition:all .5s linear .05s;       
+       -moz-transition:all .5s linear .05s;
+         -o-transition:all .5s linear .05s;
+            transition:all .5s linear .05s;
+}
+
+
+
+.button_on {
   background-color: #eeeeee;
   background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #eeeeee), color-stop(100%, #cccccc));
   background-image: -webkit-linear-gradient(top, #eeeeee, #cccccc);
@@ -180,7 +225,7 @@ button {
   padding: 8px 16px;
   text-align: center;
   text-shadow: 0 1px 0 #eee; }
-  button:hover {
+.button_on:hover {
     background-color: #dddddd;
     background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #dddddd), color-stop(100%, #bbbbbb));
     background-image: -webkit-linear-gradient(top, #dddddd, #bbbbbb);
@@ -192,12 +237,59 @@ button {
     border-bottom: 1px solid #999;
     cursor: pointer;
     text-shadow: 0 1px 0 #ddd; }
-  button:active {
+.button_on:active {
     border: 1px solid #aaa;
     border-bottom: 1px solid #888;
     -webkit-box-shadow: inset 0 0 5px 2px #aaaaaa, 0 1px 0 0 #eeeeee;
     -moz-box-shadow: inset 0 0 5px 2px #aaaaaa, 0 1px 0 0 #eeeeee;
     box-shadow: inset 0 0 5px 2px #aaaaaa, 0 1px 0 0 #eeeeee; }
+
+/* DISABLED BUTTONS */
+.off {
+  background-color: #ccc;
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #eeeeee), color-stop(100%, #cccccc));
+  background-image: -webkit-linear-gradient(top, #eeeeee, #cccccc);
+  background-image: -moz-linear-gradient(top, #eeeeee, #cccccc);
+  background-image: -ms-linear-gradient(top, #eeeeee, #cccccc);
+  background-image: -o-linear-gradient(top, #eeeeee, #cccccc);
+  background-image: linear-gradient(top, #eeeeee, #cccccc);
+  border: 1px solid #ccc;
+  border-bottom: 1px solid #bbb;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  color: #aaa;
+  font: bold 11px "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", Geneva, Verdana, sans-serif;
+  line-height: 1;
+  padding: 8px 16px;
+  text-align: center;
+  text-shadow: 0 1px 0 #eee; }
+.button_off:hover {
+    /*
+    background-color: #dddddd;
+    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #dddddd), color-stop(100%, #bbbbbb));
+    background-image: -webkit-linear-gradient(top, #dddddd, #bbbbbb);
+    background-image: -moz-linear-gradient(top, #dddddd, #bbbbbb);
+    background-image: -ms-linear-gradient(top, #dddddd, #bbbbbb);
+    background-image: -o-linear-gradient(top, #dddddd, #bbbbbb);
+    background-image: linear-gradient(top, #dddddd, #bbbbbb);
+    border: 1px solid #bbb;
+    border-bottom: 1px solid #999;
+    cursor: pointer;
+    text-shadow: 0 1px 0 #ddd; 
+    */
+}
+.button_off:active {
+    /*
+    border: 1px solid #aaa;
+    border-bottom: 1px solid #888;
+    -webkit-box-shadow: inset 0 0 5px 2px #aaaaaa, 0 1px 0 0 #eeeeee;
+    -moz-box-shadow: inset 0 0 5px 2px #aaaaaa, 0 1px 0 0 #eeeeee;
+    box-shadow: inset 0 0 5px 2px #aaaaaa, 0 1px 0 0 #eeeeee; 
+    */
+}
+
+
 
 
 
@@ -245,6 +337,10 @@ px      68    160    252    344    436    528    620    712    */
     #gist_info {
         margin-left: 48px;
     }
+    #loggedin {
+        margin-left: 48px;
+    }
+ 
     
 }
 
@@ -294,6 +390,10 @@ px      68    160    252    */
     #gist_info {
         margin-left: 28px;
     }
+    #loggedin {
+        margin-left: 28px;
+    }
+ 
     #save_gui {
         top: 14px;
         right: 288px;

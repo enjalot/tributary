@@ -71,6 +71,9 @@ tributary.run = function(g,t) {\n\
 
     //user is responsible for defining this
     //by default we just show simple text
+    tributary.init= function(g,i) {
+    };
+
     tributary.run = function(g,t,i) {
     };
 

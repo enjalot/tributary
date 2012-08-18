@@ -136,6 +136,7 @@ tributary.run = function(g,t) {\n\
 
 
     // create delta's time slider
+    /*
     var time_slider = $('#time_slider');
     time_slider.slider({
         slide: function(event, ui) {
@@ -144,20 +145,16 @@ tributary.run = function(g,t) {\n\
             tributary.t = ui.value;
             //call the run function with the current t
             tributary.execute();
-        /*
-            try {
-                tributary.run(tributary.t)
-            } catch (e) {}
-            */
         },
         min: 0,
         max: 1,
         step: 0.01,
         value: tributary.t
     });
+    */
 
     $('#slider').on('change', function() {
-        tributary.t = $('#slider').attr('value');
+        tributary.t = parseFloat(this.value);//$('#slider').attr('value');
         if($("#play_button").hasClass("playing")){
 
         }
@@ -292,9 +289,15 @@ tributary.run = function(g,t) {\n\
                 }
             }
         }
+
+        //not sure why we get true and false for 1 and 0 when range hits the end
+        if(tributary.t === true) { tributary.t = 1; }
+        if(tributary.t === false) { tributary.t = 0; }
+
         
+    console.log("T", tributary.t)
         //move the slider
-        time_slider.slider('option', 'value', tributary.t);
+        //time_slider.slider('option', 'value', tributary.t);
 
         $('#slider').attr('value', tributary.t);
         //update the function (there is probably a way to have the slider's

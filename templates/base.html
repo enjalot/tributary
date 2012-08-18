@@ -38,7 +38,7 @@
         tributary.loggedin = "{{ loggedin }}" === "True";
         tributary.username = "{{ username }}";
         tributary.avatar = "{{ avatar }}";
-        tributary.userid = "{{ userid }}";
+        tributary.userid = parseInt("{{ userid }}");
         tributary.userurl = "{{ userurl }}";
     </script>
 
@@ -65,23 +65,26 @@
     </div> 
     <div id="gist_info"></div>
 
-    <div id="save_gui">
-            
+    <div id="save_gui"> 
                 {% if not loggedin %}
-                <button id='loginPanel' class="minimal loggedout"> Login 
+                <button id='loginPanel' class="button_on"> Login </button>
                 {% else %}
-                <button id='loginPanel' class="minimal loggedin"> Logout
+                <a href="http://github.com/{{ username }}">{{ username }}</a>
+                <button id='loginPanel' class="button_on"> Logout </button>
                 {% endif %}
-                <!-- <img src="/static/css/floppy.png" width="24" height="24" alt="Floppy">&nbsp; -->
+           
+            <button id='savePanel' class="button_on">
+                Save
                 <!--
+                : <img src="/static/css/floppy.png" width="24" height="24" alt="Floppy">&nbsp;
                 <div class='address'><a href='#'>https://gist.github.com/b9ab9418af567e575b3e</a></div>
                 -->
             </button>
-            
-     
-            <button id='savePanel' class="minimal">
-                Fork <!-- <img src="/static/css/floppy.png" width="24" height="24" alt="Floppy">&nbsp; -->
+
+            <button id='forkPanel' class="button_on">
+                Fork
                 <!--
+                : <img src="/static/css/floppy.png" width="24" height="24" alt="Floppy">&nbsp;
                 <div class='address'><a href='#'>https://gist.github.com/b9ab9418af567e575b3e</a></div>
                 -->
             </button>
@@ -94,8 +97,21 @@
             </button>
             -->
         </div>
+        <!--
+        <div id="loggedin">
+            {% if loggedin %}
+            Logged in as: 
+                <a href="http://github.com/{{ username }}">{{ username }}</a>
+            {% else %}
+            Not logged in (user: anon)
+            {% endif %}
+        </div>
+        -->
+
+        <br>
     </div>
 
+    <div id="hideEditors"></div>
 
 {% endblock %}
 
@@ -104,6 +120,7 @@
         {% block gui %}
         {% endblock %}
      
+        <!--
         <div id='editor'>
 
 		<div id="editor-topbar">
@@ -116,6 +133,7 @@
 		</div>
 
         </div>
+        -->
         <div id="slider"></div>
 
     </div>
@@ -149,6 +167,7 @@
     <!-- 3rd party libraries -->
     <script src="/static/lib/d3.v2.min.js"></script>
     <script src="/static/lib/d3plugins/cie/cie.js"></script>
+    <script src="/static/lib/d3-cloud/d3.layout.cloud.js"></script>
     <script src="/static/lib/underscore-min.js"></script>
     <script src="/static/lib/backbone-min.js"></script>
     <script src="/static/lib/jwerty.js"></script>
@@ -196,11 +215,13 @@
     //always have the screen width and height
     tributary.sw = window.innerWidth;
     tributary.sh = window.innerHeight - header_factor;
+    d3.select("svg").attr("width", tributary.sw);
     d3.select("svg").attr("height", tributary.sh);
 
     function resize() {
         tributary.sw = window.innerWidth;
         tributary.sh = window.innerHeight - header_factor;
+        d3.select("svg").attr("width", tributary.sw);
         d3.select("svg").attr("height", tributary.sh);
     }
     window.onresize = function(event) {
