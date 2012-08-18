@@ -203,7 +203,7 @@ def github_authenticated():
 
 
 def save(id, data, token=None):
-    print "ID", id
+    #print "ID", id
     #if id, send a patch
     if(id is not None):
         #TODO: check id is a valid id?
@@ -267,9 +267,9 @@ def fork_endpoint(id=None):
     userid = session.get("userid", None)
     gist_userid = json.loads(data).get("user", {}).get("id", None)
 
-    print 'gist_userid=' , gist_userid
-    print 'userid=' , userid
-    print 'token=' , token 
+    #print 'gist_userid=' , gist_userid
+    #print 'userid=' , userid
+    #print 'token=' , token 
 
     if(id is None or token is None):
         return save(None, data)

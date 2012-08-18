@@ -811,13 +811,13 @@ tributary.TributaryView = Backbone.View.extend({
         if(oldgist > 0) {
           url += '/' + oldgist;
         }
-        console.log("url", url)
-          console.log("JSON", JSON.stringify(gist))
+        //console.log("url", url)
+        //  console.log("JSON", JSON.stringify(gist))
 
         var that = this;
         $.post(url, {"gist":JSON.stringify(gist)}, function(data) {
             if(typeof(data) === "string") {
-              console.log("SUP", data)
+              //console.log("SUP", data)
                 data = JSON.parse(data);
             }
             var newgist = data.id;
