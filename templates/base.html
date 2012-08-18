@@ -64,7 +64,7 @@
     </div> 
     <div id="gist_info"></div>
 
-    <div id="save_gui">
+    <div id="save_gui"> 
             <button id='loginPanel' class="minimal">
                 {% if not loggedin %}
                 Login: 
@@ -99,6 +99,12 @@
             </button>
             -->
         </div>
+         {% if loggedin %}
+        Logged in as: <a href="http://github.com/{{ username }}">{{ username }}</a>
+        {% else %}
+        Not logged in (user: anon)
+        {% endif %}
+        <br>
     </div>
 
     <div id="hideEditors"></div>

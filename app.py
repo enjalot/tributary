@@ -138,19 +138,32 @@ def internal_gist(gist, filename=None):
 
 
 @app.route('/github-login')
-def github_login():
-    #take user to github for authentication
-    return redirect('https://github.com/login/oauth/authorize?client_id=' + GITHUB_CLIENT_ID + '&scope=repo,gist')
+@app.route('/github-login/<product>', methods=["GET"])
+@app.route("/github-login/<product>/<id>", methods=["GET"])
+def github_login(product=None,id=None):
+    if (product is None): 
+        # Default product
+        product = "tributary"
+    if(id is not None):
+        #take user to github for authentication
+        return redirect('https://github.com/login/oauth/authorize?client_id=' + GITHUB_CLIENT_ID + '&scope=repo,gist' + '&state=/' + product + '/' + id)
+    return redirect('https://github.com/login/oauth/authorize?client_id=' + GITHUB_CLIENT_ID + '&scope=repo,gist' + '&state=/' + product)
 
 @app.route('/github-logout')
-def github_logout():
+@app.route("/github-logout/<product>", methods=["GET"])
+@app.route("/github-logout/<product>/<id>", methods=["GET"])
+def github_logout(product=None,id=None): 
     session["access_token"] = None
     session["loggedin"] = None
     session["username"] = None
     session["avatar"] = None
     session["userid"] = None
     session["userurl"] = None
-    return redirect("/tributary")
+    if(product is None):
+        product = "tributary"
+    if (id is None): 
+        return redirect('/'+product)
+    return redirect('/'+product+'/'+id)
 
 @app.route("/github-authenticated")
 def github_authenticated():
@@ -173,14 +186,15 @@ def github_authenticated():
     #get info about the user
     req = urllib2.Request("https://api.github.com/user?access_token=" + session['access_token'])
     resp = json.loads(urllib2.urlopen(req).read())
-    print "RESP", resp
     session['username'] = resp['login']
     session['avatar'] = resp['avatar_url']
     session['userid'] = resp['id']
     session['userurl'] = resp['url']
 
+    nexturl = request.args.get('state')
+
     #TODO: redirect back to next parameter
-    return redirect('/tributary')
+    return redirect(nexturl)
 
 
 #TODO: make fork and save button different
@@ -189,7 +203,7 @@ def github_authenticated():
 
 
 def save(id, data, token=None):
-    print "ID", id
+    #print "ID", id
     #if id, send a patch
     if(id is not None):
         #TODO: check id is a valid id?
@@ -252,6 +266,10 @@ def fork_endpoint(id=None):
     token = session.get("access_token", None)
     userid = session.get("userid", None)
     gist_userid = json.loads(data).get("user", {}).get("id", None)
+
+    #print 'gist_userid=' , gist_userid
+    #print 'userid=' , userid
+    #print 'token=' , token 
 
     if(id is None or token is None):
         return save(None, data)
