@@ -455,12 +455,13 @@ tributary.TributaryView = Backbone.View.extend({
 
           $('#gist_info').html(info_string);
 
-          if(this.gist.user.userid === tributary.userid) {
+          if(this.gist.user.id !== tributary.userid) {
             $("#savePanel").attr("disabled", "true");
             $("#savePanel").attr("class", "minimal_off");
           }
         }
-        if(!this.loggedin) {
+        //if the user is not logged in, disable save
+        if(tributary.userid === NaN) {
           $("#savePanel").attr("disabled", "true");
           $("#savePanel").attr("class", "minimal_off");
           //$("#forkPanel").attr("disabled", "true");
@@ -821,81 +822,19 @@ tributary.TributaryView = Backbone.View.extend({
         });
     }, 
     login_gist: function(loginorout, callback) {
-        //console.log("ENDPOINT", @endpoint)
-        //Save the current code to a public gist
-        var oldgist = parseInt(this.model.get("gist"), 10);
-
-        //We now assume all tributaries will be saved as inlet.js
-        //so this code is a bit redundant, but it might be useful in the future
-        //filename = this.model.get("filename");
-        //if(filename === ""){
-        filename = "inlet.js";
-        //}
-        var gist = {
-            description: 'just another inlet to tributary',
-            public: true,
-            files: {}
-        };
-        gist.files[filename] = {
-            content: this.model.get("code")
-        };
-
-        this.jsons.forEach(function(j) {
-          gist.files[j.get("name") + ".json"] = {
-            content: j.get("code")
-          };
-        });
-
-        //save config
-        gist.files["config.json"] = {
-          content: JSON.stringify(this.config.toJSON())
-        };
-
-        //save markdown
-        gist.files["_.md"] = {
-            content: this.markdown
-        };
-
-
-        //serialize the current svg and save it to gist
-        var node = d3.select("svg").node();
-        var svgxml = (new XMLSerializer()).serializeToString(node);
-
-        if($.browser.webkit){ 
-            svgxml = svgxml.replace(/ xlink/g, ' xmlns:xlink');
-            svgxml = svgxml.replace(/ href/g, ' xlink:href');
-        }
-        gist.files["inlet.svg"] = {
-          content: svgxml
-        };
-
 
         var url;
         if(loginorout) {
-          //turn the save button into a saving animation
-          /*
-          d3.select("#saveButton").style("background-image", "url(/static/img/ajax-loader.gif)");
-          d3.select("#saveButton").style("background-repeat", "no-repeat");
-          d3.select("#saveButton").style("top", "0px");
-          */
-          //d3.select("#logoutPanel img").attr("src", "/static/img/ajax-loader.gif");
-
+       
           url = '/github-logout';
 
         } else {
 
-          /*
-          d3.select("#forkButton").style("background-image", "url(/static/img/ajax-loader.gif)");
-          d3.select("#forkButton").style("background-repeat", "no-repeat");
-          d3.select("#forkButton").style("top", "0px");
-          */
-          //d3.select("#loginPanel img").attr("src", "/static/img/ajax-loader.gif");
-
+        
           url = '/github-login';
  
         }
-        if (this.endpoint)
-            url+= '/' + this.endpoint
+        url+= '/' + this.endpoint
         if (this.gist)
             if (this.gist.id)
                 url+= '/' + this.gist.id
@@ -905,6 +844,7 @@ tributary.TributaryView = Backbone.View.extend({
 
         var that = this;
         window.location = url
+
     }
 });
 

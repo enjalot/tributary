@@ -146,8 +146,8 @@ def github_login(product=None,id=None):
         product = "tributary"
     if(id is not None):
         #take user to github for authentication
-        return redirect('https://github.com/login/oauth/authorize?client_id=' + GITHUB_CLIENT_ID + '&scope=repo,gist' + '&state=/' + product + '/' + id)
-    return redirect('https://github.com/login/oauth/authorize?client_id=' + GITHUB_CLIENT_ID + '&scope=repo,gist' + '&state=/' + product)
+        return redirect('https://github.com/login/oauth/authorize?client_id=' + GITHUB_CLIENT_ID + '&scope=gist' + '&state=/' + product + '/' + id)
+    return redirect('https://github.com/login/oauth/authorize?client_id=' + GITHUB_CLIENT_ID + '&scope=gist' + '&state=/' + product)
 
 @app.route('/github-logout')
 @app.route("/github-logout/<product>", methods=["GET"])
@@ -272,7 +272,7 @@ def fork_endpoint(id=None):
     #print 'token=' , token 
 
     if(id is None or token is None):
-        return save(None, data)
+        return save(None, data, token)
     #if user doesn't own this gist, just fork it
     elif(userid == gist_userid):
         newgist = fork(id, token)
