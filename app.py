@@ -324,10 +324,19 @@ def fork(id, token=None):
 
 
 
+@app.route("/latest/<user>/")
+def latest_user(user):
+    return render_template("latest.html", username=user)
+
+
+
+
+"""
 #An experimental view that allowed creating screenshots from the gallery
 @app.route("/creator")
 def creator():
     return render_defaults("gallery_creator.html", base_url=base_url)
+"""
 
 #EXPIREMENTAL: these don't work with the rewrite, will need to be resurrected
 """

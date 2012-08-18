@@ -1,0 +1,33 @@
+<!DOCTYPE HTML>
+<html lang="en">
+  
+  <head>
+    <meta charset="utf-8" />
+    <title>Latest inlets for {{username}}</title>
+    <link href='/static/css/latest.css' rel='stylesheet' type='text/css'>
+	<link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,300,600,700' rel='stylesheet' type='text/css'>  </head>
+    <link href='http://fonts.googleapis.com/css?family=Alegreya:900italic' rel='stylesheet' type='text/css'>
+    
+    <script type="text/javascript">
+        var tributary = {};
+        tributary.username = "{{ username }}";
+    </script>
+  </head>
+
+  <body>
+    <div id="page">
+        <img id="syncing" src="/static/img/syncing.gif"/>
+
+
+    </div>
+
+    <script src="/static/lib/d3.v2.min.js"></script>
+    <script src="/static/lib/jquery-1.7.min.js"></script>
+    <script src="/static/lib/underscore-min.js"></script>
+    <script src="/static/lib/backbone-min.js"></script>
+
+    <script src="/static/views/gallery.js"></script>
+    <script src="/static/views/latest.js"></script>
+  </body>
+
+</html>
