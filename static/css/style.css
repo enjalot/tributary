@@ -110,10 +110,10 @@ body {
     top: 50px;
     position: absolute;
     margin-right: 48px;
-    -webkit-transition:  all .8s ease-in;  /* Saf3.2+, Chrome */
-     -moz-transition:    all .8s ease-in;  /* FF4+ */
-       -o-transition:    all .8s ease-in;  /* Opera 10.5+ */
-          transition:    all .8s ease-in;
+    -webkit-transition:  all .4s ease-in;  /* Saf3.2+, Chrome */
+     -moz-transition:    all .4s ease-in;  /* FF4+ */
+       -o-transition:    all .4s ease-in;  /* Opera 10.5+ */
+          transition:    all .4s ease-in;
 }
 #save_gui {
     position: absolute;
