@@ -138,25 +138,46 @@ def internal_gist(gist, filename=None):
 
 
 @app.route('/github-login')
-def github_login():
-    #take user to github for authentication
-    return redirect('https://github.com/login/oauth/authorize?client_id=' + GITHUB_CLIENT_ID + '&scope=repo,gist')
+@app.route('/github-login/<product>', methods=["GET"])
+@app.route("/github-login/<product>/<id>", methods=["GET"])
+def github_login(product=None,id=None):
+    print "GOT VARS: ", product, id
+    if (product is None): 
+        product = "tributary"
+    print "HERE"
+    if(id is not None):
+        print "GOT MY STATE"
+        #take user to github for authentication
+        return redirect('https://github.com/login/oauth/authorize?client_id=' + GITHUB_CLIENT_ID + '&scope=repo,gist' + '&state=/' + product + '/' + id)
+    return redirect('https://github.com/login/oauth/authorize?client_id=' + GITHUB_CLIENT_ID + '&scope=repo,gist' + '&state=/' + product)
 
 @app.route('/github-logout')
-def github_logout():
+@app.route("/github-logout/<product>", methods=["GET"])
+@app.route("/github-logout/<product>/<id>", methods=["GET"])
+def github_logout(product=None,id=None): 
+    print "GOT VARS: ", product, id
     session["access_token"] = None
     session["loggedin"] = None
     session["username"] = None
     session["avatar"] = None
     session["userid"] = None
     session["userurl"] = None
-    return redirect("/tributary")
+    if(product is None):
+        product = "tributary"
+    print "HERE"
+    if (id is None): 
+        print "HERE"
+        return redirect('/'+product)
+    print "HERE"
+    return redirect('/'+product+'/'+id)
 
 @app.route("/github-authenticated")
 def github_authenticated():
     #code poached from water: https://github.com/gabrielflorit/water/blob/master/water/views.py
 
+    print "ARGS = " , request.args
     tempcode = request.args.get('code', '')
+    print "TEMP CODE= " , tempcode
     # construct data and headers to send to github
     data = {'client_id': GITHUB_CLIENT_ID, 'client_secret': GITHUB_CLIENT_SECRET, 'code': tempcode }
     headers = {'content-type': 'application/json', 'accept': 'application/json'}
@@ -178,9 +199,13 @@ def github_authenticated():
     session['avatar'] = resp['avatar_url']
     session['userid'] = resp['id']
     session['userurl'] = resp['url']
+    print "Session", session
+
+    nexturl = request.args.get('state')
+    print "NEXT URL= ", nexturl
 
     #TODO: redirect back to next parameter
-    return redirect('/tributary')
+    return redirect(nexturl)
 
 
 #TODO: make fork and save button different
@@ -252,6 +277,10 @@ def fork_endpoint(id=None):
     token = session.get("access_token", None)
     userid = session.get("userid", None)
     gist_userid = json.loads(data).get("user", {}).get("id", None)
+
+    print 'gist_userid=' , gist_userid
+    print 'userid=' , userid
+    print 'token=' , token 
 
     if(id is None or token is None):
         return save(None, data)
