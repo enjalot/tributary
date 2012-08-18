@@ -67,6 +67,7 @@
 
     <div id="save_gui"> 
                 {% if not loggedin %}
+                anon
                 <button id='loginPanel' class="button_on"> Login </button>
                 {% else %}
                 <a href="http://github.com/{{ username }}">{{ username }}</a>
@@ -109,7 +110,9 @@
         -->
 
         <br>
+
     </div>
+        <img id="syncing" src="/static/img/syncing.gif"/>
 
     <div id="hideEditors"></div>
 

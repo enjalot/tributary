@@ -418,11 +418,13 @@ tributary.TributaryView = Backbone.View.extend({
 
         //Setup the save panel
         $('#savePanel').on('click', function(e) {
+            d3.select("#syncing").style("display", "block");
             that.save_gist("save", function(newurl, newgist) {
                 window.location = newurl;
             });
         });
         $('#forkPanel').on('click', function(e) {
+            d3.select("#syncing").style("display", "block");
             that.save_gist("fork", function(newurl, newgist) {
                 window.location = newurl;
             });
