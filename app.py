@@ -141,12 +141,10 @@ def internal_gist(gist, filename=None):
 @app.route('/github-login/<product>', methods=["GET"])
 @app.route("/github-login/<product>/<id>", methods=["GET"])
 def github_login(product=None,id=None):
-    print "GOT VARS: ", product, id
     if (product is None): 
+        # Default product
         product = "tributary"
-    print "HERE"
     if(id is not None):
-        print "GOT MY STATE"
         #take user to github for authentication
         return redirect('https://github.com/login/oauth/authorize?client_id=' + GITHUB_CLIENT_ID + '&scope=repo,gist' + '&state=/' + product + '/' + id)
     return redirect('https://github.com/login/oauth/authorize?client_id=' + GITHUB_CLIENT_ID + '&scope=repo,gist' + '&state=/' + product)
@@ -155,7 +153,6 @@ def github_login(product=None,id=None):
 @app.route("/github-logout/<product>", methods=["GET"])
 @app.route("/github-logout/<product>/<id>", methods=["GET"])
 def github_logout(product=None,id=None): 
-    print "GOT VARS: ", product, id
     session["access_token"] = None
     session["loggedin"] = None
     session["username"] = None
@@ -164,20 +161,15 @@ def github_logout(product=None,id=None):
     session["userurl"] = None
     if(product is None):
         product = "tributary"
-    print "HERE"
     if (id is None): 
-        print "HERE"
         return redirect('/'+product)
-    print "HERE"
     return redirect('/'+product+'/'+id)
 
 @app.route("/github-authenticated")
 def github_authenticated():
     #code poached from water: https://github.com/gabrielflorit/water/blob/master/water/views.py
 
-    print "ARGS = " , request.args
     tempcode = request.args.get('code', '')
-    print "TEMP CODE= " , tempcode
     # construct data and headers to send to github
     data = {'client_id': GITHUB_CLIENT_ID, 'client_secret': GITHUB_CLIENT_SECRET, 'code': tempcode }
     headers = {'content-type': 'application/json', 'accept': 'application/json'}
@@ -194,15 +186,12 @@ def github_authenticated():
     #get info about the user
     req = urllib2.Request("https://api.github.com/user?access_token=" + session['access_token'])
     resp = json.loads(urllib2.urlopen(req).read())
-    print "RESP", resp
     session['username'] = resp['login']
     session['avatar'] = resp['avatar_url']
     session['userid'] = resp['id']
     session['userurl'] = resp['url']
-    print "Session", session
 
     nexturl = request.args.get('state')
-    print "NEXT URL= ", nexturl
 
     #TODO: redirect back to next parameter
     return redirect(nexturl)

@@ -472,8 +472,6 @@ tributary.TributaryView = Backbone.View.extend({
           //$("#forkPanel").attr("disabled", "true");
           //$("#forkPanel").attr("class", "minimal_off");
         }
-
-
     },
 
     setup_editor: function(editor_id, model, options) {
@@ -908,8 +906,8 @@ tributary.TributaryView = Backbone.View.extend({
             if (this.gist.id)
                 url+= '/' + this.gist.id
 
-        console.log(loginorout)
-        console.log("url", url)
+        //console.log(loginorout)
+        //console.log("url", url)
 
         var that = this;
         window.location = url
