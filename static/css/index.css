@@ -10,6 +10,7 @@
 p {
     line-height: 1.5em;
 }
+
 #gallery img {
     width: 300px;
     height: 300px;
@@ -78,17 +79,50 @@ h3 {
     margin: 0;
     padding: 0;
 }
+
+
+#try {
+    width: 200px;
+    display: inline-block;
+    vertical-align: top;
+}
+#play {
+    width: 200px;
+    display: inline-block;
+    vertical-align: top;
+}
+#fork {
+    width: 200px;
+    display: inline-block;
+    vertical-align: top;
+}
+.intro {
+    width: 200px;
+    margin-left: 5px;
+    margin-right: 5px;
+
+}
+.intro a {
+    background-color: rgba(0,0,0,0);
+}
+.intro h3 {
+    width: 2em;
+    margin-left: auto;
+    margin-right: auto;
+}
+.intro img {
+    width: 200px;
+    height: 150px;
+}
+
 #what {
     width: 300px;
     display: inline-block;
     vertical-align: top;
 }
-#who {
-    width: 300px;
-    display: inline-block;
-    margin: 6px;
-}
+
 #wiki {
+    display: inline-block;
     font-size: 24px;
     line-height: 34px;
     width: 300px;
@@ -98,3 +132,16 @@ h3 {
     padding: 16px;
     
 }
+
+#who {
+    width: 640px;
+    display: inline-block;
+    margin: 6px;
+}
+#where {
+    width: 640px;
+    display: inline-block;
+    margin: 6px;
+}
+
+
