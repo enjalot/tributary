@@ -430,18 +430,12 @@ tributary.TributaryView = Backbone.View.extend({
         $('#loginPanel').on('click', function(e) {
             that.login_gist(tributary.loggedin, function(newurl, newgist) {
                 window.location = newurl;
-            //if(tributary.loggedin) {
-            //    window.location = "/github-logout";
-            //} else {
-            //    window.location = "/github-login";
-            //}
             }); 
+            /* This has no effect. Need to find the source of bug that enables Save button after logging in once. 
             if (tributary.loggedin) {
-                $('#loginPanel').value='Evan:'
-            } else {
-                $('#loginPanel').value='bollig:'
-            }
-
+                $('#savePanel').attr("disabled","true");
+                $("#savePanel").attr("class", "minimal_off");
+            }*/
         });
 
         if(this.gist) {
