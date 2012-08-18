@@ -904,8 +904,9 @@ tributary.TributaryView = Backbone.View.extend({
         }
         if (this.endpoint)
             url+= '/' + this.endpoint
-        if (this.gist.id)
-            url+= '/' + this.gist.id
+        if (this.gist)
+            if (this.gist.id)
+                url+= '/' + this.gist.id
 
         console.log(loginorout)
         console.log("url", url)
