@@ -102,6 +102,14 @@ def reptile_gist(gist=None, filename=None):
     return render_defaults("reptile.html", gist=gist, filename=filename)
 
 
+#Experimenting with three.js WebGL Library
+@app.route("/curiosity/")
+@app.route("/curiosity/<gist>/")
+@app.route("/curiosity/<gist>/<filename>")
+def curiosity_gist(gist=None, filename=None):
+    return render_defaults("curiosity.html", gist=gist, filename=filename)    
+
+
 #Embedded view for Tributary
 @app.route("/embed/<gist>/")
 @app.route("/embed/<gist>/<filename>")
