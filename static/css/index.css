@@ -10,12 +10,13 @@
 p {
     line-height: 1.5em;
 }
-
+img {
+    border-radius: 6px;    
+}
 #gallery img {
     width: 300px;
     height: 300px;
     margin: 5px;
-    border-radius: 6px;
     background-color: transparent !important;
     opacity: 0.3;
     
@@ -71,13 +72,14 @@ h1 {
     font-size: 148px;
     margin: 0;
     padding: 0;
-    padding-bottom: 12px;
+    padding-bottom: 48px;
     font-style: italic;
     font-weight: 900;
 }
 h3 {
     margin: 0;
     padding: 0;
+    margin-bottom: 12px;
 }
 
 
@@ -143,5 +145,7 @@ h3 {
     display: inline-block;
     margin: 6px;
 }
-
+#what, #wiki {
+    margin: 92px 0;
+}
 
