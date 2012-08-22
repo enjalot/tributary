@@ -172,6 +172,7 @@ tributary.TributaryView = Backbone.View.extend({
               }
               that.gist = data;
 
+              /*
               //load markdown files here
               // _.md
               var markdown;
@@ -192,7 +193,7 @@ tributary.TributaryView = Backbone.View.extend({
               } else {
                   that.markdown = "No Previous Gist"
               }
-  
+ */ 
 
               //load optional files here
               //config.json
@@ -270,7 +271,7 @@ tributary.TributaryView = Backbone.View.extend({
         } else {
           //setup empty config
           that.config = new tributary.Config();
-          that.markdown = "No parent Inlet"
+          //          that.markdown = "No parent Inlet"
           
           that.init_gui();
           that.setup_editor("editor", this.model);
@@ -769,6 +770,9 @@ tributary.TributaryView = Backbone.View.extend({
             public: true,
             files: {}
         };
+
+        console.log("code", this.model, oldgist)
+
         gist.files[filename] = {
             content: this.model.get("code")
         };
@@ -791,11 +795,12 @@ tributary.TributaryView = Backbone.View.extend({
           content: JSON.stringify(this.config.toJSON())
         };
 
+        /*
         //save markdown
         gist.files["_.md"] = {
             content: this.markdown
         };
-
+        */
 
         //serialize the current svg and save it to gist
         var node = d3.select("svg").node();

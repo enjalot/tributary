@@ -221,10 +221,25 @@ def save(id, data, token=None):
         url = 'https://api.github.com/gists'
 
     #code = json.loads(request.values.get("gist"))
+    #print code
     data = data.encode('utf-8')
+    print data
+
+    # We want to modify the gist by adding a custom markdown file
+    gist_data = json.loads(data)
+    markdown = "<a href=\"/" + id + "/" + token + "\"> Load /" + id + "/" + token + "</a>"
+    if gist_data.get("_.md",{}):
+        print "Updating"
+        gist_data["files"]["_.md"]["content"] = "NEW" + markdown
+    else:
+        print "Creating"
+        gist_data["files"]["_.md"] = {"content": markdown}
+
+    # Once we've updated the json object we need it serialized to send
+    data = json.dumps(gist_data)
+    data.encode('utf-8')
     #print "DATA", code
     #data = urllib.urlencode(code)
-    #print data
 
     headers = {'content-type': 'application/json; charset=utf-8', 'accept': 'application/json', 'encoding':'UTF-8'}
     if token is not None:
@@ -257,6 +272,12 @@ def save(id, data, token=None):
 @app.route("/tributary/save", methods=["POST"])
 @app.route("/tributary/save/<id>", methods=["POST"])
 def save_endpoint(id=None):
+    #from urlparse import urlparse
+    #parsed = urlparse('http://example.com')
+    #print parsed.hostname
+    ufile = urllib2.urlopen(request.url)
+    baseurl = ufile.geturl()
+    print baseurl
     data = request.values.get("gist")
     token = session.get("access_token", None)
     return save(id, data, token)
