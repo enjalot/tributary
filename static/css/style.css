@@ -155,8 +155,13 @@ body {
     width: 100%;
     position: fixed;
     right: 0;
-    bottom: 0;
+    bottom: 45px;
 }
+
+.CodeMirror .CodeMirror-scroll {
+    background-color: rgba(8,8,8,0.80);
+}
+
 .editor_handle {
     position: fixed; 
     display: block; 

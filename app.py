@@ -70,6 +70,15 @@ def hourglass_gist(gist=None, filename=None):
 def cypress_gist(gist=None, filename=None):
     return render_defaults("cypress.html", gist=gist, filename=filename)
 
+#Live editing run loops for canvas
+@app.route("/levee/")
+@app.route("/levee/<gist>/")
+@app.route("/levee/<gist>/<filename>")
+def levee_gist(gist=None, filename=None):
+    return render_defaults("levee.html", gist=gist, filename=filename)
+
+
+
 #Live editing boids (and other node based things)
 @app.route("/bigfish/")
 @app.route("/bigfish/<gist>/")

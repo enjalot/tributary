@@ -23,6 +23,7 @@ var Inlet = (function() {
                 editor.replaceRange(String(ui.value), start, end);
             }
         });
+        slider.css('visibility', 'hidden');
 
         //make the colorpicker
         picker = new Color.Picker({
