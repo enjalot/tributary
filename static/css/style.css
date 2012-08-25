@@ -84,6 +84,7 @@ body {
     width: 100%;
     color: white;
 
+    z-index: 200; /*lay header on top of datgui */
     position: fixed;
     top: -36px;
 
@@ -103,6 +104,7 @@ body {
     text-shadow: 0px 2px 0px rgba(0,0,0,0.8); /* FF3.5+, Opera 9+, Saf1+, Chrome, IE10 */
     background-color: rgba(0,0,0,0.5);
     border-radius: 6px;
+
 
     letter-spacing: 0.15em;
     padding-top: 6px;
@@ -132,9 +134,15 @@ body {
 }
 #save_gui {
     position: absolute;
-    right: 320px;
+    right: 5px;
+    /*right: 320px; */
     top: 6px;
 }
+#datgui {
+ top: 10px;
+}
+
+ 
 #gist_info {
     display: inline-block;
     margin-left: 148px;
@@ -366,7 +374,10 @@ px      68    160    252    344    436    528    620    712    */
     #loggedin {
         margin-left: 48px;
     }
- 
+
+    #datgui {
+        top: 50px;
+    }
     
 }
 
@@ -422,7 +433,12 @@ px      68    160    252    */
  
     #save_gui {
         top: 14px;
-        right: 288px;
+     /*   right: 288px;*/
+        right: 5px;
+    }
+    /* move datGUI over */
+    #datgui {
+        top: 50px;
     }
     #save_gui button{
         font-size: 11px !important;

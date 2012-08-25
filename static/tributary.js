@@ -291,7 +291,16 @@ tributary.TributaryView = Backbone.View.extend({
         this.dating = false;
         this.gui = new dat.GUI();
 
+        $('div.dg').toggle(false);
+        $('div.dg').css("z-index", 1);
+        $('div.dg').attr("id", "datgui"); //don't know why i can't style dg with classes...
         this.make_datgui = function() {
+            if(_.keys(trib).length === 0) {
+              //we don't have anything to show in datgui, lets hide it
+              $('div.dg').toggle(false);
+            } else {
+              $('div.dg').toggle(true);
+            }
             //we only need to remake the ui if we are not using it
             if(!that.dating) {
                 //reset everything
