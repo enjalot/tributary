@@ -230,7 +230,10 @@ def save(id, data, token=None):
         url = 'https://api.github.com/gists'
 
     #code = json.loads(request.values.get("gist"))
-    data = data.encode('utf-8')
+    try:
+        data = data.encode('utf-8')
+    except:
+        pass
     #print "DATA", code
     #data = urllib.urlencode(code)
     #print data
