@@ -31,16 +31,16 @@ def render_defaults(template, gist=None, filename=None):
     if filename is None:
         filename=default_filename
 
-    return render_template(template, 
-        gist=gist, 
-        filename=filename, 
+    return render_template(template,
+        gist=gist,
+        filename=filename,
         base_url=base_url,
         loggedin=session.get("loggedin", False),
         userid=session.get("userid", ""),
         username=session.get("username", ""),
         avatar=session.get("avatar", ""),
         userurl=session.get("userurl", "")
-        ) 
+        )
 
 #Live editing d3 for exploring parameter spaces
 @app.route("/tributary/")
@@ -69,6 +69,15 @@ def hourglass_gist(gist=None, filename=None):
 @app.route("/cypress/<gist>/<filename>")
 def cypress_gist(gist=None, filename=None):
     return render_defaults("cypress.html", gist=gist, filename=filename)
+
+#Live editing run loops for canvas
+@app.route("/levee/")
+@app.route("/levee/<gist>/")
+@app.route("/levee/<gist>/<filename>")
+def levee_gist(gist=None, filename=None):
+    return render_defaults("levee.html", gist=gist, filename=filename)
+
+
 
 #Live editing boids (and other node based things)
 @app.route("/bigfish/")
@@ -107,7 +116,7 @@ def reptile_gist(gist=None, filename=None):
 @app.route("/curiosity/<gist>/")
 @app.route("/curiosity/<gist>/<filename>")
 def curiosity_gist(gist=None, filename=None):
-    return render_defaults("curiosity.html", gist=gist, filename=filename)    
+    return render_defaults("curiosity.html", gist=gist, filename=filename)
 
 
 #Embedded view for Tributary
@@ -149,7 +158,7 @@ def internal_gist(gist, filename=None):
 @app.route('/github-login/<product>', methods=["GET"])
 @app.route("/github-login/<product>/<id>", methods=["GET"])
 def github_login(product=None,id=None):
-    if (product is None): 
+    if (product is None):
         # Default product
         product = "tributary"
     if(id is not None):
@@ -160,7 +169,7 @@ def github_login(product=None,id=None):
 @app.route('/github-logout')
 @app.route("/github-logout/<product>", methods=["GET"])
 @app.route("/github-logout/<product>/<id>", methods=["GET"])
-def github_logout(product=None,id=None): 
+def github_logout(product=None,id=None):
     session["access_token"] = None
     session["loggedin"] = None
     session["username"] = None
@@ -169,7 +178,7 @@ def github_logout(product=None,id=None):
     session["userurl"] = None
     if(product is None):
         product = "tributary"
-    if (id is None): 
+    if (id is None):
         return redirect('/'+product)
     return redirect('/'+product+'/'+id)
 
@@ -250,7 +259,7 @@ def save(id, data, token=None):
         url = url.encode('utf-8')
         req = urllib2.Request(url, data, headers=headers)
         #req = urllib2.Request(url, data)
-    else: 
+    else:
         #print "NOT LOGGED IN"
         req = urllib2.Request(url, data, headers=headers)
 
@@ -298,7 +307,7 @@ def fork_endpoint(id=None):
 
     #print 'gist_userid=' , gist_userid
     #print 'userid=' , userid
-    #print 'token=' , token 
+    #print 'token=' , token
 
     if(id is None or token is None):
         return save(None, data, token)
@@ -320,14 +329,14 @@ def fork_endpoint(id=None):
 
 def fork(id, token=None):
     #print "FORKING", id
-   
+
     url = 'https://api.github.com/gists/' + id + '/fork'
     #need data to make this a post request
     #data = None
     data = "{}"
     headers = {
-            'content-type': 'application/json; charset=utf-8', 
-            'accept': 'application/json', 
+            'content-type': 'application/json; charset=utf-8',
+            'accept': 'application/json',
             'encoding':'UTF-8'
     }
     if token is not None:
@@ -340,10 +349,10 @@ def fork(id, token=None):
         #url = url.encode('utf-8')
         req = urllib2.Request(url, data, headers=headers)
         #req = urllib2.Request(url, data)
-    else: 
+    else:
         #print "NOT LOGGED IN"
         req = urllib2.Request(url, data, headers=headers)
-    
+
     response = urllib2.urlopen(req)
 
     ret = response.read()
@@ -371,15 +380,15 @@ def creator():
 """
 @app.route("/geyser/<gist>/<filename>")
 def geyser_gist(gist=None, filename=None):
-    return render_defaults("geyser.html", gist=gist, filename=default_filename, base_url=base_url) 
+    return render_defaults("geyser.html", gist=gist, filename=default_filename, base_url=base_url)
 
 @app.route("/fountain/<gist>/<filename>")
 def fountain_gist(gist=None, filename=None):
-    return render_defaults("fountain.html", gist=gist, filename=default_filename, base_url=base_url) 
+    return render_defaults("fountain.html", gist=gist, filename=default_filename, base_url=base_url)
 
 @app.route("/carbonite/<gist>/<filename>")
 def carbonite_gist(gist=None, filename=None):
-    return render_defaults("carbonite.html", gist=gist, filename=default_filename, base_url=base_url) 
+    return render_defaults("carbonite.html", gist=gist, filename=default_filename, base_url=base_url)
 """
 
 if __name__ == "__main__":

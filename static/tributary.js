@@ -2,7 +2,8 @@ tributary.Tributary = Backbone.Model.extend({
     defaults: {
         code: "",
         coffee: false,
-        filename: "inlet.js"
+        filename: "inlet.js",
+        endpoint: "tributary"
     },
     binder: function() {
         this.on("code", this.newcode);
@@ -137,6 +138,7 @@ tributary.TributaryView = Backbone.View.extend({
     check_date: true,
     initialize: function() {
         this.endpoint = this.options.endpoint || "tributary";
+        this.model.set("endpoint", this.endpoint);
         //TODO: this should all be in render() 
         //but we assume that the #editor div is present when this class is
         //instanciated. move it once the code is on more solid ground
@@ -213,6 +215,10 @@ tributary.TributaryView = Backbone.View.extend({
               } else {
                 that.config = new tributary.Config();
               }
+
+              //TODO: do this cleaner? config should save what endpoint generated
+              that.config.set("endpoint", that.model.get("endpoint"));
+
               //
               //json files
               var files = _.keys(data.files);
@@ -286,7 +292,16 @@ tributary.TributaryView = Backbone.View.extend({
         this.dating = false;
         this.gui = new dat.GUI();
 
+        $('div.dg').toggle(false);
+        $('div.dg').css("z-index", 1);
+        $('div.dg').attr("id", "datgui"); //don't know why i can't style dg with classes...
         this.make_datgui = function() {
+            if(_.keys(trib).length === 0) {
+              //we don't have anything to show in datgui, lets hide it
+              $('div.dg').toggle(false);
+            } else {
+              $('div.dg').toggle(true);
+            }
             //we only need to remake the ui if we are not using it
             if(!that.dating) {
                 //reset everything
@@ -570,7 +585,7 @@ tributary.TributaryView = Backbone.View.extend({
         var ew = editor.width;
         var eh = editor.height;
 
-        var handle_offset = -25;
+        var handle_offset = {x: -25, y: 20};
 
         var editor_drag = d3.behavior.drag()
             .on("drag", function(d,i) {
@@ -581,8 +596,8 @@ tributary.TributaryView = Backbone.View.extend({
                 //don't use latest editor w/h in calculation
                 var neww = ew + d.x;
                 var newh = eh + d.y;
-                editor_handle.style("right", handle_offset + neww + "px");
-                editor_handle.style("bottom", handle_offset + newh + "px");
+                editor_handle.style("right", handle_offset.x + neww + "px");
+                editor_handle.style("bottom", handle_offset.y + newh + "px");
 
                 editor_el.css('width', neww + "px");
                 editor_el.css('height', newh + "px");
@@ -611,8 +626,8 @@ tributary.TributaryView = Backbone.View.extend({
             .style("position", "fixed")
             .style("display", "block")
             .style("float", "left")
-            .style("bottom", handle_offset + editor.height + "px")
-            .style("right", handle_offset + editor.width + "px")
+            .style("right", handle_offset.x + editor.width + "px")
+            .style("bottom", handle_offset.y + editor.height + "px")
             .style("width", "20px")
             .style("height", "20px")
             .style("background-color", "rgba(50, 50, 50, .4)")

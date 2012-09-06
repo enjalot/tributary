@@ -25,6 +25,7 @@ d3.json(url, function(gists) {
     }
   })
   console.log(usable.length);
+  console.log(JSON.stringify(usable))
 
   var model, view;
   usable.forEach(function(u) {
