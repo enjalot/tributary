@@ -277,7 +277,9 @@ def save__req_update(old_gist_id, new_gist_id, data, token=None):
     new_data = json.loads(data)
     # TODO: allow product to change
     markdown = "[ <a href=\"http://enjalot.com/tributary/" + new_gist_id +"\">Launch Inlet</a> ]"
-    markdown = markdown + "<br/> <a href=\"" + old_gist_id + "\">Gist #" + old_gist_id + "</a> "
+    if old_gist_id is not None:
+        markdown = markdown + "<br/><a href=\"https://gist.github.com/" + old_gist_id + "\">Gist #" + old_gist_id  + "</a> "
+
     if gist_history is not None:
         markdown = markdown + gist_history
     else:
@@ -310,15 +312,14 @@ def save__req_update(old_gist_id, new_gist_id, data, token=None):
 
 
 
-def save(old_gist_id, new_gist_id, data, token=None):
+def save(old_gist_id, data, token=None):
     #print "ID", id
     print "old_gist_id: ", old_gist_id
-    print "new_gist_id: ", new_gist_id
 
     #if id, send a patch
-    if(new_gist_id is not None):
+    if(old_gist_id is not None):
         #TODO: check id is a valid id?
-        url = 'https://api.github.com/gists/' + new_gist_id
+        url = 'https://api.github.com/gists/' + old_gist_id
     else:
         #if not id create a new gist
         url = 'https://api.github.com/gists'
@@ -328,52 +329,47 @@ def save(old_gist_id, new_gist_id, data, token=None):
     data = data.encode('utf-8')
     print "DATA:",data
     print "Old ID:",old_gist_id
-    print "New ID: ",new_gist_id
     print "TOKEN: ",token
 
-    # We want to modify the gist by adding a custom markdown file
-    gist_data = json.loads(data)
-    if token is None and new_gist_id is None:
-        markdown = "No Previous Gist"
-    else:
-        markdown = "<a href=\"/" + old_gist_id + "\"> Load /" + old_gist_id + "/" + "</a>"
-    print markdown
-
-    if gist_data.get("_.md",{}):
-        print "Updating"
-    #    gist_data["files"]["_.md"]["content"] = markdown
-    #else:
-    #    print "Creating"
-    #    gist_data["files"]["_.md"] = {"content": markdown}
-
-    # Once we've updated the json object we need it serialized to send
-    data = json.dumps(gist_data)
+    old_data = fetch_gist_content(old_gist_id, token)
+    gist_history = ""
+    if old_data:
+        if old_data.get("files",{}).get("_.md",{}):
+            gist_history = old_data.get("files",{}).get("_.md",{}).get("content",{})
+    new_data = json.loads(data)
+    markdown = ""
+    if old_gist_id is not None:
+        markdown = ""
+    new_data["files"]["_.md"] = {"content": markdown + gist_history}
+    data = json.dumps(new_data)
     data.encode('utf-8')
+
     #print "DATA", code
     #data = urllib.urlencode(code)
 
     headers = {'content-type': 'application/json; charset=utf-8', 'accept': 'application/json', 'encoding':'UTF-8'}
+    url = url.encode('utf-8')
     if token is not None:
         headers['Authorization'] = 'token ' + token
-        #print "LOGGED IN, using TOKEN", token
-        #url += "?access_token="+token
-        #url += "?authenticity_token="+token
-        url = url.encode('utf-8')
         req = urllib2.Request(url, data, headers=headers)
-        #req = urllib2.Request(url, data)
     else:
-        #print "NOT LOGGED IN"
         req = urllib2.Request(url, data, headers=headers)
 
     #to save over a gist
-    if(new_gist_id is not None):
-        #print "PATCH", url
+    if(old_gist_id is not None):
         req.get_method = lambda: 'PATCH'
 
     response = urllib2.urlopen(req)
-    #print "RESP", response
     ret = response.read()
-    #print "ret", ret
+
+    new_gist_id = old_gist_id
+    # Crated a new gist so we need to update the markdown
+    if (old_gist_id is None):
+        anon_gist_id = json.loads(ret)["id"]
+        print "Now working with id", anon_gist_id, old_gist_id
+        newgist = save__req_update(old_gist_id, anon_gist_id, data, token)
+        ret = json.dumps(newgist)
+
     resp = make_response(ret, 200)
     resp.headers['Content-Type'] = 'application/json'
 
@@ -391,7 +387,7 @@ def save_endpoint(id=None):
     #print baseurl
     data = request.values.get("gist")
     token = session.get("access_token", None)
-    return save(id, id, data, token)
+    return save(id, data, token)
 
 
 #Save a tributary to a gist
