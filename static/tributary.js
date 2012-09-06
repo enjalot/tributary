@@ -418,7 +418,6 @@ tributary.TributaryView = Backbone.View.extend({
 
     },
     init_gui: function() {
-		console.log("INSIDE INIT_GUI")
         var that = this;
         //Setup the gui elements for this page
         //Setup tweet link

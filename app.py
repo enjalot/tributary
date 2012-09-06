@@ -228,7 +228,7 @@ def fork__req_new(old_gist_id, data, token=None):
     if old_data:
         if old_data.get("files",{}).get("_.md",{}):
             gist_history = old_data.get("files",{}).get("_.md",{}).get("content",{})
-    print "Old_gist_id = ", old_gist_id
+    # print "Old_gist_id = ", old_gist_id
     new_data = json.loads(data)
     if old_gist_id is None:
         markdown = ""
@@ -272,8 +272,6 @@ def save__req_update(old_gist_id, new_gist_id, data, token=None):
         if old_data.get("files",{}).get("_.md",{}):
             gist_history = old_data.get("files",{}).get("_.md",{}).get("content",{})
 
-    print "GIST HISTORY",gist_history
-
     new_data = json.loads(data)
     # TODO: allow product to change
     markdown = "[ <a href=\"http://enjalot.com/tributary/" + new_gist_id +"\">Launch Inlet</a> ]"
@@ -293,7 +291,7 @@ def save__req_update(old_gist_id, new_gist_id, data, token=None):
 
     headers = {'content-type': 'application/json; charset=utf-8', 'accept': 'application/json', 'encoding':'UTF-8'}
     url = url.encode('utf-8')
-    print "URL= ", url
+    #print "URL= ", url
     if token is not None:
         headers['Authorization'] = 'token ' + token
         req = urllib2.Request(url, data, headers=headers)
@@ -313,23 +311,20 @@ def save__req_update(old_gist_id, new_gist_id, data, token=None):
 
 
 def save(old_gist_id, data, token=None):
-    #print "ID", id
-    print "old_gist_id: ", old_gist_id
-
     #if id, send a patch
     if(old_gist_id is not None):
         #TODO: check id is a valid id?
+        print "USER saves existing gist"
         url = 'https://api.github.com/gists/' + old_gist_id
     else:
         #if not id create a new gist
+        print "USER saves empty gist"
         url = 'https://api.github.com/gists'
 
-    #code = json.loads(request.values.get("gist"))
-    #print code
     data = data.encode('utf-8')
-    print "DATA:",data
-    print "Old ID:",old_gist_id
-    print "TOKEN: ",token
+    #print "DATA:",data
+    #print "Old ID:",old_gist_id
+    #print "TOKEN: ",token
 
     old_data = fetch_gist_content(old_gist_id, token)
     gist_history = ""
@@ -366,7 +361,6 @@ def save(old_gist_id, data, token=None):
     # Crated a new gist so we need to update the markdown
     if (old_gist_id is None):
         anon_gist_id = json.loads(ret)["id"]
-        print "Now working with id", anon_gist_id, old_gist_id
         newgist = save__req_update(old_gist_id, anon_gist_id, data, token)
         ret = json.dumps(newgist)
 
