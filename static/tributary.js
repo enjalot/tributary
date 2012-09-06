@@ -418,6 +418,7 @@ tributary.TributaryView = Backbone.View.extend({
 
     },
     init_gui: function() {
+		console.log("INSIDE INIT_GUI")
         var that = this;
         //Setup the gui elements for this page
         //Setup tweet link
@@ -479,8 +480,9 @@ tributary.TributaryView = Backbone.View.extend({
             $("#savePanel").attr("class", "off");
           }
         }
+	  
         //if the user is not logged in, disable save
-        if(tributary.userid === NaN) {
+        if(isNaN(tributary.userid)) {
           $("#savePanel").attr("disabled", "true");
           $("#savePanel").attr("class", "off");
           //$("#forkPanel").attr("disabled", "true");
@@ -786,7 +788,7 @@ tributary.TributaryView = Backbone.View.extend({
             files: {}
         };
 
-        console.log("code", this.model, oldgist)
+//console.log("code", this.model, oldgist)
 
         gist.files[filename] = {
             content: this.model.get("code")
