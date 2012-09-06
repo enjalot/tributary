@@ -210,11 +210,11 @@ def github_authenticated():
 
     nexturl = request.args.get('state')
 
-    #TODO: redirect back to next parameter
+    #DONE: redirect back to next parameter
     return redirect(nexturl)
 
 
-#TODO: make fork and save button different
+# DONE: make fork and save button different
 # make js send gist id for fork or save unless its a fresh gist
 # if fresh gist disable fork button
 
