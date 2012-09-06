@@ -223,13 +223,19 @@ def fork__req_new(old_gist_id, data, token=None):
     url = 'https://api.github.com/gists'
     data = data.encode('utf-8')
 
-    old_data = json.loads(data)
+    old_data = fetch_gist_content(old_gist_id, token)
+    gist_history = ""
+    if old_data:
+        if old_data.get("files",{}).get("_.md",{}):
+            gist_history = old_data.get("files",{}).get("_.md",{}).get("content",{})
+    print "Old_gist_id = ", old_gist_id
+    new_data = json.loads(data)
     if old_gist_id is None:
-        markdown = "No Previous Inlet"
+        markdown = ""
     else:
-        markdown = "<br/><a href=\"https://gist.github.com/" + old_gist_id + "\">Previous Gist #" + old_gist_id  + "</a>"
-    old_data["files"]["_.md"] = {"content": markdown}
-    data = json.dumps(old_data)
+        markdown = "<br/><a href=\"https://gist.github.com/" + old_gist_id + "\">Gist #" + old_gist_id  + "</a> "
+    new_data["files"]["_.md"] = {"content": markdown + gist_history}
+    data = json.dumps(new_data)
     data.encode('utf-8')
 
     headers = {'content-type': 'application/json; charset=utf-8', 'accept': 'application/json', 'encoding':'UTF-8'}
@@ -248,6 +254,7 @@ def fork__req_new(old_gist_id, data, token=None):
     return gist
 
 # Update an existing Gist
+# TODO: post PNG snapshot of fork in Markdown now that we have new gist_id
 def save__req_update(old_gist_id, new_gist_id, data, token=None):
     #print "ID", id
 #    print "old_gist_id: ", old_gist_id
@@ -259,20 +266,27 @@ def save__req_update(old_gist_id, new_gist_id, data, token=None):
 #    print "DATA:",data
 #    print "TOKEN: ",token
 
-    old_data = json.loads(data)
-    markdown = "<a href=\"https://gist.github.com/" + new_gist_id + "\">Current Gist #" + new_gist_id + "</a>"
-    if old_gist_id is not None:
-        if old_data.get("_.md",{}):
-            markdown = markdown + "<br/>" + old_data["files"]["_.md"]["content"]
-        else:
-            markdown = markdown + "<br/> <a href=\"" + old_gist_id + "\">Previous Gist #" + old_gist_id + "</a>"
+    old_data = fetch_gist_content(old_gist_id, token)
+    gist_history = ""
+    if old_data:
+        if old_data.get("files",{}).get("_.md",{}):
+            gist_history = old_data.get("files",{}).get("_.md",{}).get("content",{})
+
+    print "GIST HISTORY",gist_history
+
+    new_data = json.loads(data)
+    # TODO: allow product to change
+    markdown = "[ <a href=\"http://enjalot.com/tributary/" + new_gist_id +"\">Launch Inlet</a> ]"
+    markdown = markdown + "<br/> <a href=\"" + old_gist_id + "\">Gist #" + old_gist_id + "</a> "
+    if gist_history is not None:
+        markdown = markdown + gist_history
     else:
-        markdown = markdown + "<br/>----"
+        markdown = markdown + "<br/><hr/>"
 
 #    print "Updated MARKDOWN=",markdown
 
-    old_data["files"]["_.md"] = {"content": markdown}
-    data = json.dumps(old_data)
+    new_data["files"]["_.md"] = {"content": markdown}
+    data = json.dumps(new_data)
     data.encode('utf-8')
 
     headers = {'content-type': 'application/json; charset=utf-8', 'accept': 'application/json', 'encoding':'UTF-8'}
@@ -398,8 +412,6 @@ def fork_endpoint(prev_gist_id=None):
 #    print 'userid=' , userid
 #    print 'token=' , token
     #if (token is not None) or (prev_gist_id is not None):
-    old_data = fetch_gist_content(prev_gist_id, token)
-    print "Old data",old_data
 
 #    print json.loads(data).get("user", {})
     gist_userid = json.loads(data).get("user", {}).get("id", None)
