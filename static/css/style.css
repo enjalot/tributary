@@ -166,6 +166,13 @@ body {
     bottom: 45px;
 }
 
+
+/*
+.CodeMirror, .CodeMirror-scroll, .CodeMirror-gutter-text {
+    font-size: 16px;
+}
+*/
+
 .CodeMirror .CodeMirror-scroll {
     background-color: rgba(8,8,8,0.80);
 }
