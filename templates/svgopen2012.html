@@ -1,0 +1,215 @@
+<!DOCTYPE HTML>
+<html lang="en">
+  
+  <head>
+    <meta charset="utf-8" />
+    <title>SVG Open / Graphical Web 2012</title>
+
+    <link href='/static/css/svgopen.css' rel='stylesheet' type='text/css'>
+	<link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,300,600,900' rel='stylesheet' type='text/css'>  </head>
+    <!--
+    <link href='http://fonts.googleapis.com/css?family=Alegreya:900italic' rel='stylesheet' type='text/css'>
+    -->
+    
+  </head>
+
+  <body>
+    <script src="/static/lib/d3.v2.min.js"></script>
+<!--
+    <script src="/static/lib/jquery-1.7.min.js"></script>
+    <script src="/static/lib/underscore-min.js"></script>
+    <script src="/static/lib/backbone-min.js"></script>
+-->
+
+    <div id="menu">
+        <ul>
+            <li id="tributaryli"><a href="#tributary">Tributary</a></li>
+            <li id="deltali"><a href="#delta">Delta</a></li>
+            <li id="cypressli"><a href="#cypress">Cypress</a></li>
+            <li id="bigfishli"><a href="#bigfish">BigFish</a></li>
+            <li id="flyli"><a href="#fly">Fly</a></li>
+            <li id="curiosityli"><a href="#curiosity">Curiosity</a></li>
+            <!--<li><a href="#flow">Flow</a></li>-->
+        </ul>
+    </div>
+
+    <div id="tributary" class="view">
+        <span class="title">Tributary</span>
+        <iframe frameBorder=0 id="trib1" src="/tributary/3692165/" width=900px height=540px></iframe>
+        <a href="#trib1" onclick="trib(1, 'bar');">Bar</a> - 
+        <a href="#trib1" onclick="trib(1, 'line');">Line</a> - 
+        <a href="#trib1" onclick="trib(1, 'map');">Map by @poezn</a>
+        <br/>
+        <br/>
+        <br/>
+
+        <iframe frameBorder = 0 id="trib2" src="/tributary/3692240/" width=900px height=540px></iframe>
+        <a href="#trib2" onclick="trib(2, 'ss1');">Illusion</a> - 
+        <a href="#trib2" onclick="trib(2, 'ss2');">Colors</a> - 
+        <a href="#trib2" onclick="trib(2, 'ss3');">Icons</a>
+        <br/>
+        <br/>
+        <br/>
+
+        <iframe frameBorder = 0 id="trib3" src="http://www.themaninblue.com/experiment/Blobular/" width=900px height=540px></iframe>
+        <a href="#trib3" onclick="trib(3, 'blob1');">Blobular by @themaninblue</a> - 
+        <a href="#trib3" onclick="trib(3, 'arc');">Arc</a> - 
+        <a href="#trib3" onclick="trib(3, 'blob2');">Blob</a>
+        <br/>
+        <br/>
+        <br/>
+
+
+
+    </div>
+    
+    <div id="delta" class="view">
+        <span class="title">Delta</span>
+        <iframe frameBorder = 0 id="del" src="/delta/3692343/" width=900px height=540px></iframe>
+        <a href="#del" onclick="del('simple');">Simple</a> - 
+        <a href="#del" onclick="del('nils');">Form by @bausofthenauf</a> - 
+        <a href="#del" onclick="del('text');">Text</a>
+        <br/>
+        <br/>
+        <br/>
+    </div>
+
+    <div id="cypress" class="view">
+        <span class="title">Cypress</span> 
+        <iframe frameBorder = 0 id="cyp1" src="/cypress/3692573/" width=900px height=540px></iframe>
+        <a href="#cyp1" onclick="cyp(1, 'phylotaxis');">Phylotaxis by @syntagmatic</a> - 
+        <a href="#cyp1" onclick="cyp(1, 'pacman');">Pacman by @syntagmatic</a> 
+        <br/>
+        <br/>
+        <br/>
+
+        <iframe frameBorder = 0 id="cyp2" src="/cypress/3693489/" width=900px height=540px></iframe>
+        <a href="#cyp2" onclick="cyp(2, 'lasers1');">Lasers</a> - 
+        <a href="#cyp2" onclick="cyp(2, 'lasers2');">Weathervane by @ptvan</a> - 
+        <a href="#cyp2" onclick="cyp(2, 'lasers3');">Wrap You Up by @ptvan</a> - 
+        <a href="#cyp2" onclick="cyp(2, 'lasers4');">Dune by @ptvan</a> - 
+        <a href="#cyp2" onclick="cyp(2, 'lasers5');">Wobble by @ptvan</a> -
+        <a href="#cyp2" onclick="cyp(2, 'lasers6');">Napkins by @ptvan</a> 
+        <br/>
+        <br/>
+        <br/>
+    </div>
+ 
+    <div id="bigfish" class="view">
+        <span class="title">BigFish</span>
+        <iframe frameBorder = 0 id="bf" src="/bigfish/3692666/" width=900px height=540px></iframe>
+        <a href="#bf" onclick="bf('flock');">Flocks</a> - 
+        <a href="#bf" onclick="bf('lab');">Voronoi</a> - 
+        <a href="#bf" onclick="bf('blob3');">Blob</a> - 
+        <br/>
+        <br/>
+        <br/>
+    </div>
+
+    <div id="fly" class="view">
+        <span class="title">Fly</span>
+        <iframe frameBorder = 0 id="fl" src="/fly/3692652/" width=900px height=540px></iframe>
+        <a href="#fl" onclick="fl('boid');">More Flocks</a> - 
+        <a href="#fl" onclick="fl('sph');">SPH</a>
+        <br/>
+        <br/>
+        <br/>
+    </div>
+
+    <div id="curiosity" class="view">
+        <span class="title">Curiosity</span>
+        <iframe frameBorder = 0 id="cur" src="/curiosity/3693615/" width=900px height=540px></iframe>
+        <a href="#" onclick="fl('curiosity');">Curiosity</a> - 
+        <a href="#" onclick="fl('rover');">Rover</a>
+        <br/>
+        <br/>
+        <br/>
+    </div>
+
+    <!--
+    <div id="flow" class="view">
+        Flow 
+        <iframe id="flo" src="flow" width=900px height=540px></iframe>
+        <a href="#" onclick="flow('flow');">Flow</a>
+        <br/>
+        <br/>
+        <br/>
+    </div>
+    -->
+
+
+
+    <script>
+        var exs = {
+            //trib1
+            "bar": "/tributary/3692165/",
+            "line": "/tributary/3692212/",
+            "map": "/tributary/3692144/",
+            //trib2
+            "ss1": "/tributary/3692240/",
+            "ss2": "/tributary/3692257/",
+            "ss3": "/tributary/2958637/",
+            //trib3
+            "blob1": "http://www.themaninblue.com/experiment/Blobular/",
+            "arc": "/tributary/3692301/",
+            "blob2": "/tributary/3692323/",
+            //del
+            "simple": "/delta/3692343/",
+            "nils": "/delta/3692440/",
+            "text": "/delta/3692451/",
+            //cyp1
+            "phylotaxis": "/cypress/3692573/",
+            "pacman": "/cypress/3259253/",
+            //cyp2
+            "lasers1": "/cypress/3693489/",
+            "lasers2": "/cypress/3693568/",
+            "lasers3": "/cypress/3693574/",
+            "lasers4": "/cypress/3693581/",
+            "lasers5": "/cypress/3693586/",
+            "lasers6": "/cypress/3693535/",
+            //bf
+            "flock": "/bigfish/3692666/",
+            "lab": "/bigfish/3692677/",
+            "blob3": "/bigfish/3692682/",
+            //fl
+            "boid": "/fly/3692652/",
+            "sph": "/fly/3693086/",
+            //cur
+            "curiosity": "/curiosity/3395030/",
+            "rover": "",
+            //flow
+            "flow": "",
+        };
+        //oh shush, i know this is a bad abstraction,
+        //but time is of the essence and coffee is expensive
+        //in switzerland
+        function trib(id, ex) {
+            d3.select("#trib" + id).attr("src", exs[ex]);
+        }
+        function del(ex) {
+            d3.select("#del").attr("src", exs[ex]);
+        }
+        function cyp(id, ex) {
+            d3.select("#cyp" + id).attr("src", exs[ex]);
+        }
+        function bf(ex) {
+            d3.select("#bf").attr("src", exs[ex]);
+        }
+        function fl(ex) {
+            d3.select("#fl").attr("src", exs[ex]);
+        }
+        function cur(ex) {
+            d3.select("#cur").attr("src", exs[ex]);
+        }
+        function flo(ex) {
+            d3.select("#flo").attr("src", exs[ex]);
+        }
+ 
+
+    </script>
+
+
+
+  </body>
+
+</html>

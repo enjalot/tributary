@@ -350,6 +350,14 @@ def latest_user(user):
 
 
 
+#svg open presentation
+@app.route("/svgopen2012")
+def svgopen2012():
+    return render_template("svgopen2012.html", base_url=base_url)
+    #return render_template("gallery.html", base_url=base_url)
+
+
+
 
 """
 #An experimental view that allowed creating screenshots from the gallery
