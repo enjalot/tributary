@@ -31,6 +31,15 @@
     font-size: 30px;
     font-weight: 800;
 }
+
+.first {
+    margin-left: 10px;
+}
+.next {
+    float: right;
+    margin-right: 10px;
+}
+
 iframe {
     overflow: hidden;
 }
