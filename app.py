@@ -49,6 +49,15 @@ def render_defaults(template, gist=None, filename=None):
 def tributary_gist(gist=None, filename=None):
     return render_defaults("tributary.html", gist=gist, filename=filename)
 
+#Live editing d3 for exploring parameter spaces
+@app.route("/ocean/")
+@app.route("/ocean/<gist>/")
+@app.route("/ocean/<gist>/<filename>")
+def ocean_gist(gist=None, filename=None):
+    return render_defaults("ocean.html", gist=gist, filename=filename)
+
+
+
 #Live editing transitions
 @app.route("/delta/")
 @app.route("/delta/<gist>/")

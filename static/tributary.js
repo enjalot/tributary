@@ -49,10 +49,12 @@ tributary.Tributary = Backbone.Model.extend({
         //we don't want it to nuke the svg if there is an error
         try {
             //for the datGUI stuff
+            //TODO: move this out of here to it's own function
             window.trib = {};               //reset global trib object
             window.trib_options = {};       //reset global trib_options object
             trib = window.trib;
             trib_options = window.trib_options;
+
             $("svg.tributary_svg").empty();
             tributary.initialize(d3.select("svg.tributary_svg"));
         } catch (er) {
@@ -82,8 +84,9 @@ tributary.Config = Backbone.Model.extend({
           width: 600,
           height: 300,
           hide: false
-        }
-    },
+        },
+        endpoint: "tributary"
+    }
 });
 
 tributary.JSON = Backbone.Model.extend({
