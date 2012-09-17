@@ -25,7 +25,7 @@
 
 {% block jsinit %}
     model = new tributary.Ocean({"gist":"{{gist}}", "filename":"{{filename}}"})
-    tribView = new tributary.TributaryView({"model":model})
+    tribView = new tributary.TributaryView({"model":model, "endpoint":"ocean"})
 
     window.onresize = function(event) {
         resize();

@@ -7,3 +7,6 @@
 [submodule "static/lib/d3-cloud"]
 	path = static/lib/d3-cloud
 	url = https://github.com/jasondavies/d3-cloud.git
+[submodule "static/lib/parallel-coordinates"]
+	path = static/lib/parallel-coordinates
+	url = https://github.com/syntagmatic/parallel-coordinates.git
