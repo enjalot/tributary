@@ -295,7 +295,7 @@ tributary.run = function(g,t) {\n\
         if(tributary.t === false) { tributary.t = 0; }
 
         
-    console.log("T", tributary.t)
+        //console.log("T", tributary.t)
         //move the slider
         //time_slider.slider('option', 'value', tributary.t);
 
