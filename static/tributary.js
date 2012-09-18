@@ -17,11 +17,12 @@ tributary.Tributary = Backbone.Model.extend({
       var ep = this.get("endpoint") + "/" + this.get("gist") + "/code/";
       if(localStorage[ep]) {
         this.set("code", localStorage[ep]);
+        console.log(ep, localStorage[ep])
       }
     },
-    set_local_storage: function() {
+    set_local_storage: function(code) {
       var ep = this.get("endpoint") + "/" + this.get("gist") + "/code/";
-      localStorage[ep] = this.get("code");
+      localStorage[ep] = code;
     },
  
     handle_error: function(e) {
@@ -77,11 +78,15 @@ tributary.Tributary = Backbone.Model.extend({
         return true;
     },
     newcode: function(code) {
+      console.log("new code")
         //save the code in the model
         this.set({code:code});
         this.execute();
         //store code in local storage
-        localStorage[this.get("endpoint") + "/" + this.get("gist") + "/code/"] = code;
+        //localStorage[this.get("endpoint") + "/" + this.get("gist") + "/code/"] = code;
+        this.set_local_storage(code);
+
+
 
         return true;
     }
@@ -141,9 +146,6 @@ tributary.JSON = Backbone.Model.extend({
         //save the code in the model
         this.set({code:json});
         this.execute();
-        //TODO: store code in local storage
-        this.set_local_storage();
-
         return true;
     }
 
@@ -175,7 +177,11 @@ tributary.TributaryView = Backbone.View.extend({
         /////////////////////////
         var cachebust = "?cachebust=" + Math.random() * 4242424242424242;
 
+
         this.model.local_storage();
+        //store the code in localstorage before we load from the gist
+        var oldcode = this.model.get("code");
+
         
         if(this.model.get("gist") && this.model.get("gist") !== "None") {
           //setup ui related to the gist
@@ -285,12 +291,15 @@ tributary.TributaryView = Backbone.View.extend({
               that.init_gui();
               //for the code we setup special code editor still
               that.code_editor = that.setup_editor("editor", that.model);
+
               //it hooks up to dat gui
               that.make_datgui();
 
               //yay all done, lets run the code we loaded in
               that.model.execute();
               that.model.trigger("gotcode");
+
+              that.model.set_local_storage(oldcode);
 
           });
         } else {
@@ -552,6 +561,19 @@ tributary.TributaryView = Backbone.View.extend({
           .attr("class", "emacs_check");
         topbar.append("span")
           .text("emacs");
+
+        //
+        topbar.append("button")
+          .text("Load Local Storage")
+          .classed("button_on", true)
+          .classed("hidebutton", true)
+          .on("click", function() {
+            //really this should be for any editor window
+            that.model.local_storage()
+            that.code_editor.setValue(that.model.get("code"));
+          }); 
+
+
 
 
         //some stuff we have to do to make sure we don't get into infinite change loops
