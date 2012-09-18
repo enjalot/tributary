@@ -13,6 +13,17 @@ tributary.Tributary = Backbone.Model.extend({
     initialize: function() {
         this.binder();
     },
+    local_storage: function() {
+      var ep = this.get("endpoint") + "/" + this.get("gist") + "/code/";
+      if(localStorage[ep]) {
+        this.set("code", localStorage[ep]);
+      }
+    },
+    set_local_storage: function() {
+      var ep = this.get("endpoint") + "/" + this.get("gist") + "/code/";
+      localStorage[ep] = this.get("code");
+    },
+ 
     handle_error: function(e) {
         if(tributary.trace) {
             console.log(e);
@@ -69,7 +80,8 @@ tributary.Tributary = Backbone.Model.extend({
         //save the code in the model
         this.set({code:code});
         this.execute();
-        //TODO: store code in local storage
+        //store code in local storage
+        localStorage[this.get("endpoint") + "/" + this.get("gist") + "/code/"] = code;
 
         return true;
     }
@@ -130,6 +142,7 @@ tributary.JSON = Backbone.Model.extend({
         this.set({code:json});
         this.execute();
         //TODO: store code in local storage
+        this.set_local_storage();
 
         return true;
     }
@@ -161,6 +174,9 @@ tributary.TributaryView = Backbone.View.extend({
         //really this should go in the initialization... and all the gui should follow
         /////////////////////////
         var cachebust = "?cachebust=" + Math.random() * 4242424242424242;
+
+        this.model.local_storage();
+        
         if(this.model.get("gist") && this.model.get("gist") !== "None") {
           //setup ui related to the gist
           d3.json('https://api.github.com/gists/' + this.model.get("gist") + cachebust, function(data) {
@@ -263,6 +279,7 @@ tributary.TributaryView = Backbone.View.extend({
               if(code_file)
               {
                 that.model.set("code", code_file.content)
+              } else {
               }
 
               that.init_gui();
@@ -900,3 +917,10 @@ tributary.TributaryView = Backbone.View.extend({
 });
 
 
+function supports_html5_storage() {
+  try {
+    return 'localStorage' in window && window['localStorage'] !== null;
+  } catch (e) {
+    return false;
+  }
+}
