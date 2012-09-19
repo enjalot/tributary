@@ -1,4 +1,10 @@
 
+body {
+    width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
 #menu {
     position: fixed;
     top: 0px;

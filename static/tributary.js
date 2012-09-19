@@ -17,7 +17,7 @@ tributary.Tributary = Backbone.Model.extend({
       var ep = this.get("endpoint") + "/" + this.get("gist") + "/code/";
       if(localStorage[ep]) {
         this.set("code", localStorage[ep]);
-        console.log(ep, localStorage[ep])
+        //console.log(ep, localStorage[ep])
       }
     },
     set_local_storage: function(code) {
@@ -78,7 +78,7 @@ tributary.Tributary = Backbone.Model.extend({
         return true;
     },
     newcode: function(code) {
-      console.log("new code")
+        //console.log("new code")
         //save the code in the model
         this.set({code:code});
         this.execute();
@@ -897,7 +897,7 @@ tributary.TributaryView = Backbone.View.extend({
           url += '/' + oldgist;
         }
         //console.log("url", url)
-        //  console.log("JSON", JSON.stringify(gist))
+        //console.log("JSON", JSON.stringify(gist))
 
         var that = this;
         $.post(url, {"gist":JSON.stringify(gist)}, function(data) {
