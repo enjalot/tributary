@@ -31,16 +31,16 @@ def render_defaults(template, gist=None, filename=None):
     if filename is None:
         filename=default_filename
 
-    return render_template(template, 
-        gist=gist, 
-        filename=filename, 
+    return render_template(template,
+        gist=gist,
+        filename=filename,
         base_url=base_url,
         loggedin=session.get("loggedin", False),
         userid=session.get("userid", ""),
         username=session.get("username", ""),
         avatar=session.get("avatar", ""),
         userurl=session.get("userurl", "")
-        ) 
+        )
 
 #Live editing d3 for exploring parameter spaces
 @app.route("/tributary/")
@@ -125,7 +125,7 @@ def reptile_gist(gist=None, filename=None):
 @app.route("/curiosity/<gist>/")
 @app.route("/curiosity/<gist>/<filename>")
 def curiosity_gist(gist=None, filename=None):
-    return render_defaults("curiosity.html", gist=gist, filename=filename)    
+    return render_defaults("curiosity.html", gist=gist, filename=filename)
 
 
 #Embedded view for Tributary
@@ -167,7 +167,7 @@ def internal_gist(gist, filename=None):
 @app.route('/github-login/<product>', methods=["GET"])
 @app.route("/github-login/<product>/<id>", methods=["GET"])
 def github_login(product=None,id=None):
-    if (product is None): 
+    if (product is None):
         # Default product
         product = "tributary"
     if(id is not None):
@@ -178,7 +178,7 @@ def github_login(product=None,id=None):
 @app.route('/github-logout')
 @app.route("/github-logout/<product>", methods=["GET"])
 @app.route("/github-logout/<product>/<id>", methods=["GET"])
-def github_logout(product=None,id=None): 
+def github_logout(product=None,id=None):
     session["access_token"] = None
     session["loggedin"] = None
     session["username"] = None
@@ -187,7 +187,7 @@ def github_logout(product=None,id=None):
     session["userurl"] = None
     if(product is None):
         product = "tributary"
-    if (id is None): 
+    if (id is None):
         return redirect('/'+product)
     return redirect('/'+product+'/'+id)
 
@@ -219,56 +219,160 @@ def github_authenticated():
 
     nexturl = request.args.get('state')
 
-    #TODO: redirect back to next parameter
+    #DONE: redirect back to next parameter
     return redirect(nexturl)
 
 
-#TODO: make fork and save button different
+# DONE: make fork and save button different
 # make js send gist id for fork or save unless its a fresh gist
 # if fresh gist disable fork button
 
+# Request a brand new Gist and return the Gist ID.
+def fork__req_new(old_gist_id, data, token=None):
+    url = 'https://api.github.com/gists'
+    data = data.encode('utf-8')
 
-def save(id, data, token=None):
-    #print "ID", id
-    #if id, send a patch
-    if(id is not None):
-        #TODO: check id is a valid id?
-        url = 'https://api.github.com/gists/' + id
+    old_data = fetch_gist_content(old_gist_id, token)
+    gist_history = ""
+    if old_data:
+        if old_data.get("files",{}).get("_.md",{}):
+            gist_history = old_data.get("files",{}).get("_.md",{}).get("content",{})
+    # print "Old_gist_id = ", old_gist_id
+    new_data = json.loads(data)
+    if old_gist_id is None:
+        markdown = ""
     else:
-        #if not id create a new gist
-        url = 'https://api.github.com/gists'
-
-    #code = json.loads(request.values.get("gist"))
-    try:
-        data = data.encode('utf-8')
-    except:
-        pass
-    #print "DATA", code
-    #data = urllib.urlencode(code)
-    #print data
+        markdown = "<br/><a href=\"https://gist.github.com/" + old_gist_id + "\">Gist #" + old_gist_id  + "</a> "
+    new_data["files"]["_.md"] = {"content": markdown + gist_history}
+    data = json.dumps(new_data)
+    data.encode('utf-8')
 
     headers = {'content-type': 'application/json; charset=utf-8', 'accept': 'application/json', 'encoding':'UTF-8'}
     if token is not None:
         headers['Authorization'] = 'token ' + token
-        #print "LOGGED IN, using TOKEN", token
-        #url += "?access_token="+token
-        #url += "?authenticity_token="+token
         url = url.encode('utf-8')
         req = urllib2.Request(url, data, headers=headers)
-        #req = urllib2.Request(url, data)
-    else: 
-        #print "NOT LOGGED IN"
+    else:
+        req = urllib2.Request(url, data, headers=headers)
+
+    response = urllib2.urlopen(req)
+    ret = response.read()
+
+    gist = json.loads(ret)
+
+    return gist
+
+# Update an existing Gist
+# TODO: post PNG snapshot of fork in Markdown now that we have new gist_id
+def save__req_update(old_gist_id, new_gist_id, data, token=None):
+    #print "ID", id
+#    print "old_gist_id: ", old_gist_id
+#    print "new_gist_id: ", new_gist_id
+
+    url = 'https://api.github.com/gists/' + new_gist_id
+
+    data = data.encode('utf-8')
+#    print "DATA:",data
+#    print "TOKEN: ",token
+
+    old_data = fetch_gist_content(old_gist_id, token)
+    gist_history = ""
+    if old_data:
+        if old_data.get("files",{}).get("_.md",{}):
+            gist_history = old_data.get("files",{}).get("_.md",{}).get("content",{})
+
+    new_data = json.loads(data)
+    # TODO: allow product to change
+    markdown = "[ <a href=\"http://enjalot.com/tributary/" + new_gist_id +"\">Launch Inlet</a> ]"
+    if old_gist_id is not None:
+        markdown = markdown + "<br/><a href=\"https://gist.github.com/" + old_gist_id + "\">Gist #" + old_gist_id  + "</a> "
+
+    if gist_history is not None:
+        markdown = markdown + gist_history
+    else:
+        markdown = markdown + "<br/><hr/>"
+
+#    print "Updated MARKDOWN=",markdown
+
+    new_data["files"]["_.md"] = {"content": markdown}
+    data = json.dumps(new_data)
+    data.encode('utf-8')
+
+    headers = {'content-type': 'application/json; charset=utf-8', 'accept': 'application/json', 'encoding':'UTF-8'}
+    url = url.encode('utf-8')
+    #print "URL= ", url
+    if token is not None:
+        headers['Authorization'] = 'token ' + token
+        req = urllib2.Request(url, data, headers=headers)
+    else:
+        req = urllib2.Request(url, data, headers=headers)
+
+    # To to updating Gist (this applies a patch rather than creating a new Gist)
+    req.get_method = lambda: 'PATCH'
+
+    response = urllib2.urlopen(req)
+    ret = response.read()
+
+    gist = json.loads(ret)
+
+    return gist
+
+
+
+def save(old_gist_id, data, token=None):
+    #if id, send a patch
+    if(old_gist_id is not None):
+        #TODO: check id is a valid id?
+        print "USER saves existing gist"
+        url = 'https://api.github.com/gists/' + old_gist_id
+    else:
+        #if not id create a new gist
+        print "USER saves empty gist"
+        url = 'https://api.github.com/gists'
+
+    data = data.encode('utf-8')
+    #print "DATA:",data
+    #print "Old ID:",old_gist_id
+    #print "TOKEN: ",token
+
+    old_data = fetch_gist_content(old_gist_id, token)
+    gist_history = ""
+    if old_data:
+        if old_data.get("files",{}).get("_.md",{}):
+            gist_history = old_data.get("files",{}).get("_.md",{}).get("content",{})
+    new_data = json.loads(data)
+    markdown = ""
+    if old_gist_id is not None:
+        markdown = ""
+    new_data["files"]["_.md"] = {"content": markdown + gist_history}
+    data = json.dumps(new_data)
+    data.encode('utf-8')
+
+    #print "DATA", code
+    #data = urllib.urlencode(code)
+
+    headers = {'content-type': 'application/json; charset=utf-8', 'accept': 'application/json', 'encoding':'UTF-8'}
+    url = url.encode('utf-8')
+    if token is not None:
+        headers['Authorization'] = 'token ' + token
+        req = urllib2.Request(url, data, headers=headers)
+    else:
         req = urllib2.Request(url, data, headers=headers)
 
     #to save over a gist
-    if(id is not None):
-        #print "PATCH", url
+    if(old_gist_id is not None):
         req.get_method = lambda: 'PATCH'
 
     response = urllib2.urlopen(req)
-    #print "RESP", response
     ret = response.read()
-    #print "ret", ret
+
+    new_gist_id = old_gist_id
+    # Crated a new gist so we need to update the markdown
+    if (old_gist_id is None):
+        anon_gist_id = json.loads(ret)["id"]
+        newgist = save__req_update(old_gist_id, anon_gist_id, data, token)
+        ret = json.dumps(newgist)
+
     resp = make_response(ret, 200)
     resp.headers['Content-Type'] = 'application/json'
 
@@ -278,6 +382,12 @@ def save(id, data, token=None):
 @app.route("/tributary/save", methods=["POST"])
 @app.route("/tributary/save/<id>", methods=["POST"])
 def save_endpoint(id=None):
+    #from urlparse import urlparse
+    #parsed = urlparse('http://example.com')
+    #print parsed.hostname
+    #ufile = urllib2.urlopen(request.url)
+    #baseurl = ufile.geturl()
+    #print baseurl
     data = request.values.get("gist")
     token = session.get("access_token", None)
     return save(id, data, token)
@@ -285,49 +395,93 @@ def save_endpoint(id=None):
 
 #Save a tributary to a gist
 @app.route("/tributary/fork", methods=["POST"])
-@app.route("/tributary/fork/<id>", methods=["POST"])
-def fork_endpoint(id=None):
+@app.route("/tributary/fork/<prev_gist_id>", methods=["POST"])
+def fork_endpoint(prev_gist_id=None):
     #TODO: check id is valid
+#    print "ENTER ENDPOINT"
+#    print "prev_gist_id= ",prev_gist_id
 
+    # Data is the content to patch the gist with
     data = request.values.get("gist")
     data = data.encode('utf-8')
 
     token = session.get("access_token", None)
     userid = session.get("userid", None)
+
+#    print 'userid=' , userid
+#    print 'token=' , token
+    #if (token is not None) or (prev_gist_id is not None):
+
+#    print json.loads(data).get("user", {})
     gist_userid = json.loads(data).get("user", {}).get("id", None)
 
-    #print 'gist_userid=' , gist_userid
-    #print 'userid=' , userid
-    #print 'token=' , token 
+#    print 'gist_userid=' , gist_userid
 
-    if(id is None or token is None):
-        return save(None, data, token)
-    #if user doesn't own this gist, just fork it
-    elif(userid == gist_userid):
-        newgist = fork(id, token)
-        resp = make_response(json.dumps(newgist), 200)
-        resp.headers['Content-Type'] = 'application/json'
-        return resp
+    newgist = None
+
+    if(prev_gist_id is None):
+        # Starting from zero history
+        print "NO GIST"
+        # Fork with None for history
+        newgist = fork__req_new(None, data, token)
+    elif(userid is None):
+        # if user doesn't own this gist, just fork it
+        print "ANON forks SELF/USER"
+        newgist = fork__req_new(prev_gist_id, data, token)
     else:
-        #hacky shit. github won't let me fork a gist a user already owns
-        #first we make anon fork
-        anonid = fork(id)["id"]
-        #then we fork that with our account
-        newid = fork(anonid, token)["id"]
-        #then we save over with the original data
-        return save(newid, data, token)
+        # User owns gist, create a new fork
+        print "USER forks SELF/ANON"
+        # Fork the Gist (with our Username to get a new ID) and update it with the history of
+        # forks
+        anon_gist_id = fork__req_new(prev_gist_id, data, token)["id"]
+        newgist = save__req_update(prev_gist_id, anon_gist_id, data, token)
+#    print "NEW GIST: ", newgist
+    resp = make_response(json.dumps(newgist), 200)
+    resp.headers['Content-Type'] = 'application/json'
+    return resp
 
+def fetch_gist_content(id, token=None):
+    if id is None:
+        return None
+    url = 'https://api.github.com/gists/' + id
+    #need data to make this a post request
+    #data = None
+    data = "{}"
+    headers = {
+            'content-type': 'application/json; charset=utf-8',
+            'accept': 'application/json',
+            'encoding':'UTF-8'
+    }
+    if token is not None:
+        #authenticate the request
+        headers['Authorization'] = 'token ' + token
+        #data = "{authenticity_token:" + token + "}"
+        #data = "{access_token:" + token + "}"
+        #print "LOGGED IN, using TOKEN", token
+        #url += "?access_token="+token
+        #url = url.encode('utf-8')
+        req = urllib2.Request(url, headers=headers)
+        #req = urllib2.Request(url, data)
+    else:
+        print "NOT LOGGED IN"
+        req = urllib2.Request(url, headers=headers)
+
+    response = urllib2.urlopen(req)
+
+    ret = response.read()
+    gist = json.loads(ret)
+    return gist
 
 def fork(id, token=None):
     #print "FORKING", id
-   
+
     url = 'https://api.github.com/gists/' + id + '/fork'
     #need data to make this a post request
     #data = None
     data = "{}"
     headers = {
-            'content-type': 'application/json; charset=utf-8', 
-            'accept': 'application/json', 
+            'content-type': 'application/json; charset=utf-8',
+            'accept': 'application/json',
             'encoding':'UTF-8'
     }
     if token is not None:
@@ -340,10 +494,10 @@ def fork(id, token=None):
         #url = url.encode('utf-8')
         req = urllib2.Request(url, data, headers=headers)
         #req = urllib2.Request(url, data)
-    else: 
+    else:
         #print "NOT LOGGED IN"
         req = urllib2.Request(url, data, headers=headers)
-    
+
     response = urllib2.urlopen(req)
 
     ret = response.read()
@@ -379,15 +533,15 @@ def creator():
 """
 @app.route("/geyser/<gist>/<filename>")
 def geyser_gist(gist=None, filename=None):
-    return render_defaults("geyser.html", gist=gist, filename=default_filename, base_url=base_url) 
+    return render_defaults("geyser.html", gist=gist, filename=default_filename, base_url=base_url)
 
 @app.route("/fountain/<gist>/<filename>")
 def fountain_gist(gist=None, filename=None):
-    return render_defaults("fountain.html", gist=gist, filename=default_filename, base_url=base_url) 
+    return render_defaults("fountain.html", gist=gist, filename=default_filename, base_url=base_url)
 
 @app.route("/carbonite/<gist>/<filename>")
 def carbonite_gist(gist=None, filename=None):
-    return render_defaults("carbonite.html", gist=gist, filename=default_filename, base_url=base_url) 
+    return render_defaults("carbonite.html", gist=gist, filename=default_filename, base_url=base_url)
 """
 
 if __name__ == "__main__":
