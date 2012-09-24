@@ -1,9 +1,6 @@
 [submodule "static/lib/d3plugins"]
 	path = static/lib/d3plugins
 	url = https://github.com/d3/d3-plugins.git
-[submodule "static/data"]
-	path = static/data
-	url = git://github.com/enjalot/Bay-Area-d3.git
 [submodule "static/lib/d3-cloud"]
 	path = static/lib/d3-cloud
 	url = https://github.com/jasondavies/d3-cloud.git

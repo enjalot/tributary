@@ -102,7 +102,8 @@ tributary.Config = Backbone.Model.extend({
           height: 300,
           hide: false
         },
-        endpoint: "tributary"
+        endpoint: "tributary",
+        public: true
     }
 });
 
@@ -178,7 +179,7 @@ tributary.TributaryView = Backbone.View.extend({
         var cachebust = "?cachebust=" + Math.random() * 4242424242424242;
 
 
-        this.model.local_storage();
+        //this.model.local_storage();
         //store the code in localstorage before we load from the gist
         var oldcode = this.model.get("code");
 
@@ -563,15 +564,17 @@ tributary.TributaryView = Backbone.View.extend({
           .text("emacs");
 
         //
-        topbar.append("button")
+        var locstore = topbar.append("button")
           .text("Load Local Storage")
           .classed("button_on", true)
           .classed("hidebutton", true)
-          .on("click", function() {
-            //really this should be for any editor window
-            that.model.local_storage()
-            that.code_editor.setValue(that.model.get("code"));
-          }); 
+
+        topbar.append("input")
+          .attr("type", "checkbox")
+          .attr("class", "public_check")
+        topbar.append("span")
+          .text("public");
+
 
 
 
@@ -605,6 +608,14 @@ tributary.TributaryView = Backbone.View.extend({
         if(code !== undefined && code !== "") {
           code_editor.setValue(code);
         }
+
+        locstore.on("click", function() {
+            //really this should be for any editor window
+            that.model.local_storage()
+            code_editor.setValue(that.model.get("code"));
+        }); 
+
+
 
         /////////////////////////////////////////////////
 
@@ -805,7 +816,20 @@ tributary.TributaryView = Backbone.View.extend({
                 code_editor.setOption("keyMap", "default");
             }
         });
+        
+        var pp = editor_el.find('.public_check');
 
+        //TODO: smarter way to check if we have no gist
+        if(that.model.get("gist").length > 4) {
+          pp.attr("disabled", true)
+        }
+        if(that.config.get("public")) {
+          pp.attr("checked", true)
+        }
+        pp.on("change", function(e) {
+          var public_on = pp.is(":checked");
+          that.config.set("public", public_on);
+        })
 
         return code_editor;
 
@@ -813,7 +837,7 @@ tributary.TributaryView = Backbone.View.extend({
     save_gist: function(saveorfork, callback) {
         //console.log("ENDPOINT", @endpoint)
         //Save the current code to a public gist
-        var oldgist = parseInt(this.model.get("gist"), 10);
+        var oldgist = this.model.get("gist");//parseInt(this.model.get("gist"), 10);
 
         //We now assume all tributaries will be saved as inlet.js
         //so this code is a bit redundant, but it might be useful in the future
@@ -821,9 +845,11 @@ tributary.TributaryView = Backbone.View.extend({
         //if(filename === ""){
         filename = "inlet.js";
         //}
+        console.log("PUBLIC", this.config.get("public"))
         var gist = {
             description: 'just another inlet to tributary',
-            public: true,
+            //public: true,
+            public: this.config.get("public"),
             files: {}
         };
         gist.files[filename] = {
@@ -893,7 +919,7 @@ tributary.TributaryView = Backbone.View.extend({
         }
 
         //check if we have an existing gist number
-        if(oldgist > 0) {
+        if(oldgist.length > 4) {
           url += '/' + oldgist;
         }
         //console.log("url", url)
