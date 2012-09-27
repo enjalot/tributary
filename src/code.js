@@ -1,12 +1,22 @@
 
 //Base Model for all code and data files (js/cs, json, csv, html, css)
 //serves mostly as the event system for other components to interact with
-tributary.Code = Backbone.Model.extend({
+tributary.CodeModel = Backbone.Model.extend({
 
   defaults: {
     code: "",
-    coffee: false,
     filename: "inlet.js",
+    name: "inlet",
+    type: "js", 
+  
+    //this configuration is mostly for the editor
+    config: {
+      coffee: false,
+      vim: false,
+      emacs: false,
+      hide: false
+    }
+
   },
 
   //we have default behavior for handling some events
@@ -17,8 +27,6 @@ tributary.Code = Backbone.Model.extend({
   binder: function() {
     this.on("error", this.handle_error);
   },
-
-  //
   handle_error: function(e) {
     if(tributary.trace) {
       console.trace();
@@ -40,4 +48,9 @@ tributary.Code = Backbone.Model.extend({
     localStorage[ep] = code;
   },
 
+});
+
+
+tributary.CodeModels = Backbone.Model.extend({
+  model: tributary.CodeModel
 });

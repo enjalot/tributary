@@ -19,14 +19,16 @@
 {% endblock %}
 
 {% block scripts %}
+    <script src='/static/ui.js'></script>
 {% endblock %}
 
 {% block jsinit %}
-    model = new tributary.Tributary({"gist":"{{gist}}", "filename":"{{filename}}"})
-    tribView = new tributary.TributaryView({"model":model})
+(function() {
+    tributary.assemble("{{gist}}")
 
     window.onresize = function(event) {
         resize();
-        model.trigger("execute")
+        //model.trigger("execute")
     }
+}())
 {% endblock %}

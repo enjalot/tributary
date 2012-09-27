@@ -33,19 +33,6 @@
 
 
     <script type="text/javascript">
-        window.tributary = {}
-        var tributary = window.tributary
-        //provide global trib object
-        window.trib = {};
-        window.trib_options = {};
-        tributary.loggedin = "{{ loggedin }}" === "True";
-        tributary.username = "{{ username }}";
-        tributary.avatar = "{{ avatar }}";
-        tributary.userid = parseInt("{{ userid }}");
-        tributary.userurl = "{{ userurl }}";
-    </script>
-
-    <script type="text/javascript">
         var _gaq = _gaq || [];
         _gaq.push(['_setAccount', 'UA-30237258-1']);
         _gaq.push(['_trackPageview']);
@@ -199,10 +186,19 @@
 
     <script src="/static/lib/inlet.js"></script>
     <script src='/static/util.js'></script>
-    <script src='/static/components/dial.js'></script>
+    <!--<script src='/static/components/dial.js'></script>-->
     <script src='/static/tributary.js'></script>
 
-    
+    <script type="text/javascript">
+        //provide global trib object
+        tributary.loggedin = "{{ loggedin }}" === "True";
+        tributary.username = "{{ username }}";
+        tributary.avatar = "{{ avatar }}";
+        tributary.userid = parseInt("{{ userid }}");
+        tributary.userurl = "{{ userurl }}";
+    </script>
+
+
 
     <!--
     <script src='/static/trib.js'></script>

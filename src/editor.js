@@ -1,34 +1,10 @@
 
-//The editor model.
-//contains configuration for the editor.
-//An editor will be responsible for one file.
-//The type of editor will determine some of the options it displays
-tributary.Editor = Backbone.Model.extend({
-  defaults: {        
-    filename: "inlet.js",
-    mode: "javascript", //matches CodeMirror modes
-    coffee: false,
-    vim: false,
-    emacs: false,
-    hide: false
-  },
-  initialize: function() {
-  },
-  
-});
-
-tributary.Editors = Backbone.Collection.extend({
-  model: tributary.Editor
-});
-
-
 //The editor view renders the CodeMirror editor and sets up the logic for interaction
-//with the code model as well as the editor's config
+//with the code model 
 tributary.EditorView = Backbone.View.extend({
   initialize: function() {
-    //we will keep track of the code model in addition to our editor model
-    this.code_model = this.options.code_model;
 
+    this.config = this.model.get("config");
     //TODO: drag and drop
   },
   render: function() {
@@ -44,7 +20,10 @@ tributary.EditorView = Backbone.View.extend({
         lineNumbers: true,
         onChange: function() {
             var code = cm.getValue();
-            that.code_model.trigger("code", code);
+            if(that.config.coffee) {
+              code = CoffeeScript.compile(code, {"bare":true});
+            }
+            that.model.trigger("code", code);
         }
     });
 

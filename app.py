@@ -31,6 +31,8 @@ def render_defaults(template, gist=None, filename=None):
     if filename is None:
         filename=default_filename
 
+    if gist is None:
+        gist=""
     return render_template(template, 
         gist=gist, 
         filename=filename, 
