@@ -2,5 +2,5 @@
 *.un~
 *.pyc
 .DS_Store
-static/water
 npm-debug.log
+node_modules

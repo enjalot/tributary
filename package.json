@@ -1,0 +1,30 @@
+{
+  "name": "tributary",
+  "version": "1.0.0",
+  "description": "A live coding playground for producing visuals on the web.",
+  "keywords": [
+    "dom",
+    "w3c",
+    "visualization",
+    "svg",
+    "animation",
+    "canvas"
+  ],
+  "homepage": "http://enjalot.com",
+  "author": {
+    "name": "Ian Johnson",
+    "url": "http://enja.org"
+  },
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/enjalot/tributary.git"
+  },
+  "devDependencies": {
+    "uglify-js": "1.2.3",
+    "vows": "0.6.x",
+    "canvas": "0.12.1"
+  },
+  "scripts": {
+    "test": "./node_modules/vows/bin/vows"
+  }
+}
