@@ -12,13 +12,14 @@ tributary.Context = Backbone.View.extend({
 
   execute: function() {   
     var js = this.model.handle_coffee();
+    var that = this;
     try {
         tributary.initialize = new Function("g", js);
     } catch (e) {
         this.trigger("error", e);
         return false;
     }
-    
+
     try {
         //for the datGUI stuff
         //TODO: move this out of here to it's own function
@@ -38,6 +39,8 @@ tributary.Context = Backbone.View.extend({
         return false;
     }
     this.model.trigger("noerror");
+
+    
 
     return true;
 },

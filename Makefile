@@ -20,6 +20,8 @@ all: \
 	src/context.js \
 	src/editor.js \
 	src/gist.js \
+	src/files.js \
+	src/controls.js \
 	src/delta.js \
 	src/end.js
 

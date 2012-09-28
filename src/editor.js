@@ -32,6 +32,18 @@ tributary.Editor = Backbone.View.extend({
     this.cm.setValue(this.model.get("code"));
     this.inlet = Inlet(this.cm);
 
+    this.model.on("error", function() {
+      d3.select(that.el).select(".CodeMirror-gutter")
+        .style({
+          "border-right": "2px solid red",
+        }) ;
+    });
+    this.model.on("noerror", function() {
+      d3.select(that.el).select(".CodeMirror-gutter")
+        .style({
+          "border-right": "1px solid #aaa",
+        }) ;
+    });
 
   }
 });

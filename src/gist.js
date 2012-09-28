@@ -55,7 +55,7 @@ tributary.gist = function(id, callback) {
           "name":fsplit[0],
           "code":data.files[f].content,
           "type": ext,
-          "config": ret.config.toJSON()
+          //"config": ret.config.toJSON() //TODO: set the config for this file!
         });
         ret.models.add(model);
       }
@@ -63,6 +63,7 @@ tributary.gist = function(id, callback) {
       
     });
 
-    callback(ret);
+    ret.config.require(callback, ret);
+    //callback(ret);
   });
 };

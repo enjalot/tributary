@@ -16,13 +16,13 @@
   var header = d3.select("#header");
 
   tributary.dims = {
+    display_percent: 0.70,
     page_width: 0,
     page_height: 0,
     display_width: 0,
     display_height: 0,
     panel_width: 0,
     panel_height: 0,
-    display_percent: 0.70,
     panel_gui_width: 0,
     panel_gui_height: 40
   };
@@ -55,8 +55,84 @@
 
     tributary.sw = tributary.dims.display_width;
     tributary.sh = tributary.dims.display_height;
+    update_panel_layout();
   });
   tributary.events.trigger("resize");
+
+  //panel event object for keeping track of show/hide of various children
+  var panel_events = _.clone(Backbone.Events);
+
+
+  ////////////////////////////////////////////////////////////////////////
+  // Setup the Panel GUI for switching between windows in the panel
+  ////////////////////////////////////////////////////////////////////////
+  
+  var panel_data = ["edit", "files", "config", "controls"];
+  var pb_w = 60; //width of each button
+  var panel_buttons = panel_gui.selectAll("g.pb")
+    .data(panel_data)
+    .enter()
+    .append("g")
+    .classed("pb", true)
+    .attr({
+      id: function(d) { return d + "_tab"; },
+    })
+  .on("mouseover", function() {
+    d3.select(this).select("text")
+      .style("fill", "#00f");
+  })
+  .on("mouseout", function() {
+    d3.select(this).select("text")
+      .style("fill", "");
+  })
+  .on("click", function(d) {
+    panel_events.trigger("show", d);
+  });
+
+  panel_buttons.append("rect")
+    .attr({
+      width: pb_w,
+      height: 20
+    });
+  panel_buttons.append("text")
+    .text(function(d) { return d; })
+    .attr({
+      x: pb_w/2,
+      y: 4,
+      "text-anchor": "middle",
+      "alignment-baseline": "hanging",
+      "pointer-events":"none"
+    });
+
+  function update_panel_layout() {
+    panel_gui.selectAll("g.pb").attr({
+      transform: function(d,i) {
+          var x = tributary.dims.panel_gui_width - (i+1) * (pb_w + 5) + 5;
+          var y = tributary.dims.panel_gui_height - 20;
+          return "translate(" + [x,y] + ")";
+        }
+    });
+  }
+  update_panel_layout();
+
+  //Logic for tabs
+  panel_events.on("show", function(name) {
+    //hide all panel divs
+    $("#panel").children("div")
+      .css("display", "none");
+
+    //show the one we want
+    panel.select("#" + name)
+      .style("display", "");
+
+    //update the panel_gui ui
+    panel_gui.selectAll("g.pb")
+      .classed("gui_active", false);
+    panel_gui.select("#" + name + "_tab")
+      .classed("gui_active", true);
+  });
+  panel_events.trigger("show", "edit");
+
 
 
 
@@ -91,8 +167,15 @@
     var editor;
     ui.editors = [];
     var type;
+    
+    var edit = panel.select("#edit");
     ret.models.each(function(m) {
       type = m.get("type");
+
+      //create a div for the editor inside the panel
+      edel = edit.append("div")
+        .attr("id", m.cid);
+
       //select appropriate html ui containers
       // and create contexts
       if(type === "js") {
@@ -102,7 +185,7 @@
         });
         ui.contexts.push(context);
         context.render();
-        make_editor(m);
+        make_editor(edel.node(), m);
       }
       else if(type === "json") {
         context = new tributary.JSONContext({
@@ -110,7 +193,7 @@
         });
         ui.contexts.push(context);
         context.execute();
-        make_editor(m);
+        make_editor(edel.node(), m);
       }
       
     });
@@ -125,15 +208,33 @@
       }
     });
 
+    //fill in the file view
+    var config_view = new tributary.ConfigView({
+      el: "#config",
+      model: ret.config,
+    });
+
+    //fill in the file view
+    var files_view = new tributary.FilesView({
+      el: "#files",
+      model: ret.config,
+    });
+
+    //fill in the control view
+    var controls_view = new tributary.ControlsView({
+      el: "#controls",
+      model: ret.config,
+    });
+
+
+
   }
 
-  function make_editor(model) {
+  function make_editor(container, model) {
     var editor;
-    edel = panel.append("div")
-        .attr("id", model.cid);
     editor = new tributary.Editor({
-      model: model,
-      el: edel.node()
+      el: container,
+      model: model
     });
     editor.render();
     ui.editors.push(editor);

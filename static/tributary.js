@@ -60,8 +60,20 @@
   tributary.Config = Backbone.Model.extend({
     defaults: {
       endpoint: "tributary",
-      "public": true
+      "public": true,
+      require: []
+    },
+    require: function(callback, ret) {
+      var modules = this.get("require");
+      var scripts = _.pluck(modules, "url");
+      var rcb = function() {
+        return callback(ret, arguments);
+      };
+      require(scripts, rcb);
     }
+  });
+  tributary.ConfigView = Backbone.View.extend({
+    render: function() {}
   });
   tributary.Context = Backbone.View.extend({
     initialize: function() {
@@ -69,6 +81,7 @@
     },
     execute: function() {
       var js = this.model.handle_coffee();
+      var that = this;
       try {
         tributary.initialize = new Function("g", js);
       } catch (e) {
@@ -134,6 +147,16 @@
       });
       this.cm.setValue(this.model.get("code"));
       this.inlet = Inlet(this.cm);
+      this.model.on("error", function() {
+        d3.select(that.el).select(".CodeMirror-gutter").style({
+          "border-right": "2px solid red"
+        });
+      });
+      this.model.on("noerror", function() {
+        d3.select(that.el).select(".CodeMirror-gutter").style({
+          "border-right": "1px solid #aaa"
+        });
+      });
     }
   });
   tributary.gist = function(id, callback) {
@@ -175,15 +198,22 @@
             filename: f,
             name: fsplit[0],
             code: data.files[f].content,
-            type: ext,
-            config: ret.config.toJSON()
+            type: ext
           });
           ret.models.add(model);
         }
       });
-      callback(ret);
+      ret.config.require(callback, ret);
     });
   };
+  tributary.FilesView = Backbone.View.extend({
+    initialize: function() {},
+    render: function() {}
+  });
+  tributary.ControlsView = Backbone.View.extend({
+    initialize: function() {},
+    render: function() {}
+  });
   tributary.DeltaContext = Backbone.View.extend({
     initialize: function() {},
     render: function() {}
