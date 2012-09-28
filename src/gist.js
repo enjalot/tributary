@@ -42,6 +42,7 @@ tributary.gist = function(id, callback) {
     var files = _.keys(data.files);
     //console.log("files", files)
     
+    ret.models = new tributary.CodeModels();
     var fsplit, model, context, i = 0, ext;
     files.forEach(function(f) {
       fsplit = f.split("."); 
@@ -56,6 +57,7 @@ tributary.gist = function(id, callback) {
           "type": ext,
           "config": ret.config.toJSON()
         });
+        ret.models.add(model);
       }
 
       

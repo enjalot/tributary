@@ -30,10 +30,22 @@ tributary.CodeModel = Backbone.Model.extend({
   handle_error: function(e) {
     if(tributary.trace) {
       console.trace();
-      //console.log(e);
-      console.error(e);
+      console.log(e);
+      //console.error(e);
     }
   },
+
+  handle_coffee: function() {
+    //This checks if coffeescript is being used
+    //and returns compiled javascript
+    var js = this.get("code");
+    if(this.get("config").coffee) {
+      //compile the coffee
+      js = CoffeeScript.compile(js, {"bare":true});
+    }
+    return js;
+  },
+ 
 
   //main use case of local storage is recovery after a crash
   //uniqueness comes from filename and optional user defined key
@@ -51,6 +63,6 @@ tributary.CodeModel = Backbone.Model.extend({
 });
 
 
-tributary.CodeModels = Backbone.Model.extend({
+tributary.CodeModels = Backbone.Collection.extend({
   model: tributary.CodeModel
 });

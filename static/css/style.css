@@ -54,24 +54,43 @@ cols    1     2      3      4      5      6      7      8      9      10
 px      68    160    252    344    436    528    620    712    804    896    */
 
 body {
-/*    width: 896px;
-    padding: 72px 48px 84px; */
     background: rgb(232,232,232);
     color: rgb(60,60,60);
     -webkit-text-size-adjust: 100%; /* Stops Mobile Safari from auto-adjusting font-sizes */
     font-family: 'Open Sans', Helvetica, sans-serif;
 
+    width: 100%;
+    height: 100%;
+    position:absolute;
+    bottom:0px;
+    top:0px;
+    overflow:hidden;
 }
+
+
+#page {
+    width: 100%;
+    height: 100%;
+}
+
+#display {
+    float:left;
+}
+
+#panel {
+    background-color: black;
+    float:left;
+}
+
+#panel_gui {
+    float:right;
+    background-color: black;
+    right: 0px;
+}
+
 
 #header a:link, #header a:hover, #header a:visited {
     color: white;
-
-}
-#header:hover #branding {
-    top: 6px;
-    background-color: rgba(0,0,0,0.1);
-      -webkit-box-shadow: inset 0px 0px 5px 0px rgba(0,0,0,0.2); /* Saf3-4, iOS 4.0.2 - 4.2, Android 2.3+ */
-          box-shadow: inset 0px 0px 5px 0px     rgba(0,0,0,0.2); /* Opera 10.5, IE9, FF4+, Chrome 6+, iOS 5 */
 
 }
 
@@ -82,43 +101,43 @@ body {
     padding-top: 12px;
     padding-bottom: 12px;
     width: 100%;
+    height: 45px;
+
     color: white;
-
     z-index: 200; /*lay header on top of datgui */
-    position: fixed;
-    top: -36px;
+}
 
-     -webkit-transition: all .4s ease-in-out;  /* Saf3.2+, Chrome */
-     -moz-transition:    all .4s ease-in-out;  /* FF4+ */
-       -o-transition:    all .4s ease-in-out;  /* Opera 10.5+ */
-          transition:    all .4s ease-in-out;
-}
-#header:hover {
-    top: 0;
-}
 #header #branding {
-/*
-    -webkit-box-shadow: inset 0px 1px 8px 1px rgba(0,0,0,0.4); 
-    box-shadow:         inset 0px 1px 8px 1px rgba(0,0,0,0.4); 
-*/
     text-shadow: 0px 2px 0px rgba(0,0,0,0.8); /* FF3.5+, Opera 9+, Saf1+, Chrome, IE10 */
     background-color: rgba(0,0,0,0.5);
     border-radius: 6px;
 
+    top: 6px;
+    background-color: rgba(0,0,0,0.1);
+      -webkit-box-shadow: inset 0px 0px 5px 0px rgba(0,0,0,0.2); /* Saf3-4, iOS 4.0.2 - 4.2, Android 2.3+ */
+          box-shadow: inset 0px 0px 5px 0px     rgba(0,0,0,0.2); /* Opera 10.5, IE9, FF4+, Chrome 6+, iOS 5 */
 
     letter-spacing: 0.15em;
     padding-top: 6px;
     padding-bottom: 6px;
     padding-left: 8px;
     padding-right: 8px;
-    top: 50px;
     position: absolute;
     margin-right: 48px;
-    -webkit-transition:  all .4s ease-in;  /* Saf3.2+, Chrome */
-     -moz-transition:    all .4s ease-in;  /* FF4+ */
-       -o-transition:    all .4s ease-in;  /* Opera 10.5+ */
-          transition:    all .4s ease-in;
 }
+
+
+
+#save_gui {
+    position: absolute;
+    right: 5px;
+    /*right: 320px; */
+    top: 6px;
+}
+#datgui {
+ top: 10px;
+}
+
 
 #gui {
     padding: 12px;
@@ -132,15 +151,8 @@ body {
     background-color: rgba(255,255,255,0.72);
     border: 1px solid rgba(0,0,0,0.35);
 }
-#save_gui {
-    position: absolute;
-    right: 5px;
-    /*right: 320px; */
-    top: 6px;
-}
-#datgui {
- top: 10px;
-}
+
+
 
  
 #gist_info {
@@ -152,18 +164,19 @@ body {
     margin-left: 148px;
     font-size: 10px;
 }
-#page {
 
-}
-#display {
-    
-}
 
 .editor {
     width: 100%;
-    position: fixed;
-    right: 0;
-    bottom: 45px;
+    height: 100%;
+}
+.editor .CodeMirror {
+    width: 100%;
+    height: 100%;
+}
+.editor .CodeMirror-scroll {
+    width: 100%;
+    height: 100%;
 }
 
 
@@ -332,144 +345,4 @@ body {
 
 
 
-
-
-/*      Tablet Layout: 768px.
-        Gutters: 24px.
-        Outer margins: 28px.
-        Inherits styles from: Default Layout.
------------------------------------------------------------------
-cols    1     2      3      4      5      6      7      8
-px      68    160    252    344    436    528    620    712    */
-
-@media only screen and (min-width: 768px) and (max-width: 991px) {
-    
-    body {
-/*        width: 712px; */
-/*        padding: 48px 28px 60px; */
-        padding-top: 50px;
-    }
-    #page {
-        width: 100%;
-    }
-    #header {
-/*        font-size: 14px; */
-        height: 50px;
-        padding: 10px 5px;
-        top: 0;
-        /*background-color: #212121;*/
-        background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(33, 33, 33, 1.00)), to(rgba(0, 0, 0, 0.91)));
-        background-image: -webkit-linear-gradient(top, rgba(33, 33, 33, 1.00), rgba(0, 0, 0, 0.91));
-        background-image: -moz-linear-gradient(top, rgba(33, 33, 33, 1.00), rgba(0, 0, 0, 0.91));
-        background-image: -o-linear-gradient(top, rgba(33, 33, 33, 1.00), rgba(0, 0, 0, 0.91));
-        background-image: -ms-linear-gradient(top, rgba(33, 33, 33, 1.00), rgba(0, 0, 0, 0.91));
-        background-image: linear-gradient(top, rgba(33, 33, 33, 1.00), rgba(0, 0, 0, 0.91));
-        filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,StartColorStr='#212121', EndColorStr='#000000');
-        
-    }
-    #header #branding {
-        position: static;
-        display: inline-block;
-        margin-right: 8px;
-    }
-    #header button {
-        margin-top: 5px;
-    }
-    #gist_info {
-        margin-left: 48px;
-    }
-    #loggedin {
-        margin-left: 48px;
-    }
-
-    #datgui {
-        top: 50px;
-    }
-    
-}
-
-
-
-/*      Mobile Layout: 320px.
-        Gutters: 24px.
-        Outer margins: 34px.
-        Inherits styles from: Default Layout.
----------------------------------------------
-cols    1     2      3
-px      68    160    252    */
-
-@media only screen and (max-width: 767px) {
-    
-    body {
-        width: 100%;
-/*        width: 252px; */
-/*        padding: 48px 34px 60px; */
-    }
-    #page {
-        width: 100%;
-    }
-    #header {
-/*        font-size: 14px; */
-        height: 50px;
-        padding: 10px 5px;
-        top: 0;
-        /*background-color: #212121;*/
-        background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(33, 33, 33, 1.00)), to(rgba(0, 0, 0, 0.91)));
-        background-image: -webkit-linear-gradient(top, rgba(33, 33, 33, 1.00), rgba(0, 0, 0, 0.91));
-        background-image: -moz-linear-gradient(top, rgba(33, 33, 33, 1.00), rgba(0, 0, 0, 0.91));
-        background-image: -o-linear-gradient(top, rgba(33, 33, 33, 1.00), rgba(0, 0, 0, 0.91));
-        background-image: -ms-linear-gradient(top, rgba(33, 33, 33, 1.00), rgba(0, 0, 0, 0.91));
-        background-image: linear-gradient(top, rgba(33, 33, 33, 1.00), rgba(0, 0, 0, 0.91));
-        filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,StartColorStr='#212121', EndColorStr='#000000');
-
-    }
-    #header #branding {
-        position: static;
-        display: inline-block;
-        margin-right: 8px;
-    }
-    #header button {
-        margin-top: 5px;
-    }
-    #gist_info {
-        margin-left: 28px;
-    }
-    #loggedin {
-        margin-left: 28px;
-    }
- 
-    #save_gui {
-        top: 14px;
-     /*   right: 288px;*/
-        right: 5px;
-    }
-    /* move datGUI over */
-    #datgui {
-        top: 50px;
-    }
-    #save_gui button{
-        font-size: 11px !important;
-        padding: 2px 4px;
-    }
-}
-
-
-
-/*      Wide Mobile Layout: 480px.
-        Gutters: 24px.
-        Outer margins: 22px.
-        Inherits styles from: Default Layout, Mobile Layout.
-------------------------------------------------------------
-cols    1     2      3      4      5
-px      68    160    252    344    436    */
-
-@media only screen and (min-width: 480px) and (max-width: 767px) {
-    
-    body {
-/*        width: 436px; */
-        width: 100%;
-/*        padding: 36px 22px 48px; */
-    }
-    
-}
 

@@ -1,8 +1,13 @@
 (function() {
   var tributary = {};
   window.tributary = tributary;
+  tributary.events = _.clone(Backbone.Events);
+  tributary.data = {};
   window.trib = {};
   window.trib_options = {};
+  window.addEventListener("resize", function(event) {
+    tributary.events.trigger("resize", event);
+  });
   tributary.CodeModel = Backbone.Model.extend({
     defaults: {
       code: "",
@@ -25,8 +30,17 @@
     handle_error: function(e) {
       if (tributary.trace) {
         console.trace();
-        console.error(e);
+        console.log(e);
       }
+    },
+    handle_coffee: function() {
+      var js = this.get("code");
+      if (this.get("config").coffee) {
+        js = CoffeeScript.compile(js, {
+          bare: true
+        });
+      }
+      return js;
     },
     local_storage: function(key) {
       if (!key) {
@@ -40,7 +54,7 @@
       localStorage[ep] = code;
     }
   });
-  tributary.CodeModels = Backbone.Model.extend({
+  tributary.CodeModels = Backbone.Collection.extend({
     model: tributary.CodeModel
   });
   tributary.Config = Backbone.Model.extend({
@@ -50,47 +64,76 @@
     }
   });
   tributary.Context = Backbone.View.extend({
-    initialize: function() {},
-    render: function() {}
-  });
-  tributary.JSONContext = Backbone.View.extend({
     initialize: function() {
-      this.model.on("code", this.execute);
+      this.model.on("change:code", this.execute, this);
     },
     execute: function() {
+      var js = this.model.handle_coffee();
       try {
-        var json = JSON.parse(this.get("code"));
-        tributary[this.get("name")] = json;
+        tributary.initialize = new Function("g", js);
       } catch (e) {
         this.trigger("error", e);
         return false;
       }
-      this.trigger("noerror");
+      try {
+        window.trib = {};
+        window.trib_options = {};
+        trib = window.trib;
+        trib_options = window.trib_options;
+        $(this.el).children("svg").empty();
+        tributary.initialize(this.svg);
+      } catch (er) {
+        this.model.trigger("error", er);
+        return false;
+      }
+      this.model.trigger("noerror");
+      return true;
+    },
+    render: function() {
+      this.svg = d3.select(this.el).append("svg").attr({
+        xmlns: "http://www.w3.org/2000/svg",
+        xlink: "http://www.w3.org/1999/xlink",
+        "class": "tributary_svg"
+      });
+    }
+  });
+  tributary.JSONContext = Backbone.View.extend({
+    initialize: function() {
+      this.model.on("code", this.execute, this);
+    },
+    execute: function() {
+      try {
+        var json = JSON.parse(this.model.get("code"));
+        tributary[this.model.get("name")] = json;
+      } catch (e) {
+        this.model.trigger("error", e);
+        return false;
+      }
+      this.model.trigger("noerror");
       return true;
     },
     render: function() {}
   });
-  tributary.EditorView = Backbone.View.extend({
+  tributary.Editor = Backbone.View.extend({
     initialize: function() {
       this.config = this.model.get("config");
     },
     render: function() {
       var that = this;
-      console.log("editor el", this.el);
+      d3.select(this.el).attr({
+        "class": "editor"
+      });
       this.cm = CodeMirror(this.el, {
         mode: "javascript",
         theme: "lesser-dark",
         lineNumbers: true,
         onChange: function() {
-          var code = cm.getValue();
-          if (that.config.coffee) {
-            code = CoffeeScript.compile(code, {
-              bare: true
-            });
-          }
-          that.model.trigger("code", code);
+          var code = that.cm.getValue();
+          that.model.set("code", code);
         }
       });
+      this.cm.setValue(this.model.get("code"));
+      this.inlet = Inlet(this.cm);
     }
   });
   tributary.gist = function(id, callback) {
@@ -122,6 +165,7 @@
         ret.config = new tributary.Config;
       }
       var files = _.keys(data.files);
+      ret.models = new tributary.CodeModels;
       var fsplit, model, context, i = 0, ext;
       files.forEach(function(f) {
         fsplit = f.split(".");
@@ -134,6 +178,7 @@
             type: ext,
             config: ret.config.toJSON()
           });
+          ret.models.add(model);
         }
       });
       callback(ret);

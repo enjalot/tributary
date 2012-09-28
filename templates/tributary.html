@@ -3,17 +3,6 @@
 
 {% block title %}Tributary{% endblock %}
 
-{% block style %}
-    <link rel='stylesheet' type='text/css' href='/static/css/tributary.css' />
-{% endblock %}
-
-{% block gui %}
-    <div id='display'>
-        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" class="tributary_svg"></svg>
-    </div>
-{% endblock %}
-
-
 {% block branding %}
 	<h1>Tributary</h1>
 {% endblock %}
@@ -22,13 +11,9 @@
     <script src='/static/ui.js'></script>
 {% endblock %}
 
+
 {% block jsinit %}
 (function() {
-    tributary.assemble("{{gist}}")
-
-    window.onresize = function(event) {
-        resize();
-        //model.trigger("execute")
-    }
+    ui.assemble("{{gist}}")
 }())
 {% endblock %}

@@ -47,108 +47,76 @@
     </head>
 <body>
 
+<div id='page'>
 {% block chrome %}
-<div id="header">
-    <div id="branding">
-    {% block branding%}
-    {% endblock %}
-    </div> 
-    <div id="gist_info"></div>
+        <div id="header">
+            <div id="branding">
+                {% block branding%}
+                {% endblock %}
+            </div> 
+            <div id="gist_info"></div>
+            <div id="save_gui"> 
+                        {% if not loggedin %}
+                        anon
+                        <button id='loginPanel' class="button_on"> Login </button>
+                        {% else %}
+                        <a href="http://github.com/{{ username }}">{{ username }}</a>
+                        <button id='loginPanel' class="button_on"> Logout </button>
+                        {% endif %}
+                   
+                    <button id='savePanel' class="button_on">
+                        Save
+                        <!--
+                        : <img src="/static/css/floppy.png" width="24" height="24" alt="Floppy">&nbsp;
+                        <div class='address'><a href='#'>https://gist.github.com/b9ab9418af567e575b3e</a></div>
+                        -->
+                    </button>
 
-    <div id="save_gui"> 
-                {% if not loggedin %}
-                anon
-                <button id='loginPanel' class="button_on"> Login </button>
-                {% else %}
-                <a href="http://github.com/{{ username }}">{{ username }}</a>
-                <button id='loginPanel' class="button_on"> Logout </button>
-                {% endif %}
-           
-            <button id='savePanel' class="button_on">
-                Save
+                    <button id='forkPanel' class="button_on">
+                        Fork
+                        <!--
+                        : <img src="/static/css/floppy.png" width="24" height="24" alt="Floppy">&nbsp;
+                        <div class='address'><a href='#'>https://gist.github.com/b9ab9418af567e575b3e</a></div>
+                        -->
+                    </button>
+                    
+                    <!--
+                    <button id="tweetPanel" class="minimal">
+                        Tweet:
+                        <img id="twiticon" src="/static/css/twitter.png"></img>
+                        
+                    </button>
+                    -->
+                </div>
                 <!--
-                : <img src="/static/css/floppy.png" width="24" height="24" alt="Floppy">&nbsp;
-                <div class='address'><a href='#'>https://gist.github.com/b9ab9418af567e575b3e</a></div>
+                <div id="loggedin">
+                    {% if loggedin %}
+                    Logged in as: 
+                        <a href="http://github.com/{{ username }}">{{ username }}</a>
+                    {% else %}
+                    Not logged in (user: anon)
+                    {% endif %}
+                </div>
                 -->
-            </button>
 
-            <button id='forkPanel' class="button_on">
-                Fork
-                <!--
-                : <img src="/static/css/floppy.png" width="24" height="24" alt="Floppy">&nbsp;
-                <div class='address'><a href='#'>https://gist.github.com/b9ab9418af567e575b3e</a></div>
-                -->
-            </button>
+                <br>
+
+        </div>
             
-            <!--
-            <button id="tweetPanel" class="minimal">
-                Tweet:
-                <img id="twiticon" src="/static/css/twitter.png"></img>
-                
-            </button>
-            -->
-        </div>
-        <!--
-        <div id="loggedin">
-            {% if loggedin %}
-            Logged in as: 
-                <a href="http://github.com/{{ username }}">{{ username }}</a>
-            {% else %}
-            Not logged in (user: anon)
-            {% endif %}
-        </div>
-        -->
-
-        <br>
-
-    </div>
-        <img id="syncing" src="/static/img/syncing.gif"/>
-
-    <div id="hideEditors"></div>
+            <img id="syncing" src="/static/img/syncing.gif"/>
 
 {% endblock %}
 
-    <div id='page'>
-
-        {% block gui %}
-        {% endblock %}
-     
-        <!--
-        <div id='editor'>
-
-		<div id="editor-topbar">
-			<button id="hideEditor">Hide</button>
-            
-			<input type="checkbox" id="coffee_check"> CoffeeScript</input>
-            <input type="checkbox" id="vim_check"> vim</input>
-            <input type="checkbox" id="emacs_check"> emacs</input>
-
-		</div>
-
+        <div id="display">
         </div>
-        -->
+
+        <div id="panel_gui"></div>
+
+        <div id="panel"></div>
+
         <div id="slider"></div>
 
     </div>
-
-
-    {% block attribution %}
-    <!--
-    <div id='aboutAndAttribution'>
-        <p>100% totally based on Bret Victor's genius <a href='http://vimeo.com/36579366'>Inventing on Principle</a> talk<p>
-        <p>further inspired by 
-        <a href="http://bl.ocks.org"> bl.ocks.org </a>
-        and
-        <a href='http://gabrielflor.it/blog-water'>water</a>
-        </p>
-
-        <p><a href='https://github.com/enjalot/tributary'>source code</a> on github</p>
-        <p><a href='https://mainstem.org'>gallery</a></p>
-        <br/>
-    
-    </div>
-    -->
-    {% endblock %}
 
 
     
@@ -216,23 +184,6 @@
     else
         document.body.onmousedown=function(){return false};
     document.body.style.cursor = "default";
-
-    var header_factor = 5;
-    //always have the screen width and height
-    tributary.sw = window.innerWidth;
-    tributary.sh = window.innerHeight - header_factor;
-    d3.select("svg").attr("width", tributary.sw);
-    d3.select("svg").attr("height", tributary.sh);
-
-    function resize() {
-        tributary.sw = window.innerWidth;
-        tributary.sh = window.innerHeight - header_factor;
-        d3.select("svg").attr("width", tributary.sw);
-        d3.select("svg").attr("height", tributary.sh);
-    }
-    window.onresize = function(event) {
-        resize();
-    }
 
     {% block jsinit %}
     {% endblock %}
