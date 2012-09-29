@@ -5,6 +5,12 @@
 //The primary purpose of the context will be to supply the event handler for the 
 //execute event from the code model
 tributary.Context = Backbone.View.extend({
+  initialize: function() {},
+  execute: function() {},
+  render: function() {}
+});
+  
+tributary.TributaryContext = tributary.Context.extend({
 
   initialize: function() {
     this.model.on("change:code", this.execute, this);
@@ -40,10 +46,8 @@ tributary.Context = Backbone.View.extend({
     }
     this.model.trigger("noerror");
 
-    
-
     return true;
-},
+  },
 
   render: function() {
     //Use mustache or other templates here? naaah...
@@ -59,7 +63,7 @@ tributary.Context = Backbone.View.extend({
 });
 
 
-tributary.JSONContext = Backbone.View.extend({
+tributary.JSONContext = tributary.Context.extend({
 
   initialize: function() {
     this.model.on("code", this.execute, this);

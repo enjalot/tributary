@@ -18,8 +18,9 @@ tributary.Config = Backbone.Model.extend({
     };
     require(scripts, rcb);
   }
-});
 
+
+});
 
 ////////////////////////////////////////////////////////////////////////
 // Config UI

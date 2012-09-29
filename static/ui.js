@@ -98,9 +98,9 @@
     .text(function(d) { return d; })
     .attr({
       x: pb_w/2,
-      y: 4,
+      y: 15,
       "text-anchor": "middle",
-      "alignment-baseline": "hanging",
+      //"alignment-baseline": "hanging",
       "pointer-events":"none"
     });
 
@@ -179,7 +179,8 @@
       //select appropriate html ui containers
       // and create contexts
       if(type === "js") {
-        context = new tributary.Context({
+        //context = new tributary.TributaryContext({
+        context = new tributary.context_map[ret.config.get("endpoint")]({
           model: m,
           el: display.node()
         });
@@ -197,7 +198,6 @@
       }
       
     });
-
 
     //when done, need to execute code (because json/csv etc need to load first)
     ui.contexts.forEach(function(c) {
