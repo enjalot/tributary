@@ -94,6 +94,9 @@ body {
     fill: #262626;
 }
 
+.error {
+    border-right: 2px solid red !important;
+}
 
 
 /* 4 constituents of the panel */

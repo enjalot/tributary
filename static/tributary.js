@@ -83,36 +83,201 @@
   tributary.TributaryContext = tributary.Context.extend({
     initialize: function() {
       this.model.on("change:code", this.execute, this);
+      this.config = this.options.config;
+      tributary.init = undefined;
+      tributary.run = undefined;
+      tributary.pause = true;
+      tributary.reverse = false;
+      tributary.loop = "period";
+      tributary.bv = false;
+      tributary.nclones = 15;
+      tributary.clonse_opacity = .4;
+      tributary.duration = 3e3;
+      tributary.t = 0;
+      tributary.ease = d3.ease("linear");
+      tributary.render = function() {};
+      var that = this;
+      that.timer = {
+        then: new Date,
+        duration: tributary.duration,
+        ctime: tributary.t
+      };
+      d3.timer(function() {
+        tributary.render();
+        if (tributary.pause) {
+          return false;
+        }
+        var now = new Date;
+        var dtime = now - that.timer.then;
+        var dt;
+        if (that.reverse) {
+          dt = that.timer.ctime * dtime / that.timer.duration * -1;
+        } else {
+          dt = (1 - that.timer.ctime) * dtime / that.timer.duration;
+        }
+        tributary.t = that.timer.ctime + dt;
+        if (tributary.loops) {
+          if (tributary.t >= 1 || tributary.t <= 0 || tributary.t === "NaN") {
+            if (that.loop === "period") {
+              tributary.t = 0;
+              that.timer.then = new Date;
+              that.timer.duration = tributary.duration;
+              that.timer.ctime = tributary.t;
+              that.reverse = false;
+            } else if (that.loop === "pingpong") {
+              tributary.t = !that.reverse;
+              that.timer.then = new Date;
+              that.timer.duration = tributary.duration;
+              that.timer.ctime = tributary.t;
+              that.reverse = !that.reverse;
+            } else {
+              if (tributary.t !== 0) {
+                tributary.t = 1;
+                tributary.pause = true;
+              }
+            }
+          }
+          if (tributary.t === true) {
+            tributary.t = 1;
+          }
+          if (tributary.t === false) {
+            tributary.t = 0;
+          }
+          $("#slider").attr("value", tributary.t);
+        }
+        if (tributary.run !== undefined) {
+          var t = tributary.t;
+          if (tributary.loops) {
+            t = tributary.ease(tributary.t);
+          }
+          tributary.run(that.g, t, 0);
+        }
+      });
     },
     execute: function() {
       var js = this.model.handle_coffee();
       var that = this;
       try {
         tributary.initialize = new Function("g", js);
+        tributary.initialize(this.g);
       } catch (e) {
-        this.trigger("error", e);
+        this.model.trigger("error", e);
         return false;
+      }
+      if (tributary.bv) {
+        try {
+          $(this.clones.node()).empty();
+          this.make_clones();
+        } catch (er) {
+          this.model.trigger("error", er);
+        }
       }
       try {
         window.trib = {};
         window.trib_options = {};
         trib = window.trib;
         trib_options = window.trib_options;
-        $(this.el).children("svg").empty();
-        tributary.initialize(this.svg);
-      } catch (er) {
-        this.model.trigger("error", er);
+        tributary.clear();
+        tributary.initialize(this.g);
+        if (tributary.autoinit && tributary.init !== undefined) {
+          tributary.init(this.g, 0);
+        }
+        if (tributary.run !== undefined) {
+          tributary.run(this.g, tributary.ease(tributary.t), 0);
+        }
+      } catch (err) {
+        this.model.trigger("error", err);
         return false;
       }
       this.model.trigger("noerror");
       return true;
     },
     render: function() {
+      var display = this.config.get("display");
+      if (display === "svg") {
+        this.make_svg();
+      } else if (display === "canvas") {
+        this.make_canvas();
+      } else if (display === "webgl") {
+        this.make_webgl();
+      } else if (display === "div") {
+        tributary.clear = function() {
+          this.$el.empty();
+        };
+      } else {
+        tributary.clear = function() {
+          this.$el.empty();
+        };
+      }
+    },
+    make_svg: function() {
       this.svg = d3.select(this.el).append("svg").attr({
         xmlns: "http://www.w3.org/2000/svg",
         xlink: "http://www.w3.org/1999/xlink",
         "class": "tributary_svg"
       });
+      this.g = this.svg;
+      var that = this;
+      tributary.clear = function() {
+        $(that.g.node()).empty();
+      };
+    },
+    make_canvas: function() {
+      tributary.clear = function() {
+        tributary.canvas.width = tributary.sw;
+        tributary.canvas.height = tributary.sh;
+        tributary.ctx.clearRect(0, 0, tributary.sw, tributary.sh);
+      };
+      tributary.canvas = d3.select(this.el).append("canvas").classed("tributary_canvas", true).node();
+      tributary.ctx = tributary.canvas.getContext("2d");
+      this.g = tributary.ctx;
+    },
+    make_clones: function() {
+      this.clones = this.svg.append("g").attr("id", "clones");
+      this.g = this.svg.append("g").attr("id", "delta");
+      var frames = d3.range(tributary.nclones);
+      var gf = this.clones.selectAll("g.bvclone").data(frames).enter().append("g").attr("class", "bvclone").style("opacity", tributary.clone_opacity);
+      gf.each(function(d, i) {
+        var j = i + 1;
+        var frame = d3.select(this);
+        tributary.init(frame, j);
+        var t = tributary.ease(j / (tributary.nclones + 1));
+        tributary.run(frame, t, j);
+      });
+    },
+    make_webgl: function() {
+      container = this.el;
+      tributary.camera = new THREE.PerspectiveCamera(70, tributary.sw / tributary.sh, 1, 1e3);
+      tributary.camera.position.y = 150;
+      tributary.camera.position.z = 500;
+      tributary.scene = new THREE.Scene;
+      THREE.Object3D.prototype.clear = function() {
+        var children = this.children;
+        var i;
+        for (i = children.length - 1; i >= 0; i--) {
+          var child = children[i];
+          child.clear();
+          this.remove(child);
+        }
+      };
+      tributary.renderer = new THREE.WebGLRenderer;
+      tributary.renderer.setSize(tributary.sw, tributary.sh);
+      container.appendChild(tributary.renderer.domElement);
+      tributary.render = function() {
+        tributary.renderer.render(tributary.scene, tributary.camera);
+      };
+      tributary.render();
+      function onWindowResize() {
+        windowHalfX = tributary.sw / 2;
+        windowHalfY = tributary.sh / 2;
+        tributary.camera.aspect = tributary.sw / tributary.sh;
+        tributary.camera.updateProjectionMatrix();
+        tributary.renderer.setSize(tributary.sw, tributary.sh);
+      }
+      tributary.events.on("resize", onWindowResize, false);
+      tributary.clear = function() {
+        tributary.scene.clear();
+      };
     }
   });
   tributary.JSONContext = tributary.Context.extend({
@@ -269,14 +434,10 @@
       this.cm.setValue(this.model.get("code"));
       this.inlet = Inlet(this.cm);
       this.model.on("error", function() {
-        d3.select(that.el).select(".CodeMirror-gutter").style({
-          "border-right": "2px solid red"
-        });
+        d3.select(that.el).select(".CodeMirror-gutter").classed("error", true);
       });
       this.model.on("noerror", function() {
-        d3.select(that.el).select(".CodeMirror-gutter").style({
-          "border-right": "1px solid #aaa"
-        });
+        d3.select(that.el).select(".CodeMirror-gutter").classed("error", false);
       });
     }
   });

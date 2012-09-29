@@ -167,6 +167,35 @@
     var editor;
     ui.editors = [];
     var type;
+
+    var endpoint = ret.config.get("endpoint");
+
+    if(endpoint === "delta") {
+      ret.config.set("display", "svg");
+      tributary.loops = true;
+      tributary.autoinit = true;
+
+    } else if (endpoint === "cypress") {
+      ret.config.set("display", "canvas");
+      tributary.autoinit = true;
+
+    } else if (endpoint === "curiosity") {
+      ret.config.set("display", "webgl");
+      tributary.autoinit = true;
+      
+    } else if (endpoint === "bigfish") {
+      ret.config.set("display", "svg");
+      tributary.autoinit = false;
+      
+    } else if (endpoint === "fly") {
+      ret.config.set("display", "canvas");
+      tributary.autoinit = false;
+
+    }
+
+    if(!ret.config.get("display")) {
+      ret.config.set("display", "svg");
+    }
     
     var edit = panel.select("#edit");
     ret.models.each(function(m) {
@@ -179,8 +208,9 @@
       //select appropriate html ui containers
       // and create contexts
       if(type === "js") {
-        //context = new tributary.TributaryContext({
-        context = new tributary.context_map[ret.config.get("endpoint")]({
+        //context = new tributary.context_map[ret.config.get("endpoint")]({
+        context = new tributary.TributaryContext({
+          config: ret.config,
           model: m,
           el: display.node()
         });
@@ -190,6 +220,7 @@
       }
       else if(type === "json") {
         context = new tributary.JSONContext({
+          config: ret.config,
           model: m,
         });
         ui.contexts.push(context);
