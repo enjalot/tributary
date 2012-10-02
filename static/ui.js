@@ -59,9 +59,6 @@
   });
   tributary.events.trigger("resize");
 
-  //panel event object for keeping track of show/hide of various children
-  var panel_events = _.clone(Backbone.Events);
-
 
   ////////////////////////////////////////////////////////////////////////
   // Setup the Panel GUI for switching between windows in the panel
@@ -86,7 +83,7 @@
       .style("fill", "");
   })
   .on("click", function(d) {
-    panel_events.trigger("show", d);
+    tributary.events.trigger("show", d);
   });
 
   panel_buttons.append("rect")
@@ -116,7 +113,7 @@
   update_panel_layout();
 
   //Logic for tabs
-  panel_events.on("show", function(name) {
+  tributary.events.on("show", function(name) {
     //hide all panel divs
     $("#panel").children("div")
       .css("display", "none");
@@ -131,7 +128,7 @@
     panel_gui.select("#" + name + "_tab")
       .classed("gui_active", true);
   });
-  panel_events.trigger("show", "edit");
+  tributary.events.trigger("show", "edit");
 
 
 
@@ -161,40 +158,43 @@
 
   //callback function to handle response from gist unpacking
   function _assemble(ret) {
-    ui.contexts = [];
+    var config = ret.config;
+
+    config.contexts = [];
     var context;
     var edel;
     var editor;
     ui.editors = [];
     var type;
 
-    var endpoint = ret.config.get("endpoint");
+
+    var endpoint = config.get("endpoint");
 
     if(endpoint === "delta") {
-      ret.config.set("display", "svg");
+      config.set("display", "svg");
       tributary.loops = true;
       tributary.autoinit = true;
 
     } else if (endpoint === "cypress") {
-      ret.config.set("display", "canvas");
+      config.set("display", "canvas");
       tributary.autoinit = true;
 
     } else if (endpoint === "curiosity") {
-      ret.config.set("display", "webgl");
+      config.set("display", "webgl");
       tributary.autoinit = true;
       
     } else if (endpoint === "bigfish") {
-      ret.config.set("display", "svg");
+      config.set("display", "svg");
       tributary.autoinit = false;
       
     } else if (endpoint === "fly") {
-      ret.config.set("display", "canvas");
+      config.set("display", "canvas");
       tributary.autoinit = false;
 
     }
 
-    if(!ret.config.get("display")) {
-      ret.config.set("display", "svg");
+    if(!config.get("display")) {
+      config.set("display", "svg");
     }
     
     var edit = panel.select("#edit");
@@ -204,26 +204,28 @@
       //create a div for the editor inside the panel
       edel = edit.append("div")
         .attr("id", m.cid);
+      console.log(m, type)
 
       //select appropriate html ui containers
       // and create contexts
+      // TODO: if name === "inlet.js" otherwise we do a JSContext for .js
       if(type === "js") {
-        //context = new tributary.context_map[ret.config.get("endpoint")]({
+        //context = new tributary.context_map[config.get("endpoint")]({
         context = new tributary.TributaryContext({
-          config: ret.config,
+          config: config,
           model: m,
           el: display.node()
         });
-        ui.contexts.push(context);
+        config.contexts.push(context);
         context.render();
         make_editor(edel.node(), m);
       }
       else if(type === "json") {
         context = new tributary.JSONContext({
-          config: ret.config,
+          config: config,
           model: m,
         });
-        ui.contexts.push(context);
+        config.contexts.push(context);
         context.execute();
         make_editor(edel.node(), m);
       }
@@ -231,7 +233,7 @@
     });
 
     //when done, need to execute code (because json/csv etc need to load first)
-    ui.contexts.forEach(function(c) {
+    config.contexts.forEach(function(c) {
       //select appropriate html ui containers
       // and create contexts
       if(c.model.get("type") === "js") {
@@ -242,20 +244,23 @@
     //fill in the file view
     var config_view = new tributary.ConfigView({
       el: "#config",
-      model: ret.config,
+      model: config,
     });
+    config_view.render();
 
     //fill in the file view
     var files_view = new tributary.FilesView({
       el: "#files",
-      model: ret.config,
+      model: config,
     });
+    files_view.render();
 
     //fill in the control view
     var controls_view = new tributary.ControlsView({
       el: "#controls",
-      model: ret.config,
+      model: config,
     });
+    controls_view.render();
 
 
 

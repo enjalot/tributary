@@ -107,17 +107,44 @@ body {
 #controls{
     width: 100%;
     height: 100%;
-    display: none;
 }
 #config {
     width: 100%;
     height: 100%;
-    display: none;
 }
+.display {
+    padding: 5px 5px 5px 5px;
+    margin: 5px 5px 5px 5px;
+    color: #fff;
+}
+.display:hover {
+    background: #393939;
+    cursor: pointer;
+}
+.display_active {
+    background: #5a5a5a;
+}
+.display .description {
+    font-size: 10px;
+}
+.config_title {
+    font-size: 20px;
+    color:#fff;
+    margin: 5px;
+}
+
+
 #files {
     width: 100%;
     height: 100%;
-    display: none;
+}
+.fv {
+    padding: 5px;
+    color: #fff;
+}
+.fv:hover {
+    background: #393939;
+    cursor: pointer;
 }
 
 .editor {

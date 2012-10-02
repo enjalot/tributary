@@ -13,8 +13,13 @@ tributary.Context = Backbone.View.extend({
 tributary.TributaryContext = tributary.Context.extend({
 
   initialize: function() {
+    //
     this.model.on("change:code", this.execute, this);
+    //allow other context's to make this code execute
+    tributary.events.on("execute", this.execute, this);
+
     this.config = this.options.config;
+    this.config.on("change:display", this.set_display, this);
 
     tributary.init = undefined;
     tributary.run = undefined;
@@ -28,7 +33,7 @@ tributary.TributaryContext = tributary.Context.extend({
     tributary.loop = "period"; //["off", "period", "pingpong"]
     tributary.bv = false;
     tributary.nclones = 15;
-    tributary.clonse_opacity = 0.4;
+    tributary.clone_opacity = 0.4;
     tributary.duration = 3000;
     tributary.t = 0;
     tributary.ease = d3.ease("linear");
@@ -46,7 +51,7 @@ tributary.TributaryContext = tributary.Context.extend({
     };
 
     d3.timer(function() {
-      tributary.render()
+      tributary.render();
       //if paused lets not execute
       if(tributary.pause) { return false; }
 
@@ -61,6 +66,7 @@ tributary.TributaryContext = tributary.Context.extend({
       tributary.t = that.timer.ctime + dt;
       
 
+      //TODO: implement play button, should reset the timer
       if(tributary.loops) {
         //once we reach 1, lets pause and stay there
         if(tributary.t >= 1 || tributary.t <= 0 || tributary.t === "NaN")
@@ -111,22 +117,13 @@ tributary.TributaryContext = tributary.Context.extend({
     var js = this.model.handle_coffee();
     var that = this;
     try {
-        tributary.initialize = new Function("g", js);
-        tributary.initialize(this.g);
+      eval(js);
+      //tributary.initialize = new Function("g", js);
+      //tributary.initialize(this.g);
     } catch (e) {
         this.model.trigger("error", e);
         return false;
     }
-
-    if(tributary.bv) {
-        //d3.selectAll(".bvclone").remove(); 
-        try {
-          $(this.clones.node()).empty();
-          this.make_clones();
-        } catch (er) {
-          this.model.trigger("error", er);
-        }
-      }
 
     try {
         //for the datGUI stuff
@@ -139,8 +136,14 @@ tributary.TributaryContext = tributary.Context.extend({
         //empty out our display element
         tributary.clear();
 
+        if(this.clones) { $(this.clones.node()).empty(); }
+        if(tributary.bv) {
+          this.make_clones();
+        }
+
         //execute the code
-        tributary.initialize(this.g);
+        eval(js);
+        //tributary.initialize(this.g);
 
         if(tributary.autoinit && tributary.init !== undefined) {
           tributary.init(this.g, 0);
@@ -160,10 +163,14 @@ tributary.TributaryContext = tributary.Context.extend({
   },
 
   render: function() {
+    //check config for display to use
+    this.set_display(); 
+  },
 
-  //check config for display to use
-  var display = this.config.get("display");
-  if(display === "svg") {
+  set_display: function() {
+    this.$el.empty();
+    var display = this.config.get("display");
+    if(display === "svg") {
       this.make_svg();
     } else if (display === "canvas") {
       this.make_canvas(); 
@@ -194,6 +201,8 @@ tributary.TributaryContext = tributary.Context.extend({
     var that = this;
     tributary.clear = function() {
       $(that.g.node()).empty();
+      //this handles delta (clones)
+      //$(that.svg.node()).empty();
     };
 
   },
@@ -215,9 +224,19 @@ tributary.TributaryContext = tributary.Context.extend({
 
   },
 
+  //TODO: make canvas clones
   make_clones: function() {
-    this.clones = this.svg.append("g").attr("id", "clones");
-    this.g = this.svg.append("g").attr("id", "delta");
+    //create the clone and delta g elements if they don't exist
+    this.clones = this.svg.selectAll("g.clones")
+      .data([0]);
+    this.clones
+      .enter()
+      .append("g").attr("class", "clones");
+    this.g = this.svg.selectAll("g.delta")
+      .data([0]);
+    this.g
+      .enter()
+      .append("g").attr("class", "delta");
  
     //make n frames with lowered opacity
     var frames = d3.range(tributary.nclones);
@@ -301,12 +320,14 @@ tributary.TributaryContext = tributary.Context.extend({
 });
 
 
-
-
 tributary.JSONContext = tributary.Context.extend({
 
   initialize: function() {
-    this.model.on("code", this.execute, this);
+    this.model.on("change:code", this.execute, this);
+    this.model.on("change:code", function() {
+      console.log("execute???");
+      tributary.events.trigger("execute");
+    });
   },
 
   execute: function() {
@@ -330,4 +351,9 @@ tributary.JSONContext = tributary.Context.extend({
 });
 
 
+//tributary.JSContext = tributary.Context.extend({
+
+//tributary.CSVContext = tributary.Context.extend({
+//tributary.CSSContext = tributary.Context.extend({
+//tributary.HTMLContext = tributary.Context.extend({
 

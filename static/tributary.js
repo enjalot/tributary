@@ -70,10 +70,39 @@
         return callback(ret, arguments);
       };
       require(scripts, rcb);
+    },
+    initialize: function() {
+      this.on("hide", function() {
+        this.contexts.forEach(function(context) {
+          context.model.trigger("hide");
+        });
+      }, this);
     }
   });
   tributary.ConfigView = Backbone.View.extend({
-    render: function() {}
+    render: function() {
+      var that = this;
+      d3.select(this.el).append("span").classed("config_title", true).text("Display:");
+      var displays = d3.select(this.el).append("div").classed("displays", true).selectAll("div.display").data(tributary.displays).enter().append("div").classed("display", true);
+      var initdisplay = this.model.get("display");
+      displays.each(function(d) {
+        console.log(d.name, initdisplay);
+        if (d.name === initdisplay) {
+          d3.select(this).classed("display_active", true);
+        }
+      });
+      displays.append("span").text(function(d) {
+        return d.name;
+      });
+      displays.append("span").text(function(d) {
+        return " " + d.description;
+      }).classed("description", true);
+      displays.on("click", function(d) {
+        d3.select(this.parentNode).selectAll("div.display").classed("display_active", false);
+        d3.select(this).classed("display_active", true);
+        that.model.set("display", d.name);
+      });
+    }
   });
   tributary.Context = Backbone.View.extend({
     initialize: function() {},
@@ -83,7 +112,9 @@
   tributary.TributaryContext = tributary.Context.extend({
     initialize: function() {
       this.model.on("change:code", this.execute, this);
+      tributary.events.on("execute", this.execute, this);
       this.config = this.options.config;
+      this.config.on("change:display", this.set_display, this);
       tributary.init = undefined;
       tributary.run = undefined;
       tributary.pause = true;
@@ -91,7 +122,7 @@
       tributary.loop = "period";
       tributary.bv = false;
       tributary.nclones = 15;
-      tributary.clonse_opacity = .4;
+      tributary.clone_opacity = .4;
       tributary.duration = 3e3;
       tributary.t = 0;
       tributary.ease = d3.ease("linear");
@@ -158,19 +189,10 @@
       var js = this.model.handle_coffee();
       var that = this;
       try {
-        tributary.initialize = new Function("g", js);
-        tributary.initialize(this.g);
+        eval(js);
       } catch (e) {
         this.model.trigger("error", e);
         return false;
-      }
-      if (tributary.bv) {
-        try {
-          $(this.clones.node()).empty();
-          this.make_clones();
-        } catch (er) {
-          this.model.trigger("error", er);
-        }
       }
       try {
         window.trib = {};
@@ -178,7 +200,13 @@
         trib = window.trib;
         trib_options = window.trib_options;
         tributary.clear();
-        tributary.initialize(this.g);
+        if (this.clones) {
+          $(this.clones.node()).empty();
+        }
+        if (tributary.bv) {
+          this.make_clones();
+        }
+        eval(js);
         if (tributary.autoinit && tributary.init !== undefined) {
           tributary.init(this.g, 0);
         }
@@ -193,6 +221,10 @@
       return true;
     },
     render: function() {
+      this.set_display();
+    },
+    set_display: function() {
+      this.$el.empty();
       var display = this.config.get("display");
       if (display === "svg") {
         this.make_svg();
@@ -233,8 +265,10 @@
       this.g = tributary.ctx;
     },
     make_clones: function() {
-      this.clones = this.svg.append("g").attr("id", "clones");
-      this.g = this.svg.append("g").attr("id", "delta");
+      this.clones = this.svg.selectAll("g.clones").data([ 0 ]);
+      this.clones.enter().append("g").attr("class", "clones");
+      this.g = this.svg.selectAll("g.delta").data([ 0 ]);
+      this.g.enter().append("g").attr("class", "delta");
       var frames = d3.range(tributary.nclones);
       var gf = this.clones.selectAll("g.bvclone").data(frames).enter().append("g").attr("class", "bvclone").style("opacity", tributary.clone_opacity);
       gf.each(function(d, i) {
@@ -282,7 +316,11 @@
   });
   tributary.JSONContext = tributary.Context.extend({
     initialize: function() {
-      this.model.on("code", this.execute, this);
+      this.model.on("change:code", this.execute, this);
+      this.model.on("change:code", function() {
+        console.log("execute???");
+        tributary.events.trigger("execute");
+      });
     },
     execute: function() {
       try {
@@ -416,6 +454,12 @@
   tributary.Editor = Backbone.View.extend({
     initialize: function() {
       this.config = this.model.get("config");
+      this.model.on("show", function() {
+        d3.select(this.el).style("display", "");
+      }, this);
+      this.model.on("hide", function() {
+        d3.select(this.el).style("display", "none");
+      }, this);
     },
     render: function() {
       var that = this;
@@ -490,15 +534,43 @@
   };
   tributary.FilesView = Backbone.View.extend({
     initialize: function() {},
+    render: function() {
+      var that = this;
+      var fvs = d3.select(this.el).selectAll("div").data(this.model.contexts);
+      var fv = fvs.enter().append("div").classed("fv", true);
+      fv.on("click", function(d) {
+        that.model.trigger("hide");
+        d.model.trigger("show");
+        tributary.events.trigger("show", "edit");
+      });
+      fv.append("span").text(function(d) {
+        return d.model.get("filename");
+      });
+    }
+  });
+  tributary.FileView = Backbone.View.extend({
     render: function() {}
   });
   tributary.ControlsView = Backbone.View.extend({
     initialize: function() {},
     render: function() {}
   });
-  tributary.context_map = {
-    tributary: tributary.TributaryContext,
-    delta: tributary.DeltaContext,
-    cypress: tributary.CypressContext
+  tributary.displays = [ {
+    name: "svg",
+    description: "creates an <svg> element for you to use"
+  }, {
+    name: "canvas",
+    description: "creates a <canvas> element and gives you a Context for the canvas"
+  }, {
+    name: "webgl",
+    description: "gives you a Three.js WebGLRenderer scene"
+  }, {
+    name: "div",
+    description: "gives you a plain old <div>"
+  } ];
+  d3.selection.prototype.moveToFront = function() {
+    return this.each(function() {
+      this.parentNode.appendChild(this);
+    });
   };
 })();

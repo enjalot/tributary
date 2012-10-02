@@ -6,6 +6,14 @@ tributary.Editor = Backbone.View.extend({
 
     this.config = this.model.get("config");
     //TODO: drag and drop
+
+    this.model.on("show", function() {
+      d3.select(this.el).style("display", "");
+    }, this);
+    this.model.on("hide", function() {
+      d3.select(this.el).style("display", "none");
+    }, this);
+
   },
   render: function() {
     var that = this;
