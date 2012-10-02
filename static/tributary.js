@@ -83,12 +83,12 @@
     render: function() {
       var that = this;
       d3.select(this.el).append("span").classed("config_title", true).text("Display:");
-      var displays = d3.select(this.el).append("div").classed("displays", true).selectAll("div.display").data(tributary.displays).enter().append("div").classed("display", true);
+      var displays = d3.select(this.el).append("div").classed("displays", true).selectAll("div.config").data(tributary.displays).enter().append("div").classed("config", true);
       var initdisplay = this.model.get("display");
       displays.each(function(d) {
         console.log(d.name, initdisplay);
         if (d.name === initdisplay) {
-          d3.select(this).classed("display_active", true);
+          d3.select(this).classed("config_active", true);
         }
       });
       displays.append("span").text(function(d) {
@@ -98,9 +98,21 @@
         return " " + d.description;
       }).classed("description", true);
       displays.on("click", function(d) {
-        d3.select(this.parentNode).selectAll("div.display").classed("display_active", false);
-        d3.select(this).classed("display_active", true);
+        d3.select(this.parentNode).selectAll("div.config").classed("config_active", false);
+        d3.select(this).classed("config_active", true);
         that.model.set("display", d.name);
+      });
+      d3.select(this.el).append("span").classed("config_title", true).text("Time Controls:");
+      var tcs = d3.select(this.el).append("div").classed("timecontrols", true).selectAll("div.config").data(tributary.time_controls).enter().append("div").classed("config", true);
+      tcs.each(function(d) {});
+      tcs.append("span").text(function(d) {
+        return d.name;
+      });
+      tcs.append("span").text(function(d) {
+        return " " + d.description;
+      }).classed("description", true);
+      tcs.on("click", function(d) {
+        d3.select(this).classed("config_active", !d3.select(this).classed("config_active"));
       });
     }
   });
@@ -567,6 +579,16 @@
   }, {
     name: "div",
     description: "gives you a plain old <div>"
+  } ];
+  tributary.time_controls = [ {
+    name: "play",
+    description: "gives you a play button, and tributary.t. if you provide tributary.run(g,t) it will be executed in a run loop"
+  }, {
+    name: "loop",
+    description: "gives you a loop where tributary.t goes from 0 to 1."
+  }, {
+    name: "restart",
+    description: "assumes you only want tributary.init(g) to be run when the restart button is clicked"
   } ];
   d3.selection.prototype.moveToFront = function() {
     return this.each(function() {

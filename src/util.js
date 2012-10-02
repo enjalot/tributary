@@ -7,6 +7,16 @@ tributary.displays = [
   {name:"div", description: "gives you a plain old <div>"},
 ];
 
+//TODO: add icons
+tributary.time_controls = [
+  {name:"play", description: "gives you a play button, and tributary.t. if you provide tributary.run(g,t) it will be executed in a run loop"},
+  {name:"loop", description: "gives you a loop where tributary.t goes from 0 to 1."},
+  {name:"restart", description: "assumes you only want tributary.init(g) to be run when the restart button is clicked"},
+];
+
+
+
+
 
 
 d3.selection.prototype.moveToFront = function() { 
