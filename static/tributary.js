@@ -63,10 +63,11 @@
       "public": true,
       require: [],
       play: false,
-      loops: false,
+      loop: false,
+      restart: false,
       autoinit: true,
       pause: true,
-      loop: "period",
+      loop_type: "period",
       bv: false,
       nclones: 15,
       clone_opacity: .4,
@@ -138,7 +139,6 @@
   });
   tributary.TributaryContext = tributary.Context.extend({
     initialize: function() {
-      var that = this;
       this.model.on("change:code", this.execute, this);
       tributary.events.on("execute", this.execute, this);
       this.config = this.options.config;
@@ -146,10 +146,10 @@
       var config = this.config;
       tributary.init = undefined;
       tributary.run = undefined;
-      tributary.loops = config.get("loops");
+      tributary.loop = config.get("loop");
       tributary.autoinit = config.get("autoinit");
       tributary.pause = config.get("pause");
-      tributary.loop = config.get("loop");
+      tributary.loop_type = config.get("loop_type");
       tributary.bv = config.get("bv");
       tributary.nclones = config.get("nclones");
       tributary.clone_opacity = config.get("clone_opacity");
@@ -161,10 +161,10 @@
       tributary.execute = function() {
         if (tributary.run !== undefined) {
           var t = tributary.t;
-          if (tributary.loops) {
+          if (tributary.loop) {
             t = tributary.ease(tributary.t);
           }
-          tributary.run(that.g, t, 0);
+          tributary.run(tributary.g, t, 0);
         }
       };
       tributary.timer = {
@@ -186,15 +186,15 @@
           dt = (1 - tributary.timer.ctime) * dtime / tributary.timer.duration;
         }
         tributary.t = tributary.timer.ctime + dt;
-        if (tributary.loops) {
+        if (tributary.loop) {
           if (tributary.t >= 1 || tributary.t <= 0 || tributary.t === "NaN") {
-            if (tributary.loop === "period") {
+            if (tributary.loop_type === "period") {
               tributary.t = 0;
               tributary.timer.then = new Date;
               tributary.timer.duration = tributary.duration;
               tributary.timer.ctime = tributary.t;
               tributary.reverse = false;
-            } else if (tributary.loop === "pingpong") {
+            } else if (tributary.loop_type === "pingpong") {
               tributary.t = !tributary.reverse;
               tributary.timer.then = new Date;
               tributary.timer.duration = tributary.duration;
@@ -220,7 +220,6 @@
     },
     execute: function() {
       var js = this.model.handle_coffee();
-      var that = this;
       try {
         eval(js);
       } catch (e) {
@@ -241,7 +240,7 @@
         }
         eval(js);
         if (tributary.autoinit && tributary.init !== undefined) {
-          tributary.init(this.g, 0);
+          tributary.init(tributary.g, 0);
         }
         tributary.execute();
       } catch (err) {
@@ -279,10 +278,9 @@
         xlink: "http://www.w3.org/1999/xlink",
         "class": "tributary_svg"
       });
-      this.g = this.svg;
-      var that = this;
+      tributary.g = this.svg;
       tributary.clear = function() {
-        $(that.g.node()).empty();
+        $(tributary.g.node()).empty();
       };
     },
     make_canvas: function() {
@@ -293,13 +291,13 @@
       };
       tributary.canvas = d3.select(this.el).append("canvas").classed("tributary_canvas", true).node();
       tributary.ctx = tributary.canvas.getContext("2d");
-      this.g = tributary.ctx;
+      tributary.g = tributary.ctx;
     },
     make_clones: function() {
       this.clones = this.svg.selectAll("g.clones").data([ 0 ]);
       this.clones.enter().append("g").attr("class", "clones");
-      this.g = this.svg.selectAll("g.delta").data([ 0 ]);
-      this.g.enter().append("g").attr("class", "delta");
+      tributary.g = this.svg.selectAll("g.delta").data([ 0 ]);
+      tributary.g.enter().append("g").attr("class", "delta");
       var frames = d3.range(tributary.nclones);
       var gf = this.clones.selectAll("g.bvclone").data(frames).enter().append("g").attr("class", "bvclone").style("opacity", tributary.clone_opacity);
       gf.each(function(d, i) {
@@ -517,6 +515,7 @@
     }
   });
   tributary.gist = function(id, callback) {
+    tributary.gistid = id;
     var ret = {};
     var cachebust = "?cachebust=" + Math.random() * 0xf12765df4c9b2;
     d3.json("https://api.github.com/gists/" + id + cachebust, function(data) {
@@ -563,6 +562,66 @@
       ret.config.require(callback, ret);
     });
   };
+  tributary.save_gist = function(config, saveorfork, callback) {
+    var oldgist = tributary.gistid || "";
+    var gist = {
+      description: "just another inlet to tributary",
+      "public": config.get("public"),
+      files: {}
+    };
+    config.contexts.forEach(function(context) {
+      gist.files[context.model.get("filename")] = {
+        content: context.model.get("code")
+      };
+    });
+    gist.files["config.json"] = {
+      content: JSON.stringify(config.toJSON())
+    };
+    if (config.display === "svg") {
+      var node = d3.select("svg").node();
+      var svgxml = (new XMLSerializer).serializeToString(node);
+      if ($.browser.webkit) {
+        svgxml = svgxml.replace(/ xlink/g, " xmlns:xlink");
+        svgxml = svgxml.replace(/ href/g, " xlink:href");
+      }
+      gist.files["inlet.svg"] = {
+        content: svgxml
+      };
+    }
+    var url;
+    if (saveorfork === "save") {
+      url = "/tributary/save";
+    } else if (saveorfork === "fork") {
+      url = "/tributary/fork";
+    }
+    if (oldgist.length > 4) {
+      url += "/" + oldgist;
+    }
+    var that = this;
+    $.post(url, {
+      gist: JSON.stringify(gist)
+    }, function(data) {
+      if (typeof data === "string") {
+        data = JSON.parse(data);
+      }
+      var newgist = data.id;
+      var newurl = "/tributary/" + newgist;
+      callback(newurl, newgist);
+    });
+  };
+  tributary.login_gist = function(loginorout, callback) {
+    var url;
+    if (loginorout) {
+      url = "/github-logout";
+    } else {
+      url = "/github-login";
+    }
+    url += "/tributary";
+    if (tributary.gistid) {
+      url += "/" + tributary.gistid;
+    }
+    callback(url);
+  };
   tributary.FilesView = Backbone.View.extend({
     initialize: function() {},
     render: function() {
@@ -585,6 +644,8 @@
   tributary.ControlsView = Backbone.View.extend({
     initialize: function() {
       this.model.on("change:play", this.play_button, this);
+      this.model.on("change:loop", this.time_slider, this);
+      this.model.on("change:restart", this.restart_button, this);
     },
     render: function() {
       var del = d3.select(this.el);
@@ -593,6 +654,7 @@
       del.append("div").attr("id", "time_options");
       this.play_button();
       this.time_slider();
+      this.restart_button();
     },
     play_button: function() {
       var tc = d3.select(this.el).select("#time_controls");
@@ -606,7 +668,7 @@
             pb.classed("playing", true);
             pb.text("Pause");
           }
-          if (tributary.t < 1 || !tributary.loops) {
+          if (tributary.t < 1 || !tributary.loop) {
             tributary.pause = !tributary.pause;
             if (!tributary.pause) {
               tributary.timer.then = new Date;
@@ -620,8 +682,9 @@
       }
     },
     time_slider: function() {
+      tributary.loop = this.model.get("loop");
       var tc = d3.select(this.el).select("#time_controls");
-      if (this.model.get("loops")) {
+      if (tributary.loop) {
         var ts = tc.append("input").attr({
           type: "range",
           min: 0,
@@ -639,14 +702,31 @@
         this.model.on("tick", function(t) {
           $(ts.node()).attr("value", tributary.t);
         });
-        var bv = tc.append("button").classed("bv", true).classed("button_on", true).text("BV");
-        bv.on("click", function() {
-          tributary.bv = !tributary.bv;
-          tributary.events.trigger("execute");
-        });
+        if (this.model.get("display") === "svg") {
+          var bv = tc.append("button").classed("bv", true).classed("button_on", true).text("BV");
+          bv.on("click", function() {
+            tributary.bv = !tributary.bv;
+            tributary.events.trigger("execute");
+          });
+        }
       } else {
+        tributary.bv = false;
         tc.select("input.time_slider").remove();
         tc.select("button.bv").remove();
+      }
+    },
+    restart_button: function() {
+      var that = this;
+      var tc = d3.select(this.el).select("#time_controls");
+      if (this.model.get("restart")) {
+        tributary.autoinit = false;
+        var rb = tc.append("button").classed("restart", true).classed("button_on", true).text("Restart");
+        rb.on("click", function(event) {
+          tributary.init(tributary.g);
+        });
+      } else {
+        tributary.autoinit = true;
+        tc.select("button.restart").remove();
       }
     }
   });

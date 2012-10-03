@@ -130,6 +130,27 @@
   });
   tributary.events.trigger("show", "edit");
 
+function setup_save(config) {
+  //Setup the save panel
+  $('#savePanel').on('click', function(e) {
+    d3.select("#syncing").style("display", "block");
+    tributary.save_gist(config, "save", function(newurl, newgist) {
+      window.location = newurl;
+    });
+  });
+  $('#forkPanel').on('click', function(e) {
+    d3.select("#syncing").style("display", "block");
+    tributary.save_gist(config, "fork", function(newurl, newgist) {
+      window.location = newurl;
+    });
+  });
+  //Setup the login button
+  $('#loginPanel').on('click', function(e) {
+    tributary.login_gist(tributary.loggedin, function(newurl, newgist) {
+      window.location = newurl;
+    }); 
+  });
+}
 
 
 
@@ -172,7 +193,7 @@
     if(endpoint === "delta") {
       config.set("display", "svg");
       config.set("play", true);
-      config.set("loops", true);
+      config.set("loop", true);
       config.set("autoinit", true);
 
     } else if (endpoint === "cypress") {
@@ -267,7 +288,7 @@
     });
     controls_view.render();
 
-
+    setup_save(config);
 
   }
 

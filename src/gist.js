@@ -2,6 +2,7 @@
 //Utility function for turning a gist into a bunch of tributary models
 //returns an object with those models and descriptive information
 tributary.gist = function(id, callback) {
+  tributary.gistid = id;
   //return object
   var ret = {};
 
@@ -67,3 +68,78 @@ tributary.gist = function(id, callback) {
     //callback(ret);
   });
 };
+
+
+tributary.save_gist = function(config, saveorfork, callback) {
+  var oldgist = tributary.gistid || "";
+
+  var gist = {
+      description: 'just another inlet to tributary',
+      public: config.get("public"),
+      files: {}
+  };
+
+  //save each model back into the gist
+  config.contexts.forEach(function(context) {
+    gist.files[context.model.get("filename")] = {
+        content: context.model.get("code")
+    };
+  });
+
+  //save config
+  gist.files["config.json"] = {
+    content: JSON.stringify(config.toJSON())
+  };
+
+  if(config.display === "svg") {
+    //serialize the current svg and save it to gist
+    var node = d3.select("svg").node();
+    var svgxml = (new XMLSerializer()).serializeToString(node);
+
+    if($.browser.webkit){ 
+        svgxml = svgxml.replace(/ xlink/g, ' xmlns:xlink');
+        svgxml = svgxml.replace(/ href/g, ' xlink:href');
+    }
+    gist.files["inlet.svg"] = {
+      content: svgxml
+    };
+  }
+
+  var url;
+  if(saveorfork === "save") {
+    url = '/tributary/save';
+  } else if(saveorfork === "fork") {
+    url = '/tributary/fork';
+  }
+
+  //check if we have an existing gist number
+  if(oldgist.length > 4) {
+    url += '/' + oldgist;
+  }
+
+  var that = this;
+  $.post(url, {"gist":JSON.stringify(gist)}, function(data) {
+      if(typeof(data) === "string") {
+        data = JSON.parse(data);
+      }
+      var newgist = data.id;
+      var newurl = "/tributary/" + newgist;
+      callback(newurl, newgist);
+  });
+};
+tributary.login_gist = function(loginorout, callback) {
+  var url;
+  if(loginorout) {
+    url = '/github-logout';
+  } else {
+    url = '/github-login';
+  }
+  url += '/tributary';
+  if (tributary.gistid) {
+    url+= '/' + tributary.gistid;
+  }
+  //window.location = url
+  callback(url);
+};
+
+

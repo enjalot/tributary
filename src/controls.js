@@ -4,6 +4,8 @@
 tributary.ControlsView = Backbone.View.extend({
   initialize: function() {
     this.model.on("change:play", this.play_button, this);
+    this.model.on("change:loop", this.time_slider, this);
+    this.model.on("change:restart", this.restart_button, this);
     
   },
   render: function() {
@@ -18,6 +20,7 @@ tributary.ControlsView = Backbone.View.extend({
 
     this.play_button();
     this.time_slider();
+    this.restart_button();
 
   },
 
@@ -41,7 +44,7 @@ tributary.ControlsView = Backbone.View.extend({
           pb.text("Pause");
         }
         
-        if(tributary.t < 1 || !tributary.loops) {
+        if(tributary.t < 1 || !tributary.loop) {
           tributary.pause = !tributary.pause;
           
           if(!tributary.pause) {
@@ -59,9 +62,9 @@ tributary.ControlsView = Backbone.View.extend({
   },
 
   time_slider: function() {
+    tributary.loop = this.model.get("loop");
     var tc = d3.select(this.el).select("#time_controls");
-    if(this.model.get("loops")) {
-
+    if(tributary.loop) {
       var ts = tc.append("input")
         .attr({
           type: "range",
@@ -85,22 +88,48 @@ tributary.ControlsView = Backbone.View.extend({
         $(ts.node()).attr("value", tributary.t);
       });
 
+      //TODO: generalize BV button to other displays
+      if(this.model.get("display") === "svg") {
+        var bv = tc.append("button")
+          .classed("bv", true)
+          .classed("button_on", true) 
+          .text("BV");
 
-      var bv = tc.append("button")
-        .classed("bv", true)
-        .classed("button_on", true) 
-        .text("BV");
-
-      bv.on("click", function() {
-        tributary.bv = !tributary.bv;
-        tributary.events.trigger("execute");
-      });
-
+        bv.on("click", function() {
+          tributary.bv = !tributary.bv;
+          tributary.events.trigger("execute");
+        });
+      }
 
     } else {
+      tributary.bv = false;
       tc.select("input.time_slider").remove();
       tc.select("button.bv").remove();
     }
 
   },
+
+  restart_button: function() {
+    var that = this;
+    //console.log("play!", this.model.get("play"));
+    //add/remove play button
+    var tc = d3.select(this.el).select("#time_controls");
+    if(this.model.get("restart")) {
+      tributary.autoinit = false;
+      //create the button
+      var rb = tc.append("button")
+        .classed("restart", true)
+        .classed("button_on", true) 
+        .text("Restart");
+
+      rb.on("click", function(event) {
+        tributary.init(tributary.g);
+      });
+    } else {
+      tributary.autoinit = true;
+      //destroy the button
+      tc.select("button.restart").remove();
+    }
+  },
+
 });

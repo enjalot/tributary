@@ -57,3 +57,11 @@ https://github.com/zmaril/Visualization-Data
 
 
 
+TODO:
+
+Remove all styling from code and use classes 
+Convert the panel_gui to divs (don't use svg)
+
+Make BV button work for any of the renders (not just svg)
+
+

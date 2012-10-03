@@ -13,7 +13,6 @@ tributary.Context = Backbone.View.extend({
 tributary.TributaryContext = tributary.Context.extend({
 
   initialize: function() {
-    var that = this;
     //
     this.model.on("change:code", this.execute, this);
     //allow other context's to make this code execute
@@ -27,14 +26,14 @@ tributary.TributaryContext = tributary.Context.extend({
     tributary.run = undefined;
 
     //time controls;
-    tributary.loops = config.get("loops");
+    tributary.loop = config.get("loop");
     tributary.autoinit = config.get("autoinit");
 
     //default parameters for this context
     tributary.pause = config.get("pause"); //pause is used to pause and unpause
     //tributary.autoplay = true;
     //tributary.autoinit = true;
-    tributary.loop = config.get("loop"); //["off", "period", "pingpong"]
+    tributary.loop_type = config.get("loop_type"); //["off", "period", "pingpong"]
     tributary.bv = config.get("bv");
     tributary.nclones = config.get("nclones");
     tributary.clone_opacity = config.get("clone_opacity");
@@ -48,10 +47,10 @@ tributary.TributaryContext = tributary.Context.extend({
     tributary.execute = function() {
       if(tributary.run !== undefined) {
         var t = tributary.t;
-        if(tributary.loops) {
+        if(tributary.loop) {
           t = tributary.ease(tributary.t); 
         }
-        tributary.run(that.g, t, 0);
+        tributary.run(tributary.g, t, 0);
       }
     }
 
@@ -79,18 +78,18 @@ tributary.TributaryContext = tributary.Context.extend({
       tributary.t = tributary.timer.ctime + dt;
       
       //TODO: implement play button, should reset the timer
-      if(tributary.loops) {
+      if(tributary.loop) {
         //once we reach 1, lets pause and stay there
         if(tributary.t >= 1 || tributary.t <= 0 || tributary.t === "NaN")
         {
-          if(tributary.loop === "period") {
+          if(tributary.loop_type === "period") {
             tributary.t = 0;
             tributary.timer.then = new Date();
             tributary.timer.duration = tributary.duration;
             tributary.timer.ctime = tributary.t;
             tributary.reverse = false;
             //tributary.pause = false;
-          } else if (tributary.loop === "pingpong") {
+          } else if (tributary.loop_type === "pingpong") {
             //this sets tributary.t to 0 when we get to 0 and 1 when we get to 1 (because of the direction we were going)
             tributary.t = !tributary.reverse;
             tributary.timer.then = new Date();
@@ -123,11 +122,10 @@ tributary.TributaryContext = tributary.Context.extend({
 
   execute: function() {   
     var js = this.model.handle_coffee();
-    var that = this;
     try {
       eval(js);
       //tributary.initialize = new Function("g", js);
-      //tributary.initialize(this.g);
+      //tributary.initialize(tributary.g);
     } catch (e) {
         this.model.trigger("error", e);
         return false;
@@ -151,16 +149,16 @@ tributary.TributaryContext = tributary.Context.extend({
 
         //execute the code
         eval(js);
-        //tributary.initialize(this.g);
+        //tributary.initialize(tributary.g);
 
         if(tributary.autoinit && tributary.init !== undefined) {
-          tributary.init(this.g, 0);
+          tributary.init(tributary.g, 0);
         }
         //then we run the user defined run function
         tributary.execute();
         /*
         if(tributary.run !== undefined) {
-          tributary.run(this.g, tributary.ease(tributary.t), 0);
+          tributary.run(tributary.g, tributary.ease(tributary.t), 0);
         }
         */
     } catch (err) {
@@ -206,13 +204,12 @@ tributary.TributaryContext = tributary.Context.extend({
         "xlink":"http://www.w3.org/1999/xlink",
         class:"tributary_svg"       
       });
-    this.g = this.svg;
+    tributary.g = this.svg;
 
-    var that = this;
     tributary.clear = function() {
-      $(that.g.node()).empty();
+      $(tributary.g.node()).empty();
       //this handles delta (clones)
-      //$(that.svg.node()).empty();
+      //$(tributary.svg.node()).empty();
     };
 
   },
@@ -230,7 +227,7 @@ tributary.TributaryContext = tributary.Context.extend({
       .classed("tributary_canvas",true)
       .node();
     tributary.ctx = tributary.canvas.getContext('2d');
-    this.g = tributary.ctx;
+    tributary.g = tributary.ctx;
 
   },
 
@@ -242,9 +239,9 @@ tributary.TributaryContext = tributary.Context.extend({
     this.clones
       .enter()
       .append("g").attr("class", "clones");
-    this.g = this.svg.selectAll("g.delta")
+    tributary.g = this.svg.selectAll("g.delta")
       .data([0]);
-    this.g
+    tributary.g
       .enter()
       .append("g").attr("class", "delta");
  
