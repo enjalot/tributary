@@ -5,7 +5,20 @@ tributary.Config = Backbone.Model.extend({
   defaults: {        
       endpoint: "tributary",
       public: true,
-      require: [] //require modules will be like : {name:"crossfilter", url:"/static/lib/crossfilter.min.js"}
+      require: [], //require modules will be like : {name:"crossfilter", url:"/static/lib/crossfilter.min.js"}
+
+      //things related to time control
+      play: false,
+      loops: false,
+      autoinit: true,
+      //time options
+      pause: true,
+      loop: "period", //["off", "period", "pingpong"]
+      bv: false,
+      nclones: 15,
+      clone_opacity: 0.4,
+      duration: 3000,
+      ease: "linear",
   },
 
   require: function(callback, ret) {
@@ -55,7 +68,7 @@ tributary.ConfigView = Backbone.View.extend({
 
     var initdisplay = this.model.get("display");
     displays.each(function(d) {
-      console.log(d.name, initdisplay);
+      //console.log(d.name, initdisplay);
       if(d.name === initdisplay) { d3.select(this).classed("config_active",true); }
     });
     displays.append("span")
@@ -89,8 +102,7 @@ tributary.ConfigView = Backbone.View.extend({
 
     //TODO: set active for options active in config
     tcs.each(function(d) {
-      //console.log(d.name, initdisplay);
-      //if(d.name === initdisplay) { d3.select(this).classed("display_active",true); }
+      if(that.model.get(d.name)) { d3.select(this).classed("config_active", true); }
     });
     
     tcs.append("span")
@@ -101,9 +113,11 @@ tributary.ConfigView = Backbone.View.extend({
 
     tcs.on("click", function(d) {
       //TODO: make this data driven
-      d3.select(this).classed("config_active", !d3.select(this).classed("config_active"));
+      var tf = !that.model.get(d.name);
+      d3.select(this).classed("config_active", tf);
       //TODO: set time controls in config
       //that.model.set("display", d.name);
+      that.model.set(d.name, tf);
     });
 
 

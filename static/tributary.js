@@ -61,7 +61,17 @@
     defaults: {
       endpoint: "tributary",
       "public": true,
-      require: []
+      require: [],
+      play: false,
+      loops: false,
+      autoinit: true,
+      pause: true,
+      loop: "period",
+      bv: false,
+      nclones: 15,
+      clone_opacity: .4,
+      duration: 3e3,
+      ease: "linear"
     },
     require: function(callback, ret) {
       var modules = this.get("require");
@@ -86,7 +96,6 @@
       var displays = d3.select(this.el).append("div").classed("displays", true).selectAll("div.config").data(tributary.displays).enter().append("div").classed("config", true);
       var initdisplay = this.model.get("display");
       displays.each(function(d) {
-        console.log(d.name, initdisplay);
         if (d.name === initdisplay) {
           d3.select(this).classed("config_active", true);
         }
@@ -104,7 +113,11 @@
       });
       d3.select(this.el).append("span").classed("config_title", true).text("Time Controls:");
       var tcs = d3.select(this.el).append("div").classed("timecontrols", true).selectAll("div.config").data(tributary.time_controls).enter().append("div").classed("config", true);
-      tcs.each(function(d) {});
+      tcs.each(function(d) {
+        if (that.model.get(d.name)) {
+          d3.select(this).classed("config_active", true);
+        }
+      });
       tcs.append("span").text(function(d) {
         return d.name;
       });
@@ -112,7 +125,9 @@
         return " " + d.description;
       }).classed("description", true);
       tcs.on("click", function(d) {
-        d3.select(this).classed("config_active", !d3.select(this).classed("config_active"));
+        var tf = !that.model.get(d.name);
+        d3.select(this).classed("config_active", tf);
+        that.model.set(d.name, tf);
       });
     }
   });
@@ -123,24 +138,36 @@
   });
   tributary.TributaryContext = tributary.Context.extend({
     initialize: function() {
+      var that = this;
       this.model.on("change:code", this.execute, this);
       tributary.events.on("execute", this.execute, this);
       this.config = this.options.config;
       this.config.on("change:display", this.set_display, this);
+      var config = this.config;
       tributary.init = undefined;
       tributary.run = undefined;
-      tributary.pause = true;
-      tributary.reverse = false;
-      tributary.loop = "period";
-      tributary.bv = false;
-      tributary.nclones = 15;
-      tributary.clone_opacity = .4;
-      tributary.duration = 3e3;
+      tributary.loops = config.get("loops");
+      tributary.autoinit = config.get("autoinit");
+      tributary.pause = config.get("pause");
+      tributary.loop = config.get("loop");
+      tributary.bv = config.get("bv");
+      tributary.nclones = config.get("nclones");
+      tributary.clone_opacity = config.get("clone_opacity");
+      tributary.duration = config.get("duration");
+      tributary.ease = d3.ease(config.get("ease"));
       tributary.t = 0;
-      tributary.ease = d3.ease("linear");
+      tributary.reverse = false;
       tributary.render = function() {};
-      var that = this;
-      that.timer = {
+      tributary.execute = function() {
+        if (tributary.run !== undefined) {
+          var t = tributary.t;
+          if (tributary.loops) {
+            t = tributary.ease(tributary.t);
+          }
+          tributary.run(that.g, t, 0);
+        }
+      };
+      tributary.timer = {
         then: new Date,
         duration: tributary.duration,
         ctime: tributary.t
@@ -151,28 +178,28 @@
           return false;
         }
         var now = new Date;
-        var dtime = now - that.timer.then;
+        var dtime = now - tributary.timer.then;
         var dt;
-        if (that.reverse) {
-          dt = that.timer.ctime * dtime / that.timer.duration * -1;
+        if (tributary.reverse) {
+          dt = tributary.timer.ctime * dtime / tributary.timer.duration * -1;
         } else {
-          dt = (1 - that.timer.ctime) * dtime / that.timer.duration;
+          dt = (1 - tributary.timer.ctime) * dtime / tributary.timer.duration;
         }
-        tributary.t = that.timer.ctime + dt;
+        tributary.t = tributary.timer.ctime + dt;
         if (tributary.loops) {
           if (tributary.t >= 1 || tributary.t <= 0 || tributary.t === "NaN") {
-            if (that.loop === "period") {
+            if (tributary.loop === "period") {
               tributary.t = 0;
-              that.timer.then = new Date;
-              that.timer.duration = tributary.duration;
-              that.timer.ctime = tributary.t;
-              that.reverse = false;
-            } else if (that.loop === "pingpong") {
-              tributary.t = !that.reverse;
-              that.timer.then = new Date;
-              that.timer.duration = tributary.duration;
-              that.timer.ctime = tributary.t;
-              that.reverse = !that.reverse;
+              tributary.timer.then = new Date;
+              tributary.timer.duration = tributary.duration;
+              tributary.timer.ctime = tributary.t;
+              tributary.reverse = false;
+            } else if (tributary.loop === "pingpong") {
+              tributary.t = !tributary.reverse;
+              tributary.timer.then = new Date;
+              tributary.timer.duration = tributary.duration;
+              tributary.timer.ctime = tributary.t;
+              tributary.reverse = !tributary.reverse;
             } else {
               if (tributary.t !== 0) {
                 tributary.t = 1;
@@ -186,15 +213,9 @@
           if (tributary.t === false) {
             tributary.t = 0;
           }
-          $("#slider").attr("value", tributary.t);
         }
-        if (tributary.run !== undefined) {
-          var t = tributary.t;
-          if (tributary.loops) {
-            t = tributary.ease(tributary.t);
-          }
-          tributary.run(that.g, t, 0);
-        }
+        tributary.execute();
+        config.trigger("tick", tributary.t);
       });
     },
     execute: function() {
@@ -222,9 +243,7 @@
         if (tributary.autoinit && tributary.init !== undefined) {
           tributary.init(this.g, 0);
         }
-        if (tributary.run !== undefined) {
-          tributary.run(this.g, tributary.ease(tributary.t), 0);
-        }
+        tributary.execute();
       } catch (err) {
         this.model.trigger("error", err);
         return false;
@@ -564,8 +583,72 @@
     render: function() {}
   });
   tributary.ControlsView = Backbone.View.extend({
-    initialize: function() {},
-    render: function() {}
+    initialize: function() {
+      this.model.on("change:play", this.play_button, this);
+    },
+    render: function() {
+      var del = d3.select(this.el);
+      del.append("div").attr("id", "time_controls");
+      del.append("div").attr("id", "user_controls");
+      del.append("div").attr("id", "time_options");
+      this.play_button();
+      this.time_slider();
+    },
+    play_button: function() {
+      var tc = d3.select(this.el).select("#time_controls");
+      if (this.model.get("play")) {
+        var pb = tc.append("button").classed("play", true).classed("button_on", true).text("Play");
+        pb.on("click", function(event) {
+          if (!tributary.pause) {
+            pb.classed("playing", false);
+            pb.text("Play");
+          } else if (tributary.pause) {
+            pb.classed("playing", true);
+            pb.text("Pause");
+          }
+          if (tributary.t < 1 || !tributary.loops) {
+            tributary.pause = !tributary.pause;
+            if (!tributary.pause) {
+              tributary.timer.then = new Date;
+              tributary.timer.duration = (1 - tributary.t) * tributary.duration;
+              tributary.timer.ctime = tributary.t;
+            }
+          }
+        });
+      } else {
+        tc.select("button.play").remove();
+      }
+    },
+    time_slider: function() {
+      var tc = d3.select(this.el).select("#time_controls");
+      if (this.model.get("loops")) {
+        var ts = tc.append("input").attr({
+          type: "range",
+          min: 0,
+          max: 1,
+          step: .01,
+          value: 0,
+          name: "time"
+        }).classed("time_slider", true);
+        $(ts.node()).on("change", function() {
+          tributary.t = parseFloat(this.value);
+          if (tributary.pause) {
+            tributary.execute();
+          }
+        });
+        this.model.on("tick", function(t) {
+          $(ts.node()).attr("value", tributary.t);
+        });
+        var bv = tc.append("button").classed("bv", true).classed("button_on", true).text("BV");
+        bv.on("click", function() {
+          tributary.bv = !tributary.bv;
+          tributary.events.trigger("execute");
+        });
+      } else {
+        tc.select("input.time_slider").remove();
+        tc.select("button.bv").remove();
+      }
+    }
   });
   tributary.displays = [ {
     name: "svg",

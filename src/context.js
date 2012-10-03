@@ -13,6 +13,7 @@ tributary.Context = Backbone.View.extend({
 tributary.TributaryContext = tributary.Context.extend({
 
   initialize: function() {
+    var that = this;
     //
     this.model.on("change:code", this.execute, this);
     //allow other context's to make this code execute
@@ -20,31 +21,43 @@ tributary.TributaryContext = tributary.Context.extend({
 
     this.config = this.options.config;
     this.config.on("change:display", this.set_display, this);
+    var config = this.config;
 
     tributary.init = undefined;
     tributary.run = undefined;
 
+    //time controls;
+    tributary.loops = config.get("loops");
+    tributary.autoinit = config.get("autoinit");
 
     //default parameters for this context
-    tributary.pause = true;
+    tributary.pause = config.get("pause"); //pause is used to pause and unpause
     //tributary.autoplay = true;
     //tributary.autoinit = true;
-    tributary.reverse = false;
-    tributary.loop = "period"; //["off", "period", "pingpong"]
-    tributary.bv = false;
-    tributary.nclones = 15;
-    tributary.clone_opacity = 0.4;
-    tributary.duration = 3000;
+    tributary.loop = config.get("loop"); //["off", "period", "pingpong"]
+    tributary.bv = config.get("bv");
+    tributary.nclones = config.get("nclones");
+    tributary.clone_opacity = config.get("clone_opacity");
+    tributary.duration = config.get("duration");
+    tributary.ease = d3.ease(config.get("ease"));
     tributary.t = 0;
-    tributary.ease = d3.ease("linear");
+    tributary.reverse = false;
 
     tributary.render = function() {};
-    
-    var that = this;
+    //convenience function
+    tributary.execute = function() {
+      if(tributary.run !== undefined) {
+        var t = tributary.t;
+        if(tributary.loops) {
+          t = tributary.ease(tributary.t); 
+        }
+        tributary.run(that.g, t, 0);
+      }
+    }
 
     //we need to save state of timer so when we pause/unpause or manually change slider
     //we can finish a transition
-    that.timer = {
+    tributary.timer = {
         then: new Date(),
         duration: tributary.duration,
         ctime: tributary.t
@@ -56,35 +69,34 @@ tributary.TributaryContext = tributary.Context.extend({
       if(tributary.pause) { return false; }
 
       var now = new Date();
-      var dtime = now - that.timer.then;
+      var dtime = now - tributary.timer.then;
       var dt;
-      if (that.reverse) {
-          dt = that.timer.ctime * dtime / that.timer.duration * -1;
+      if (tributary.reverse) {
+          dt = tributary.timer.ctime * dtime / tributary.timer.duration * -1;
       } else {
-          dt = (1 - that.timer.ctime) * dtime / that.timer.duration;
+          dt = (1 - tributary.timer.ctime) * dtime / tributary.timer.duration;
       }
-      tributary.t = that.timer.ctime + dt;
+      tributary.t = tributary.timer.ctime + dt;
       
-
       //TODO: implement play button, should reset the timer
       if(tributary.loops) {
         //once we reach 1, lets pause and stay there
         if(tributary.t >= 1 || tributary.t <= 0 || tributary.t === "NaN")
         {
-          if(that.loop === "period") {
+          if(tributary.loop === "period") {
             tributary.t = 0;
-            that.timer.then = new Date();
-            that.timer.duration = tributary.duration;
-            that.timer.ctime = tributary.t;
-            that.reverse = false;
+            tributary.timer.then = new Date();
+            tributary.timer.duration = tributary.duration;
+            tributary.timer.ctime = tributary.t;
+            tributary.reverse = false;
             //tributary.pause = false;
-          } else if (that.loop === "pingpong") {
+          } else if (tributary.loop === "pingpong") {
             //this sets tributary.t to 0 when we get to 0 and 1 when we get to 1 (because of the direction we were going)
-            tributary.t = !that.reverse;
-            that.timer.then = new Date();
-            that.timer.duration = tributary.duration;
-            that.timer.ctime = tributary.t;
-            that.reverse = !that.reverse;
+            tributary.t = !tributary.reverse;
+            tributary.timer.then = new Date();
+            tributary.timer.duration = tributary.duration;
+            tributary.timer.ctime = tributary.t;
+            tributary.reverse = !tributary.reverse;
           }
           else {
             if (tributary.t !== 0)
@@ -94,21 +106,17 @@ tributary.TributaryContext = tributary.Context.extend({
             }
           }
         }
+        //TODO: fix, look up 10 lines to pingpong
         //not sure why we get true and false for 1 and 0 when range hits the end
         if(tributary.t === true) { tributary.t = 1; }
         if(tributary.t === false) { tributary.t = 0; }
    
         //move the slider
-        $('#slider').attr('value', tributary.t);
+        //$('#slider').attr('value', tributary.t);
       }
       
-      if(tributary.run !== undefined) {
-        var t = tributary.t;
-        if(tributary.loops) {
-          t = tributary.ease(tributary.t); 
-        }
-        tributary.run(that.g, t, 0);
-      }
+      tributary.execute();
+      config.trigger("tick", tributary.t);
     });
  
   },
@@ -149,10 +157,12 @@ tributary.TributaryContext = tributary.Context.extend({
           tributary.init(this.g, 0);
         }
         //then we run the user defined run function
-        //tributary.execute();
+        tributary.execute();
+        /*
         if(tributary.run !== undefined) {
           tributary.run(this.g, tributary.ease(tributary.t), 0);
         }
+        */
     } catch (err) {
         this.model.trigger("error", err);
         return false;

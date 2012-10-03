@@ -167,30 +167,33 @@
     ui.editors = [];
     var type;
 
-
     var endpoint = config.get("endpoint");
 
     if(endpoint === "delta") {
       config.set("display", "svg");
-      tributary.loops = true;
-      tributary.autoinit = true;
+      config.set("play", true);
+      config.set("loops", true);
+      config.set("autoinit", true);
 
     } else if (endpoint === "cypress") {
       config.set("display", "canvas");
-      tributary.autoinit = true;
+      config.set("play", true);
+      config.set("autoinit", true);
 
     } else if (endpoint === "curiosity") {
       config.set("display", "webgl");
-      tributary.autoinit = true;
+      config.set("play", true);
+      config.set("autoinit", true);
       
     } else if (endpoint === "bigfish") {
       config.set("display", "svg");
-      tributary.autoinit = false;
+      config.set("play", true);
+      config.set("autoinit", false);
       
     } else if (endpoint === "fly") {
       config.set("display", "canvas");
-      tributary.autoinit = false;
-
+      config.set("play", true);
+      config.set("autoinit", false);
     }
 
     if(!config.get("display")) {
@@ -202,9 +205,11 @@
       type = m.get("type");
 
       //create a div for the editor inside the panel
-      edel = edit.append("div")
-        .attr("id", m.cid);
-      console.log(m, type)
+      //console.log(m, type)
+      if(["md", "svg"].indexOf(type) < 0) {
+        edel = edit.append("div")
+          .attr("id", m.cid);
+      }
 
       //select appropriate html ui containers
       // and create contexts
