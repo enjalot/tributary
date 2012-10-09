@@ -55,7 +55,7 @@
 
     tributary.sw = tributary.dims.display_width;
     tributary.sh = tributary.dims.display_height;
-    update_panel_layout();
+    //update_panel_layout();
   });
   tributary.events.trigger("resize");
 
@@ -66,14 +66,15 @@
   
   var panel_data = ["edit", "files", "config", "controls"];
   var pb_w = 60; //width of each button
-  var panel_buttons = panel_gui.selectAll("g.pb")
+  var panel_buttons = panel_gui.selectAll("div.pb")
     .data(panel_data)
     .enter()
-    .append("g")
+    .append("div")
     .classed("pb", true)
     .attr({
       id: function(d) { return d + "_tab"; },
     })
+  /*
   .on("mouseover", function() {
     d3.select(this).select("text")
       .style("fill", "#00f");
@@ -82,17 +83,21 @@
     d3.select(this).select("text")
       .style("fill", "");
   })
+  */
   .on("click", function(d) {
     tributary.events.trigger("show", d);
   });
 
+  /*
   panel_buttons.append("rect")
     .attr({
       width: pb_w,
       height: 20
     });
-  panel_buttons.append("text")
-    .text(function(d) { return d; })
+  */
+  panel_buttons//.append("text")
+    .text(function(d) { return d; });
+    /*
     .attr({
       x: pb_w/2,
       y: 15,
@@ -100,7 +105,9 @@
       //"alignment-baseline": "hanging",
       "pointer-events":"none"
     });
+    */
 
+  /*
   function update_panel_layout() {
     panel_gui.selectAll("g.pb").attr({
       transform: function(d,i) {
@@ -111,6 +118,7 @@
     });
   }
   update_panel_layout();
+  */
 
   //Logic for tabs
   tributary.events.on("show", function(name) {
@@ -123,7 +131,7 @@
       .style("display", "");
 
     //update the panel_gui ui
-    panel_gui.selectAll("g.pb")
+    panel_gui.selectAll("div.pb")
       .classed("gui_active", false);
     panel_gui.select("#" + name + "_tab")
       .classed("gui_active", true);

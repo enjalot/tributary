@@ -49,63 +49,50 @@
 <body>
 
 <div id='page'>
-{% block chrome %}
-        <div id="header">
-            <div id="branding">
-                {% block branding%}
-                {% endblock %}
-            </div> 
-            <div id="gist_info"></div>
-            <div id="save_gui"> 
-                        {% if not loggedin %}
-                        anon
-                        <button id='loginPanel' class="button_on"> Login </button>
-                        {% else %}
-                        <a href="http://github.com/{{ username }}">{{ username }}</a>
-                        <button id='loginPanel' class="button_on"> Logout </button>
-                        {% endif %}
-                   
-                    <button id='savePanel' class="button_on">
-                        Save
-                        <!--
-                        : <img src="/static/css/floppy.png" width="24" height="24" alt="Floppy">&nbsp;
-                        <div class='address'><a href='#'>https://gist.github.com/b9ab9418af567e575b3e</a></div>
-                        -->
-                    </button>
+    {% block chrome %}
+    <div id="header">
+        <div id="branding">
+        {% block branding%}
+        {% endblock %}
+        </div> 
+        <div id="gist_info"></div>
+        <div id="save_gui"> 
+            {% if not loggedin %}
+            anon
+            <button id='loginPanel' class="button_on"> Login </button>
+            {% else %}
+            <a href="http://github.com/{{ username }}">{{ username }}</a>
+            <button id='loginPanel' class="button_on"> Logout </button>
+            {% endif %}
 
-                    <button id='forkPanel' class="button_on">
-                        Fork
-                        <!--
-                        : <img src="/static/css/floppy.png" width="24" height="24" alt="Floppy">&nbsp;
-                        <div class='address'><a href='#'>https://gist.github.com/b9ab9418af567e575b3e</a></div>
-                        -->
-                    </button>
-                    
-            </div>
-        <br>
+            <button id='savePanel' class="button_on">
+                Save
+            </button>
+
+            <button id='forkPanel' class="button_on">
+                Fork
+            </button>
 
         </div>
-            
-            <img id="syncing" src="/static/img/syncing.gif"/>
-
-{% endblock %}
-
-        <div id="display">
-        </div>
-
-        <svg id="panel_gui">
-        </svg>
-
-        <div id="panel">
-            <div id="edit"></div>
-            <div id="config"></div>
-            <div id="controls"></div>
-            <div id="files"></div>
-        </div>
-
-        <div id="slider"></div>
-
+    <br>
     </div>
+    <img id="syncing" src="/static/img/syncing.gif"/>
+    {% endblock %}
+
+    <!-- main tributary UI skeleton -->
+    <div id="display">
+    </div>
+    <div id="panel_gui">
+    </div>
+    <div id="panel">
+        <div id="edit"></div>
+        <div id="config"></div>
+        <div id="controls"></div>
+        <div id="files"></div>
+    </div>
+    <div id="slider"></div>
+
+</div>
 
     
     

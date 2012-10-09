@@ -81,17 +81,19 @@ body {
     right: 0px;
 }
 .pb {
+    display:block;
+    float:left;
+    margin-left: 5px;
+    padding: 5px;
+    color: #fff;
+    background-color: #595959;
 }
-.pb rect {
-    /*fill: rgba(8,8,8,0.80);*/
-    fill: #595959
+.pb:hover {
+    color: #00f;
 }
-.pb text {
-    fill: #fff;
-    font-size: 14px;
-}
-.gui_active rect {
-    fill: #262626;
+
+.gui_active {
+    background-color: #262626;
 }
 
 .error {
