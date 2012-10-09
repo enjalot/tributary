@@ -42,46 +42,27 @@ python app.py
 If you want to deploy behind apache, check out the sample apache config in server/sample_apache_config.txt
 
 
-#Submodules:
-A couple of external (client side) libraries are included as submodules, to use them:
-```
-git submodule init
-git submodule update
-```
-
-The d3-plugins git repository is added mostly for the cie plugin for color spaces.
-
-Some useful and commonly used data (like US state and World country boundaries) are provided by Zack Maril's repo
-static/data
-https://github.com/zmaril/Visualization-Data
-
-
-
-TODO:
-
-Remove all styling from code and use classes 
-Convert the panel_gui to divs (don't use svg)
-
-Make BV button work for any of the renders (not just svg)
-
-
 Reserved properties of the tributary object:
-tributary.initialize
-tributary.init
-tributary.run
-tributary.g
-tributary.ctx
-tributary.t
-tributary.loop
-tributary.autoinit
-tributary.pause
-tributary.loop_type
-tributary.bv
-tributary.nclones
-tributary.clone_opacity
-tributary.duration
-tributary.ease
-tributary.reverse
-tributary.render
+tributary.initialize  
+tributary.init  
+tributary.run  
+tributary.g  
+tributary.ctx  
+tributary.t  
+tributary.loop  
+tributary.autoinit  
+tributary.pause  
+tributary.loop_type  
+tributary.bv  
+tributary.nclones  
+tributary.clone_opacity  
+tributary.duration  
+tributary.ease  
+tributary.reverse  
+tributary.render  
+
+
+TODO:  
+Make BV button work for any of the renders (not just svg)
 
 

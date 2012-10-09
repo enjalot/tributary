@@ -224,11 +224,6 @@ tributary.ConfigView = Backbone.View.extend({
 
     });
 
-
-
-    
-
-
   }
 
 });
