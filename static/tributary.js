@@ -291,7 +291,9 @@
         window.trib_options = {};
         trib = window.trib;
         trib_options = window.trib_options;
-        tributary.clear();
+        if (tributary.autoinit) {
+          tributary.clear();
+        }
         if (this.clones) {
           $(this.clones.node()).empty();
         }
@@ -314,6 +316,7 @@
       this.set_display();
     },
     set_display: function() {
+      var that = this;
       this.$el.empty();
       var display = this.config.get("display");
       if (display === "svg") {
@@ -323,12 +326,13 @@
       } else if (display === "webgl") {
         this.make_webgl();
       } else if (display === "div") {
+        this.g = d3.select(this.el);
         tributary.clear = function() {
-          this.$el.empty();
+          that.$el.empty();
         };
       } else {
         tributary.clear = function() {
-          this.$el.empty();
+          that.$el.empty();
         };
       }
     },
@@ -411,7 +415,6 @@
       });
     },
     execute: function() {
-      console.log("NAME", this.model.get("name"));
       try {
         var json = JSON.parse(this.model.get("code"));
         tributary[this.model.get("name")] = json;
@@ -785,4 +788,203 @@
       this.parentNode.appendChild(this);
     });
   };
+  tributary.ui = {};
+  var display = d3.select("#display");
+  var panel_gui = d3.select("#panel_gui");
+  var panel = d3.select("#panel");
+  var panel_handle = d3.select("#panel_handle");
+  var page = d3.select("#page");
+  var header = d3.select("#header");
+  tributary.dims = {
+    display_percent: .7,
+    page_width: 0,
+    page_height: 0,
+    display_width: 0,
+    display_height: 0,
+    panel_width: 0,
+    panel_height: 0,
+    panel_gui_width: 0,
+    panel_gui_height: 40
+  };
+  tributary.events.on("resize", function() {
+    tributary.dims.page_width = parseInt(page.style("width"), 10);
+    tributary.dims.page_height = parseInt(page.style("height"), 10);
+    tributary.dims.display_width = tributary.dims.page_width * tributary.dims.display_percent;
+    tributary.dims.panel_width = tributary.dims.page_width - tributary.dims.display_width;
+    tributary.dims.panel_gui_width = tributary.dims.panel_width;
+    tributary.dims.display_height = tributary.dims.page_height - parseInt(header.style("height"), 10);
+    tributary.dims.panel_height = tributary.dims.display_height - tributary.dims.panel_gui_height;
+    display.style("width", tributary.dims.display_width + "px");
+    display.style("height", tributary.dims.display_height + "px");
+    panel.style("width", tributary.dims.panel_width + "px");
+    panel.style("height", tributary.dims.panel_height + "px");
+    panel_gui.style("width", tributary.dims.panel_gui_width + "px");
+    panel_gui.style("height", tributary.dims.panel_gui_height + "px");
+    panel_handle.style("right", tributary.dims.panel_width + "px");
+    tributary.sw = tributary.dims.display_width;
+    tributary.sh = tributary.dims.display_height;
+  });
+  tributary.events.trigger("resize");
+  var ph_drag = d3.behavior.drag().on("drag", function() {
+    var dx = d3.event.dx / tributary.dims.page_width;
+    if (tributary.dims.display_percent + dx >= 0 && tributary.dims.display_percent + dx <= 1) {
+      tributary.dims.display_percent += dx;
+    }
+    tributary.events.trigger("resize");
+  });
+  panel_handle.call(ph_drag);
+  var panel_data = [ "edit", "files", "config", "controls" ];
+  var pb_w = 60;
+  var panel_buttons = panel_gui.selectAll("div.pb").data(panel_data).enter().append("div").classed("pb", true).attr({
+    id: function(d) {
+      return d + "_tab";
+    }
+  }).on("click", function(d) {
+    tributary.events.trigger("show", d);
+  });
+  panel_buttons.text(function(d) {
+    return d;
+  });
+  tributary.events.on("show", function(name) {
+    $("#panel").children("div").css("display", "none");
+    panel.select("#" + name).style("display", "");
+    panel_gui.selectAll("div.pb").classed("gui_active", false);
+    panel_gui.select("#" + name + "_tab").classed("gui_active", true);
+  });
+  tributary.events.trigger("show", "edit");
+  function setup_save(config) {
+    $("#savePanel").on("click", function(e) {
+      d3.select("#syncing").style("display", "block");
+      tributary.save_gist(config, "save", function(newurl, newgist) {
+        window.location = newurl;
+      });
+    });
+    $("#forkPanel").on("click", function(e) {
+      d3.select("#syncing").style("display", "block");
+      tributary.save_gist(config, "fork", function(newurl, newgist) {
+        window.location = newurl;
+      });
+    });
+    $("#loginPanel").on("click", function(e) {
+      tributary.login_gist(tributary.loggedin, function(newurl, newgist) {
+        window.location = newurl;
+      });
+    });
+  }
+  tributary.ui.assemble = function(gistid) {
+    tributary.trace = true;
+    if (gistid.length > 0) {
+      tributary.gist(gistid, _assemble);
+    } else {
+      var ret = {};
+      ret.config = new tributary.Config;
+      ret.models = new tributary.CodeModels(new tributary.CodeModel);
+      _assemble(ret);
+    }
+  };
+  function _assemble(ret) {
+    var config = ret.config;
+    config.contexts = [];
+    var context;
+    var edel;
+    var editor;
+    var type;
+    var endpoint = config.get("endpoint");
+    if (tributary.endpoint) {
+      endpoint = tributary.endpoint;
+    }
+    if (endpoint === "delta") {
+      config.set("display", "svg");
+      config.set("play", true);
+      config.set("loop", true);
+      config.set("autoinit", true);
+    } else if (endpoint === "cypress") {
+      config.set("display", "canvas");
+      config.set("play", true);
+      config.set("autoinit", true);
+    } else if (endpoint === "hourglass") {
+      config.set("display", "svg");
+      config.set("play", true);
+      config.set("autoinit", true);
+    } else if (endpoint === "curiosity") {
+      config.set("display", "webgl");
+      config.set("play", true);
+      config.set("autoinit", true);
+    } else if (endpoint === "bigfish") {
+      config.set("display", "svg");
+      config.set("play", true);
+      config.set("autoinit", false);
+      config.set("restart", true);
+    } else if (endpoint === "fly") {
+      config.set("display", "canvas");
+      config.set("play", true);
+      config.set("autoinit", false);
+      config.set("restart", true);
+    } else if (endpoint === "ocean") {
+      config.set("display", "div");
+    }
+    if (!config.get("display")) {
+      config.set("display", "svg");
+    }
+    config.set("endpoint", "");
+    var edit = panel.select("#edit");
+    tributary.edit = edit;
+    ret.models.each(function(m) {
+      type = m.get("type");
+      if (type === "js") {
+        context = new tributary.TributaryContext({
+          config: config,
+          model: m,
+          el: display.node()
+        });
+        config.contexts.push(context);
+        context.render();
+        tributary.make_editor({
+          model: m
+        });
+      } else if (type === "json") {
+        context = new tributary.JSONContext({
+          config: config,
+          model: m
+        });
+        config.contexts.push(context);
+        context.execute();
+        tributary.make_editor({
+          model: m
+        });
+      }
+    });
+    config.contexts.forEach(function(c) {
+      if (c.model.get("type") === "js") {
+        tributary.autoinit = true;
+        c.execute();
+        tributary.autoinit = config.get("autoinit");
+      }
+    });
+    var config_view = new tributary.ConfigView({
+      el: "#config",
+      model: config
+    });
+    config_view.render();
+    var files_view = new tributary.FilesView({
+      el: "#files",
+      model: config
+    });
+    files_view.render();
+    var controls_view = new tributary.ControlsView({
+      el: "#controls",
+      model: config
+    });
+    controls_view.render();
+    setup_save(config);
+    tributary.events.trigger("show", config.get("tab"));
+    tributary.events.on("show", function(name) {
+      config.set("tab", name);
+    });
+    tributary.dims.display_percent = config.get("display_percent");
+    tributary.events.trigger("resize");
+    tributary.events.on("resize", function() {
+      config.set("display_percent", tributary.dims.display_percent);
+    });
+  }
 })();

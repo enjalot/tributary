@@ -5,48 +5,15 @@
 {% block title %}Fly{% endblock %}
 
 {% block style %}
-    <link rel='stylesheet' type='text/css' href='/static/css/fly.css' />
 {% endblock %}
 
 {% block scripts %}
-    <script src='/static/views/fly.js'></script>
 {% endblock %}
 
 {% block branding %}
 	<h1>Fly</h1>
 {% endblock %}
 
-
-
-{% block gui %}
-    <div id="gui">
-        <button id="play_button" class="button_on">Play</button>
-        <button id="init_button" class="button_on">Init</button>
-
-<!--        <div id="off_button" class="select button">Off</div> 
-        Temporarily hiding "off" button- unless it serves a purpose I'm unaware of, user should probably use the "play/stop" button instead
-        <button id="period_button" class="select button minimal">Loop</button>
-        <button id="pingpong_button" class="select button minimal">PingPong</button>
--->
-    </div>
-    <div id='display'>
-        <canvas id="flycanvas" class="tributary_canvas"></canvas>
-    </div>
-
-{% endblock %}
-
-
 {% block jsinit %}
-    var model = new tributary.Fly({"gist":"{{gist}}", "filename":"{{filename}}"})
-    tribView = new tributary.TributaryView({"model":model, "endpoint":"fly"})
-
-    //initialize on page load
-    model.on("gotcode", function() {
-        tributary.initialize();
-    })
-
-    window.onresize = function(event) {
-        resize();
-        model.trigger("execute")
-    }
+tributary.endpoint = "fly";
 {% endblock %}

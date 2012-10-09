@@ -4,35 +4,15 @@
 {% block title %}Curiosity{% endblock %}
 
 {% block style %}
-    <link rel='stylesheet' type='text/css' href='/static/css/curiosity.css' />
 {% endblock %}
-
-{% block gui %}
-    <div id='display'>
-    </div>
-{% endblock %}
-
 
 {% block branding %}
-
 	<h1>Curiosity</h1>
 {% endblock %}
 
 {% block scripts %}
-    <script src='/static/lib/three.min.js'></script>
-    <script src="/static/lib/Stats.js"></script>
-    <script src='/static/views/curiosity.js'></script>
-
-
 {% endblock %}
 
 {% block jsinit %}
-    model = new tributary.Curiosity({"gist":"{{gist}}", "filename":"{{filename}}"})
-    tribView = new tributary.TributaryView({"model":model, "endpoint":"curiosity"})
-    //tribView = new tributary.CuriosityView({"model":model})
-
-    window.onresize = function(event) {
-        resize();
-        model.trigger("execute")
-    }
+tributary.endpoint = "curiosity";
 {% endblock %}

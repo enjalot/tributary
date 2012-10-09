@@ -23,6 +23,7 @@ all: \
 	src/files.js \
 	src/controls.js \
 	src/util.js \
+	src/ui.js \
 	src/end.js
 
 

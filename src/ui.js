@@ -1,6 +1,4 @@
-(function(){
-  var ui = {};
-  window.ui = ui;
+  tributary.ui = {};
 
   //UI calculations, we control the dimensions of our various ui components with JS
   //
@@ -146,7 +144,7 @@ function setup_save(config) {
   ////////////////////////////////////////////////////////////////////////
   ////////////////////////////////////////////////////////////////////////
 
-  ui.assemble = function(gistid) {
+  tributary.ui.assemble = function(gistid) {
     tributary.trace = true;
 
     if(gistid.length > 0){
@@ -170,7 +168,12 @@ function setup_save(config) {
     var editor;
     var type;
 
+    //endpoint is for backwards compatibility with preset tributary
+    //configurations
     var endpoint = config.get("endpoint");
+    if(tributary.endpoint) {
+      endpoint = tributary.endpoint;
+    }
 
     if(endpoint === "delta") {
       config.set("display", "svg");
@@ -183,6 +186,11 @@ function setup_save(config) {
       config.set("play", true);
       config.set("autoinit", true);
 
+    } else if (endpoint === "hourglass") {
+      config.set("display", "svg");
+      config.set("play", true);
+      config.set("autoinit", true);
+
     } else if (endpoint === "curiosity") {
       config.set("display", "webgl");
       config.set("play", true);
@@ -192,16 +200,26 @@ function setup_save(config) {
       config.set("display", "svg");
       config.set("play", true);
       config.set("autoinit", false);
+      config.set("restart", true);
       
     } else if (endpoint === "fly") {
       config.set("display", "canvas");
       config.set("play", true);
       config.set("autoinit", false);
+      config.set("restart", true);
+
+    } else if (endpoint === "ocean") {
+      config.set("display", "div");
+
     }
 
     if(!config.get("display")) {
       config.set("display", "svg");
     }
+
+    //endpoint is for backwards compatibility
+    //we shouldn't save it from now on
+    config.set("endpoint", "");
     
     var edit = panel.select("#edit");
     tributary.edit = edit;
@@ -244,7 +262,10 @@ function setup_save(config) {
       //select appropriate html ui containers
       // and create contexts
       if(c.model.get("type") === "js") {
+        //first load should auto init
+        tributary.autoinit = true;
         c.execute();
+        tributary.autoinit = config.get("autoinit");
       }
     });
 
@@ -287,6 +308,3 @@ function setup_save(config) {
 
   } 
 
-  
-
-}());

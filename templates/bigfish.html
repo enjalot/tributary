@@ -5,44 +5,15 @@
 {% block title %}BigFish{% endblock %}
 
 {% block style %}
-    <link rel='stylesheet' type='text/css' href='/static/css/bigfish.css' />
 {% endblock %}
 
 {% block scripts %}
-    <script src='/static/views/bigfish.js'></script>
 {% endblock %}
 
 {% block branding %}
 	<h1>BigFish</h1>
 {% endblock %}
 
-
-{% block gui %}
-    <div id="gui">
-        <button id="play_button" class="button_on">Play</button>
-        <button id="init_button" class="button_on">Init</button>
-    </div>
-    <div id='display'>
-        <svg id="bigfishsvg" class="tributary_svg"></svg>
-    </div>
-
-{% endblock %}
-
-
 {% block jsinit %}
-    var model = new tributary.BigFish({"gist":"{{gist}}", "filename":"{{filename}}"})
-
-    tribView = new tributary.TributaryView({"model":model, "endpoint":"bigfish"})
-    //initialize on page load
-    model.on("gotcode", function() {
-        tributary.initialize();
-    })
-
-
-    //tribView = new tributary.TributaryView({"model":model, "endpoint":"bigfish"})
-
-    window.onresize = function(event) {
-        resize();
-        model.trigger("execute")
-    }
+tributary.endpoint = "bigfish";
 {% endblock %}

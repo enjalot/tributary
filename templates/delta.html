@@ -1,51 +1,20 @@
 
 {% extends "base.html" %}
 
-
 {% block title %}Delta{% endblock %}
 
 {% block style %}
-    <link rel='stylesheet' type='text/css' href='/static/css/delta.css' />
 {% endblock %}
 
 {% block scripts %}
-    <script src='/static/views/delta.js'></script>
 {% endblock %}
 
 {% block branding %}
 	<h1>Delta</h1>
 {% endblock %}
 
-
-
-{% block gui %}
-    <div id="gui">
-        <button id="bv_button" class="button_on">BV</button>
-        <button id="play_button" class="button_on">Play</button>
-        <!-- <div id="time_slider"></div>-->
-        <div id="simple_slider">
-            <input id="slider" type="range" min="0" max="1" value="0" step="0.01" name="time">
-        </div>
-
-<!--        <div id="off_button" class="select button">Off</div> 
-        Temporarily hiding "off" button- unless it serves a purpose I'm unaware of, user should probably use the "play/stop" button instead
-        <button id="period_button" class="select button minimal">Loop</button>
-        <button id="pingpong_button" class="select button minimal">PingPong</button>
--->
-    </div>
-    <div id='display'>
-        <svg id="deltasvg" class="tributary_svg"></svg>
-    </div>
-
-{% endblock %}
-
-
 {% block jsinit %}
-    var model = new tributary.Delta({"gist":"{{gist}}", "filename":"{{filename}}"})
-    tribView = new tributary.TributaryView({"model":model, "endpoint":"delta"})
-
-    window.onresize = function(event) {
-        resize();
-        model.trigger("execute")
-    }
+(function() {
+tributary.endpoint = "delta";
+}())
 {% endblock %}

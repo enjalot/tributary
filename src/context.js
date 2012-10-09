@@ -140,7 +140,9 @@ tributary.TributaryContext = tributary.Context.extend({
         trib_options = window.trib_options;
 
         //empty out our display element
-        tributary.clear();
+        if(tributary.autoinit) {
+          tributary.clear();
+        }
 
         if(this.clones) { $(this.clones.node()).empty(); }
         if(tributary.bv) {
@@ -176,6 +178,7 @@ tributary.TributaryContext = tributary.Context.extend({
   },
 
   set_display: function() {
+    var that = this;
     this.$el.empty();
     var display = this.config.get("display");
     if(display === "svg") {
@@ -185,12 +188,13 @@ tributary.TributaryContext = tributary.Context.extend({
     } else if (display === "webgl") {
       this.make_webgl();
     } else if (display === "div") {
+      this.g = d3.select(this.el);
       tributary.clear = function() {
-          this.$el.empty();
+          that.$el.empty();
       };
     } else {
       tributary.clear = function() {
-          this.$el.empty();
+          that.$el.empty();
       };
     }
   },
@@ -338,7 +342,6 @@ tributary.JSONContext = tributary.Context.extend({
   },
 
   execute: function() {
-    console.log("NAME",this.model.get("name"));
     try {
       var json = JSON.parse(this.model.get("code"));
       tributary[this.model.get("name")] = json;
