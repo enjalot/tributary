@@ -65,3 +65,23 @@ Convert the panel_gui to divs (don't use svg)
 Make BV button work for any of the renders (not just svg)
 
 
+Reserved properties of the tributary object:
+tributary.initialize
+tributary.init
+tributary.run
+tributary.g
+tributary.ctx
+tributary.t
+tributary.loop
+tributary.autoinit
+tributary.pause
+tributary.loop_type
+tributary.bv
+tributary.nclones
+tributary.clone_opacity
+tributary.duration
+tributary.ease
+tributary.reverse
+tributary.render
+
+

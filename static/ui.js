@@ -11,6 +11,8 @@
   var panel_gui = d3.select("#panel_gui");
   //panel holds the editors, and other controls
   var panel= d3.select("#panel");
+  //the ui element for resizing the panel
+  var panel_handle = d3.select("#panel_handle");
   
   var page = d3.select("#page");
   var header = d3.select("#header");
@@ -52,12 +54,24 @@
     panel_gui.style("height", tributary.dims.panel_gui_height + "px");
     //panel_gui.style("margin-top", tributary.dims.panel_gui_height + "px");
 
+    panel_handle.style("right", tributary.dims.panel_width + "px");
 
     tributary.sw = tributary.dims.display_width;
     tributary.sh = tributary.dims.display_height;
     //update_panel_layout();
   });
   tributary.events.trigger("resize");
+
+  var ph_drag = d3.behavior.drag()
+    .on("drag", function() {
+      //modify the display % when dragging
+      var dx = d3.event.dx/tributary.dims.page_width;
+      if(tributary.dims.display_percent + dx >= 0.0 && tributary.dims.display_percent + dx <= 1) {
+        tributary.dims.display_percent += dx;
+      } 
+      tributary.events.trigger("resize");
+    })
+  panel_handle.call(ph_drag);
 
 
   ////////////////////////////////////////////////////////////////////////
@@ -256,6 +270,20 @@ function setup_save(config) {
     controls_view.render();
 
     setup_save(config);
+
+
+
+    //save tab state
+    tributary.events.trigger("show", config.get("tab"));
+    tributary.events.on("show", function(name) {
+      config.set("tab", name);
+    });
+
+    tributary.dims.display_percent = config.get("display_percent");
+    tributary.events.trigger("resize");
+    tributary.events.on("resize", function() {
+      config.set("display_percent", tributary.dims.display_percent);
+    });
 
   } 
 

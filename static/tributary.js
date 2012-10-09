@@ -62,6 +62,8 @@
       endpoint: "tributary",
       "public": true,
       require: [],
+      tab: "edit",
+      display_percent: .7,
       play: false,
       loop: false,
       restart: false,
@@ -94,7 +96,7 @@
     render: function() {
       var that = this;
       d3.select(this.el).append("span").classed("config_title", true).text("Display:");
-      var displays = d3.select(this.el).append("div").classed("displays", true).selectAll("div.config").data(tributary.displays).enter().append("div").classed("config", true);
+      var displays = d3.select(this.el).append("div").classed("displaycontrols", true).selectAll("div.config").data(tributary.displays).enter().append("div").classed("config", true);
       var initdisplay = this.model.get("display");
       displays.each(function(d) {
         if (d.name === initdisplay) {
@@ -129,6 +131,63 @@
         var tf = !that.model.get(d.name);
         d3.select(this).classed("config_active", tf);
         that.model.set(d.name, tf);
+      });
+      d3.select(this.el).append("span").classed("config_title", true).text("Require:");
+      var rc = d3.select(this.el).append("div").classed("requirecontrols", true);
+      var rcs = rc.selectAll("div.config").data(this.model.get("require")).enter().append("div").classed("config", true);
+      rcs.append("span").text(function(d) {
+        return d.name;
+      });
+      rcs.append("span").text(function(d) {
+        return " " + d.url;
+      }).classed("description", true);
+      rcs.append("span").text("x").classed("delete", true).on("click", function(d) {
+        var reqs = that.model.get("require");
+        var ind = reqs.indexOf(d);
+        reqs.splice(ind, 1);
+        that.model.set("require", reqs);
+        that.$el.empty();
+        that.render();
+      });
+      var plus = rc.append("div").classed("config", true);
+      plus.append("span").text("+ ");
+      var name_input = plus.append("div").text("name: ").style({
+        display: "none"
+      });
+      name_input.append("input").attr({
+        type: "text"
+      });
+      var url_input = plus.append("div").text("url: ").style({
+        display: "none"
+      });
+      url_input.append("input").text("url:").attr({
+        type: "text"
+      });
+      plus.on("click", function() {
+        name_input.style("display", "");
+        url_input.style("display", "");
+        name_input.select("input").node().focus();
+        var done = function() {
+          var req = {
+            name: name_input.select("input").node().value,
+            url: url_input.select("input").node().value
+          };
+          var reqs = that.model.get("require");
+          reqs.push(req);
+          that.model.set("require", reqs);
+          that.$el.empty();
+          that.render();
+        };
+        name_input.on("keypress", function() {
+          if (d3.event.charCode === 13) {
+            done();
+          }
+        });
+        url_input.on("keypress", function() {
+          if (d3.event.charCode === 13) {
+            done();
+          }
+        });
       });
     }
   });
