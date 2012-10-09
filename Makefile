@@ -18,7 +18,6 @@ all: \
 	src/code.js \
 	src/config.js \
 	src/context.js \
-	src/delta.js \
 	src/editor.js \
 	src/gist.js \
 	src/files.js \

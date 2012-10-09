@@ -123,7 +123,9 @@ tributary.ControlsView = Backbone.View.extend({
         .text("Restart");
 
       rb.on("click", function(event) {
+        tributary.clear();
         tributary.init(tributary.g);
+        tributary.execute();
       });
     } else {
       tributary.autoinit = true;
