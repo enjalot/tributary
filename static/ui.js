@@ -74,52 +74,13 @@
     .attr({
       id: function(d) { return d + "_tab"; },
     })
-  /*
-  .on("mouseover", function() {
-    d3.select(this).select("text")
-      .style("fill", "#00f");
-  })
-  .on("mouseout", function() {
-    d3.select(this).select("text")
-      .style("fill", "");
-  })
-  */
   .on("click", function(d) {
     tributary.events.trigger("show", d);
   });
 
-  /*
-  panel_buttons.append("rect")
-    .attr({
-      width: pb_w,
-      height: 20
-    });
-  */
   panel_buttons//.append("text")
     .text(function(d) { return d; });
-    /*
-    .attr({
-      x: pb_w/2,
-      y: 15,
-      "text-anchor": "middle",
-      //"alignment-baseline": "hanging",
-      "pointer-events":"none"
-    });
-    */
-
-  /*
-  function update_panel_layout() {
-    panel_gui.selectAll("g.pb").attr({
-      transform: function(d,i) {
-          var x = tributary.dims.panel_gui_width - (i+1) * (pb_w + 5) + 5;
-          var y = tributary.dims.panel_gui_height - 20;
-          return "translate(" + [x,y] + ")";
-        }
-    });
-  }
-  update_panel_layout();
-  */
-
+ 
   //Logic for tabs
   tributary.events.on("show", function(name) {
     //hide all panel divs
@@ -193,7 +154,6 @@ function setup_save(config) {
     var context;
     var edel;
     var editor;
-    ui.editors = [];
     var type;
 
     var endpoint = config.get("endpoint");
@@ -230,15 +190,14 @@ function setup_save(config) {
     }
     
     var edit = panel.select("#edit");
+    tributary.edit = edit;
+
     ret.models.each(function(m) {
       type = m.get("type");
 
-      //create a div for the editor inside the panel
       //console.log(m, type)
-      if(["md", "svg"].indexOf(type) < 0) {
-        edel = edit.append("div")
-          .attr("id", m.cid);
-      }
+      //if(["md", "svg"].indexOf(type) < 0) {
+      //}
 
       //select appropriate html ui containers
       // and create contexts
@@ -252,7 +211,7 @@ function setup_save(config) {
         });
         config.contexts.push(context);
         context.render();
-        make_editor(edel.node(), m);
+        tributary.make_editor({model: m});
       }
       else if(type === "json") {
         context = new tributary.JSONContext({
@@ -261,7 +220,7 @@ function setup_save(config) {
         });
         config.contexts.push(context);
         context.execute();
-        make_editor(edel.node(), m);
+        tributary.make_editor({model: m});
       }
       
     });
@@ -298,17 +257,8 @@ function setup_save(config) {
 
     setup_save(config);
 
-  }
+  } 
 
-  function make_editor(container, model) {
-    var editor;
-    editor = new tributary.Editor({
-      el: container,
-      model: model
-    });
-    editor.render();
-    ui.editors.push(editor);
-    return editor;
-  }
+  
 
 }());

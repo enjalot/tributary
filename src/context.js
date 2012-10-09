@@ -123,9 +123,9 @@ tributary.TributaryContext = tributary.Context.extend({
   execute: function() {   
     var js = this.model.handle_coffee();
     try {
-      eval(js);
-      //tributary.initialize = new Function("g", js);
-      //tributary.initialize(tributary.g);
+      //eval(js);
+      tributary.initialize = new Function("g", js);
+      tributary.initialize(tributary.g);
     } catch (e) {
         this.model.trigger("error", e);
         return false;
@@ -148,8 +148,8 @@ tributary.TributaryContext = tributary.Context.extend({
         }
 
         //execute the code
-        eval(js);
-        //tributary.initialize(tributary.g);
+        //eval(js);
+        tributary.initialize(tributary.g);
 
         if(tributary.autoinit && tributary.init !== undefined) {
           tributary.init(tributary.g, 0);
@@ -264,9 +264,6 @@ tributary.TributaryContext = tributary.Context.extend({
   },
 
   make_webgl: function() {
-
-
-
     container = this.el;
 
     tributary.camera = new THREE.PerspectiveCamera( 70, tributary.sw / tributary.sh, 1, 1000 );
@@ -327,17 +324,21 @@ tributary.TributaryContext = tributary.Context.extend({
 });
 
 
+//JSON Context
+//The JSON context evaluates json and sets the result to
+//tributary.foo where foo is the name of the context 
+//i.e. the filename without the extension
 tributary.JSONContext = tributary.Context.extend({
 
   initialize: function() {
     this.model.on("change:code", this.execute, this);
     this.model.on("change:code", function() {
-      console.log("execute???");
       tributary.events.trigger("execute");
     });
   },
 
   execute: function() {
+    console.log("NAME",this.model.get("name"));
     try {
       var json = JSON.parse(this.model.get("code"));
       tributary[this.model.get("name")] = json;

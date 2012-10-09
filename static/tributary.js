@@ -221,7 +221,8 @@
     execute: function() {
       var js = this.model.handle_coffee();
       try {
-        eval(js);
+        tributary.initialize = new Function("g", js);
+        tributary.initialize(tributary.g);
       } catch (e) {
         this.model.trigger("error", e);
         return false;
@@ -238,7 +239,7 @@
         if (tributary.bv) {
           this.make_clones();
         }
-        eval(js);
+        tributary.initialize(tributary.g);
         if (tributary.autoinit && tributary.init !== undefined) {
           tributary.init(tributary.g, 0);
         }
@@ -347,11 +348,11 @@
     initialize: function() {
       this.model.on("change:code", this.execute, this);
       this.model.on("change:code", function() {
-        console.log("execute???");
         tributary.events.trigger("execute");
       });
     },
     execute: function() {
+      console.log("NAME", this.model.get("name"));
       try {
         var json = JSON.parse(this.model.get("code"));
         tributary[this.model.get("name")] = json;
@@ -520,6 +521,31 @@
       fv.append("span").text(function(d) {
         return d.model.get("filename");
       });
+      var plus = d3.select(this.el).append("div").classed("fv", true);
+      plus.append("span").text("+");
+      var input = plus.append("input").attr({
+        type: "text"
+      }).style({
+        visibility: "hidden"
+      });
+      plus.on("click", function() {
+        input.style("visibility", "visible");
+        input.node().focus();
+        input.on("keypress", function() {
+          if (d3.event.charCode === 13) {
+            var context = tributary.make_context({
+              filename: input.node().value,
+              config: that.model
+            });
+            that.model.contexts.push(context);
+            tributary.make_editor({
+              model: context.model
+            });
+            that.$el.empty();
+            that.render();
+          }
+        });
+      });
     }
   });
   tributary.FileView = Backbone.View.extend({
@@ -639,6 +665,62 @@
     name: "restart",
     description: "assumes you only want tributary.init(g) to be run when the restart button is clicked"
   } ];
+  tributary.make_context = function(options) {
+    var filename, content, display;
+    var config = options.config;
+    if (options.filename) {
+      filename = options.filename;
+    } else {
+      filename = "inlet.js";
+    }
+    if (options.content) {
+      content = options.content;
+    } else {
+      content = "";
+    }
+    if (options.display) {
+      display = options.display;
+    } else {
+      display = d3.select("#display");
+    }
+    var context;
+    var fn = filename.split(".");
+    ext = fn[fn.length - 1];
+    var m = new tributary.CodeModel({
+      name: fn[0],
+      filename: filename,
+      code: content
+    });
+    if (ext === "js") {
+      context = new tributary.TributaryContext({
+        config: config,
+        model: m,
+        el: display.node()
+      });
+    } else if (ext === "json") {
+      context = new tributary.JSONContext({
+        config: config,
+        model: m
+      });
+      context.execute();
+    } else if (ext === "css") {} else if (ext === "html") {} else {}
+    return context;
+  };
+  tributary.make_editor = function(options) {
+    var model = options.model;
+    if (options.container) {
+      container = options.container;
+    } else {
+      container = tributary.edit.append("div").attr("id", model.cid);
+    }
+    var editor;
+    editor = new tributary.Editor({
+      el: container.node(),
+      model: model
+    });
+    editor.render();
+    return editor;
+  };
   d3.selection.prototype.moveToFront = function() {
     return this.each(function() {
       this.parentNode.appendChild(this);

@@ -15,8 +15,84 @@ tributary.time_controls = [
 ];
 
 
+tributary.make_context = function(options) {
+  //Creates a context from a filename and/or file content
+  //{
+  //  config: REQUIRED
+  //  filename: optional, default: inlet.js
+  //  content: optional, default: ""
+  //  display: optional, default: "d3.select("#display")
+  //}
+  var filename, content, display;
+  var config = options.config;
+  if(options.filename){
+    filename = options.filename;
+  } else {
+    filename = "inlet.js";
+  }
+  if(options.content) {
+    content = options.content;
+  } else {
+    content = "";
+  }
+  if(options.display) {
+    display = options.display;
+  } else {
+    display = d3.select("#display"); 
+  }
 
 
+  var context;
+  //figure out the context to make from the file extension
+  var fn = filename.split(".");
+  ext = fn[fn.length-1];
+
+  //make a code model with the content
+  var m = new tributary.CodeModel({name: fn[0], filename: filename, code: content});
+
+  if(ext === "js") {
+    context = new tributary.TributaryContext({
+      config: config,
+      model: m,
+      el: display.node()
+    });
+  } else if(ext === "json") {
+    context = new tributary.JSONContext({
+      config: config,
+      model: m,
+    });
+    context.execute();
+  } else if(ext === "css") {
+  } else if(ext === "html") {
+  } else {
+  }
+
+  return context;
+}
+
+
+tributary.make_editor = function(options) {
+  //Creates a editor from a model and optional editor container
+  //{
+  //  model: REQUIRED
+  //  container: optional, default: tributary.edit.append("div") with model.cid as id
+  //}
+
+  var model = options.model;
+  if(options.container) {
+    container = options.container;
+  } else {
+    container = tributary.edit.append("div")
+      .attr("id", model.cid);
+  }
+  var editor;
+  editor = new tributary.Editor({
+    el: container.node(),
+    model: model
+  });
+  editor.render();
+  return editor;
+}
 
 
 d3.selection.prototype.moveToFront = function() { 
