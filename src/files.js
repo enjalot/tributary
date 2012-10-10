@@ -55,6 +55,8 @@ tributary.FilesView = Backbone.View.extend({
           var context = tributary.make_context({ filename: input.node().value, config: that.model });
           if(context) {
             that.model.contexts.push(context);
+            context.render();
+            context.execute();
             tributary.make_editor({model: context.model});
             
             //rerender the files view to show new file

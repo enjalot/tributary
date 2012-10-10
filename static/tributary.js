@@ -493,6 +493,7 @@
       }).enter().append("style").classed("csscontext", true).attr({
         type: "text/css"
       }).node();
+      console.log("style el", this.el);
     }
   });
   tributary.HTMLContext = tributary.Context.extend({
@@ -693,6 +694,8 @@
             });
             if (context) {
               that.model.contexts.push(context);
+              context.render();
+              context.execute();
               tributary.make_editor({
                 model: context.model
               });
