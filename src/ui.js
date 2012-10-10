@@ -291,15 +291,15 @@ function setup_header(ret){
     */
     //make the description and attribution
     var info_string = '"<a href="' + ret.gist.html_url + '">' + ret.gist.description + '</a>" by ';
-    if(ret.gist.user.url === "") {
-        info_string += ret.gist.user.login;
+    if(ret.user.url === "") {
+        info_string += ret.user.login;
     } else {
-        info_string += '<a href="' + ret.gist.user.url + '">' + ret.gist.user.login + '</a>';
+        info_string += '<a href="' + ret.user.url + '">' + ret.user.login + '</a>';
     }
 
     $('#gist_info').html(info_string);
 
-    if(ret.gist.user.id !== tributary.userid) {
+    if(ret.user.id !== tributary.userid) {
       $("#savePanel").attr("disabled", "true");
       $("#savePanel").attr("class", "off");
     }
