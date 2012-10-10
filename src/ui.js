@@ -112,30 +112,6 @@
   });
   tributary.events.trigger("show", "edit");
 
-function setup_save(config) {
-  //Setup the save panel
-  $('#savePanel').on('click', function(e) {
-    d3.select("#syncing").style("display", "block");
-    tributary.save_gist(config, "save", function(newurl, newgist) {
-      window.location = newurl;
-    });
-  });
-  $('#forkPanel').on('click', function(e) {
-    d3.select("#syncing").style("display", "block");
-    tributary.save_gist(config, "fork", function(newurl, newgist) {
-      window.location = newurl;
-    });
-  });
-  //Setup the login button
-  $('#loginPanel').on('click', function(e) {
-    tributary.login_gist(tributary.loggedin, function(newurl, newgist) {
-      window.location = newurl;
-    }); 
-  });
-}
-
-
-
 
   ////////////////////////////////////////////////////////////////////////
   ////////////////////////////////////////////////////////////////////////
@@ -285,8 +261,7 @@ function setup_save(config) {
     });
     controls_view.render();
 
-    setup_save(config);
-
+    setup_header(ret);
 
 
     //save tab state
@@ -302,4 +277,61 @@ function setup_save(config) {
     });
 
   } 
+
+function setup_header(ret){
+
+  setup_save(ret.config);
+
+  if(ret.user) {
+    var gist_uid = ret.user.userid;
+    /* TODO: setup editing of description as well as a save button
+    if(gist_uid === tributary.userid) {
+        //the loggedin user owns this gist
+    }
+    */
+    //make the description and attribution
+    var info_string = '"<a href="' + ret.gist.html_url + '">' + ret.gist.description + '</a>" by ';
+    if(ret.gist.user.url === "") {
+        info_string += ret.gist.user.login;
+    } else {
+        info_string += '<a href="' + ret.gist.user.url + '">' + ret.gist.user.login + '</a>';
+    }
+
+    $('#gist_info').html(info_string);
+
+    if(ret.gist.user.id !== tributary.userid) {
+      $("#savePanel").attr("disabled", "true");
+      $("#savePanel").attr("class", "off");
+    }
+  }
+  //if the user is not logged in, disable save
+  if(tributary.userid === NaN) {
+    $("#savePanel").attr("disabled", "true");
+    $("#savePanel").attr("class", "off");
+    //$("#forkPanel").attr("disabled", "true");
+    //$("#forkPanel").attr("class", "minimal_off");
+  }
+}
+
+function setup_save(config) {
+  //Setup the save panel
+  $('#savePanel').on('click', function(e) {
+    d3.select("#syncing").style("display", "block");
+    tributary.save_gist(config, "save", function(newurl, newgist) {
+      window.location = newurl;
+    });
+  });
+  $('#forkPanel').on('click', function(e) {
+    d3.select("#syncing").style("display", "block");
+    tributary.save_gist(config, "fork", function(newurl, newgist) {
+      window.location = newurl;
+    });
+  });
+  //Setup the login button
+  $('#loginPanel').on('click', function(e) {
+    tributary.login_gist(tributary.loggedin, function(newurl, newgist) {
+      window.location = newurl;
+    }); 
+  });
+}
 

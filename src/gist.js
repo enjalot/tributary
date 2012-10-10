@@ -11,6 +11,7 @@ tributary.gist = function(id, callback) {
 
   d3.json('https://api.github.com/gists/' + id + cachebust, function(data) {
 
+    ret.gist = data;
     //get user information or set to anon if none.
     if(data.user === null || data.user === undefined) {
         ret.user = {

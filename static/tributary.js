@@ -74,7 +74,8 @@
       nclones: 15,
       clone_opacity: .4,
       duration: 3e3,
-      ease: "linear"
+      ease: "linear",
+      dt: .01
     },
     require: function(callback, ret) {
       var modules = this.get("require");
@@ -215,6 +216,7 @@
       tributary.duration = config.get("duration");
       tributary.ease = d3.ease(config.get("ease"));
       tributary.t = 0;
+      tributary.dt = config.get("dt");
       tributary.reverse = false;
       tributary.render = function() {};
       tributary.execute = function() {
@@ -239,13 +241,13 @@
         var now = new Date;
         var dtime = now - tributary.timer.then;
         var dt;
-        if (tributary.reverse) {
-          dt = tributary.timer.ctime * dtime / tributary.timer.duration * -1;
-        } else {
-          dt = (1 - tributary.timer.ctime) * dtime / tributary.timer.duration;
-        }
-        tributary.t = tributary.timer.ctime + dt;
         if (tributary.loop) {
+          if (tributary.reverse) {
+            dt = tributary.timer.ctime * dtime / tributary.timer.duration * -1;
+          } else {
+            dt = (1 - tributary.timer.ctime) * dtime / tributary.timer.duration;
+          }
+          tributary.t = tributary.timer.ctime + dt;
           if (tributary.t >= 1 || tributary.t <= 0 || tributary.t === "NaN") {
             if (tributary.loop_type === "period") {
               tributary.t = 0;
@@ -272,6 +274,8 @@
           if (tributary.t === false) {
             tributary.t = 0;
           }
+        } else {
+          tributary.t += tributary.dt;
         }
         tributary.execute();
         config.trigger("tick", tributary.t);
@@ -553,6 +557,7 @@
     var ret = {};
     var cachebust = "?cachebust=" + Math.random() * 0xf12765df4c9b2;
     d3.json("https://api.github.com/gists/" + id + cachebust, function(data) {
+      ret.gist = data;
       if (data.user === null || data.user === undefined) {
         ret.user = {
           login: "anon",
@@ -964,25 +969,6 @@
     panel_gui.select("#" + name + "_tab").classed("gui_active", true);
   });
   tributary.events.trigger("show", "edit");
-  function setup_save(config) {
-    $("#savePanel").on("click", function(e) {
-      d3.select("#syncing").style("display", "block");
-      tributary.save_gist(config, "save", function(newurl, newgist) {
-        window.location = newurl;
-      });
-    });
-    $("#forkPanel").on("click", function(e) {
-      d3.select("#syncing").style("display", "block");
-      tributary.save_gist(config, "fork", function(newurl, newgist) {
-        window.location = newurl;
-      });
-    });
-    $("#loginPanel").on("click", function(e) {
-      tributary.login_gist(tributary.loggedin, function(newurl, newgist) {
-        window.location = newurl;
-      });
-    });
-  }
   tributary.ui.assemble = function(gistid) {
     tributary.trace = true;
     if (gistid.length > 0) {
@@ -1081,7 +1067,7 @@
       model: config
     });
     controls_view.render();
-    setup_save(config);
+    setup_header(ret);
     tributary.events.trigger("show", config.get("tab"));
     tributary.events.on("show", function(name) {
       config.set("tab", name);
@@ -1090,6 +1076,46 @@
     tributary.events.trigger("resize");
     tributary.events.on("resize", function() {
       config.set("display_percent", tributary.dims.display_percent);
+    });
+  }
+  function setup_header(ret) {
+    setup_save(ret.config);
+    if (ret.user) {
+      var gist_uid = ret.user.userid;
+      var info_string = '"<a href="' + ret.gist.html_url + '">' + ret.gist.description + '</a>" by ';
+      if (ret.gist.user.url === "") {
+        info_string += ret.gist.user.login;
+      } else {
+        info_string += '<a href="' + ret.gist.user.url + '">' + ret.gist.user.login + "</a>";
+      }
+      $("#gist_info").html(info_string);
+      if (ret.gist.user.id !== tributary.userid) {
+        $("#savePanel").attr("disabled", "true");
+        $("#savePanel").attr("class", "off");
+      }
+    }
+    if (tributary.userid === NaN) {
+      $("#savePanel").attr("disabled", "true");
+      $("#savePanel").attr("class", "off");
+    }
+  }
+  function setup_save(config) {
+    $("#savePanel").on("click", function(e) {
+      d3.select("#syncing").style("display", "block");
+      tributary.save_gist(config, "save", function(newurl, newgist) {
+        window.location = newurl;
+      });
+    });
+    $("#forkPanel").on("click", function(e) {
+      d3.select("#syncing").style("display", "block");
+      tributary.save_gist(config, "fork", function(newurl, newgist) {
+        window.location = newurl;
+      });
+    });
+    $("#loginPanel").on("click", function(e) {
+      tributary.login_gist(tributary.loggedin, function(newurl, newgist) {
+        window.location = newurl;
+      });
     });
   }
 })();

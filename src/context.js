@@ -40,6 +40,7 @@ tributary.TributaryContext = tributary.Context.extend({
     tributary.duration = config.get("duration");
     tributary.ease = d3.ease(config.get("ease"));
     tributary.t = 0;
+    tributary.dt = config.get("dt");
     tributary.reverse = false;
 
     tributary.render = function() {};
@@ -70,15 +71,16 @@ tributary.TributaryContext = tributary.Context.extend({
       var now = new Date();
       var dtime = now - tributary.timer.then;
       var dt;
-      if (tributary.reverse) {
-          dt = tributary.timer.ctime * dtime / tributary.timer.duration * -1;
-      } else {
-          dt = (1 - tributary.timer.ctime) * dtime / tributary.timer.duration;
-      }
-      tributary.t = tributary.timer.ctime + dt;
-      
+            
       //TODO: implement play button, should reset the timer
       if(tributary.loop) {
+        if (tributary.reverse) {
+            dt = tributary.timer.ctime * dtime / tributary.timer.duration * -1;
+        } else {
+            dt = (1 - tributary.timer.ctime) * dtime / tributary.timer.duration;
+        }
+        tributary.t = tributary.timer.ctime + dt;
+
         //once we reach 1, lets pause and stay there
         if(tributary.t >= 1 || tributary.t <= 0 || tributary.t === "NaN")
         {
@@ -104,7 +106,7 @@ tributary.TributaryContext = tributary.Context.extend({
                 tributary.pause = true;
             }
           }
-        }
+        } 
         //TODO: fix, look up 10 lines to pingpong
         //not sure why we get true and false for 1 and 0 when range hits the end
         if(tributary.t === true) { tributary.t = 1; }
@@ -112,6 +114,8 @@ tributary.TributaryContext = tributary.Context.extend({
    
         //move the slider
         //$('#slider').attr('value', tributary.t);
+      } else {
+        tributary.t += tributary.dt;
       }
       
       tributary.execute();

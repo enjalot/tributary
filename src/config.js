@@ -22,6 +22,7 @@ tributary.Config = Backbone.Model.extend({
       clone_opacity: 0.4,
       duration: 3000,
       ease: "linear",
+      dt: 0.01,
 
   },
 
