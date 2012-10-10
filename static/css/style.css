@@ -81,18 +81,67 @@ body {
     right: 0px;
 }
 .pb {
-    display:block;
-    float:left;
-    margin-left: 5px;
-    padding: 5px;
+    cursor: pointer;
+    display:inline-block;
+    padding: 6px 10px;
+    margin: 0 2px;
     color: #fff;
     background-color: #595959;
+    
+    border-top-right-radius: 4px;
+    border-top-left-radius: 4px;    
+    
+    /*background-color: #404041;*/
+    background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(64, 64, 65, 1.00)), to(rgba(8, 8, 8, 0.75)));
+    background-image: -webkit-linear-gradient(top, rgba(64, 64, 65, 1.00), rgba(8, 8, 8, 0.75));
+    background-image: -moz-linear-gradient(top, rgba(64, 64, 65, 1.00), rgba(8, 8, 8, 0.75));
+    background-image: -o-linear-gradient(top, rgba(64, 64, 65, 1.00), rgba(8, 8, 8, 0.75));
+    background-image: -ms-linear-gradient(top, rgba(64, 64, 65, 1.00), rgba(8, 8, 8, 0.75));
+    background-image: linear-gradient(top, rgba(64, 64, 65, 1.00), rgba(8, 8, 8, 0.75));
+    filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,StartColorStr='#404041', EndColorStr='#080808');
+    
+    border: 1px solid black;
+    
+    opacity: 0.5;
+    
+    -webkit-transition:all .85s ease-out ;       
+       -moz-transition:all .85s ease-out ;
+         -o-transition:all .85s ease-out ;
+            transition:all .85s ease-out ; 
+            
+
 }
 .pb:hover {
-    color: #00f;
+    opacity: 0.85;
+    
+    /*background-color: #080808;*/
+    background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(8, 8, 8, 0.75)), to(rgba(64, 64, 65, 1.00)));
+    background-image: -webkit-linear-gradient(top, rgba(8, 8, 8, 0.75), rgba(64, 64, 65, 1.00));
+    background-image: -moz-linear-gradient(top, rgba(8, 8, 8, 0.75), rgba(64, 64, 65, 1.00));
+    background-image: -o-linear-gradient(top, rgba(8, 8, 8, 0.75), rgba(64, 64, 65, 1.00));
+    background-image: -ms-linear-gradient(top, rgba(8, 8, 8, 0.75), rgba(64, 64, 65, 1.00));
+    background-image: linear-gradient(top, rgba(8, 8, 8, 0.75), rgba(64, 64, 65, 1.00));
+    filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,StartColorStr='#080808', EndColorStr='#404041');
+    
+    -webkit-transition:all .28s ease-out ;       
+       -moz-transition:all .28s ease-out ;
+         -o-transition:all .28s ease-out ;
+            transition:all .28s ease-out ;
 }
 .gui_active {
-    background-color: #262626;
+    opacity: 1;
+    
+    background-color: #1b1b1b;
+    background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(27, 27, 27)), to(rgb(59, 59, 60)));
+    background-image: -webkit-linear-gradient(top, rgb(27, 27, 27), rgb(59, 59, 60));
+    background-image: -moz-linear-gradient(top, rgb(27, 27, 27), rgb(59, 59, 60));
+    background-image: -o-linear-gradient(top, rgb(27, 27, 27), rgb(59, 59, 60));
+    background-image: -ms-linear-gradient(top, rgb(27, 27, 27), rgb(59, 59, 60));
+    background-image: linear-gradient(top, rgb(27, 27, 27), rgb(59, 59, 60));
+    filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,StartColorStr='#1b1b1b', EndColorStr='#3b3b3c');
+
+    border-bottom: 3px solid #999;
+
 }
 
 /* the draggable handle for resizing the panel */
@@ -436,3 +485,6 @@ body {
 
 
 
+.ui-slider-handle {
+    outline: none !important;
+}
