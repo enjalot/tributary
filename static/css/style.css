@@ -73,6 +73,7 @@ body {
 #panel {
     background-color: #262626;
     float:left;
+    min-width: 260px;
 }
 
 #panel_gui {

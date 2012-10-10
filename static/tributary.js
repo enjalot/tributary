@@ -923,8 +923,12 @@
     panel_gui_height: 40
   };
   tributary.events.on("resize", function() {
+    var min_width = parseInt(panel.style("min-width"), 10);
     tributary.dims.page_width = parseInt(page.style("width"), 10);
     tributary.dims.page_height = parseInt(page.style("height"), 10);
+    if (tributary.dims.page_width - tributary.dims.page_width * tributary.dims.display_percent < min_width) {
+      return;
+    }
     tributary.dims.display_width = tributary.dims.page_width * tributary.dims.display_percent;
     tributary.dims.panel_width = tributary.dims.page_width - tributary.dims.display_width;
     tributary.dims.panel_gui_width = tributary.dims.panel_width;

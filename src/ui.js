@@ -30,9 +30,16 @@
   //We control the layout of our UI completely with code, otherwise we are forcing CSS
   //to do something it wasn't meant to do, make an application...
   tributary.events.on("resize", function() {
+    var min_width = parseInt(panel.style("min-width"), 10);
 
     tributary.dims.page_width = parseInt(page.style("width"), 10);
     tributary.dims.page_height = parseInt(page.style("height"), 10);
+
+    //if the panel width goes below the minimum width, don't resize
+    if( tributary.dims.page_width - tributary.dims.page_width * tributary.dims.display_percent < min_width ) {
+      return;
+    }
+
 
     //calculate how big we want our display to be
     tributary.dims.display_width = tributary.dims.page_width * tributary.dims.display_percent;
