@@ -63,6 +63,18 @@ tributary.render
 
 
 TODO:  
-Make BV button work for any of the renders (not just svg)
+Editor UI:  
+* re-enable vim and emacs mode (add ui for those selections somewhere)  
+* re-enable local storage backups per editor (need it so you can load code back but not execute it)  
+
+File UI:  
+* open file from disk (file dialog)  
+* edit filename  
+* delete files  
+
+Embedding example (simpler UI, assemble from fewer pieces)  
+
+Make BV button work for any of the renders (not just svg)  
+
 
 

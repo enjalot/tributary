@@ -104,6 +104,7 @@ body {
     border-left: 1px solid #000;
     border-right: 1px solid #000;
     position:absolute;
+    cursor: ew-resize;
 }
 
 
