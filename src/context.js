@@ -352,7 +352,6 @@ tributary.JSONContext = tributary.Context.extend({
     this.model.trigger("noerror");
 
     return true;
-
   },
 
   render: function() {
@@ -362,9 +361,135 @@ tributary.JSONContext = tributary.Context.extend({
 });
 
 
-//tributary.JSContext = tributary.Context.extend({
+//The JS context evaluates js in the global namespace
+//TODO: doesn't seem to really be global, need to use tributary object...
+tributary.JSContext = tributary.Context.extend({
+  initialize: function() {
+    this.model.on("change:code", this.execute, this);
+    this.model.on("change:code", function() {
+      tributary.events.trigger("execute");
+    });
+  },
 
-//tributary.CSVContext = tributary.Context.extend({
-//tributary.CSSContext = tributary.Context.extend({
-//tributary.HTMLContext = tributary.Context.extend({
+  execute: function() {
+    try {
+      eval(this.model.get("code"));
+    } catch (e) {
+      this.model.trigger("error", e);
+      return false;
+    }
+    this.model.trigger("noerror");
+
+    return true;
+  },
+
+  render: function() {
+    //JS context doesn't do anything on rendering
+  },
+
+});
+
+
+//The CSV context evaluates js in the global namespace
+tributary.CSVContext = tributary.Context.extend({
+  initialize: function() {
+    this.model.on("change:code", this.execute, this);
+    this.model.on("change:code", function() {
+      tributary.events.trigger("execute");
+    });
+  },
+
+  execute: function() {
+    try {
+      var json = d3.csv.parse(this.model.get("code"));
+      tributary[this.model.get("name")] = json;
+    } catch (e) {
+      this.model.trigger("error", e);
+      return false;
+    }
+    this.model.trigger("noerror");
+
+    return true;
+  },
+
+  render: function() {
+    //CSV context doesn't do anything on rendering
+  },
+});
+
+
+//The CSS context adds a style element to the head with the contents of the css
+tributary.CSSContext = tributary.Context.extend({
+  initialize: function() {
+    this.model.on("change:code", this.execute, this);
+    this.model.on("change:code", function() {
+      tributary.events.trigger("execute");
+    });
+  },
+
+  execute: function() {
+    try {
+      //set the text of the style element to the code
+      this.el.textContent = this.model.get("code");
+    } catch (e) {
+      this.model.trigger("error", e);
+      return false;
+    }
+    this.model.trigger("noerror");
+
+    return true;
+  },
+
+  render: function() {
+    //we create a style element for the model in the head
+    this.el = d3.select("head")
+      .selectAll("style.csscontext")
+      .data([this.model], function(d) { return d.cid })
+      .enter()
+      .append("style")
+      .classed("csscontext", true)
+      .attr({
+        type:"text/css"
+      }).node();
+
+  },
+
+});
+
+//TODO: figure out how to make this useful
+tributary.HTMLContext = tributary.Context.extend({
+  initialize: function() {
+    this.model.on("change:code", this.execute, this);
+    this.model.on("change:code", function() {
+      tributary.events.trigger("execute");
+    });
+  },
+
+  execute: function() {
+    try {
+      //set the text of the style element to the code
+      $(this.el).html(this.model.get("code"));
+    } catch (e) {
+      this.model.trigger("error", e);
+      return false;
+    }
+    this.model.trigger("noerror");
+
+    return true;
+  },
+
+  render: function() {
+    this.el = d3.select("body")
+      .selectAll("div.htmlcontext")
+      .data([this.model], function(d) { return d.cid })
+      .enter()
+      .append("div")
+      .classed("htmlcontext", true)
+      .node();
+
+    
+  },
+
+});
+
 

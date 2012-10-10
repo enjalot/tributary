@@ -19,51 +19,78 @@ tributary.make_context = function(options) {
   //Creates a context from a filename and/or file content
   //{
   //  config: REQUIRED
+  //  model: optional, if a CodeModel is passed in, filename and content wont be used
   //  filename: optional, default: inlet.js
   //  content: optional, default: ""
   //  display: optional, default: "d3.select("#display")
   //}
-  var filename, content, display;
+  var context, model,display, type;
   var config = options.config;
-  if(options.filename){
-    filename = options.filename;
+  if(options.model) {
+    model = options.model;
+    filename = model.get("filename");
+    type = model.get("type");
   } else {
-    filename = "inlet.js";
-  }
-  if(options.content) {
-    content = options.content;
-  } else {
-    content = "";
+    var filename, content;
+    if(options.filename){
+      filename = options.filename;
+    } else {
+      filename = "inlet.js";
+    }
+    if(options.content) {
+      content = options.content;
+    } else {
+      content = "";
+    }
+    //figure out the context to make from the file extension
+    var fn = filename.split(".");
+    type = fn[fn.length-1];
+
+    //make a code model with the content
+    model = new tributary.CodeModel({name: fn[0], filename: filename, code: content});
+
   }
   if(options.display) {
     display = options.display;
   } else {
     display = d3.select("#display"); 
   }
-
-
-  var context;
-  //figure out the context to make from the file extension
-  var fn = filename.split(".");
-  ext = fn[fn.length-1];
-
-  //make a code model with the content
-  var m = new tributary.CodeModel({name: fn[0], filename: filename, code: content});
-
-  if(ext === "js") {
+  
+  if(filename === "inlet.js") {
     context = new tributary.TributaryContext({
       config: config,
-      model: m,
+      model: model,
       el: display.node()
     });
-  } else if(ext === "json") {
+  } else if(type === "json") {
     context = new tributary.JSONContext({
       config: config,
-      model: m,
+      model: model,
     });
-    context.execute();
-  } else if(ext === "css") {
-  } else if(ext === "html") {
+  } else if(type === "csv") {
+    context = new tributary.CSVContext({
+      config: config,
+      model: model,
+    });
+  } else if(type === "js") {
+    context = new tributary.JSContext({
+      config: config,
+      model: model,
+    });
+  } else if(type === "css") {
+    context = new tributary.CSSContext({
+      config: config,
+      model: model,
+    });
+  } else if(type === "html") {
+    //TODO: enable this when it becomes useful
+    /*
+    context = new tributary.HTMLContext({
+      config: config,
+      model: model,
+      el: display.node()
+    });
+    */
   } else {
   }
 

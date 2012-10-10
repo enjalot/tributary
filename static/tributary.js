@@ -427,6 +427,93 @@
     },
     render: function() {}
   });
+  tributary.JSContext = tributary.Context.extend({
+    initialize: function() {
+      this.model.on("change:code", this.execute, this);
+      this.model.on("change:code", function() {
+        tributary.events.trigger("execute");
+      });
+    },
+    execute: function() {
+      try {
+        eval(this.model.get("code"));
+      } catch (e) {
+        this.model.trigger("error", e);
+        return false;
+      }
+      this.model.trigger("noerror");
+      return true;
+    },
+    render: function() {}
+  });
+  tributary.CSVContext = tributary.Context.extend({
+    initialize: function() {
+      this.model.on("change:code", this.execute, this);
+      this.model.on("change:code", function() {
+        tributary.events.trigger("execute");
+      });
+    },
+    execute: function() {
+      try {
+        var json = d3.csv.parse(this.model.get("code"));
+        tributary[this.model.get("name")] = json;
+      } catch (e) {
+        this.model.trigger("error", e);
+        return false;
+      }
+      this.model.trigger("noerror");
+      return true;
+    },
+    render: function() {}
+  });
+  tributary.CSSContext = tributary.Context.extend({
+    initialize: function() {
+      this.model.on("change:code", this.execute, this);
+      this.model.on("change:code", function() {
+        tributary.events.trigger("execute");
+      });
+    },
+    execute: function() {
+      try {
+        this.el.textContent = this.model.get("code");
+      } catch (e) {
+        this.model.trigger("error", e);
+        return false;
+      }
+      this.model.trigger("noerror");
+      return true;
+    },
+    render: function() {
+      this.el = d3.select("head").selectAll("style.csscontext").data([ this.model ], function(d) {
+        return d.cid;
+      }).enter().append("style").classed("csscontext", true).attr({
+        type: "text/css"
+      }).node();
+    }
+  });
+  tributary.HTMLContext = tributary.Context.extend({
+    initialize: function() {
+      this.model.on("change:code", this.execute, this);
+      this.model.on("change:code", function() {
+        tributary.events.trigger("execute");
+      });
+    },
+    execute: function() {
+      try {
+        $(this.el).html(this.model.get("code"));
+      } catch (e) {
+        this.model.trigger("error", e);
+        return false;
+      }
+      this.model.trigger("noerror");
+      return true;
+    },
+    render: function() {
+      this.el = d3.select("body").selectAll("div.htmlcontext").data([ this.model ], function(d) {
+        return d.cid;
+      }).enter().append("div").classed("htmlcontext", true).node();
+    }
+  });
   tributary.Editor = Backbone.View.extend({
     initialize: function() {
       this.config = this.model.get("config");
@@ -599,12 +686,16 @@
               filename: input.node().value,
               config: that.model
             });
-            that.model.contexts.push(context);
-            tributary.make_editor({
-              model: context.model
-            });
-            that.$el.empty();
-            that.render();
+            if (context) {
+              that.model.contexts.push(context);
+              tributary.make_editor({
+                model: context.model
+              });
+              that.$el.empty();
+              that.render();
+            } else {
+              input.classed("input_error", true);
+            }
           }
         });
       });
@@ -728,44 +819,64 @@
     description: "assumes you only want tributary.init(g) to be run when the restart button is clicked"
   } ];
   tributary.make_context = function(options) {
-    var filename, content, display;
+    var context, model, display, type;
     var config = options.config;
-    if (options.filename) {
-      filename = options.filename;
+    if (options.model) {
+      model = options.model;
+      filename = model.get("filename");
+      type = model.get("type");
     } else {
-      filename = "inlet.js";
-    }
-    if (options.content) {
-      content = options.content;
-    } else {
-      content = "";
+      var filename, content;
+      if (options.filename) {
+        filename = options.filename;
+      } else {
+        filename = "inlet.js";
+      }
+      if (options.content) {
+        content = options.content;
+      } else {
+        content = "";
+      }
+      var fn = filename.split(".");
+      type = fn[fn.length - 1];
+      model = new tributary.CodeModel({
+        name: fn[0],
+        filename: filename,
+        code: content
+      });
     }
     if (options.display) {
       display = options.display;
     } else {
       display = d3.select("#display");
     }
-    var context;
-    var fn = filename.split(".");
-    ext = fn[fn.length - 1];
-    var m = new tributary.CodeModel({
-      name: fn[0],
-      filename: filename,
-      code: content
-    });
-    if (ext === "js") {
+    if (filename === "inlet.js") {
       context = new tributary.TributaryContext({
         config: config,
-        model: m,
+        model: model,
         el: display.node()
       });
-    } else if (ext === "json") {
+    } else if (type === "json") {
       context = new tributary.JSONContext({
         config: config,
-        model: m
+        model: model
       });
-      context.execute();
-    } else if (ext === "css") {} else if (ext === "html") {} else {}
+    } else if (type === "csv") {
+      context = new tributary.CSVContext({
+        config: config,
+        model: model
+      });
+    } else if (type === "js") {
+      context = new tributary.JSContext({
+        config: config,
+        model: model
+      });
+    } else if (type === "css") {
+      context = new tributary.CSSContext({
+        config: config,
+        model: model
+      });
+    } else if (type === "html") {} else {}
     return context;
   };
   tributary.make_editor = function(options) {
@@ -823,6 +934,7 @@
     panel_handle.style("right", tributary.dims.panel_width + "px");
     tributary.sw = tributary.dims.display_width;
     tributary.sh = tributary.dims.display_height;
+    tributary.events.trigger("execute");
   });
   tributary.events.trigger("resize");
   var ph_drag = d3.behavior.drag().on("drag", function() {
@@ -931,31 +1043,24 @@
     tributary.edit = edit;
     ret.models.each(function(m) {
       type = m.get("type");
-      if (type === "js") {
-        context = new tributary.TributaryContext({
-          config: config,
-          model: m,
-          el: display.node()
-        });
+      context = tributary.make_context({
+        config: config,
+        model: m,
+        display: display
+      });
+      if (context) {
         config.contexts.push(context);
         context.render();
-        tributary.make_editor({
-          model: m
-        });
-      } else if (type === "json") {
-        context = new tributary.JSONContext({
-          config: config,
-          model: m
-        });
-        config.contexts.push(context);
-        context.execute();
+        if (m.get("filename") !== "inlet.js") {
+          context.execute();
+        }
         tributary.make_editor({
           model: m
         });
       }
     });
     config.contexts.forEach(function(c) {
-      if (c.model.get("type") === "js") {
+      if (c.model.get("filename") === "inlet.js") {
         tributary.autoinit = true;
         c.execute();
         tributary.autoinit = config.get("autoinit");

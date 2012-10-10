@@ -56,7 +56,8 @@
 
     tributary.sw = tributary.dims.display_width;
     tributary.sh = tributary.dims.display_height;
-    //update_panel_layout();
+
+    tributary.events.trigger("execute");
   });
   tributary.events.trigger("resize");
 
@@ -234,34 +235,28 @@ function setup_save(config) {
       //select appropriate html ui containers
       // and create contexts
       // TODO: if name === "inlet.js" otherwise we do a JSContext for .js
-      if(type === "js") {
-        //context = new tributary.context_map[config.get("endpoint")]({
-        context = new tributary.TributaryContext({
-          config: config,
-          model: m,
-          el: display.node()
-        });
+
+      context = tributary.make_context({
+        config: config,
+        model: m,
+        display: display
+      });
+      if(context) {
         config.contexts.push(context);
         context.render();
+        if(m.get("filename") !== "inlet.js") {
+          context.execute();
+        }
+
         tributary.make_editor({model: m});
       }
-      else if(type === "json") {
-        context = new tributary.JSONContext({
-          config: config,
-          model: m,
-        });
-        config.contexts.push(context);
-        context.execute();
-        tributary.make_editor({model: m});
-      }
-      
     });
 
     //when done, need to execute code (because json/csv etc need to load first)
     config.contexts.forEach(function(c) {
       //select appropriate html ui containers
       // and create contexts
-      if(c.model.get("type") === "js") {
+      if(c.model.get("filename") === "inlet.js") {
         //first load should auto init
         tributary.autoinit = true;
         c.execute();
