@@ -1,4 +1,4 @@
-#Tributary
+# Tributary
 Tributary allows you to share live-editable code snippets. These snippets will
 most likely use d3.js and allow a user to play with code in a very responsive
 way.
@@ -8,7 +8,7 @@ Florit which was in turn inspired by Bret Victor's genius and making it sharable
 
 Tributary is a labor of love by Ian '@enjalot' Johnson and EJ '@mrejfox' Fox.
 
-#Usage:
+# Usage:
 Start typing into the code editor and watch your code come to life!
 If you want to save your work you can click the fork button and it will save into a gist.
 The url in your browser will update to something like:
@@ -18,7 +18,7 @@ where the number: 2165875 is the gist id
 (you can see it here: https://gist.github.com/2165875 ) 
 
 
-#Development:
+# Development:
 Tributary is an experimental environment and an experimental project. We are playing with
 different "views" on code which have different assumptions. Once you get into it you may
 find you want to make your own view. 
@@ -63,19 +63,20 @@ tributary.reverse
 tributary.render  
 
 
-TODO:  
-Editor UI:  
-* re-enable vim and emacs mode (add ui for those selections somewhere)  
-* re-enable local storage backups per editor (need it so you can load code back but not execute it)  
+### TODO:  
 
-File UI:  
-* open file from disk (file dialog)  
-* edit filename  
-* delete files  
+#### Editor UI:  
++ re-enable vim and emacs mode (add ui for those selections somewhere)  
++ re-enable local storage backups per editor (need it so you can load code back but not execute it)  
 
-Embedding example (simpler UI, assemble from fewer pieces)  
+#### File UI:  
++ open file from disk (file dialog)  
++ edit filename  
++ delete files  
 
-Make BV button work for any of the renders (not just svg)  
++ Embedding example (simpler UI, assemble from fewer pieces)  
+
++ Make BV button work for any of the renders (not just svg)  
 
 
 
