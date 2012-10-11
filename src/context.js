@@ -129,7 +129,7 @@ tributary.TributaryContext = tributary.Context.extend({
     try {
       //eval(js);
       tributary.initialize = new Function("g", js);
-      tributary.initialize(tributary.g);
+      //tributary.initialize(tributary.g);
     } catch (e) {
         this.model.trigger("error", e);
         return false;

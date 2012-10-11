@@ -285,7 +285,6 @@
       var js = this.model.handle_coffee();
       try {
         tributary.initialize = new Function("g", js);
-        tributary.initialize(tributary.g);
       } catch (e) {
         this.model.trigger("error", e);
         return false;
@@ -794,6 +793,7 @@
         var rb = tc.append("button").classed("restart", true).classed("button_on", true).text("Restart");
         rb.on("click", function(event) {
           tributary.clear();
+          tributary.initialize();
           tributary.init(tributary.g);
           tributary.execute();
         });
@@ -905,6 +905,15 @@
   d3.selection.prototype.moveToFront = function() {
     return this.each(function() {
       this.parentNode.appendChild(this);
+    });
+  };
+  tributary.batch = {};
+  tributary.batch._execute = function() {
+    var funcs = _.functions(this);
+    _.each(funcs, function(f) {
+      if (f !== "_execute") {
+        tributary.batch[f]();
+      }
     });
   };
   tributary.ui = {};
@@ -1101,7 +1110,7 @@
         $("#savePanel").attr("class", "off");
       }
     }
-    if (tributary.userid === NaN) {
+    if (isNaN(tributary.userid)) {
       $("#savePanel").attr("disabled", "true");
       $("#savePanel").attr("class", "off");
     }

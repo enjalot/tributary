@@ -312,7 +312,7 @@ function setup_header(ret){
     }
   }
   //if the user is not logged in, disable save
-  if(tributary.userid === NaN) {
+  if(isNaN(tributary.userid)) {
     $("#savePanel").attr("disabled", "true");
     $("#savePanel").attr("class", "off");
     //$("#forkPanel").attr("disabled", "true");
