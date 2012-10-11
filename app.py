@@ -48,6 +48,9 @@ def render_defaults(template, gist=None, filename=None):
 @app.route("/tributary/")
 @app.route("/tributary/<gist>/")
 @app.route("/tributary/<gist>/<filename>")
+@app.route("/inlet/")
+@app.route("/inlet/<gist>/")
+@app.route("/inlet/<gist>/<filename>")
 def tributary_gist(gist=None, filename=None):
     return render_defaults("tributary.html", gist=gist, filename=filename)
 
@@ -306,7 +309,7 @@ def fork_endpoint(id=None):
     if(id is None or token is None):
         return save(None, data, token)
     #if user doesn't own this gist, just fork it
-    elif(userid == gist_userid):
+    elif(userid != gist_userid):
         newgist = fork(id, token)
         resp = make_response(json.dumps(newgist), 200)
         resp.headers['Content-Type'] = 'application/json'
