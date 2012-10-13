@@ -24,7 +24,7 @@
     panel_width: 0,
     panel_height: 0,
     panel_gui_width: 0,
-    panel_gui_height: 40
+    panel_gui_height: 31
   };
 
   //We control the layout of our UI completely with code, otherwise we are forcing CSS

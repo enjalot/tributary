@@ -547,7 +547,7 @@
   tributary.save_gist = function(config, saveorfork, callback) {
     var oldgist = tributary.gistid || "";
     var gist = {
-      description: "new tributary",
+      description: "just another inlet to tributary",
       "public": config.get("public"),
       files: {}
     };
@@ -933,7 +933,7 @@
     panel_width: 0,
     panel_height: 0,
     panel_gui_width: 0,
-    panel_gui_height: 40
+    panel_gui_height: 31
   };
   tributary.events.on("resize", function() {
     var min_width = parseInt(panel.style("min-width"), 10);

@@ -75,7 +75,7 @@ body {
     background-color: #262626;
     float:left;
     min-width: 260px;
-    padding-top: 6px;
+    padding-top: 4px;
 }
 
 #panel_gui {
@@ -84,16 +84,23 @@ body {
     right: 0px;
     
     border-bottom: 2px solid #999;
-    height: 40px;
-    padding-top: 6px;
+    padding-top: 4px;
+    height: 31px !important;
 }
 .pb {
+    width: 58px;
+    height: 25px;
+    text-align: center;
+    font-size: 13px;
     cursor: pointer;
     display:inline-block;
-    padding: 6px 10px;
-    margin: 0 2px;
+    padding: 4px 4px;
+    margin: 0 3px;
     color: #fff;
     background-color: #595959;
+    color: #BABABA;
+    font-weight: bold;
+    text-transform: capitalize;
     
     border-top-right-radius: 4px;
     border-top-left-radius: 4px; 
@@ -118,7 +125,6 @@ body {
          -o-transition:all .85s ease-out ;
             transition:all .85s ease-out ; 
             
-    height: 32px;
             
 
 }
@@ -142,6 +148,10 @@ body {
 .gui_active {
     opacity: 1;
     
+    color: #D5D5D5;
+    
+    text-shadow:rgba(10, 10, 10, 0.62) 0 1px 3px; 
+    
     background-color: #1b1b1b;
     background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(27, 27, 27)), to(rgb(59, 59, 60)));
     background-image: -webkit-linear-gradient(top, rgb(27, 27, 27), rgb(59, 59, 60));
@@ -151,7 +161,7 @@ body {
     background-image: linear-gradient(top, rgb(27, 27, 27), rgb(59, 59, 60));
     filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,StartColorStr='#1b1b1b', EndColorStr='#3b3b3c');
 
-    border-bottom: 3px solid #999;
+    border-bottom: 1px solid #999;
 
 }
 
@@ -227,13 +237,31 @@ body {
     height: 100%;
 }
 .config {
-    padding: 5px 5px 5px 5px;
-    margin: 5px 5px 5px 5px;
+    padding: 8px 6px;
+    margin: 6px;
     color: #fff;
+    
+    border-radius: 4px;
+    
+    -webkit-transition:all .22s linear ;       
+       -moz-transition:all .22s linear ;
+         -o-transition:all .22s linear ;
+            transition:all .22s linear ; 
 }
 .config:hover {
-    background: #393939;
     cursor: pointer;
+    
+    background-color: #262626;
+    background-image: -webkit-gradient(radial, 0% 0%,0,0% 0%,200, from(rgb(58, 58, 58)), to(rgb(38, 38, 38)));
+    background-image: -webkit-radial-gradient(0% 0%, rgb(38, 38, 38), rgb(58, 58, 58));
+    background-image: -moz-radial-gradient(0% 0%, rgb(38, 38, 38), rgb(58, 58, 58));
+    background-image: -o-radial-gradient(0% 0%, rgb(38, 38, 38), rgb(58, 58, 58));
+    background-image: -ms-radial-gradient(0% 0%, rgb(38, 38, 38), rgb(58, 58, 58));
+    background-image: radial-gradient(0% 0%, rgb(38, 38, 38), rgb(58, 58, 58));
+
+    -webkit-box-shadow:inset 0 0 4px 1px rgba(0,0,0,0.25); /* Saf3.0+, Chrome */
+       -moz-box-shadow:inset 0 0 4px 1px rgba(0,0,0,0.25); /* FF3.5+ */
+            box-shadow:inset 0 0 4px 1px rgba(0,0,0,0.25); /* Opera 10.5, IE 9.0 */
 }
 .config .description {
     font-size: 10px;
@@ -250,7 +278,20 @@ body {
 
 
 .config_active {
-    background: #5a5a5a;
+    
+    border: 1px solid rgba(250,250,240,0.3);
+    background-color: #424142;
+    background-image: -webkit-gradient(radial, 0% 0%,0,0% 0%,200, from(rgb(30, 30, 30)), to(rgb(66, 65, 66)));
+    background-image: -webkit-radial-gradient(0% 0%, rgb(66, 65, 66), rgb(30, 30, 30));
+    background-image: -moz-radial-gradient(0% 0%, rgb(66, 65, 66), rgb(30, 30, 30));
+    background-image: -o-radial-gradient(0% 0%, rgb(66, 65, 66), rgb(30, 30, 30));
+    background-image: -ms-radial-gradient(0% 0%, rgb(66, 65, 66), rgb(30, 30, 30));
+    background-image: radial-gradient(0% 0%, rgb(66, 65, 66), rgb(30, 30, 30));
+    
+    -webkit-box-shadow:0 0 3px 1px rgba(0,0,0,0.6); /* Saf3.0+, Chrome */
+       -moz-box-shadow:0 0 3px 1px rgba(0,0,0,0.6); /* FF3.5+ */
+            box-shadow:0 0 3px 1px rgba(0,0,0,0.6); /* Opera 10.5, IE 9.0 */
+    
 }
 .config_title {
     font-size: 20px;
@@ -264,12 +305,23 @@ body {
     height: 100%;
 }
 .fv {
-    padding: 5px;
+    padding: 10px 8px;
     color: #fff;
+    border-radius: 4px;
+    cursor: pointer;
 }
 .fv:hover {
-    background: #393939;
-    cursor: pointer;
+    background-color: #262626;
+    background-image: -webkit-gradient(radial, 0% 0%,0,0% 0%,200, from(rgb(58, 58, 58)), to(rgb(38, 38, 38)));
+    background-image: -webkit-radial-gradient(0% 0%, rgb(38, 38, 38), rgb(58, 58, 58));
+    background-image: -moz-radial-gradient(0% 0%, rgb(38, 38, 38), rgb(58, 58, 58));
+    background-image: -o-radial-gradient(0% 0%, rgb(38, 38, 38), rgb(58, 58, 58));
+    background-image: -ms-radial-gradient(0% 0%, rgb(38, 38, 38), rgb(58, 58, 58));
+    background-image: radial-gradient(0% 0%, rgb(38, 38, 38), rgb(58, 58, 58));
+
+    -webkit-box-shadow:inset 0 0 4px 1px rgba(0,0,0,0.65); /* Saf3.0+, Chrome */
+       -moz-box-shadow:inset 0 0 4px 1px rgba(0,0,0,0.65); /* FF3.5+ */
+            box-shadow:inset 0 0 4px 1px rgba(0,0,0,0.65); /* Opera 10.5, IE 9.0 */
 }
 .input_error {
     border: 4px solid #f00;
@@ -356,6 +408,10 @@ body {
     /*right: 320px; */
     top: 6px;
 }
+#save_gui button{
+    margin: 0 2px;;
+    
+}
 #datgui {
  top: 10px;
 }
@@ -399,6 +455,9 @@ body {
     font-size: 10px;
 }
 
+#panelgui .gui_active {
+    opacity: 1 !important;
+}
 
 /*
 .CodeMirror, .CodeMirror-scroll, .CodeMirror-gutter-text {
