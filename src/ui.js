@@ -96,10 +96,8 @@
     })
   .on("click", function(d) {
     tributary.events.trigger("show", d);
-  });
-
-  panel_buttons//.append("text")
-    .text(function(d) { return d; });
+  })
+  .text(function(d) { return d; });
  
   //Logic for tabs
   tributary.events.on("show", function(name) {
