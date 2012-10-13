@@ -340,6 +340,10 @@ body {
     height: 100%;
 }
 
+
+.play {
+    width: 70px;
+}
 /*
 .CodeMirror .CodeMirror-scroll {
     background-color: rgba(8,8,8,0.80);
