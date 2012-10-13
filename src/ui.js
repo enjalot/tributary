@@ -84,7 +84,7 @@
   // Setup the Panel GUI for switching between windows in the panel
   ////////////////////////////////////////////////////////////////////////
   
-  var panel_data = ["edit", "files", "config", "controls"];
+  var panel_data = ["edit", "files", "config"];
   var pb_w = 60; //width of each button
   var panel_buttons = panel_gui.selectAll("div.pb")
     .data(panel_data)

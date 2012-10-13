@@ -133,63 +133,6 @@
         d3.select(this).classed("config_active", tf);
         that.model.set(d.name, tf);
       });
-      d3.select(this.el).append("span").classed("config_title", true).text("Require:");
-      var rc = d3.select(this.el).append("div").classed("requirecontrols", true);
-      var rcs = rc.selectAll("div.config").data(this.model.get("require")).enter().append("div").classed("config", true);
-      rcs.append("span").text(function(d) {
-        return d.name;
-      });
-      rcs.append("span").text(function(d) {
-        return " " + d.url;
-      }).classed("description", true);
-      rcs.append("span").text("x").classed("delete", true).on("click", function(d) {
-        var reqs = that.model.get("require");
-        var ind = reqs.indexOf(d);
-        reqs.splice(ind, 1);
-        that.model.set("require", reqs);
-        that.$el.empty();
-        that.render();
-      });
-      var plus = rc.append("div").classed("config", true);
-      plus.append("span").text("+ ");
-      var name_input = plus.append("div").text("name: ").style({
-        display: "none"
-      });
-      name_input.append("input").attr({
-        type: "text"
-      });
-      var url_input = plus.append("div").text("url: ").style({
-        display: "none"
-      });
-      url_input.append("input").text("url:").attr({
-        type: "text"
-      });
-      plus.on("click", function() {
-        name_input.style("display", "");
-        url_input.style("display", "");
-        name_input.select("input").node().focus();
-        var done = function() {
-          var req = {
-            name: name_input.select("input").node().value,
-            url: url_input.select("input").node().value
-          };
-          var reqs = that.model.get("require");
-          reqs.push(req);
-          that.model.set("require", reqs);
-          that.$el.empty();
-          that.render();
-        };
-        name_input.on("keypress", function() {
-          if (d3.event.charCode === 13) {
-            done();
-          }
-        });
-        url_input.on("keypress", function() {
-          if (d3.event.charCode === 13) {
-            done();
-          }
-        });
-      });
     }
   });
   tributary.Context = Backbone.View.extend({
@@ -706,6 +649,64 @@
           }
         });
       });
+      var requireUI = d3.select(this.el).append("div").attr("id", "require-ui");
+      requireUI.append("span").classed("config_title", true).text("Require:");
+      var rc = requireUI.append("div").classed("requirecontrols", true);
+      var rcs = rc.selectAll("div.config").data(this.model.get("require")).enter().append("div").classed("config", true);
+      rcs.append("span").text(function(d) {
+        return d.name;
+      });
+      rcs.append("span").text(function(d) {
+        return " " + d.url;
+      }).classed("description", true);
+      rcs.append("span").text("x").classed("delete", true).on("click", function(d) {
+        var reqs = that.model.get("require");
+        var ind = reqs.indexOf(d);
+        reqs.splice(ind, 1);
+        that.model.set("require", reqs);
+        that.$el.empty();
+        that.render();
+      });
+      var plus = rc.append("div").classed("config", true);
+      plus.append("span").text("+ ");
+      var name_input = plus.append("div").text("name: ").style({
+        display: "none"
+      });
+      name_input.append("input").attr({
+        type: "text"
+      });
+      var url_input = plus.append("div").text("url: ").style({
+        display: "none"
+      });
+      url_input.append("input").text("url:").attr({
+        type: "text"
+      });
+      plus.on("click", function() {
+        name_input.style("display", "");
+        url_input.style("display", "");
+        name_input.select("input").node().focus();
+        var done = function() {
+          var req = {
+            name: name_input.select("input").node().value,
+            url: url_input.select("input").node().value
+          };
+          var reqs = that.model.get("require");
+          reqs.push(req);
+          that.model.set("require", reqs);
+          that.$el.empty();
+          that.render();
+        };
+        name_input.on("keypress", function() {
+          if (d3.event.charCode === 13) {
+            done();
+          }
+        });
+        url_input.on("keypress", function() {
+          if (d3.event.charCode === 13) {
+            done();
+          }
+        });
+      });
     }
   });
   tributary.FileView = Backbone.View.extend({
@@ -966,7 +967,7 @@
     tributary.events.trigger("resize");
   });
   panel_handle.call(ph_drag);
-  var panel_data = [ "edit", "files", "config", "controls" ];
+  var panel_data = [ "edit", "files", "config" ];
   var pb_w = 60;
   var panel_buttons = panel_gui.selectAll("div.pb").data(panel_data).enter().append("div").classed("pb", true).attr({
     id: function(d) {
@@ -974,8 +975,7 @@
     }
   }).on("click", function(d) {
     tributary.events.trigger("show", d);
-  });
-  panel_buttons.text(function(d) {
+  }).text(function(d) {
     return d;
   });
   tributary.events.on("show", function(name) {

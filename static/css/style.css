@@ -71,6 +71,7 @@ body {
 }
 
 #panel {
+    position: relative;
     background-color: #262626;
     float:left;
     min-width: 260px;
@@ -145,6 +146,45 @@ body {
 
 }
 
+#require-ui {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+}
+
+.config div{
+    text-align: right;
+}
+
+.config input {
+    background-color: black;
+    border: 1px solid #999;
+    border-radius: 4px;
+    padding: 4px;
+    color: white;
+    outline: none;
+}
+.config input:active {
+    border: 1px solid black;
+}
+
+#controls {
+    padding: 16px;
+    text-align: center;
+    position: fixed;
+    bottom: 12px;
+    left: 12px;
+/*    width: 298px; */
+/*    height: 72px; 
+    overflow: auto; */
+    border-radius: 4px;
+    
+    background-color: rgba(210,210,215,0.38);
+}
+#controls button {
+    margin: 0 6px;
+}
+
 /* the draggable handle for resizing the panel */
 #panel_handle {
     display:block;
@@ -167,10 +207,12 @@ body {
     border-right: 2px solid red !important;
 }
 
+/*
 #controls{
     width: 100%;
     height: 100%;
 }
+*/
 #config {
     width: 100%;
     height: 100%;

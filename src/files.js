@@ -72,11 +72,13 @@ tributary.FilesView = Backbone.View.extend({
     
     
     //Add require.js UI
-    d3.select(this.el).append("span")
+    
+    var requireUI = d3.select(this.el).append("div").attr("id", "require-ui")
+    requireUI.append("span")
       .classed("config_title", true)
       .text("Require:");
      
-    var rc = d3.select(this.el).append("div")
+    var rc = requireUI.append("div")
       .classed("requirecontrols", true);
     var rcs = rc 
       .selectAll("div.config")
