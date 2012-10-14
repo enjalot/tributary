@@ -1,6 +1,6 @@
 
 var tributary = {};
-window.tributary = tributary;
+//window.tributary = tributary;
 
 //general event handler for any part of tributary to listen on
 tributary.events = _.clone(Backbone.Events);

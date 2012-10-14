@@ -124,7 +124,7 @@ tributary.ControlsView = Backbone.View.extend({
 
       rb.on("click", function(event) {
         tributary.clear();
-        tributary.initialize();
+        tributary.initialize(tributary.g, tributary);
         tributary.init(tributary.g);
         tributary.execute();
       });

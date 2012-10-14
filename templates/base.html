@@ -131,12 +131,13 @@
 
     
     <script type="text/javascript">
+        var tb = Tributary();
         //provide global trib object
-        tributary.loggedin = "{{ loggedin }}" === "True";
-        tributary.username = "{{ username }}";
-        tributary.avatar = "{{ avatar }}";
-        tributary.userid = parseInt("{{ userid }}");
-        tributary.userurl = "{{ userurl }}";
+        tb.loggedin = "{{ loggedin }}" === "True";
+        tb.username = "{{ username }}";
+        tb.avatar = "{{ avatar }}";
+        tb.userid = parseInt("{{ userid }}");
+        tb.userurl = "{{ userurl }}";
     </script>
 
 
@@ -161,9 +162,9 @@
     {% block jsinit %}
     {% endblock %}
 
-    tributary.ui.setup();
+    tb.ui.setup();
     //assemble the UI
-    tributary.ui.assemble("{{gist}}");
+    tb.ui.assemble("{{gist}}");
 
     </script>
 <!--

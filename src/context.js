@@ -9,6 +9,7 @@ tributary.Context = Backbone.View.extend({
   execute: function() {},
   render: function() {}
 });
+
   
 tributary.TributaryContext = tributary.Context.extend({
 
@@ -128,7 +129,7 @@ tributary.TributaryContext = tributary.Context.extend({
     var js = this.model.handle_coffee();
     try {
       //eval(js);
-      tributary.initialize = new Function("g", js);
+      tributary.initialize = new Function("g", "tributary", js);
       //tributary.initialize(tributary.g);
     } catch (e) {
         this.model.trigger("error", e);
@@ -155,7 +156,7 @@ tributary.TributaryContext = tributary.Context.extend({
 
         //execute the code
         //eval(js);
-        tributary.initialize(tributary.g);
+        tributary.initialize(tributary.g, tributary);
 
         if(tributary.autoinit && tributary.init !== undefined) {
           tributary.init(tributary.g, 0);

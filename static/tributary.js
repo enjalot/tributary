@@ -1,6 +1,6 @@
-(function() {
+//(function(){
+var Tributary = function() {
   var tributary = {};
-  window.tributary = tributary;
   tributary.events = _.clone(Backbone.Events);
   tributary.data = {};
   window.trib = {};
@@ -229,7 +229,7 @@
     execute: function() {
       var js = this.model.handle_coffee();
       try {
-        tributary.initialize = new Function("g", js);
+        tributary.initialize = new Function("g", "tributary", js);
       } catch (e) {
         this.model.trigger("error", e);
         return false;
@@ -248,7 +248,7 @@
         if (tributary.bv) {
           this.make_clones();
         }
-        tributary.initialize(tributary.g);
+        tributary.initialize(tributary.g, tributary);
         if (tributary.autoinit && tributary.init !== undefined) {
           tributary.init(tributary.g, 0);
         }
@@ -796,7 +796,7 @@
         var rb = tc.append("button").classed("restart", true).classed("button_on", true).text("Restart");
         rb.on("click", function(event) {
           tributary.clear();
-          tributary.initialize();
+          tributary.initialize(tributary.g, tributary);
           tributary.init(tributary.g);
           tributary.execute();
         });
@@ -1139,4 +1139,5 @@
       });
     });
   }
-})();
+  return tributary;
+};

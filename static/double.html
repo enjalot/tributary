@@ -15,19 +15,36 @@
     <link rel="shortcut icon" href="/static/img/favicon.ico">
 
     <style>
-        #display {
+        #display1 {
             position:absolute;
             top: 20px;
             left: 20px;
             width: 500px;
             height: 500px;
+            border: 1px solid black;
         }
-        #editor {
+        #editor1 {
             position: absolute;
             right: 0px;
             width: 400px;
-            height: 600px;
+            height: 400px;
         }
+        #display2 {
+            position:absolute;
+            top: 550px;
+            left: 20px;
+            width: 500px;
+            height: 500px;
+            border: 1px solid black;
+        }
+        #editor2 {
+            position: absolute;
+            right: 0px;
+            top: 500px;
+            width: 400px;
+            height: 400px;
+        }
+
     </style>
     
     </head>
@@ -40,9 +57,11 @@
     </div>
 
     <!-- main tributary UI skeleton -->
-    <div id="display"></div>
+    <div id="display1"></div>
+    <div id="display2"></div>
 
-    <div id="editor"></div>
+    <div id="editor1"></div>
+    <div id="editor2"></div>
 
     <div id="slider"></div>
 
@@ -73,29 +92,50 @@
 
     <!-- Tributary -->
     <script src="/static/lib/inlet.js"></script>
-    <script src='/static/tributary.js?v=0.5'></script>
+    <script src='/static/tributary.js?v=0.55'></script>
 
 
     <script type="text/javascript">
         (function() {
+            var tb = Tributary();
 
-        var tb = Tributary();
-        var config = new tb.Config();
+            var config = new tb.Config();
 
-        var model = new tb.CodeModel();
+            var model = new tb.CodeModel();
 
-        var context = new tb.TributaryContext({
-          config: config,
-          model: model,
-          el: d3.select("#display").node()
-        });
-        context.render();
+            var context = new tb.TributaryContext({
+              config: config,
+              model: model,
+              el: d3.select("#display1").node()
+            });
+            context.render();
 
-        var editor = new tb.Editor({
-          model: model,
-          el: d3.select("#editor").node()
-        });
-        editor.render();
+            var editor = new tb.Editor({
+              model: model,
+              el: d3.select("#editor1").node()
+            });
+            editor.render();
+
+
+            var tb2 = Tributary();
+
+            var config2 = new tb2.Config();
+
+            var model2 = new tb2.CodeModel();
+
+            var context2 = new tb2.TributaryContext({
+              config: config2,
+              model: model2,
+              el: d3.select("#display2").node()
+            });
+            context2.render();
+
+            var editor2 = new tb2.Editor({
+              model: model2,
+              el: d3.select("#editor2").node()
+            });
+            editor2.render();
+
 
         }());
     </script>
