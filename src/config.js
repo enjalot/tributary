@@ -4,6 +4,7 @@
 tributary.Config = Backbone.Model.extend({
   defaults: {        
       endpoint: "tributary",
+      display: "svg",
       public: true,
       require: [], //require modules will be like : {name:"crossfilter", url:"/static/lib/crossfilter.min.js"}
       tab: "edit",

@@ -1,19 +1,21 @@
-  tributary.ui = {};
+tributary.ui = {};
 
+var display, panel_gui, panel, panel_handle, page, header;
+tributary.ui.setup = function() {
   //UI calculations, we control the dimensions of our various ui components with JS
   //
   //keep track of the screen width and height
   //display is the element where things get rendered into
-  var display = d3.select("#display");
+  display = d3.select("#display");
   //panel gui controls what's shown in the panel
-  var panel_gui = d3.select("#panel_gui");
+  panel_gui = d3.select("#panel_gui");
   //panel holds the editors, and other controls
-  var panel= d3.select("#panel");
+  panel= d3.select("#panel");
   //the ui element for resizing the panel
-  var panel_handle = d3.select("#panel_handle");
+  panel_handle = d3.select("#panel_handle");
   
-  var page = d3.select("#page");
-  var header = d3.select("#header");
+  page = d3.select("#page");
+  header = d3.select("#header");
 
   tributary.dims = {
     display_percent: 0.70,
@@ -117,171 +119,173 @@
   });
   tributary.events.trigger("show", "edit");
 
+};
 
-  ////////////////////////////////////////////////////////////////////////
-  ////////////////////////////////////////////////////////////////////////
-  ////////////////////////////////////////////////////////////////////////
-  //Assemble the full tributary UI
-  ////////////////////////////////////////////////////////////////////////
-  ////////////////////////////////////////////////////////////////////////
-  ////////////////////////////////////////////////////////////////////////
 
-  tributary.ui.assemble = function(gistid) {
-    tributary.trace = true;
+////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////
+//Assemble the full tributary UI
+////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////
 
-    if(gistid.length > 0){
-      tributary.gist(gistid, _assemble);
-    } else {
-      var ret = {};
-      ret.config = new tributary.Config();
-      ret.models = new tributary.CodeModels(new tributary.CodeModel());
-      _assemble(ret);
-    }
+tributary.ui.assemble = function(gistid) {
+  tributary.trace = true;
 
-  };
+  if(gistid.length > 0){
+    tributary.gist(gistid, _assemble);
+  } else {
+    var ret = {};
+    ret.config = new tributary.Config();
+    ret.models = new tributary.CodeModels(new tributary.CodeModel());
+    _assemble(ret);
+  }
 
-  //callback function to handle response from gist unpacking
-  function _assemble(ret) {
-    var config = ret.config;
+};
 
-    config.contexts = [];
-    var context;
-    var edel;
-    var editor;
-    var type;
+//callback function to handle response from gist unpacking
+function _assemble(ret) {
+  var config = ret.config;
 
-    //endpoint is for backwards compatibility with preset tributary
-    //configurations
-    var endpoint = config.get("endpoint");
-    if(tributary.endpoint) {
-      endpoint = tributary.endpoint;
-    }
+  config.contexts = [];
+  var context;
+  var edel;
+  var editor;
+  var type;
 
-    if(endpoint === "delta") {
-      config.set("display", "svg");
-      config.set("play", true);
-      config.set("loop", true);
-      config.set("autoinit", true);
+  //endpoint is for backwards compatibility with preset tributary
+  //configurations
+  var endpoint = config.get("endpoint");
+  if(tributary.endpoint) {
+    endpoint = tributary.endpoint;
+  }
 
-    } else if (endpoint === "cypress") {
-      config.set("display", "canvas");
-      config.set("play", true);
-      config.set("autoinit", true);
+  if(endpoint === "delta") {
+    config.set("display", "svg");
+    config.set("play", true);
+    config.set("loop", true);
+    config.set("autoinit", true);
 
-    } else if (endpoint === "hourglass") {
-      config.set("display", "svg");
-      config.set("play", true);
-      config.set("autoinit", true);
+  } else if (endpoint === "cypress") {
+    config.set("display", "canvas");
+    config.set("play", true);
+    config.set("autoinit", true);
 
-    } else if (endpoint === "curiosity") {
-      config.set("display", "webgl");
-      config.set("play", true);
-      config.set("autoinit", true);
-      
-    } else if (endpoint === "bigfish") {
-      config.set("display", "svg");
-      config.set("play", true);
-      config.set("autoinit", false);
-      config.set("restart", true);
-      
-    } else if (endpoint === "fly") {
-      config.set("display", "canvas");
-      config.set("play", true);
-      config.set("autoinit", false);
-      config.set("restart", true);
+  } else if (endpoint === "hourglass") {
+    config.set("display", "svg");
+    config.set("play", true);
+    config.set("autoinit", true);
 
-    } else if (endpoint === "ocean") {
-      config.set("display", "div");
-
-    }
-
-    if(!config.get("display")) {
-      config.set("display", "svg");
-    }
-
-    //endpoint is for backwards compatibility
-    //we shouldn't save it from now on
-    config.set("endpoint", "");
+  } else if (endpoint === "curiosity") {
+    config.set("display", "webgl");
+    config.set("play", true);
+    config.set("autoinit", true);
     
-    var edit = panel.select("#edit");
-    tributary.edit = edit;
+  } else if (endpoint === "bigfish") {
+    config.set("display", "svg");
+    config.set("play", true);
+    config.set("autoinit", false);
+    config.set("restart", true);
+    
+  } else if (endpoint === "fly") {
+    config.set("display", "canvas");
+    config.set("play", true);
+    config.set("autoinit", false);
+    config.set("restart", true);
 
-    ret.models.each(function(m) {
-      type = m.get("type");
+  } else if (endpoint === "ocean") {
+    config.set("display", "div");
 
-      //console.log(m, type)
-      //if(["md", "svg"].indexOf(type) < 0) {
-      //}
+  }
 
-      //select appropriate html ui containers
-      // and create contexts
-      // TODO: if name === "inlet.js" otherwise we do a JSContext for .js
+  if(!config.get("display")) {
+    config.set("display", "svg");
+  }
 
-      context = tributary.make_context({
-        config: config,
-        model: m,
-        display: display
-      });
-      if(context) {
-        config.contexts.push(context);
-        context.render();
-        if(m.get("filename") !== "inlet.js") {
-          context.execute();
-        }
+  //endpoint is for backwards compatibility
+  //we shouldn't save it from now on
+  config.set("endpoint", "");
+  
+  var edit = panel.select("#edit");
+  tributary.edit = edit;
 
-        tributary.make_editor({model: m});
+  ret.models.each(function(m) {
+    type = m.get("type");
+
+    //console.log(m, type)
+    //if(["md", "svg"].indexOf(type) < 0) {
+    //}
+
+    //select appropriate html ui containers
+    // and create contexts
+    // TODO: if name === "inlet.js" otherwise we do a JSContext for .js
+
+    context = tributary.make_context({
+      config: config,
+      model: m,
+      display: display
+    });
+    if(context) {
+      config.contexts.push(context);
+      context.render();
+      if(m.get("filename") !== "inlet.js") {
+        context.execute();
       }
-    });
 
-    //when done, need to execute code (because json/csv etc need to load first)
-    config.contexts.forEach(function(c) {
-      //select appropriate html ui containers
-      // and create contexts
-      if(c.model.get("filename") === "inlet.js") {
-        //first load should auto init
-        tributary.autoinit = true;
-        c.execute();
-        tributary.autoinit = config.get("autoinit");
-      }
-    });
+      tributary.make_editor({model: m});
+    }
+  });
 
-    //fill in the file view
-    var config_view = new tributary.ConfigView({
-      el: "#config",
-      model: config,
-    });
-    config_view.render();
+  //when done, need to execute code (because json/csv etc need to load first)
+  config.contexts.forEach(function(c) {
+    //select appropriate html ui containers
+    // and create contexts
+    if(c.model.get("filename") === "inlet.js") {
+      //first load should auto init
+      tributary.autoinit = true;
+      c.execute();
+      tributary.autoinit = config.get("autoinit");
+    }
+  });
 
-    //fill in the file view
-    var files_view = new tributary.FilesView({
-      el: "#files",
-      model: config,
-    });
-    files_view.render();
+  //fill in the file view
+  var config_view = new tributary.ConfigView({
+    el: "#config",
+    model: config,
+  });
+  config_view.render();
 
-    //fill in the control view
-    var controls_view = new tributary.ControlsView({
-      el: "#controls",
-      model: config,
-    });
-    controls_view.render();
+  //fill in the file view
+  var files_view = new tributary.FilesView({
+    el: "#files",
+    model: config,
+  });
+  files_view.render();
 
-    setup_header(ret);
+  //fill in the control view
+  var controls_view = new tributary.ControlsView({
+    el: "#controls",
+    model: config,
+  });
+  controls_view.render();
+
+  setup_header(ret);
 
 
-    //save tab state
-    tributary.events.trigger("show", config.get("tab"));
-    tributary.events.on("show", function(name) {
-      config.set("tab", name);
-    });
+  //save tab state
+  tributary.events.trigger("show", config.get("tab"));
+  tributary.events.on("show", function(name) {
+    config.set("tab", name);
+  });
 
-    tributary.dims.display_percent = config.get("display_percent");
-    tributary.events.trigger("resize");
-    tributary.events.on("resize", function() {
-      config.set("display_percent", tributary.dims.display_percent);
-    });
+  tributary.dims.display_percent = config.get("display_percent");
+  tributary.events.trigger("resize");
+  tributary.events.on("resize", function() {
+    config.set("display_percent", tributary.dims.display_percent);
+  });
 
-  } 
+} 
 
 function setup_header(ret){
 

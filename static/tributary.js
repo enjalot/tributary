@@ -14,6 +14,7 @@
       filename: "inlet.js",
       name: "inlet",
       type: "js",
+      mode: "javascript",
       config: {
         coffee: false,
         vim: false,
@@ -60,6 +61,7 @@
   tributary.Config = Backbone.Model.extend({
     defaults: {
       endpoint: "tributary",
+      display: "svg",
       "public": true,
       require: [],
       tab: "edit",
@@ -477,7 +479,7 @@
         "class": "editor"
       });
       this.cm = CodeMirror(this.el, {
-        mode: "javascript",
+        mode: that.model.get("mode"),
         theme: "lesser-dark",
         lineNumbers: true,
         onChange: function() {
@@ -918,73 +920,76 @@
     });
   };
   tributary.ui = {};
-  var display = d3.select("#display");
-  var panel_gui = d3.select("#panel_gui");
-  var panel = d3.select("#panel");
-  var panel_handle = d3.select("#panel_handle");
-  var page = d3.select("#page");
-  var header = d3.select("#header");
-  tributary.dims = {
-    display_percent: .7,
-    page_width: 0,
-    page_height: 0,
-    display_width: 0,
-    display_height: 0,
-    panel_width: 0,
-    panel_height: 0,
-    panel_gui_width: 0,
-    panel_gui_height: 31
-  };
-  tributary.events.on("resize", function() {
-    var min_width = parseInt(panel.style("min-width"), 10);
-    tributary.dims.page_width = parseInt(page.style("width"), 10);
-    tributary.dims.page_height = parseInt(page.style("height"), 10);
-    if (tributary.dims.page_width - tributary.dims.page_width * tributary.dims.display_percent < min_width) {
-      return;
-    }
-    tributary.dims.display_width = tributary.dims.page_width * tributary.dims.display_percent;
-    tributary.dims.panel_width = tributary.dims.page_width - tributary.dims.display_width;
-    tributary.dims.panel_gui_width = tributary.dims.panel_width;
-    tributary.dims.display_height = tributary.dims.page_height - parseInt(header.style("height"), 10);
-    tributary.dims.panel_height = tributary.dims.display_height - tributary.dims.panel_gui_height;
-    display.style("width", tributary.dims.display_width + "px");
-    display.style("height", tributary.dims.display_height + "px");
-    panel.style("width", tributary.dims.panel_width + "px");
-    panel.style("height", tributary.dims.panel_height + "px");
-    panel_gui.style("width", tributary.dims.panel_gui_width + "px");
-    panel_gui.style("height", tributary.dims.panel_gui_height + "px");
-    panel_handle.style("right", tributary.dims.panel_width + "px");
-    tributary.sw = tributary.dims.display_width;
-    tributary.sh = tributary.dims.display_height;
-    tributary.events.trigger("execute");
-  });
-  tributary.events.trigger("resize");
-  var ph_drag = d3.behavior.drag().on("drag", function() {
-    var dx = d3.event.dx / tributary.dims.page_width;
-    if (tributary.dims.display_percent + dx >= 0 && tributary.dims.display_percent + dx <= 1) {
-      tributary.dims.display_percent += dx;
-    }
+  var display, panel_gui, panel, panel_handle, page, header;
+  tributary.ui.setup = function() {
+    display = d3.select("#display");
+    panel_gui = d3.select("#panel_gui");
+    panel = d3.select("#panel");
+    panel_handle = d3.select("#panel_handle");
+    page = d3.select("#page");
+    header = d3.select("#header");
+    tributary.dims = {
+      display_percent: .7,
+      page_width: 0,
+      page_height: 0,
+      display_width: 0,
+      display_height: 0,
+      panel_width: 0,
+      panel_height: 0,
+      panel_gui_width: 0,
+      panel_gui_height: 31
+    };
+    tributary.events.on("resize", function() {
+      var min_width = parseInt(panel.style("min-width"), 10);
+      tributary.dims.page_width = parseInt(page.style("width"), 10);
+      tributary.dims.page_height = parseInt(page.style("height"), 10);
+      if (tributary.dims.page_width - tributary.dims.page_width * tributary.dims.display_percent < min_width) {
+        return;
+      }
+      tributary.dims.display_width = tributary.dims.page_width * tributary.dims.display_percent;
+      tributary.dims.panel_width = tributary.dims.page_width - tributary.dims.display_width;
+      tributary.dims.panel_gui_width = tributary.dims.panel_width;
+      tributary.dims.display_height = tributary.dims.page_height - parseInt(header.style("height"), 10);
+      tributary.dims.panel_height = tributary.dims.display_height - tributary.dims.panel_gui_height;
+      display.style("width", tributary.dims.display_width + "px");
+      display.style("height", tributary.dims.display_height + "px");
+      panel.style("width", tributary.dims.panel_width + "px");
+      panel.style("height", tributary.dims.panel_height + "px");
+      panel_gui.style("width", tributary.dims.panel_gui_width + "px");
+      panel_gui.style("height", tributary.dims.panel_gui_height + "px");
+      panel_handle.style("right", tributary.dims.panel_width + "px");
+      tributary.sw = tributary.dims.display_width;
+      tributary.sh = tributary.dims.display_height;
+      tributary.events.trigger("execute");
+    });
     tributary.events.trigger("resize");
-  });
-  panel_handle.call(ph_drag);
-  var panel_data = [ "edit", "files", "config" ];
-  var pb_w = 60;
-  var panel_buttons = panel_gui.selectAll("div.pb").data(panel_data).enter().append("div").classed("pb", true).attr({
-    id: function(d) {
-      return d + "_tab";
-    }
-  }).on("click", function(d) {
-    tributary.events.trigger("show", d);
-  }).text(function(d) {
-    return d;
-  });
-  tributary.events.on("show", function(name) {
-    $("#panel").children("div").css("display", "none");
-    panel.select("#" + name).style("display", "");
-    panel_gui.selectAll("div.pb").classed("gui_active", false);
-    panel_gui.select("#" + name + "_tab").classed("gui_active", true);
-  });
-  tributary.events.trigger("show", "edit");
+    var ph_drag = d3.behavior.drag().on("drag", function() {
+      var dx = d3.event.dx / tributary.dims.page_width;
+      if (tributary.dims.display_percent + dx >= 0 && tributary.dims.display_percent + dx <= 1) {
+        tributary.dims.display_percent += dx;
+      }
+      tributary.events.trigger("resize");
+    });
+    panel_handle.call(ph_drag);
+    var panel_data = [ "edit", "files", "config" ];
+    var pb_w = 60;
+    var panel_buttons = panel_gui.selectAll("div.pb").data(panel_data).enter().append("div").classed("pb", true).attr({
+      id: function(d) {
+        return d + "_tab";
+      }
+    }).on("click", function(d) {
+      tributary.events.trigger("show", d);
+    }).text(function(d) {
+      return d;
+    });
+    tributary.events.on("show", function(name) {
+      $("#panel").children("div").css("display", "none");
+      panel.select("#" + name).style("display", "");
+      panel_gui.selectAll("div.pb").classed("gui_active", false);
+      panel_gui.select("#" + name + "_tab").classed("gui_active", true);
+    });
+    tributary.events.trigger("show", "edit");
+  };
   tributary.ui.assemble = function(gistid) {
     tributary.trace = true;
     if (gistid.length > 0) {

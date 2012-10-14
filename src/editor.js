@@ -26,7 +26,7 @@ tributary.Editor = Backbone.View.extend({
     //we render the codemirror instance into the el
     this.cm = CodeMirror(this.el, {
         //value: "function myScript(){return 100;}\n",
-        mode:  "javascript",
+        mode: that.model.get("mode"),
         theme: "lesser-dark",
         lineNumbers: true,
         onChange: function() {

@@ -8,6 +8,7 @@ tributary.CodeModel = Backbone.Model.extend({
     filename: "inlet.js",
     name: "inlet",
     type: "js", 
+    mode: "javascript",
   
     //this configuration is mostly for the editor
     config: {
