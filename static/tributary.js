@@ -275,6 +275,7 @@ var Tributary = function() {
         this.make_webgl();
       } else if (display === "div") {
         this.g = d3.select(this.el);
+        tributary.g = this.g;
         tributary.clear = function() {
           that.$el.empty();
         };
@@ -475,9 +476,7 @@ var Tributary = function() {
     },
     render: function() {
       var that = this;
-      d3.select(this.el).attr({
-        "class": "editor"
-      });
+      d3.select(this.el).classed("editor", true);
       this.cm = CodeMirror(this.el, {
         mode: that.model.get("mode"),
         theme: "lesser-dark",

@@ -19,9 +19,7 @@ tributary.Editor = Backbone.View.extend({
     var that = this;
 
     d3.select(this.el)
-      .attr({
-        class: "editor"
-      });
+      .classed("editor", true)
 
     //we render the codemirror instance into the el
     this.cm = CodeMirror(this.el, {
