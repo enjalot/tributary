@@ -91,6 +91,7 @@ tributary.ConfigView = Backbone.View.extend({
         .classed("config_active", false);
       d3.select(this).classed("config_active", true);
       that.model.set("display", d.name);
+      tributary.events.trigger("execute");
     });
 
 

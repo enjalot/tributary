@@ -116,6 +116,7 @@ var Tributary = function() {
         d3.select(this.parentNode).selectAll("div.config").classed("config_active", false);
         d3.select(this).classed("config_active", true);
         that.model.set("display", d.name);
+        tributary.events.trigger("execute");
       });
       d3.select(this.el).append("span").classed("config_title", true).text("Time Controls:");
       var tcs = d3.select(this.el).append("div").classed("timecontrols", true).selectAll("div.config").data(tributary.time_controls).enter().append("div").classed("config", true);
