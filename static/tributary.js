@@ -476,9 +476,7 @@ var Tributary = function() {
     },
     render: function() {
       var that = this;
-      d3.select(this.el).attr({
-        "class": "editor"
-      });
+      d3.select(this.el).classed("editor", true);
       this.cm = CodeMirror(this.el, {
         mode: that.model.get("mode"),
         theme: "lesser-dark",
