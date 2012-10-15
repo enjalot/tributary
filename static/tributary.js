@@ -275,6 +275,7 @@ var Tributary = function() {
         this.make_webgl();
       } else if (display === "div") {
         this.g = d3.select(this.el);
+        tributary.g = this.g;
         tributary.clear = function() {
           that.$el.empty();
         };
