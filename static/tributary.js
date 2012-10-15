@@ -988,6 +988,30 @@ var Tributary = function() {
       panel_gui.select("#" + name + "_tab").classed("gui_active", true);
     });
     tributary.events.trigger("show", "edit");
+    $("#hide-panel-button").on("click", function() {
+      tributary.events.trigger("hidepanel");
+      $("#display").addClass("fullscreen");
+      $("svg").addClass("fullscreen");
+      $("#header").addClass("dimheader");
+    });
+    $("#show-codepanel-button").on("click", function() {
+      tributary.events.trigger("showpanel");
+      $("#display").removeClass("fullscreen");
+      $("svg").removeClass("fullscreen");
+      $("#header").removeClass("dimheader");
+    });
+    tributary.events.on("hidepanel", function() {
+      $("#panel").hide();
+      $("#panel_gui").hide();
+      $("#panel_handle").hide();
+      $("#show-codepanel").show();
+    });
+    tributary.events.on("showpanel", function() {
+      $("#panel").show();
+      $("#panel_gui").show();
+      $("#panel_handle").show();
+      $("#show-codepanel").hide();
+    });
   };
   tributary.ui.assemble = function(gistid) {
     tributary.trace = true;
