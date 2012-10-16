@@ -40,13 +40,13 @@ tributary.FilesView = Backbone.View.extend({
         type: "text"
       })
     .style({
-      visibility: "hidden"
+      display: "none"
     });
 
 
     plus.on("click", function() {
       input
-        .style("visibility","visible");
+        .style("display","inline-block");
       input.node().focus();
       input.on("keypress", function() {
         //they hit enter
@@ -73,7 +73,7 @@ tributary.FilesView = Backbone.View.extend({
     
     //Add require.js UI
     
-    var requireUI = d3.select(this.el).append("div").attr("id", "require-ui")
+    var requireUI = d3.select("#require").append("div").attr("id", "require-ui")
     requireUI.append("span")
       .classed("config_title", true)
       .text("Require:");

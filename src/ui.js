@@ -14,6 +14,8 @@ tributary.ui.setup = function() {
   //the ui element for resizing the panel
   panel_handle = d3.select("#panel_handle");
   
+  panelfile_gui = d3.select("#panelfiles_gui");
+  
   page = d3.select("#page");
   header = d3.select("#header");
 
@@ -26,17 +28,15 @@ tributary.ui.setup = function() {
     panel_width: 0,
     panel_height: 0,
     panel_gui_width: 0,
-    panel_gui_height: 31
+    panel_gui_height: 31,
+    panelfiles_gui_height: 31
   };
 
   //We control the layout of our UI completely with code, otherwise we are forcing CSS
   //to do something it wasn't meant to do, make an application...
   tributary.events.on("resize", function() {
     var min_width = parseInt(panel.style("min-width"), 10);
-
     tributary.dims.page_width = parseInt(page.style("width"), 10);
-    tributary.dims.page_height = parseInt(page.style("height"), 10);
-
     //if the panel width goes below the minimum width, don't resize
     if( tributary.dims.page_width - tributary.dims.page_width * tributary.dims.display_percent < min_width ) {
       return;
@@ -48,16 +48,19 @@ tributary.ui.setup = function() {
     tributary.dims.panel_width = tributary.dims.page_width - tributary.dims.display_width;
     tributary.dims.panel_gui_width = tributary.dims.panel_width;
 
+    tributary.dims.page_height = parseInt(page.style("height"), 10);
     tributary.dims.display_height = tributary.dims.page_height - parseInt(header.style("height"),10);
-    tributary.dims.panel_height = tributary.dims.display_height - tributary.dims.panel_gui_height;
+    tributary.dims.panel_height = tributary.dims.display_height - (tributary.dims.panel_gui_height + tributary.dims.panelfiles_gui_height);
 
     //we adjust the size of the ui with javascript because css sucks
     display.style("width", tributary.dims.display_width + "px");
-    display.style("height", tributary.dims.display_height + "px");
     panel.style("width", tributary.dims.panel_width + "px");
-    panel.style("height", tributary.dims.panel_height + "px");
-
     panel_gui.style("width", tributary.dims.panel_gui_width + "px");
+    panelfile_gui.style("width", tributary.dims.panel_gui_width + "px");
+
+
+    panel.style("height", tributary.dims.panel_height + "px");
+    display.style("height", tributary.dims.display_height + "px");
     panel_gui.style("height", tributary.dims.panel_gui_height + "px");
     //panel_gui.style("margin-top", tributary.dims.panel_gui_height + "px");
 
@@ -86,7 +89,9 @@ tributary.ui.setup = function() {
   // Setup the Panel GUI for switching between windows in the panel
   ////////////////////////////////////////////////////////////////////////
   
-  var panel_data = ["edit", "files", "config"];
+  var panel_data = ["edit", "config"]; // Add "require" to this array to get array tab
+  
+  
   var pb_w = 60; //width of each button
   var panel_buttons = panel_gui.selectAll("div.pb")
     .data(panel_data)
@@ -144,7 +149,8 @@ tributary.ui.setup = function() {
       $("#panel").hide();
       $("#panel_gui").hide();
       $("#panel_handle").hide();
-      
+      $("#panelfiles_gui").hide();
+
       $('#show-codepanel').show();
       
   })
@@ -154,7 +160,8 @@ tributary.ui.setup = function() {
       $("#panel").show();
       $("#panel_gui").show();
       $("#panel_handle").show();
-      
+      $("#panelfiles_gui").show();
+
       $('#show-codepanel').hide();
       
   })
