@@ -395,6 +395,26 @@ tributary.JSContext = tributary.Context.extend({
 
 });
 
+//The CS context evaluates coffeescript in the global namespace.
+tributary.CSContext = tributary.Context.extend({
+  initialize: function() {
+    this.model.on("change:code", this.execute, this);
+    this.model.on("change:code", function() {
+      tributary.events.trigger("execute");
+    });
+  },
+  execute: function() {
+    try {
+      eval(this.model.handle_coffee());
+    } catch (e) {
+      this.model.trigger("error", e);
+      return false;
+    }
+    this.model.trigger("noerror");
+    return true;
+  },
+  render: function() {}
+});
 
 //The CSV context evaluates js in the global namespace
 tributary.CSVContext = tributary.Context.extend({

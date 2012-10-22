@@ -47,7 +47,7 @@ tributary.make_context = function(options) {
     type = fn[fn.length-1];
 
     //make a code model with the content
-    model = new tributary.CodeModel({name: fn[0], filename: filename, code: content});
+    model = new tributary.CodeModel({name: fn[0], filename: filename, code: content, type: type});
 
   }
   if(options.display) {
@@ -74,6 +74,11 @@ tributary.make_context = function(options) {
     });
   } else if(type === "js") {
     context = new tributary.JSContext({
+      config: config,
+      model: model,
+    });
+  } else if(type === "cs") {
+    context = new tributary.CSContext({
       config: config,
       model: model,
     });
