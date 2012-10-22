@@ -12,7 +12,7 @@ tributary.CodeModel = Backbone.Model.extend({
   
     //this configuration is mostly for the editor
     config: {
-      coffee: false,
+      coffee: true,
       vim: false,
       emacs: false,
       hide: false
@@ -40,7 +40,7 @@ tributary.CodeModel = Backbone.Model.extend({
     //This checks if coffeescript is being used
     //and returns compiled javascript
     var js = this.get("code");
-    if(this.get("config").coffee) {
+    if(this.get("config").coffee || this.get("type") == "cs") {
       //compile the coffee
       js = CoffeeScript.compile(js, {"bare":true});
     }
