@@ -1,5 +1,143 @@
 //(function(){
 var Tributary = function() {
+  function _assemble(ret) {
+    var config = ret.config;
+    config.contexts = [];
+    var context;
+    var edel;
+    var editor;
+    var type;
+    var endpoint = config.get("endpoint");
+    if (tributary.endpoint) {
+      endpoint = tributary.endpoint;
+    }
+    if (endpoint === "delta") {
+      config.set("display", "svg");
+      config.set("play", true);
+      config.set("loop", true);
+      config.set("autoinit", true);
+    } else if (endpoint === "cypress") {
+      config.set("display", "canvas");
+      config.set("play", true);
+      config.set("autoinit", true);
+    } else if (endpoint === "hourglass") {
+      config.set("display", "svg");
+      config.set("play", true);
+      config.set("autoinit", true);
+    } else if (endpoint === "curiosity") {
+      config.set("display", "webgl");
+      config.set("play", true);
+      config.set("autoinit", true);
+    } else if (endpoint === "bigfish") {
+      config.set("display", "svg");
+      config.set("play", true);
+      config.set("autoinit", false);
+      config.set("restart", true);
+    } else if (endpoint === "fly") {
+      config.set("display", "canvas");
+      config.set("play", true);
+      config.set("autoinit", false);
+      config.set("restart", true);
+    } else if (endpoint === "ocean") {
+      config.set("display", "div");
+    }
+    if (!config.get("display")) {
+      config.set("display", "svg");
+    }
+    config.set("endpoint", "");
+    var edit = panel.select("#edit");
+    tributary.edit = edit;
+    ret.models.each(function(m) {
+      type = m.get("type");
+      context = tributary.make_context({
+        config: config,
+        model: m,
+        display: display
+      });
+      if (context) {
+        config.contexts.push(context);
+        context.render();
+        if (m.get("filename") !== "inlet.js") {
+          context.execute();
+        }
+        tributary.make_editor({
+          model: m
+        });
+      }
+    });
+    config.contexts.forEach(function(c) {
+      if (c.model.get("filename") === "inlet.js") {
+        tributary.autoinit = true;
+        c.execute();
+        tributary.autoinit = config.get("autoinit");
+      }
+    });
+    var config_view = new tributary.ConfigView({
+      el: "#config",
+      model: config
+    });
+    config_view.render();
+    var files_view = new tributary.FilesView({
+      el: "#files",
+      model: config
+    });
+    files_view.render();
+    var controls_view = new tributary.ControlsView({
+      el: "#controls",
+      model: config
+    });
+    controls_view.render();
+    setup_header(ret);
+    tributary.events.trigger("show", config.get("tab"));
+    tributary.events.on("show", function(name) {
+      config.set("tab", name);
+    });
+    tributary.dims.display_percent = config.get("display_percent");
+    tributary.events.trigger("resize");
+    tributary.events.on("resize", function() {
+      config.set("display_percent", tributary.dims.display_percent);
+    });
+  }
+  function setup_header(ret) {
+    setup_save(ret.config);
+    if (ret.user) {
+      var gist_uid = ret.user.userid;
+      var info_string = '"<a href="' + ret.gist.html_url + '">' + ret.gist.description + '</a>" by ';
+      if (ret.user.url === "") {
+        info_string += ret.user.login;
+      } else {
+        info_string += '<a href="' + ret.user.url + '">' + ret.user.login + "</a>";
+      }
+      $("#gist_info").html(info_string);
+      if (ret.user.id !== tributary.userid) {
+        $("#savePanel").attr("disabled", "true");
+        $("#savePanel").attr("class", "off");
+      }
+    }
+    if (isNaN(tributary.userid)) {
+      $("#savePanel").attr("disabled", "true");
+      $("#savePanel").attr("class", "off");
+    }
+  }
+  function setup_save(config) {
+    $("#savePanel").on("click", function(e) {
+      d3.select("#syncing").style("display", "block");
+      tributary.save_gist(config, "save", function(newurl, newgist) {
+        window.location = newurl;
+      });
+    });
+    $("#forkPanel").on("click", function(e) {
+      d3.select("#syncing").style("display", "block");
+      tributary.save_gist(config, "fork", function(newurl, newgist) {
+        window.location = newurl;
+      });
+    });
+    $("#loginPanel").on("click", function(e) {
+      tributary.login_gist(tributary.loggedin, function(newurl, newgist) {
+        window.location = newurl;
+      });
+    });
+  }
   var tributary = {};
   tributary.events = _.clone(Backbone.Events);
   tributary.data = {};
@@ -16,7 +154,7 @@ var Tributary = function() {
       type: "js",
       mode: "javascript",
       config: {
-        coffee: false,
+        coffee: true,
         vim: false,
         emacs: false,
         hide: false
@@ -36,7 +174,7 @@ var Tributary = function() {
     },
     handle_coffee: function() {
       var js = this.get("code");
-      if (this.get("config").coffee) {
+      if (this.get("config").coffee && this.get("type") == "cs") {
         js = CoffeeScript.compile(js, {
           bare: true
         });
@@ -323,6 +461,13 @@ var Tributary = function() {
       });
     },
     make_webgl: function() {
+      function onWindowResize() {
+        windowHalfX = tributary.sw / 2;
+        windowHalfY = tributary.sh / 2;
+        tributary.camera.aspect = tributary.sw / tributary.sh;
+        tributary.camera.updateProjectionMatrix();
+        tributary.renderer.setSize(tributary.sw, tributary.sh);
+      }
       container = this.el;
       tributary.camera = new THREE.PerspectiveCamera(70, tributary.sw / tributary.sh, 1, 1e3);
       tributary.camera.position.y = 150;
@@ -344,13 +489,6 @@ var Tributary = function() {
         tributary.renderer.render(tributary.scene, tributary.camera);
       };
       tributary.render();
-      function onWindowResize() {
-        windowHalfX = tributary.sw / 2;
-        windowHalfY = tributary.sh / 2;
-        tributary.camera.aspect = tributary.sw / tributary.sh;
-        tributary.camera.updateProjectionMatrix();
-        tributary.renderer.setSize(tributary.sw, tributary.sh);
-      }
       tributary.events.on("resize", onWindowResize, false);
       tributary.clear = function() {
         tributary.scene.clear();
@@ -387,6 +525,25 @@ var Tributary = function() {
     execute: function() {
       try {
         eval(this.model.get("code"));
+      } catch (e) {
+        this.model.trigger("error", e);
+        return false;
+      }
+      this.model.trigger("noerror");
+      return true;
+    },
+    render: function() {}
+  });
+  tributary.CSContext = tributary.Context.extend({
+    initialize: function() {
+      this.model.on("change:code", this.execute, this);
+      this.model.on("change:code", function() {
+        tributary.events.trigger("execute");
+      });
+    },
+    execute: function() {
+      try {
+        eval(this.model.handle_coffee());
       } catch (e) {
         this.model.trigger("error", e);
         return false;
@@ -853,7 +1010,8 @@ var Tributary = function() {
       model = new tributary.CodeModel({
         name: fn[0],
         filename: filename,
-        code: content
+        code: content,
+        type: type
       });
     }
     if (options.display) {
@@ -879,6 +1037,11 @@ var Tributary = function() {
       });
     } else if (type === "js") {
       context = new tributary.JSContext({
+        config: config,
+        model: model
+      });
+    } else if (type === "cs") {
+      context = new tributary.CSContext({
         config: config,
         model: model
       });
@@ -1025,143 +1188,5 @@ var Tributary = function() {
       _assemble(ret);
     }
   };
-  function _assemble(ret) {
-    var config = ret.config;
-    config.contexts = [];
-    var context;
-    var edel;
-    var editor;
-    var type;
-    var endpoint = config.get("endpoint");
-    if (tributary.endpoint) {
-      endpoint = tributary.endpoint;
-    }
-    if (endpoint === "delta") {
-      config.set("display", "svg");
-      config.set("play", true);
-      config.set("loop", true);
-      config.set("autoinit", true);
-    } else if (endpoint === "cypress") {
-      config.set("display", "canvas");
-      config.set("play", true);
-      config.set("autoinit", true);
-    } else if (endpoint === "hourglass") {
-      config.set("display", "svg");
-      config.set("play", true);
-      config.set("autoinit", true);
-    } else if (endpoint === "curiosity") {
-      config.set("display", "webgl");
-      config.set("play", true);
-      config.set("autoinit", true);
-    } else if (endpoint === "bigfish") {
-      config.set("display", "svg");
-      config.set("play", true);
-      config.set("autoinit", false);
-      config.set("restart", true);
-    } else if (endpoint === "fly") {
-      config.set("display", "canvas");
-      config.set("play", true);
-      config.set("autoinit", false);
-      config.set("restart", true);
-    } else if (endpoint === "ocean") {
-      config.set("display", "div");
-    }
-    if (!config.get("display")) {
-      config.set("display", "svg");
-    }
-    config.set("endpoint", "");
-    var edit = panel.select("#edit");
-    tributary.edit = edit;
-    ret.models.each(function(m) {
-      type = m.get("type");
-      context = tributary.make_context({
-        config: config,
-        model: m,
-        display: display
-      });
-      if (context) {
-        config.contexts.push(context);
-        context.render();
-        if (m.get("filename") !== "inlet.js") {
-          context.execute();
-        }
-        tributary.make_editor({
-          model: m
-        });
-      }
-    });
-    config.contexts.forEach(function(c) {
-      if (c.model.get("filename") === "inlet.js") {
-        tributary.autoinit = true;
-        c.execute();
-        tributary.autoinit = config.get("autoinit");
-      }
-    });
-    var config_view = new tributary.ConfigView({
-      el: "#config",
-      model: config
-    });
-    config_view.render();
-    var files_view = new tributary.FilesView({
-      el: "#files",
-      model: config
-    });
-    files_view.render();
-    var controls_view = new tributary.ControlsView({
-      el: "#controls",
-      model: config
-    });
-    controls_view.render();
-    setup_header(ret);
-    tributary.events.trigger("show", config.get("tab"));
-    tributary.events.on("show", function(name) {
-      config.set("tab", name);
-    });
-    tributary.dims.display_percent = config.get("display_percent");
-    tributary.events.trigger("resize");
-    tributary.events.on("resize", function() {
-      config.set("display_percent", tributary.dims.display_percent);
-    });
-  }
-  function setup_header(ret) {
-    setup_save(ret.config);
-    if (ret.user) {
-      var gist_uid = ret.user.userid;
-      var info_string = '"<a href="' + ret.gist.html_url + '">' + ret.gist.description + '</a>" by ';
-      if (ret.user.url === "") {
-        info_string += ret.user.login;
-      } else {
-        info_string += '<a href="' + ret.user.url + '">' + ret.user.login + "</a>";
-      }
-      $("#gist_info").html(info_string);
-      if (ret.user.id !== tributary.userid) {
-        $("#savePanel").attr("disabled", "true");
-        $("#savePanel").attr("class", "off");
-      }
-    }
-    if (isNaN(tributary.userid)) {
-      $("#savePanel").attr("disabled", "true");
-      $("#savePanel").attr("class", "off");
-    }
-  }
-  function setup_save(config) {
-    $("#savePanel").on("click", function(e) {
-      d3.select("#syncing").style("display", "block");
-      tributary.save_gist(config, "save", function(newurl, newgist) {
-        window.location = newurl;
-      });
-    });
-    $("#forkPanel").on("click", function(e) {
-      d3.select("#syncing").style("display", "block");
-      tributary.save_gist(config, "fork", function(newurl, newgist) {
-        window.location = newurl;
-      });
-    });
-    $("#loginPanel").on("click", function(e) {
-      tributary.login_gist(tributary.loggedin, function(newurl, newgist) {
-        window.location = newurl;
-      });
-    });
-  }
   return tributary;
 };
