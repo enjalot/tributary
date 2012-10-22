@@ -40,7 +40,7 @@ tributary.CodeModel = Backbone.Model.extend({
     //This checks if coffeescript is being used
     //and returns compiled javascript
     var js = this.get("code");
-    if(this.get("config").coffee || this.get("type") == "cs") {
+    if(this.get("config").coffee && this.get("type") == "cs") {
       //compile the coffee
       js = CoffeeScript.compile(js, {"bare":true});
     }
