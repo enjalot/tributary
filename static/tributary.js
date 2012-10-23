@@ -135,6 +135,65 @@ var Tributary = function() {
         d3.select(this).classed("config_active", tf);
         that.model.set(d.name, tf);
       });
+      var requireUI = d3.select(this.el).append("div").attr("id", "require-ui");
+      requireUI.append("span").classed("config_title", true).text("Require:");
+      var rc = requireUI.append("div").classed("requirecontrols", true);
+      var rcs = rc.selectAll("div.config").data(this.model.get("require")).enter().append("div").classed("config", true);
+      rcs.append("span").text(function(d) {
+        return d.name;
+      });
+      rcs.append("span").text(function(d) {
+        return " " + d.url;
+      }).classed("description", true);
+      rcs.append("span").text("x").classed("delete", true).on("click", function(d) {
+        var reqs = that.model.get("require");
+        var ind = reqs.indexOf(d);
+        reqs.splice(ind, 1);
+        that.model.set("require", reqs);
+        that.$el.empty();
+        that.render();
+      });
+      var plus = rc.append("div").classed("config", true);
+      plus.append("span").text("+ ");
+      var name_input = plus.append("div").text("name: ").style({
+        display: "none"
+      });
+      name_input.append("input").attr({
+        type: "text"
+      });
+      var url_input = plus.append("div").text("url: ").style({
+        display: "none"
+      });
+      url_input.append("input").text("url:").attr({
+        type: "text"
+      });
+      plus.on("click", function() {
+        name_input.style("display", "");
+        url_input.style("display", "");
+        name_input.select("input").node().focus();
+        var done = function() {
+          var req = {
+            name: name_input.select("input").node().value,
+            url: url_input.select("input").node().value
+          };
+          var reqs = that.model.get("require");
+          reqs.push(req);
+          that.model.set("require", reqs);
+          that.$el.empty();
+          console.log(that);
+          that.render();
+        };
+        name_input.on("keypress", function() {
+          if (d3.event.charCode === 13) {
+            done();
+          }
+        });
+        url_input.on("keypress", function() {
+          if (d3.event.charCode === 13) {
+            done();
+          }
+        });
+      });
     }
   });
   tributary.Context = Backbone.View.extend({
@@ -624,10 +683,10 @@ var Tributary = function() {
       var input = plus.append("input").attr({
         type: "text"
       }).style({
-        visibility: "hidden"
+        display: "none"
       });
       plus.on("click", function() {
-        input.style("visibility", "visible");
+        input.style("display", "inline-block");
         input.node().focus();
         input.on("keypress", function() {
           if (d3.event.charCode === 13) {
@@ -647,64 +706,6 @@ var Tributary = function() {
             } else {
               input.classed("input_error", true);
             }
-          }
-        });
-      });
-      var requireUI = d3.select(this.el).append("div").attr("id", "require-ui");
-      requireUI.append("span").classed("config_title", true).text("Require:");
-      var rc = requireUI.append("div").classed("requirecontrols", true);
-      var rcs = rc.selectAll("div.config").data(this.model.get("require")).enter().append("div").classed("config", true);
-      rcs.append("span").text(function(d) {
-        return d.name;
-      });
-      rcs.append("span").text(function(d) {
-        return " " + d.url;
-      }).classed("description", true);
-      rcs.append("span").text("x").classed("delete", true).on("click", function(d) {
-        var reqs = that.model.get("require");
-        var ind = reqs.indexOf(d);
-        reqs.splice(ind, 1);
-        that.model.set("require", reqs);
-        that.$el.empty();
-        that.render();
-      });
-      var plus = rc.append("div").classed("config", true);
-      plus.append("span").text("+ ");
-      var name_input = plus.append("div").text("name: ").style({
-        display: "none"
-      });
-      name_input.append("input").attr({
-        type: "text"
-      });
-      var url_input = plus.append("div").text("url: ").style({
-        display: "none"
-      });
-      url_input.append("input").text("url:").attr({
-        type: "text"
-      });
-      plus.on("click", function() {
-        name_input.style("display", "");
-        url_input.style("display", "");
-        name_input.select("input").node().focus();
-        var done = function() {
-          var req = {
-            name: name_input.select("input").node().value,
-            url: url_input.select("input").node().value
-          };
-          var reqs = that.model.get("require");
-          reqs.push(req);
-          that.model.set("require", reqs);
-          that.$el.empty();
-          that.render();
-        };
-        name_input.on("keypress", function() {
-          if (d3.event.charCode === 13) {
-            done();
-          }
-        });
-        url_input.on("keypress", function() {
-          if (d3.event.charCode === 13) {
-            done();
           }
         });
       });
@@ -925,6 +926,7 @@ var Tributary = function() {
     panel_gui = d3.select("#panel_gui");
     panel = d3.select("#panel");
     panel_handle = d3.select("#panel_handle");
+    panelfile_gui = d3.select("#panelfiles_gui");
     page = d3.select("#page");
     header = d3.select("#header");
     tributary.dims = {
@@ -936,25 +938,27 @@ var Tributary = function() {
       panel_width: 0,
       panel_height: 0,
       panel_gui_width: 0,
-      panel_gui_height: 31
+      panel_gui_height: 31,
+      panelfiles_gui_height: 31
     };
     tributary.events.on("resize", function() {
       var min_width = parseInt(panel.style("min-width"), 10);
       tributary.dims.page_width = parseInt(page.style("width"), 10);
-      tributary.dims.page_height = parseInt(page.style("height"), 10);
       if (tributary.dims.page_width - tributary.dims.page_width * tributary.dims.display_percent < min_width) {
         return;
       }
       tributary.dims.display_width = tributary.dims.page_width * tributary.dims.display_percent;
       tributary.dims.panel_width = tributary.dims.page_width - tributary.dims.display_width;
       tributary.dims.panel_gui_width = tributary.dims.panel_width;
+      tributary.dims.page_height = parseInt(page.style("height"), 10);
       tributary.dims.display_height = tributary.dims.page_height - parseInt(header.style("height"), 10);
-      tributary.dims.panel_height = tributary.dims.display_height - tributary.dims.panel_gui_height;
+      tributary.dims.panel_height = tributary.dims.display_height - (tributary.dims.panel_gui_height + tributary.dims.panelfiles_gui_height);
       display.style("width", tributary.dims.display_width + "px");
-      display.style("height", tributary.dims.display_height + "px");
       panel.style("width", tributary.dims.panel_width + "px");
-      panel.style("height", tributary.dims.panel_height + "px");
       panel_gui.style("width", tributary.dims.panel_gui_width + "px");
+      panelfile_gui.style("width", tributary.dims.panel_gui_width + "px");
+      panel.style("height", tributary.dims.panel_height + "px");
+      display.style("height", tributary.dims.display_height + "px");
       panel_gui.style("height", tributary.dims.panel_gui_height + "px");
       panel_handle.style("right", tributary.dims.panel_width + "px");
       tributary.sw = tributary.dims.display_width;
@@ -970,7 +974,7 @@ var Tributary = function() {
       tributary.events.trigger("resize");
     });
     panel_handle.call(ph_drag);
-    var panel_data = [ "edit", "files", "config" ];
+    var panel_data = [ "edit", "config" ];
     var pb_w = 60;
     var panel_buttons = panel_gui.selectAll("div.pb").data(panel_data).enter().append("div").classed("pb", true).attr({
       id: function(d) {
@@ -1004,12 +1008,14 @@ var Tributary = function() {
       $("#panel").hide();
       $("#panel_gui").hide();
       $("#panel_handle").hide();
+      $("#panelfiles_gui").hide();
       $("#show-codepanel").show();
     });
     tributary.events.on("showpanel", function() {
       $("#panel").show();
       $("#panel_gui").show();
       $("#panel_handle").show();
+      $("#panelfiles_gui").show();
       $("#show-codepanel").hide();
     });
   };
