@@ -9,7 +9,27 @@ tributary.gist = function(id, callback) {
   var cachebust = "?cachebust=" + Math.random() * 4242424242424242;
 
 
-  d3.json('https://api.github.com/gists/' + id + cachebust, function(data) {
+  //d3.json('https://api.github.com/gists/' + id + cachebust, handle_gist);
+  var url = 'https://api.github.com/gists/' + id + cachebust;
+  $.ajax({
+    url: url,
+    success: handle_gist,
+    error: function(e) {
+      console.log(e)
+      //if a 403 error (because of rate limiting) 
+      url = "/gist/" + id + cachebust;
+      $.ajax({
+        url: url,
+        success: handle_gist,
+        error: function(er) {
+          console.log(er)
+          //OH NOES
+        }
+      })
+    },
+  })
+  
+  function handle_gist(data) {
 
     ret.gist = data;
     //get user information or set to anon if none.
@@ -67,7 +87,7 @@ tributary.gist = function(id, callback) {
 
     ret.config.require(callback, ret);
     //callback(ret);
-  });
+  }
 };
 
 

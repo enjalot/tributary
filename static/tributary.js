@@ -501,7 +501,23 @@ var Tributary = function() {
     tributary.gistid = id;
     var ret = {};
     var cachebust = "?cachebust=" + Math.random() * 0xf12765df4c9b2;
-    d3.json("https://api.github.com/gists/" + id + cachebust, function(data) {
+    var url = "https://api.github.com/gists/" + id + cachebust;
+    $.ajax({
+      url: url,
+      success: handle_gist,
+      error: function(e) {
+        console.log(e);
+        url = "/gist/" + id + cachebust;
+        $.ajax({
+          url: url,
+          success: handle_gist,
+          error: function(er) {
+            console.log(er);
+          }
+        });
+      }
+    });
+    function handle_gist(data) {
       ret.gist = data;
       if (data.user === null || data.user === undefined) {
         ret.user = {
@@ -544,7 +560,7 @@ var Tributary = function() {
         }
       });
       ret.config.require(callback, ret);
-    });
+    }
   };
   tributary.save_gist = function(config, saveorfork, callback) {
     var oldgist = tributary.gistid || "";
