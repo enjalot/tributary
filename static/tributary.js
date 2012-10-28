@@ -878,7 +878,7 @@ var Tributary = function() {
     } else {
       display = d3.select("#display");
     }
-    if (mainfiles.indexOf(filename) > 0) {
+    if (mainfiles.indexOf(filename) >= 0) {
       context = new tributary.TributaryContext({
         config: config,
         model: model,

@@ -38,8 +38,8 @@ var Inlet = (function() {
                 //console.log("SLIDING", ui.value+"", token.start, token.end)
                 var start = {"line":cursor.line, "ch":token.start};
                 var end = {"line":cursor.line, "ch":token.end};
-                console.log(start, end)
-                end.ch = start.ch + 7
+                start.ch = start.ch + token.string.indexOf("#");
+                end.ch = start.ch + 7;
                 //editor.replaceRange('"#' + newcolor.toUpperCase() + '"', start, end);
                 editor.replaceRange('#' + newcolor.toUpperCase(), start, end);
             }
@@ -97,13 +97,12 @@ var Inlet = (function() {
             //else if #use regex to check for color
             } else {
                 //var match = token.string.match(/["']#?(([a-fA-F0-9]){3}){1,2}["']/);
-                var match = token.string.match(/#?(([a-fA-F0-9]){3}){1,2}/);
+                var match = token.string.match(/#+(([a-fA-F0-9]){3}){1,2}/);
                 if(match) {
                     //turn on color picker
                     //console.log(token.string, match)
                     var color = match[0];
-                    console.log(match)
-                    color = color.slice(2, color.length-1);
+                    color = color.slice(1, color.length);
                     picker.update(color);
 
                     //TODO: make positioning of color picker configurable
