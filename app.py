@@ -54,6 +54,24 @@ def render_defaults(template, gist=None, filename=None):
 def tributary_gist(gist=None, filename=None):
     return render_defaults("tributary.html", gist=gist, filename=filename)
 
+
+@app.route("/gist/<gist>/")
+# Request a brand new Gist and return the Gist ID.
+def getgist(gist):
+    url = 'https://api.github.com/gists/' + gist + "?client_id=" + GITHUB_CLIENT_ID + "&client_secret=" + GITHUB_CLIENT_SECRET
+
+    url = url.encode('utf-8')
+    req = urllib2.Request(url)
+
+    response = urllib2.urlopen(url)
+    ret = response.read()
+
+    resp = make_response(ret, 200)
+    resp.headers['Content-Type'] = 'application/json'
+
+    return resp
+
+
 #Live editing d3 for exploring parameter spaces
 @app.route("/ocean/")
 @app.route("/ocean/<gist>/")
@@ -226,6 +244,7 @@ def github_authenticated():
 
     #DONE: redirect back to next parameter
     return redirect(nexturl)
+
 
 
 # DONE: make fork and save button different
