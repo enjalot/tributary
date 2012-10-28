@@ -1105,7 +1105,7 @@ var Tributary = function() {
       if (context) {
         config.contexts.push(context);
         context.render();
-        if (mainfiles.indexOf(m.get("filename")) >= 0) {
+        if (mainfiles.indexOf(m.get("filename")) < 0) {
           context.execute();
         }
         tributary.make_editor({
