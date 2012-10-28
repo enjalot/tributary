@@ -878,7 +878,7 @@ var Tributary = function() {
     } else {
       display = d3.select("#display");
     }
-    if (filename === "inlet.js") {
+    if (mainfiles.indexOf(filename) > 0) {
       context = new tributary.TributaryContext({
         config: config,
         model: model,
@@ -937,6 +937,7 @@ var Tributary = function() {
     });
   };
   tributary.ui = {};
+  var mainfiles = [ "inlet.js", "sinwaves.js", "squarecircle.js" ];
   var display, panel_gui, panel, panel_handle, page, header;
   tributary.ui.setup = function() {
     display = d3.select("#display");
@@ -1104,7 +1105,7 @@ var Tributary = function() {
       if (context) {
         config.contexts.push(context);
         context.render();
-        if (m.get("filename") !== "inlet.js") {
+        if (mainfiles.indexOf(m.get("filename")) >= 0) {
           context.execute();
         }
         tributary.make_editor({
@@ -1113,7 +1114,7 @@ var Tributary = function() {
       }
     });
     config.contexts.forEach(function(c) {
-      if (c.model.get("filename") === "inlet.js") {
+      if (mainfiles.indexOf(c.model.get("filename")) >= 0) {
         tributary.autoinit = true;
         c.execute();
         tributary.autoinit = config.get("autoinit");

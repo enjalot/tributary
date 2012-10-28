@@ -56,7 +56,7 @@ tributary.make_context = function(options) {
     display = d3.select("#display"); 
   }
   
-  if(filename === "inlet.js") {
+  if(mainfiles.indexOf(filename) >0 ) {//  === "inlet.js") {
     context = new tributary.TributaryContext({
       config: config,
       model: model,

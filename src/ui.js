@@ -1,5 +1,10 @@
 tributary.ui = {};
 
+//list of old filenames that are broken by the change.
+//TODO: decide if want to allow for arbitrary file to be the tributary context, in config somehow?
+var mainfiles = ["inlet.js", "sinwaves.js", "squarecircle.js"];
+
+
 var display, panel_gui, panel, panel_handle, page, header;
 tributary.ui.setup = function() {
   //UI calculations, we control the dimensions of our various ui components with JS
@@ -276,7 +281,7 @@ function _assemble(ret) {
     if(context) {
       config.contexts.push(context);
       context.render();
-      if(m.get("filename") !== "inlet.js") {
+      if(mainfiles.indexOf(m.get("filename")) >= 0) {
         context.execute();
       }
 
@@ -288,7 +293,7 @@ function _assemble(ret) {
   config.contexts.forEach(function(c) {
     //select appropriate html ui containers
     // and create contexts
-    if(c.model.get("filename") === "inlet.js") {
+    if(mainfiles.indexOf(c.model.get("filename")) >= 0) {
       //first load should auto init
       tributary.autoinit = true;
       c.execute();
