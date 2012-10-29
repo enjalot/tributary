@@ -135,6 +135,28 @@ tributary.TributaryContext = tributary.Context.extend({
 
   execute: function() {   
     var js = this.model.handle_coffee();
+    //jshint step
+    
+
+    if(js.length > 0 && tributary.hint) {
+      var hints = JSHINT(js, {
+        asi: true,
+        laxcomma: true,
+        laxbreak: true,
+        loopfunc: true,
+        smarttabs: true,
+        sub: true
+      })
+      if(!hints) {
+        this.model.trigger("jshint", JSHINT.errors);
+        //for now, we can let the user continue incase JSHINT is too strict
+        //this.model.trigger("error", null);
+        //return false;
+      } else {
+        this.model.trigger("nojshint");
+      }
+    }
+
     try {
       //eval(js);
       tributary.initialize = new Function("g", "tributary", js);
@@ -386,8 +408,29 @@ tributary.JSContext = tributary.Context.extend({
   },
 
   execute: function() {
+
+    var js = this.model.get("code");
+    if(js.length > 0 && tributary.hint) {
+      var hints = JSHINT(js, {
+        asi: true,
+        laxcomma: true,
+        laxbreak: true,
+        loopfunc: true,
+        smarttabs: true,
+        sub: true
+      })
+      if(!hints) {
+        this.model.trigger("jshint", JSHINT.errors);
+        //for now, we can let the user continue incase JSHINT is too strict
+        //this.model.trigger("error", null);
+        //return false;
+      } else {
+        this.model.trigger("nojshint");
+      }
+    }
+
     try {
-      eval(this.model.get("code"));
+      eval(js);
     } catch (e) {
       this.model.trigger("error", e);
       return false;

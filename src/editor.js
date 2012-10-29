@@ -47,5 +47,28 @@ tributary.Editor = Backbone.View.extend({
         .classed("error", false);
     });
 
+
+    var errlines = -1;
+    this.model.on("jshint", function(errors) {
+      //turn off highlighting of any error lines
+      for(var i = that.cm.lineCount(); i--;) {
+        that.cm.setLineClass(i, null, null);
+      }
+      var err;
+      for(i = errors.length; i--; ) {
+        err =errors[i];
+        //go through the errors and highlight the lines
+        that.cm.setLineClass(err.line-1, null, "lineerror");
+        console.log("Error on line: " + err.line + " (" + that.model.get("filename") + ") reason: " + err.reason)
+      }
+    });
+
+    this.model.on("nojshint", function() {
+      //turn off highlighting of any error lines
+      for(var i = that.cm.lineCount(); i--;) {
+        that.cm.setLineClass(i, null, null);
+      }
+    })
+
   }
 });

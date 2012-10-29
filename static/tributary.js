@@ -295,6 +295,21 @@ var Tributary = function() {
     },
     execute: function() {
       var js = this.model.handle_coffee();
+      if (js.length > 0 && tributary.hint) {
+        var hints = JSHINT(js, {
+          asi: true,
+          laxcomma: true,
+          laxbreak: true,
+          loopfunc: true,
+          smarttabs: true,
+          sub: true
+        });
+        if (!hints) {
+          this.model.trigger("jshint", JSHINT.errors);
+        } else {
+          this.model.trigger("nojshint");
+        }
+      }
       try {
         tributary.initialize = new Function("g", "tributary", js);
       } catch (e) {
@@ -451,8 +466,24 @@ var Tributary = function() {
       });
     },
     execute: function() {
+      var js = this.model.get("code");
+      if (js.length > 0 && tributary.hint) {
+        var hints = JSHINT(js, {
+          asi: true,
+          laxcomma: true,
+          laxbreak: true,
+          loopfunc: true,
+          smarttabs: true,
+          sub: true
+        });
+        if (!hints) {
+          this.model.trigger("jshint", JSHINT.errors);
+        } else {
+          this.model.trigger("nojshint");
+        }
+      }
       try {
-        eval(this.model.get("code"));
+        eval(js);
       } catch (e) {
         this.model.trigger("error", e);
         return false;
@@ -560,6 +591,23 @@ var Tributary = function() {
       });
       this.model.on("noerror", function() {
         d3.select(that.el).select(".CodeMirror-gutter").classed("error", false);
+      });
+      var errlines = -1;
+      this.model.on("jshint", function(errors) {
+        for (var i = that.cm.lineCount(); i--; ) {
+          that.cm.setLineClass(i, null, null);
+        }
+        var err;
+        for (i = errors.length; i--; ) {
+          err = errors[i];
+          that.cm.setLineClass(err.line - 1, null, "lineerror");
+          console.log("Error on line: " + err.line + " (" + that.model.get("filename") + ") reason: " + err.reason);
+        }
+      });
+      this.model.on("nojshint", function() {
+        for (var i = that.cm.lineCount(); i--; ) {
+          that.cm.setLineClass(i, null, null);
+        }
       });
     }
   });
@@ -1034,7 +1082,8 @@ var Tributary = function() {
     });
   };
   tributary.ui.assemble = function(gistid) {
-    tributary.trace = true;
+    tributary.trace = false;
+    tributary.hint = true;
     if (gistid.length > 0) {
       tributary.gist(gistid, _assemble);
     } else {

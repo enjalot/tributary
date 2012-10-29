@@ -783,6 +783,10 @@ body {
     display:none;
 }
 
+.lineerror {
+  background: #A23232 !important;
+  opacity: 0.2;
+}
 
 
 
