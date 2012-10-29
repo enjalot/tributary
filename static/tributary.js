@@ -206,9 +206,11 @@ var Tributary = function() {
     initialize: function() {
       this.model.on("change:code", this.execute, this);
       this.model.on("change:code", function() {
-        $(window).on("beforeunload", function() {
-          return "Are you sure you want to leave?";
-        });
+        if (!window.onbeforeunload) {
+          $(window).on("beforeunload", function() {
+            return "Are you sure you want to leave?";
+          });
+        }
       }, this);
       tributary.events.on("execute", this.execute, this);
       this.config = this.options.config;
@@ -1180,16 +1182,17 @@ var Tributary = function() {
       });
     });
     $("#forkPanel").on("click", function(e) {
-      window.onunload = function() {
-        return false;
-      };
       d3.select("#syncing").style("display", "block");
       tributary.save_gist(config, "fork", function(newurl, newgist) {
+        window.onunload = false;
+        window.onbeforeunload = false;
         window.location = newurl;
       });
     });
     $("#loginPanel").on("click", function(e) {
       tributary.login_gist(tributary.loggedin, function(newurl, newgist) {
+        window.onunload = false;
+        window.onbeforeunload = false;
         window.location = newurl;
       });
     });

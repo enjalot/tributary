@@ -384,15 +384,19 @@ function setup_save(config) {
     });
   });
   $('#forkPanel').on('click', function(e) {
-    window.onunload = function() { return false; };
+
     d3.select("#syncing").style("display", "block");
     tributary.save_gist(config, "fork", function(newurl, newgist) {
+      window.onunload = false;
+      window.onbeforeunload = false;
       window.location = newurl;
     });
   });
   //Setup the login button
   $('#loginPanel').on('click', function(e) {
     tributary.login_gist(tributary.loggedin, function(newurl, newgist) {
+      window.onunload = false;
+      window.onbeforeunload = false;
       window.location = newurl;
     }); 
   });
