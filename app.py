@@ -307,7 +307,7 @@ def save__req_update(old_gist_id, new_gist_id, data, token=None):
 
     new_data = json.loads(data)
     # TODO: allow product to change
-    markdown = "[ <a href=\"http://enjalot.com/tributary/" + new_gist_id +"\">Launch Inlet</a> ]"
+    markdown = "[ <a href=\"http://tributary.io/inlet/" + new_gist_id +"\">Launch Inlet</a> ]"
     if old_gist_id is not None:
         markdown = markdown + "<br/><a href=\"https://gist.github.com/" + old_gist_id + "\">Gist #" + old_gist_id  + "</a> "
 
