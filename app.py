@@ -192,7 +192,7 @@ def internal_gist(gist, filename=None):
 def github_login(product=None,id=None):
     if (product is None):
         # Default product
-        product = "tributary"
+        product = "inlet"
     if(id is not None):
         #take user to github for authentication
         return redirect('https://github.com/login/oauth/authorize?client_id=' + GITHUB_CLIENT_ID + '&scope=gist' + '&state=/' + product + '/' + id)
@@ -209,7 +209,7 @@ def github_logout(product=None,id=None):
     session["userid"] = None
     session["userurl"] = None
     if(product is None):
-        product = "tributary"
+        product = "inlet"
     if (id is None):
         return redirect('/'+product)
     return redirect('/'+product+'/'+id)

@@ -643,17 +643,6 @@ var Tributary = function() {
     gist.files["config.json"] = {
       content: JSON.stringify(config.toJSON())
     };
-    if (config.display === "svg") {
-      var node = d3.select("svg").node();
-      var svgxml = (new XMLSerializer).serializeToString(node);
-      if ($.browser.webkit) {
-        svgxml = svgxml.replace(/ xlink/g, " xmlns:xlink");
-        svgxml = svgxml.replace(/ href/g, " xlink:href");
-      }
-      gist.files["inlet.svg"] = {
-        content: svgxml
-      };
-    }
     var url;
     if (saveorfork === "save") {
       url = "/tributary/save";
@@ -671,7 +660,7 @@ var Tributary = function() {
         data = JSON.parse(data);
       }
       var newgist = data.id;
-      var newurl = "/tributary/" + newgist;
+      var newurl = "/inlet/" + newgist;
       callback(newurl, newgist);
     });
   };
@@ -682,7 +671,7 @@ var Tributary = function() {
     } else {
       url = "/github-login";
     }
-    url += "/tributary";
+    url += "/inlet";
     if (tributary.gistid) {
       url += "/" + tributary.gistid;
     }

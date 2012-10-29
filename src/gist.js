@@ -112,7 +112,10 @@ tributary.save_gist = function(config, saveorfork, callback) {
     content: JSON.stringify(config.toJSON())
   };
 
-  if(config.display === "svg") {
+  /*
+   * TODO: turn this on when we have a good solution across renders
+   * or make it an optional button
+  if(config.get("display") === "svg") {
     //serialize the current svg and save it to gist
     var node = d3.select("svg").node();
     var svgxml = (new XMLSerializer()).serializeToString(node);
@@ -124,7 +127,7 @@ tributary.save_gist = function(config, saveorfork, callback) {
     gist.files["inlet.svg"] = {
       content: svgxml
     };
-  }
+  }*/
 
   var url;
   if(saveorfork === "save") {
@@ -144,7 +147,7 @@ tributary.save_gist = function(config, saveorfork, callback) {
         data = JSON.parse(data);
       }
       var newgist = data.id;
-      var newurl = "/tributary/" + newgist;
+      var newurl = "/inlet/" + newgist;
       callback(newurl, newgist);
   });
 };
@@ -155,7 +158,7 @@ tributary.login_gist = function(loginorout, callback) {
   } else {
     url = '/github-login';
   }
-  url += '/tributary';
+  url += '/inlet';
   if (tributary.gistid) {
     url+= '/' + tributary.gistid;
   }
