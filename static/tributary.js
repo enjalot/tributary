@@ -205,6 +205,11 @@ var Tributary = function() {
   tributary.TributaryContext = tributary.Context.extend({
     initialize: function() {
       this.model.on("change:code", this.execute, this);
+      this.model.on("change:code", function() {
+        $(window).on("beforeunload", function() {
+          return "Are you sure you want to leave?";
+        });
+      }, this);
       tributary.events.on("execute", this.execute, this);
       this.config = this.options.config;
       this.config.on("change:display", this.set_display, this);

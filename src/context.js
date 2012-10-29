@@ -10,12 +10,19 @@ tributary.Context = Backbone.View.extend({
   render: function() {}
 });
 
-  
+
 tributary.TributaryContext = tributary.Context.extend({
 
   initialize: function() {
-    //
     this.model.on("change:code", this.execute, this);
+
+    //if the user has modified the code, we want to protect them from losing their work
+    this.model.on("change:code", function() {
+      //TODO: check to see if it's already set...
+      $(window).on('beforeunload', function() {
+            return 'Are you sure you want to leave?';
+      });
+    }, this);
     //allow other context's to make this code execute
     tributary.events.on("execute", this.execute, this);
 
