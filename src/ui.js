@@ -365,8 +365,8 @@ function setup_header(ret){
       $("#savePanel").attr("class", "off");
     }
   }
-  //if the user is not logged in, disable save
-  if(isNaN(tributary.userid)) {
+  //if the user is not logged in, or no gist disable save
+  if(isNaN(tributary.userid) || !ret.gist) {
     $("#savePanel").attr("disabled", "true");
     $("#savePanel").attr("class", "off");
     //$("#forkPanel").attr("disabled", "true");
@@ -379,10 +379,12 @@ function setup_save(config) {
   $('#savePanel').on('click', function(e) {
     d3.select("#syncing").style("display", "block");
     tributary.save_gist(config, "save", function(newurl, newgist) {
-      window.location = newurl;
+      d3.select("#syncing").style("display", "none");
+      //window.location = newurl;
     });
   });
   $('#forkPanel').on('click', function(e) {
+    window.onunload = function() { return false; };
     d3.select("#syncing").style("display", "block");
     tributary.save_gist(config, "fork", function(newurl, newgist) {
       window.location = newurl;

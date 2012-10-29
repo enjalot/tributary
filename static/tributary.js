@@ -1167,7 +1167,7 @@ var Tributary = function() {
         $("#savePanel").attr("class", "off");
       }
     }
-    if (isNaN(tributary.userid)) {
+    if (isNaN(tributary.userid) || !ret.gist) {
       $("#savePanel").attr("disabled", "true");
       $("#savePanel").attr("class", "off");
     }
@@ -1176,10 +1176,13 @@ var Tributary = function() {
     $("#savePanel").on("click", function(e) {
       d3.select("#syncing").style("display", "block");
       tributary.save_gist(config, "save", function(newurl, newgist) {
-        window.location = newurl;
+        d3.select("#syncing").style("display", "none");
       });
     });
     $("#forkPanel").on("click", function(e) {
+      window.onunload = function() {
+        return false;
+      };
       d3.select("#syncing").style("display", "block");
       tributary.save_gist(config, "fork", function(newurl, newgist) {
         window.location = newurl;
