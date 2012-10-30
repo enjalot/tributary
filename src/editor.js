@@ -56,10 +56,12 @@ tributary.Editor = Backbone.View.extend({
       }
       var err;
       for(i = errors.length; i--; ) {
-        err =errors[i];
-        //go through the errors and highlight the lines
-        that.cm.setLineClass(err.line-1, null, "lineerror");
-        console.log("Error on line: " + err.line + " (" + that.model.get("filename") + ") reason: " + err.reason)
+        err = errors[i];
+        if(err) {
+          //go through the errors and highlight the lines
+          that.cm.setLineClass(err.line-1, null, "lineerror");
+          console.log("Error on line: " + err.line + " (" + that.model.get("filename") + ") reason: " + err.reason)
+        }
       }
     });
 
