@@ -785,9 +785,13 @@ body {
 
 .lineerror {
   background: #A23232 !important;
-  opacity: 0.2;
+  opacity: 0.1;
+  border: 1px solid red !important;/*#A23232;*/
 }
 
+.linenumbererror {
+  color: #A23232 !important;
+}
 
 
 .ui-slider-handle {

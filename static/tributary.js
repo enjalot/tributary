@@ -295,7 +295,7 @@ var Tributary = function() {
     },
     execute: function() {
       var js = this.model.handle_coffee();
-      if (js.length > 0 && tributary.hint) {
+      if (js.length > 0) {
         var hints = JSHINT(js, {
           asi: true,
           laxcomma: true,
@@ -467,7 +467,7 @@ var Tributary = function() {
     },
     execute: function() {
       var js = this.model.get("code");
-      if (js.length > 0 && tributary.hint) {
+      if (js.length > 0) {
         var hints = JSHINT(js, {
           asi: true,
           laxcomma: true,
@@ -596,13 +596,17 @@ var Tributary = function() {
       this.model.on("jshint", function(errors) {
         for (var i = that.cm.lineCount(); i--; ) {
           that.cm.setLineClass(i, null, null);
+          that.cm.setMarker(i, "%N%", "");
         }
         var err;
         for (i = errors.length; i--; ) {
           err = errors[i];
           if (err) {
             that.cm.setLineClass(err.line - 1, null, "lineerror");
-            console.log("Error on line: " + err.line + " (" + that.model.get("filename") + ") reason: " + err.reason);
+            that.cm.setMarker(err.line - 1, "%N%", "linenumbererror");
+            if (tributary.hint) {
+              console.log("Error on line: " + err.line + " (" + that.model.get("filename") + ") reason: " + err.reason);
+            }
           }
         }
       });
@@ -1085,7 +1089,7 @@ var Tributary = function() {
   };
   tributary.ui.assemble = function(gistid) {
     tributary.trace = false;
-    tributary.hint = true;
+    tributary.hint = false;
     if (gistid.length > 0) {
       tributary.gist(gistid, _assemble);
     } else {

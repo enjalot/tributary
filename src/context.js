@@ -138,7 +138,7 @@ tributary.TributaryContext = tributary.Context.extend({
     //jshint step
     
 
-    if(js.length > 0 && tributary.hint) {
+    if(js.length > 0) {
       var hints = JSHINT(js, {
         asi: true,
         laxcomma: true,
@@ -410,7 +410,7 @@ tributary.JSContext = tributary.Context.extend({
   execute: function() {
 
     var js = this.model.get("code");
-    if(js.length > 0 && tributary.hint) {
+    if(js.length > 0) {
       var hints = JSHINT(js, {
         asi: true,
         laxcomma: true,

@@ -53,6 +53,7 @@ tributary.Editor = Backbone.View.extend({
       //turn off highlighting of any error lines
       for(var i = that.cm.lineCount(); i--;) {
         that.cm.setLineClass(i, null, null);
+        that.cm.setMarker(i, "%N%", "");
       }
       var err;
       for(i = errors.length; i--; ) {
@@ -60,7 +61,10 @@ tributary.Editor = Backbone.View.extend({
         if(err) {
           //go through the errors and highlight the lines
           that.cm.setLineClass(err.line-1, null, "lineerror");
-          console.log("Error on line: " + err.line + " (" + that.model.get("filename") + ") reason: " + err.reason)
+          that.cm.setMarker(err.line-1, "%N%", "linenumbererror");
+          if(tributary.hint) {
+            console.log("Error on line: " + err.line + " (" + that.model.get("filename") + ") reason: " + err.reason)
+          }
         }
       }
     });

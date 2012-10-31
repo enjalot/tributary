@@ -185,7 +185,7 @@ tributary.ui.setup = function() {
 tributary.ui.assemble = function(gistid) {
   //tributary.trace = true;
   tributary.trace = false;
-  tributary.hint = true;
+  tributary.hint = false;
 
   if(gistid.length > 0){
     tributary.gist(gistid, _assemble);
