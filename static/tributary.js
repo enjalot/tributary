@@ -204,7 +204,10 @@ var Tributary = function() {
   });
   tributary.TributaryContext = tributary.Context.extend({
     initialize: function() {
-      this.model.on("change:code", this.execute, this);
+      this.model.on("change:code", function() {
+        tributary.events.trigger("execute");
+      });
+      tributary.events.on("execute", this.execute, this);
       this.model.on("change:code", function() {
         if (!window.onbeforeunload) {
           $(window).on("beforeunload", function() {
@@ -212,7 +215,6 @@ var Tributary = function() {
           });
         }
       }, this);
-      tributary.events.on("execute", this.execute, this);
       this.config = this.options.config;
       this.config.on("change:display", this.set_display, this);
       var config = this.config;
@@ -323,6 +325,7 @@ var Tributary = function() {
         trib_options = window.trib_options;
         if (tributary.autoinit) {
           tributary.clear();
+          tributary.events.trigger("prerender");
         }
         if (this.clones) {
           $(this.clones.node()).empty();
@@ -541,14 +544,14 @@ var Tributary = function() {
   });
   tributary.HTMLContext = tributary.Context.extend({
     initialize: function() {
-      this.model.on("change:code", this.execute, this);
       this.model.on("change:code", function() {
         tributary.events.trigger("execute");
       });
+      tributary.events.on("prerender", this.execute, this);
     },
     execute: function() {
       try {
-        $(this.el).html(this.model.get("code"));
+        $(this.el).append(this.model.get("code"));
       } catch (e) {
         this.model.trigger("error", e);
         return false;
@@ -556,11 +559,27 @@ var Tributary = function() {
       this.model.trigger("noerror");
       return true;
     },
-    render: function() {
-      this.el = d3.select("body").selectAll("div.htmlcontext").data([ this.model ], function(d) {
-        return d.cid;
-      }).enter().append("div").classed("htmlcontext", true).node();
-    }
+    render: function() {}
+  });
+  tributary.SVGContext = tributary.Context.extend({
+    initialize: function() {
+      this.model.on("change:code", function() {
+        tributary.events.trigger("execute");
+      });
+      tributary.events.on("prerender", this.execute, this);
+    },
+    execute: function() {
+      try {
+        var svg = d3.select(this.el).select("svg").node();
+        $(svg).append("<svg class='injected'>" + this.model.get("code") + "</svg>");
+      } catch (e) {
+        this.model.trigger("error", e);
+        return false;
+      }
+      this.model.trigger("noerror");
+      return true;
+    },
+    render: function() {}
   });
   tributary.Editor = Backbone.View.extend({
     initialize: function() {
@@ -954,7 +973,19 @@ var Tributary = function() {
         config: config,
         model: model
       });
-    } else if (type === "html") {} else {}
+    } else if (type === "html") {
+      context = new tributary.HTMLContext({
+        config: config,
+        model: model,
+        el: display.node()
+      });
+    } else if (type === "svg" && filename !== "inlet.svg") {
+      context = new tributary.SVGContext({
+        config: config,
+        model: model,
+        el: display.node()
+      });
+    } else {}
     return context;
   };
   tributary.make_editor = function(options) {

@@ -14,10 +14,16 @@ tributary.Context = Backbone.View.extend({
 tributary.TributaryContext = tributary.Context.extend({
 
   initialize: function() {
-    this.model.on("change:code", this.execute, this);
+    //this.model.on("change:code", this.execute, this);
+    this.model.on("change:code", function() {
+      tributary.events.trigger("execute");
+    });
+    tributary.events.on("execute", this.execute, this);
+ 
 
     //if the user has modified the code, we want to protect them from losing their work
     this.model.on("change:code", function() {
+      //TODO: use CodeMirror .isClean / .markClean when switch to v3
       if(!window.onbeforeunload) {
         $(window).on('beforeunload', function() {
               return 'Are you sure you want to leave?';
@@ -25,7 +31,7 @@ tributary.TributaryContext = tributary.Context.extend({
       }
     }, this);
     //allow other context's to make this code execute
-    tributary.events.on("execute", this.execute, this);
+    //tributary.events.on("execute", this.execute, this);
 
     this.config = this.options.config;
     this.config.on("change:display", this.set_display, this);
@@ -177,6 +183,8 @@ tributary.TributaryContext = tributary.Context.extend({
         //empty out our display element
         if(tributary.autoinit) {
           tributary.clear();
+          //call anything that needs to be prerendered (SVG and HTML contexts)
+          tributary.events.trigger("prerender");
         }
 
         if(this.clones) { $(this.clones.node()).empty(); }
@@ -514,19 +522,19 @@ tributary.CSSContext = tributary.Context.extend({
 
 });
 
-//TODO: figure out how to make this useful
 tributary.HTMLContext = tributary.Context.extend({
   initialize: function() {
-    this.model.on("change:code", this.execute, this);
+    //this.model.on("change:code", this.execute, this);
     this.model.on("change:code", function() {
       tributary.events.trigger("execute");
     });
+    tributary.events.on("prerender", this.execute, this);
   },
 
   execute: function() {
     try {
       //set the text of the style element to the code
-      $(this.el).html(this.model.get("code"));
+      $(this.el).append(this.model.get("code"));
     } catch (e) {
       this.model.trigger("error", e);
       return false;
@@ -537,6 +545,7 @@ tributary.HTMLContext = tributary.Context.extend({
   },
 
   render: function() {
+    /*
     this.el = d3.select("body")
       .selectAll("div.htmlcontext")
       .data([this.model], function(d) { return d.cid })
@@ -544,10 +553,51 @@ tributary.HTMLContext = tributary.Context.extend({
       .append("div")
       .classed("htmlcontext", true)
       .node();
+    */
 
     
   },
+});
+
+//TODO: figure out how to make this useful
+tributary.SVGContext = tributary.Context.extend({
+  initialize: function() {
+    //this.model.on("change:code", this.execute, this);
+    this.model.on("change:code", function() {
+      tributary.events.trigger("execute");
+    });
+    tributary.events.on("prerender", this.execute, this);
+  },
+
+  execute: function() {
+    try {
+      //TODO: validate the SVG?
+      var svg = d3.select(this.el).select("svg").node();
+      //this should happen before code from inlet gets executed
+      $(svg).append("<svg class='injected'>" + this.model.get("code") + "</svg>");
+    } catch (e) {
+      this.model.trigger("error", e);
+      return false;
+    }
+    this.model.trigger("noerror");
+
+    return true;
+  },
+
+  render: function() {
+    /*
+    this.el = d3.select("body")
+      .selectAll("div.htmlcontext")
+      .data([this.model], function(d) { return d.cid })
+      .enter()
+      .append("div")
+      .classed("htmlcontext", true)
+      .node();
+      */
+  },
 
 });
+
+
 
 

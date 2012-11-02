@@ -84,14 +84,20 @@ tributary.make_context = function(options) {
     });
   } else if(type === "html") {
     //TODO: enable this when it becomes useful
-    /*
     context = new tributary.HTMLContext({
       config: config,
       model: model,
       el: display.node()
     });
-    */
-  } else {
+  } else if(type === "svg" && filename !== "inlet.svg") {
+    //TODO: enable this when it becomes useful
+    context = new tributary.SVGContext({
+      config: config,
+      model: model,
+      el: display.node()
+    });
+  } 
+  else {
   }
 
   return context;
