@@ -48,13 +48,37 @@ tributary.Editor = Backbone.View.extend({
     });
 
 
+    var olderrors = [];
     this.model.on("jshint", function(errors) {
       //turn off highlighting of any error lines
-      d3.select(that.el).selectAll(".lineerror").classed("lineerror", false);
-      d3.select(that.el).selectAll(".linenumbererror").classed("linenumbererror", false);
-
+      //d3.select(that.el).selectAll(".lineerror").classed("lineerror", false);
+      //d3.select(that.el).selectAll(".linenumbererror").classed("linenumbererror", false);
+      //d3.selectAll("pre.linenumbererror").classed("linenumbererror", false);
       var err;
-      for(i = errors.length; i--; ) {
+      /*
+      for(var i = olderrors.length; i--;) {
+        err = olderrors[i];
+        console.log("indof", err)
+        that.cm.setLineClass(err.line-1, null, null);
+        //that.cm.setMarker(err.line-1, "%N%", null);
+      }
+      */
+
+      //console.log(olderrors, errors)
+      //TODO: this actually misses sometimes, when you hit enter all the lines
+      //will be different from last time
+      var oldlines = _.pluck(olderrors, "line");
+      var lines = _.pluck(errors, "line");
+      var diff = _.difference(oldlines, lines);
+      //console.log("diff", diff);
+      var line;
+      for(i = diff.length; i--;) {
+        line = diff[i];
+        that.cm.setLineClass(line-1, null, null);
+        that.cm.setMarker(line-1, "%N%", null);
+      }
+
+      for(var i = errors.length; i--; ) {
         err = errors[i];
         if(err) {
           //go through the errors and highlight the lines
@@ -65,6 +89,11 @@ tributary.Editor = Backbone.View.extend({
           }
         }
       }
+
+      
+
+      olderrors = _.clone(errors);
+
     });
 
     this.model.on("nojshint", function() {
