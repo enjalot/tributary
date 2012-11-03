@@ -611,12 +611,9 @@ var Tributary = function() {
       this.model.on("noerror", function() {
         d3.select(that.el).select(".CodeMirror-gutter").classed("error", false);
       });
-      var errlines = -1;
       this.model.on("jshint", function(errors) {
-        for (var i = that.cm.lineCount(); i--; ) {
-          that.cm.setLineClass(i, null, null);
-          that.cm.setMarker(i, "%N%", "");
-        }
+        d3.select(that.el).selectAll(".lineerror").classed("lineerror", false);
+        d3.select(that.el).selectAll(".linenumbererror").classed("linenumbererror", false);
         var err;
         for (i = errors.length; i--; ) {
           err = errors[i];

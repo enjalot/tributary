@@ -48,13 +48,11 @@ tributary.Editor = Backbone.View.extend({
     });
 
 
-    var errlines = -1;
     this.model.on("jshint", function(errors) {
       //turn off highlighting of any error lines
-      for(var i = that.cm.lineCount(); i--;) {
-        that.cm.setLineClass(i, null, null);
-        that.cm.setMarker(i, "%N%", "");
-      }
+      d3.select(that.el).selectAll(".lineerror").classed("lineerror", false);
+      d3.select(that.el).selectAll(".linenumbererror").classed("linenumbererror", false);
+
       var err;
       for(i = errors.length; i--; ) {
         err = errors[i];
