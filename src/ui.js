@@ -370,16 +370,18 @@ if(ret.user.url === "") {
     $('#gist_info').html(info_string);
 
     if(ret.user.id !== tributary.userid) {
-      $("#savePanel").attr("disabled", "true");
-      $("#savePanel").attr("class", "off");
+      //$("#savePanel").attr("disabled", "true");
+      //$("#savePanel").attr("class", "off");
     }
   }
   //if the user is not logged in, or no gist disable save
   if(isNaN(tributary.userid) || !ret.gist) {
-    $("#savePanel").attr("disabled", "true");
-    $("#savePanel").attr("class", "off");
+    //$("#savePanel").attr("disabled", "true");
+    //$("#savePanel").attr("class", "off");
     //$("#forkPanel").attr("disabled", "true");
     //$("#forkPanel").attr("class", "minimal_off");
+    
+    $('#savePanel').attr("id", "forkPanel");
   }
   
   

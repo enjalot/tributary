@@ -1261,14 +1261,10 @@ var Tributary = function() {
         info_string += '<a href="' + ret.user.url + '">' + ret.user.login + "</a>";
       }
       $("#gist_info").html(info_string);
-      if (ret.user.id !== tributary.userid) {
-        $("#savePanel").attr("disabled", "true");
-        $("#savePanel").attr("class", "off");
-      }
+      if (ret.user.id !== tributary.userid) {}
     }
     if (isNaN(tributary.userid) || !ret.gist) {
-      $("#savePanel").attr("disabled", "true");
-      $("#savePanel").attr("class", "off");
+      $("#savePanel").attr("id", "forkPanel");
     }
     $("#gist-title").on("keydown", function() {
       console.log($("#gist-title").val());
