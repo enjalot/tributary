@@ -372,6 +372,8 @@ if(ret.user.url === "") {
     if(ret.user.id !== tributary.userid) {
       //$("#savePanel").attr("disabled", "true");
       //$("#savePanel").attr("class", "off");
+      $('#savePanel').attr("id", "forkPanel");
+      
     }
   }
   //if the user is not logged in, or no gist disable save

@@ -1261,7 +1261,9 @@ var Tributary = function() {
         info_string += '<a href="' + ret.user.url + '">' + ret.user.login + "</a>";
       }
       $("#gist_info").html(info_string);
-      if (ret.user.id !== tributary.userid) {}
+      if (ret.user.id !== tributary.userid) {
+        $("#savePanel").attr("id", "forkPanel");
+      }
     }
     if (isNaN(tributary.userid) || !ret.gist) {
       $("#savePanel").attr("id", "forkPanel");
