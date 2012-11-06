@@ -574,7 +574,8 @@ tributary.SVGContext = tributary.Context.extend({
       //TODO: validate the SVG?
       var svg = d3.select(this.el).select("svg").node();
       //this should happen before code from inlet gets executed
-      $(svg).append("<svg class='injected'>" + this.model.get("code") + "</svg>");
+      //$(svg).append("<svg class='injected'>" + this.model.get("code") + "</svg>");
+      tributary.appendSVGFragment(svg, this.model.get("code"));
     } catch (e) {
       this.model.trigger("error", e);
       return false;

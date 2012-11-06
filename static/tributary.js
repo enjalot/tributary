@@ -571,7 +571,7 @@ var Tributary = function() {
     execute: function() {
       try {
         var svg = d3.select(this.el).select("svg").node();
-        $(svg).append("<svg class='injected'>" + this.model.get("code") + "</svg>");
+        tributary.appendSVGFragment(svg, this.model.get("code"));
       } catch (e) {
         this.model.trigger("error", e);
         return false;
@@ -1013,6 +1013,17 @@ var Tributary = function() {
     return this.each(function() {
       this.parentNode.appendChild(this);
     });
+  };
+  tributary.appendSVGFragment = function(element, fragment) {
+    var svgpre = "<svg xmlns=http://www.w3.org/2000/svg xmlns:xlink=http://www.w3.org/1999/xlink>";
+    var svgpost = "</svg>";
+    var range = document.createRange();
+    range.selectNode(element);
+    var frag = range.createContextualFragment(svgpre + fragment + svgpost);
+    var svgchildren = frag.childNodes[0].childNodes;
+    for (var i = 0, l = svgchildren.length; i < l; i++) {
+      element.appendChild(svgchildren[i]);
+    }
   };
   tributary.batch = {};
   tributary.batch._execute = function() {

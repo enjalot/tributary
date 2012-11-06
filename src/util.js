@@ -135,6 +135,21 @@ d3.selection.prototype.moveToFront = function() {
 };
 
 
+tributary.appendSVGFragment = function(element, fragment) {
+  //this should allow optional namespace declarations
+  var svgpre = "<svg xmlns=http://www.w3.org/2000/svg xmlns:xlink=http://www.w3.org/1999/xlink>"; 
+  var svgpost = "</svg>";
+  var range = document.createRange();
+  range.selectNode(element);
+  var frag = range.createContextualFragment(svgpre + fragment + svgpost);
+  var svgchildren = frag.childNodes[0].childNodes;
+  //console.log(svgchildren);
+  for(var i = 0, l = svgchildren.length; i < l; i++) {
+    element.appendChild(svgchildren[i]);
+  }
+  
+  //appendChild
+}
 
 
 
