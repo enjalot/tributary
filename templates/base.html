@@ -53,6 +53,13 @@
         {% block branding%}
         {% endblock %}
         </div> 
+         <img id="syncing" src="/static/img/ej_long_loader.3.gif"/> 
+<!--        <div id="syncing">
+            <svg id="syncing-svg">
+                
+            </svg>
+        </div>
+-->        
         <div id="gist_info"></div>
         <div id="save_gui"> 
             {% if not loggedin %}
@@ -79,7 +86,6 @@
     
     <br>
     </div>
-    <img id="syncing" src="/static/img/syncing.gif"/>
     {% endblock %}
 
     <!-- main tributary UI skeleton -->
