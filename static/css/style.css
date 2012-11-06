@@ -543,8 +543,30 @@ body {
     position: absolute;
     margin-right: 48px;
 }
+#gist-title {
+    color: white;
+    background-color: transparent;
+    border: 0;
+    border-bottom: 1px solid white;
+    padding: 1px 4px;
+    margin: 0 2px;
+    outline: none;
+    
+    -webkit-transition:all .3s linear ;       
+       -moz-transition:all .3s linear ;
+         -o-transition:all .3s linear ;
+            transition:all .3s linear ; 
+}
+#gist-title:hover {
+    background-color: white;
+    border-radius: 2px;
+    color: black;
 
+}
 
+#gist-title a:link {
+    text-decoration: none;
+}
 
 
 .dimheader {
@@ -788,6 +810,8 @@ position: absolute;
 top: 8px;
 right: 392px;
 }
+
+
 
 .lineerror {
   background: #A23232 !important;

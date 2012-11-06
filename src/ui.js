@@ -347,19 +347,26 @@ function setup_header(ret){
 
   if(ret.user) {
     var gist_uid = ret.user.userid;
-    /* TODO: setup editing of description as well as a save button
-    if(gist_uid === tributary.userid) {
-        //the loggedin user owns this gist
-    }
-    */
-    //make the description and attribution
-    var info_string = '"<a href="' + ret.gist.html_url + '">' + ret.gist.description + '</a>" by ';
-    if(ret.user.url === "") {
-        info_string += ret.user.login;
-    } else {
-        info_string += '<a href="' + ret.user.url + '">' + ret.user.login + '</a>';
-    }
 
+
+    /* TODO: setup editing of description as well as a save button */
+    if(gist_uid === tributary.userid) {
+        //make editable description
+        var info_string = '<input id="gist-title" value="' + ret.gist.description + '" > by <!-- ya boy -->';
+    }
+    else {
+        //make the description and attribution
+        var info_string = '"<span id="gist-title-static"><a href="' + ret.gist.html_url + '">' + ret.gist.description + '</a></span>" by ';        
+    }
+        
+
+
+if(ret.user.url === "") {
+    info_string += ret.user.login;
+} else {
+    info_string += '<a href="' + ret.user.url + '">' + ret.user.login + '</a>';
+}    
+    
     $('#gist_info').html(info_string);
 
     if(ret.user.id !== tributary.userid) {
@@ -374,6 +381,12 @@ function setup_header(ret){
     //$("#forkPanel").attr("disabled", "true");
     //$("#forkPanel").attr("class", "minimal_off");
   }
+  
+  
+  $("#gist-title").on("keydown", function(){
+      console.log($("#gist-title").val());  
+      ret.config.set("description", $("#gist-title").val())
+  })  
 }
 
 function setup_save(config) {

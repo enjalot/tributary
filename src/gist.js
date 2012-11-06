@@ -95,7 +95,7 @@ tributary.save_gist = function(config, saveorfork, callback) {
   var oldgist = tributary.gistid || "";
 
   var gist = {
-      description: 'just another inlet to tributary',
+      description: config.get("description"),
       public: config.get("public"),
       files: {}
   };

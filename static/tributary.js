@@ -60,6 +60,7 @@ var Tributary = function() {
   });
   tributary.Config = Backbone.Model.extend({
     defaults: {
+      description: "Another Inlet",
       endpoint: "tributary",
       display: "svg",
       "public": true,
@@ -710,7 +711,7 @@ var Tributary = function() {
   tributary.save_gist = function(config, saveorfork, callback) {
     var oldgist = tributary.gistid || "";
     var gist = {
-      description: "just another inlet to tributary",
+      description: config.get("description"),
       "public": config.get("public"),
       files: {}
     };
@@ -1249,7 +1250,11 @@ var Tributary = function() {
     setup_save(ret.config);
     if (ret.user) {
       var gist_uid = ret.user.userid;
-      var info_string = '"<a href="' + ret.gist.html_url + '">' + ret.gist.description + '</a>" by ';
+      if (gist_uid === tributary.userid) {
+        var info_string = '<input id="gist-title" value="' + ret.gist.description + '" > by <!-- ya boy -->';
+      } else {
+        var info_string = '"<span id="gist-title-static"><a href="' + ret.gist.html_url + '">' + ret.gist.description + '</a></span>" by ';
+      }
       if (ret.user.url === "") {
         info_string += ret.user.login;
       } else {
@@ -1265,6 +1270,10 @@ var Tributary = function() {
       $("#savePanel").attr("disabled", "true");
       $("#savePanel").attr("class", "off");
     }
+    $("#gist-title").on("keydown", function() {
+      console.log($("#gist-title").val());
+      ret.config.set("description", $("#gist-title").val());
+    });
   }
   function setup_save(config) {
     $("#savePanel").on("click", function(e) {
