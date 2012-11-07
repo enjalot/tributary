@@ -369,7 +369,7 @@ body {
 .fullscreen {
     position: absolute;
     left: 0;
-    top: 48px;
+    top: 32px;
     width: 100% !important;
     height: 100% !important;
     z-index: 0;
