@@ -67,30 +67,34 @@ tributary.Editor = Backbone.View.extend({
       //console.log(olderrors, errors)
       //TODO: this actually misses sometimes, when you hit enter all the lines
       //will be different from last time
-      var oldlines = _.pluck(olderrors, "line");
-      var lines = _.pluck(errors, "line");
-      var diff = _.difference(oldlines, lines);
-      //console.log("diff", diff);
-      var line;
-      for(i = diff.length; i--;) {
-        line = diff[i];
-        that.cm.setLineClass(line-1, null, null);
-        that.cm.setMarker(line-1, "%N%", null);
-      }
+      try {
+        var oldlines = _.pluck(olderrors, "line");
+        var lines = _.pluck(errors, "line");
+        var diff = _.difference(oldlines, lines);
+        //console.log("diff", diff);
+        var line;
+        for(i = diff.length; i--;) {
+          line = diff[i];
+          that.cm.setLineClass(line-1, null, null);
+          that.cm.setMarker(line-1, "%N%", null);
+        }
 
-      for(var i = errors.length; i--; ) {
-        err = errors[i];
-        if(err) {
-          //go through the errors and highlight the lines
-          that.cm.setLineClass(err.line-1, null, "lineerror");
-          that.cm.setMarker(err.line-1, "%N%", "linenumbererror");
-          if(tributary.hint) {
-            console.log("Error on line: " + err.line + " (" + that.model.get("filename") + ") reason: " + err.reason)
+        for(var i = errors.length; i--; ) {
+          err = errors[i];
+          if(err) {
+            //go through the errors and highlight the lines
+            that.cm.setLineClass(err.line-1, null, "lineerror");
+            that.cm.setMarker(err.line-1, "%N%", "linenumbererror");
+            if(tributary.hint) {
+              console.log("Error on line: " + err.line + " (" + that.model.get("filename") + ") reason: " + err.reason)
+            }
           }
         }
+      } catch (e) {
+        //TODO: fix this shit?
       }
 
-      
+        
 
       olderrors = _.clone(errors);
 
