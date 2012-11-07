@@ -1265,10 +1265,12 @@ var Tributary = function() {
       $("#gist_info").html(info_string);
       if (ret.user.id !== tributary.userid) {
         $("#savePanel").attr("id", "forkPanel");
+        setup_save(ret.config);
       }
     }
     if (isNaN(tributary.userid) || !ret.gist) {
       $("#savePanel").attr("id", "forkPanel");
+      setup_save(ret.config);
     }
     $("#gist-title").on("keydown", function() {
       console.log($("#gist-title").val());
@@ -1276,13 +1278,17 @@ var Tributary = function() {
     });
   }
   function setup_save(config) {
+    $("#savePanel").off("click");
     $("#savePanel").on("click", function(e) {
+      console.log("saving!");
       d3.select("#syncing").style("display", "block");
       tributary.save_gist(config, "save", function(newurl, newgist) {
         d3.select("#syncing").style("display", "none");
       });
     });
+    $("#forkPanel").off("click");
     $("#forkPanel").on("click", function(e) {
+      console.log("forking!");
       d3.select("#syncing").style("display", "block");
       tributary.save_gist(config, "fork", function(newurl, newgist) {
         window.onunload = false;

@@ -373,6 +373,7 @@ if(ret.user.url === "") {
       //$("#savePanel").attr("disabled", "true");
       //$("#savePanel").attr("class", "off");
       $('#savePanel').attr("id", "forkPanel");
+      setup_save(ret.config);
       
     }
   }
@@ -384,6 +385,7 @@ if(ret.user.url === "") {
     //$("#forkPanel").attr("class", "minimal_off");
     
     $('#savePanel').attr("id", "forkPanel");
+    setup_save(ret.config);
   }
   
   
@@ -395,15 +397,18 @@ if(ret.user.url === "") {
 
 function setup_save(config) {
   //Setup the save panel
+  $('#savePanel').off("click");
   $('#savePanel').on('click', function(e) {
+    console.log("saving!")
     d3.select("#syncing").style("display", "block");
     tributary.save_gist(config, "save", function(newurl, newgist) {
       d3.select("#syncing").style("display", "none");
       //window.location = newurl;
     });
   });
+  $('#forkPanel').off("click");
   $('#forkPanel').on('click', function(e) {
-
+    console.log("forking!")
     d3.select("#syncing").style("display", "block");
     tributary.save_gist(config, "fork", function(newurl, newgist) {
       window.onunload = false;
