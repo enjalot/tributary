@@ -63,6 +63,10 @@ tributary.ease
 tributary.reverse  
 tributary.render  
 
+Frontend JS src file compilation with make to static requires node.js and uglify-js
+```
+npm install uglify-js
+```
 
 ### TODO:  
 
