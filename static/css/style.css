@@ -179,18 +179,84 @@ body {
 
 }
 
-/*
-#require-ui {
-    position: absolute;
-    bottom: 0;
-    left: 0;
+
+.tb_config {
+    width: 100%;
+    /*height: 100%;*/
+    overflow-y: auto;
 }
-*/
+.config {
+    padding: 8px 6px;
+    margin: 6px;
+    color: #fff;
+    
+    border-radius: 4px;
+    
+    -webkit-transition:all .22s linear ;       
+       -moz-transition:all .22s linear ;
+         -o-transition:all .22s linear ;
+            transition:all .22s linear ; 
+}
+.config:hover {
+    cursor: pointer;
+    
+    background-color: #262626;
+    background-image: -webkit-gradient(radial, 0% 0%,0,0% 0%,200, from(rgb(58, 58, 58)), to(rgb(38, 38, 38)));
+    background-image: -webkit-radial-gradient(0% 0%, rgb(38, 38, 38), rgb(58, 58, 58));
+    background-image: -moz-radial-gradient(0% 0%, rgb(38, 38, 38), rgb(58, 58, 58));
+    background-image: -o-radial-gradient(0% 0%, rgb(38, 38, 38), rgb(58, 58, 58));
+    background-image: -ms-radial-gradient(0% 0%, rgb(38, 38, 38), rgb(58, 58, 58));
+    background-image: radial-gradient(0% 0%, rgb(38, 38, 38), rgb(58, 58, 58));
+
+    -webkit-box-shadow:inset 0 0 4px 1px rgba(0,0,0,0.25); /* Saf3.0+, Chrome */
+       -moz-box-shadow:inset 0 0 4px 1px rgba(0,0,0,0.25); /* FF3.5+ */
+            box-shadow:inset 0 0 4px 1px rgba(0,0,0,0.25); /* Opera 10.5, IE 9.0 */
+}
+.config .description {
+    font-size: 10px;
+}
+.config .delete{
+    font-size: 14px;
+    float:right;
+    margin-right: 24px;
+    padding: 3px;
+    border-radius: 2px;
+}
+.config .delete:hover {
+    font-size: 12px;
+    background-color: #f00;
+}
+
+
+
+.config_active {
+    
+    border: 1px solid rgba(250,250,240,0.3);
+    background-color: #424142;
+    background-image: -webkit-gradient(radial, 0% 0%,0,0% 0%,200, from(rgb(30, 30, 30)), to(rgb(66, 65, 66)));
+    background-image: -webkit-radial-gradient(0% 0%, rgb(66, 65, 66), rgb(30, 30, 30));
+    background-image: -moz-radial-gradient(0% 0%, rgb(66, 65, 66), rgb(30, 30, 30));
+    background-image: -o-radial-gradient(0% 0%, rgb(66, 65, 66), rgb(30, 30, 30));
+    background-image: -ms-radial-gradient(0% 0%, rgb(66, 65, 66), rgb(30, 30, 30));
+    background-image: radial-gradient(0% 0%, rgb(66, 65, 66), rgb(30, 30, 30));
+    
+    -webkit-box-shadow:0 0 3px 1px rgba(0,0,0,0.6); /* Saf3.0+, Chrome */
+       -moz-box-shadow:0 0 3px 1px rgba(0,0,0,0.6); /* FF3.5+ */
+            box-shadow:0 0 3px 1px rgba(0,0,0,0.6); /* Opera 10.5, IE 9.0 */
+    
+}
+.config_title {
+    font-size: 20px;
+    color:#fff;
+    margin: 5px;
+}
+
+
+
 .config div{
     text-align: right;
 }
-
-.config,.add input {
+.config input {
     background-color: black;
     border: 1px solid #999;
     border-radius: 4px;
@@ -198,7 +264,23 @@ body {
     color: white;
     outline: none;
 }
-.config,.add input:active {
+.config input:active {
+    border: 1px solid black;
+}
+
+.tb_add {
+    text-align: right;
+    color: white;
+}
+.tb_add input {
+    background-color: black;
+    border: 1px solid #999;
+    border-radius: 4px;
+    padding: 4px;
+    color: white;
+    outline: none;
+}
+.tb_add input:active {
     border: 1px solid black;
 }
 
@@ -300,77 +382,6 @@ body {
     height: 100%;
 }
 */
-.tb_config {
-    width: 100%;
-    /*height: 100%;*/
-    overflow-y: auto;
-}
-.config {
-    padding: 8px 6px;
-    margin: 6px;
-    color: #fff;
-    
-    border-radius: 4px;
-    
-    -webkit-transition:all .22s linear ;       
-       -moz-transition:all .22s linear ;
-         -o-transition:all .22s linear ;
-            transition:all .22s linear ; 
-}
-.config:hover {
-    cursor: pointer;
-    
-    background-color: #262626;
-    background-image: -webkit-gradient(radial, 0% 0%,0,0% 0%,200, from(rgb(58, 58, 58)), to(rgb(38, 38, 38)));
-    background-image: -webkit-radial-gradient(0% 0%, rgb(38, 38, 38), rgb(58, 58, 58));
-    background-image: -moz-radial-gradient(0% 0%, rgb(38, 38, 38), rgb(58, 58, 58));
-    background-image: -o-radial-gradient(0% 0%, rgb(38, 38, 38), rgb(58, 58, 58));
-    background-image: -ms-radial-gradient(0% 0%, rgb(38, 38, 38), rgb(58, 58, 58));
-    background-image: radial-gradient(0% 0%, rgb(38, 38, 38), rgb(58, 58, 58));
-
-    -webkit-box-shadow:inset 0 0 4px 1px rgba(0,0,0,0.25); /* Saf3.0+, Chrome */
-       -moz-box-shadow:inset 0 0 4px 1px rgba(0,0,0,0.25); /* FF3.5+ */
-            box-shadow:inset 0 0 4px 1px rgba(0,0,0,0.25); /* Opera 10.5, IE 9.0 */
-}
-.config .description {
-    font-size: 10px;
-}
-.config .delete{
-    font-size: 14px;
-    float:right;
-    margin-right: 24px;
-    padding: 3px;
-    border-radius: 2px;
-}
-.config .delete:hover {
-    font-size: 12px;
-    background-color: #f00;
-}
-
-
-
-.config_active {
-    
-    border: 1px solid rgba(250,250,240,0.3);
-    background-color: #424142;
-    background-image: -webkit-gradient(radial, 0% 0%,0,0% 0%,200, from(rgb(30, 30, 30)), to(rgb(66, 65, 66)));
-    background-image: -webkit-radial-gradient(0% 0%, rgb(66, 65, 66), rgb(30, 30, 30));
-    background-image: -moz-radial-gradient(0% 0%, rgb(66, 65, 66), rgb(30, 30, 30));
-    background-image: -o-radial-gradient(0% 0%, rgb(66, 65, 66), rgb(30, 30, 30));
-    background-image: -ms-radial-gradient(0% 0%, rgb(66, 65, 66), rgb(30, 30, 30));
-    background-image: radial-gradient(0% 0%, rgb(66, 65, 66), rgb(30, 30, 30));
-    
-    -webkit-box-shadow:0 0 3px 1px rgba(0,0,0,0.6); /* Saf3.0+, Chrome */
-       -moz-box-shadow:0 0 3px 1px rgba(0,0,0,0.6); /* FF3.5+ */
-            box-shadow:0 0 3px 1px rgba(0,0,0,0.6); /* Opera 10.5, IE 9.0 */
-    
-}
-.config_title {
-    font-size: 20px;
-    color:#fff;
-    margin: 5px;
-}
-
 
 .fullscreen {
     position: absolute;

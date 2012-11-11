@@ -123,12 +123,12 @@ tributary.ConfigView = Backbone.View.extend({
     var plus = require
       .selectAll(".plus");
     var add= require
-      .selectAll(".add");
+      .selectAll(".tb_add");
 
 
-    var name_input = require.select(".add")
+    var name_input = require.select(".tb_add")
       .select("input.name");
-    var url_input = require.select(".add")
+    var url_input = require.select(".tb_add")
       .select("input.url");
 
     require.selectAll("div.config")

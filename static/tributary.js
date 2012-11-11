@@ -135,9 +135,9 @@ var Tributary = function() {
       });
       var require = d3.select(this.el).select(".requirecontrols");
       var plus = require.selectAll(".plus");
-      var add = require.selectAll(".add");
-      var name_input = require.select(".add").select("input.name");
-      var url_input = require.select(".add").select("input.url");
+      var add = require.selectAll(".tb_add");
+      var name_input = require.select(".tb_add").select("input.name");
+      var url_input = require.select(".tb_add").select("input.url");
       require.selectAll("div.config").datum(function() {
         return this.dataset;
       }).select("span.delete").datum(function() {
