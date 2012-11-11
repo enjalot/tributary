@@ -63,11 +63,13 @@ tributary.make_context = function(options) {
       el: display.node()
     });
   } else if(type === "json") {
+    model.set("mode", "json")
     context = new tributary.JSONContext({
       config: config,
       model: model,
     });
   } else if(type === "csv") {
+    model.set("mode", "text")
     context = new tributary.CSVContext({
       config: config,
       model: model,
@@ -78,11 +80,13 @@ tributary.make_context = function(options) {
       model: model,
     });
   } else if(type === "css") {
+    model.set("mode", "css")
     context = new tributary.CSSContext({
       config: config,
       model: model,
     });
   } else if(type === "html") {
+    model.set("mode", "text/html")
     //TODO: enable this when it becomes useful
     context = new tributary.HTMLContext({
       config: config,
@@ -90,6 +94,7 @@ tributary.make_context = function(options) {
       el: display.node()
     });
   } else if(type === "svg" && filename !== "inlet.svg") {
+    model.set("mode", "text/html")
     //TODO: enable this when it becomes useful
     context = new tributary.SVGContext({
       config: config,

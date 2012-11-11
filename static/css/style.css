@@ -190,7 +190,7 @@ body {
     text-align: right;
 }
 
-.config input {
+.config,.add input {
     background-color: black;
     border: 1px solid #999;
     border-radius: 4px;
@@ -198,7 +198,7 @@ body {
     color: white;
     outline: none;
 }
-.config input:active {
+.config,.add input:active {
     border: 1px solid black;
 }
 
@@ -337,7 +337,7 @@ body {
 }
 .config .delete{
     font-size: 14px;
-    /*float:right;*/
+    float:right;
     margin-right: 24px;
     padding: 3px;
     border-radius: 2px;

@@ -10,8 +10,11 @@ tributary.FilesView = Backbone.View.extend({
 
     var template = Handlebars.templates.files;
 
-    //inlet.js comes first
+    //render all the file tabs
     var contexts = _.map(this.model.contexts, function(ctx) { return ctx.model.toJSON(); });
+    //sort by filename
+    contexts = contexts.sort(function(a,b) { if(a.filename < b.filename) return -1; return 1; });
+    //inlet.js comes first
     var inlet = _.find(contexts, function(d) { return d.filename === "inlet.js" });
     contexts.splice(contexts.indexOf(inlet), 1);
     contexts.unshift(inlet);
@@ -22,6 +25,7 @@ tributary.FilesView = Backbone.View.extend({
     $(this.el).html(template(context));
 
 
+    //setup the event handlers for the file tabs
     var fvs = d3.select(this.el).selectAll("div.fv")
     fvs.on("click", function(d) {
       var filename = this.dataset.filename;
@@ -31,6 +35,7 @@ tributary.FilesView = Backbone.View.extend({
       tributary.events.trigger("show", "edit");
     });
 
+    //the new file button
     var plus = d3.select(this.el).selectAll("div.plus")
       .on("click", function() {
         var input = d3.select(this).select("input")

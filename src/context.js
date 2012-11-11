@@ -516,7 +516,7 @@ tributary.CSSContext = tributary.Context.extend({
       .attr({
         type:"text/css"
       }).node();
-    console.log("style el", this.el);
+    //console.log("style el", this.el);
 
   },
 

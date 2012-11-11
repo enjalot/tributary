@@ -1,22 +1,43 @@
 <div class=displaycontrols>
   <span class=config_title>Display:</span>
   {{#each displays}}
-
+    <div class=config data-name={{this.name}}>
+      <span>{{this.name}}</span>
+      <span class=description>{{this.description}}</span>
+    </div>
   {{/each}}
 </div>
 
 <div class=timecontrols>
   <span class=config_title>Time Controls:</span>
-  {{#each timecontrols}}
-
+  {{#each time_controls}}
+    <div class=config data-name={{this.name}}>
+      <span>{{this.name}}</span>
+      <span class=description>{{this.description}}</span>
+    </div>
   {{/each}}
 </div>
 
 <div class="requirecontrols">
-  <span class=config_title>External Scripts:</span>
-  {{#each timecontrols}}
-    
+  <div class=config_title>External Scripts:</div>
+  {{#each requires}}
+    <div class=config data-name={{this.name}} data-url={{this.url}}>
+      <span>{{this.name}}</span>
+      <span class=description> {{this.url}}</span>
+      <span class=delete>x</span>
+    </div>
   {{/each}}
+  <div class="plus">
+    +
+  </div>
+
+
+  <div class="add" style="display:none;">
+  <br>
+    name: <input type=text class="name"></input><br>
+    url: <input type=text class="url"></input>
+  </div>
+
 </div>
 
 

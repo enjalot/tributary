@@ -64,31 +64,30 @@ tributary.ConfigView = Backbone.View.extend({
     //TODO: split each of the sections into their own view? 
     //at least the require stuff probably
     var that = this;
-    //show options for the various renderers (displays)
-    d3.select(this.el).append("span")
-      .classed("config_title", true)
-      .text("Display:");
-      
 
-    var displays = d3.select(this.el).append("div")
-      .classed("displaycontrols", true)
-      .selectAll("div.config")
-      .data(tributary.displays)
-      .enter()
-      .append("div")
-      .classed("config", true);
+    var template = Handlebars.templates.config;
+    //inlet.js comes first
+    
+    var context ={
+      displays: tributary.displays, 
+      time_controls: tributary.time_controls,
+      requires: this.model.get("require")
+    };
+
+    $(this.el).html(template(context));
+
+
+
+    var displays = d3.select(this.el)
+      .select(".displaycontrols")
+      .selectAll("div.config");
 
     var initdisplay = this.model.get("display");
-    displays.each(function(d) {
-      //console.log(d.name, initdisplay);
-      if(d.name === initdisplay) { d3.select(this).classed("config_active",true); }
-    });
-    displays.append("span")
-      .text(function(d) { return d.name; });
-    displays.append("span")
-      .text(function(d) { return " " + d.description; })
-      .classed("description", true);
-
+    displays.map(function() { return this.dataset; })
+    displays.filter(function(d) {
+      return d.name === initdisplay;
+    })
+    .classed("config_active", true);
 
     displays.on("click", function(d) {
       d3.select(this.parentNode).selectAll("div.config")
@@ -98,33 +97,17 @@ tributary.ConfigView = Backbone.View.extend({
       tributary.events.trigger("execute");
     });
 
+    var timecontrols = d3.select(this.el)
+      .select(".timecontrols")
+      .selectAll("div.config");
 
+    timecontrols.map(function() { return this.dataset; })
+    timecontrols.filter(function(d) {
+      return that.model.get(d.name);
+    })
+    .classed("config_active", true);
 
-    //show options for time controls
-    d3.select(this.el).append("span")
-      .classed("config_title", true)
-      .text("Time Controls:");
-     
-    var tcs = d3.select(this.el).append("div")
-      .classed("timecontrols", true)
-      .selectAll("div.config")
-      .data(tributary.time_controls)
-      .enter()
-      .append("div")
-      .classed("config", true);
-
-    //TODO: set active for options active in config
-    tcs.each(function(d) {
-      if(that.model.get(d.name)) { d3.select(this).classed("config_active", true); }
-    });
-    
-    tcs.append("span")
-      .text(function(d) { return d.name; });
-    tcs.append("span")
-      .text(function(d) { return " " + d.description; })
-      .classed("description", true);
-
-    tcs.on("click", function(d) {
+    timecontrols.on("click", function(d) {
       //TODO: make this data driven
       var tf = !that.model.get(d.name);
       d3.select(this).classed("config_active", tf);
@@ -132,7 +115,117 @@ tributary.ConfigView = Backbone.View.extend({
       //that.model.set("display", d.name);
       that.model.set(d.name, tf);
     });
-    
+
+
+    var require = d3.select(this.el)
+      .select(".requirecontrols");
+
+    var plus = require
+      .selectAll(".plus");
+    var add= require
+      .selectAll(".add");
+
+
+    var name_input = require.select(".add")
+      .select("input.name");
+    var url_input = require.select(".add")
+      .select("input.url");
+
+    require.selectAll("div.config")
+      .datum(function() { return this.dataset; })
+      .select("span.delete")
+      .datum(function() { return this.dataset; })
+      .on("click", function(d) {
+        var reqs = that.model.get("require");
+        var ind = reqs.indexOf(d);
+        reqs.splice(ind, 1);
+        that.model.set("require", reqs);
+
+        //rerender
+        that.$el.empty();
+        that.render();
+
+        add.style("display", "none");
+      });
+
+
+    require.selectAll("div.config")
+      .on("click", function(d) {
+        add.style("display", "");
+        name_input.node().value = d.name;
+        url_input.node().value = d.url;
+
+        //update the appropraite req
+        var done = function() {
+          //create a new require
+
+          
+          var reqs = that.model.get("require");
+          var req = _.find(reqs, function(r) { return r.name === d.name; });
+          req.name = name_input.node().value;
+          req.url = url_input.node().value;
+
+          that.model.set("require", reqs);
+          that.model.require(function() {}, reqs);
+          
+          //rerender the files view to show new file
+          that.$el.empty();
+          console.log(that);
+          that.render();
+        };
+
+        name_input.on("keypress", function() {
+          //they hit enter
+          if(d3.event.charCode === 13) {
+            done();
+          }
+        });
+        url_input.on("keypress", function() {
+          //they hit enter
+          if(d3.event.charCode === 13) {
+            done();
+          }
+        });
+      })
+
+    plus.on("click", function() {
+      add.style("display", "");
+      name_input.node().focus();
+      var done = function() {
+        //create a new require
+        var req = { 
+          name: name_input.node().value,
+          url: url_input.node().value
+        };
+        var reqs = that.model.get("require");
+        reqs.push(req);
+        that.model.set("require", reqs);
+        that.model.require(function() {}, reqs);
+        
+        //rerender the files view to show new file
+        that.$el.empty();
+        console.log(that);
+        that.render();
+      };
+
+      name_input.on("keypress", function() {
+        //they hit enter
+        if(d3.event.charCode === 13) {
+          done();
+        }
+      });
+      url_input.on("keypress", function() {
+        //they hit enter
+        if(d3.event.charCode === 13) {
+          done();
+        }
+      });
+    });
+ 
+
+    /*
+
+      
     
     //Add require.js UI
     
@@ -232,6 +325,7 @@ tributary.ConfigView = Backbone.View.extend({
         }
       });
     });
+    */
   }
 });
 

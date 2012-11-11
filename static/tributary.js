@@ -100,88 +100,97 @@ var Tributary = function() {
     initialize: function() {},
     render: function() {
       var that = this;
-      d3.select(this.el).append("span").classed("config_title", true).text("Display:");
-      var displays = d3.select(this.el).append("div").classed("displaycontrols", true).selectAll("div.config").data(tributary.displays).enter().append("div").classed("config", true);
+      var template = Handlebars.templates.config;
+      var context = {
+        displays: tributary.displays,
+        time_controls: tributary.time_controls,
+        requires: this.model.get("require")
+      };
+      $(this.el).html(template(context));
+      var displays = d3.select(this.el).select(".displaycontrols").selectAll("div.config");
       var initdisplay = this.model.get("display");
-      displays.each(function(d) {
-        if (d.name === initdisplay) {
-          d3.select(this).classed("config_active", true);
-        }
+      displays.map(function() {
+        return this.dataset;
       });
-      displays.append("span").text(function(d) {
-        return d.name;
-      });
-      displays.append("span").text(function(d) {
-        return " " + d.description;
-      }).classed("description", true);
+      displays.filter(function(d) {
+        return d.name === initdisplay;
+      }).classed("config_active", true);
       displays.on("click", function(d) {
         d3.select(this.parentNode).selectAll("div.config").classed("config_active", false);
         d3.select(this).classed("config_active", true);
         that.model.set("display", d.name);
         tributary.events.trigger("execute");
       });
-      d3.select(this.el).append("span").classed("config_title", true).text("Time Controls:");
-      var tcs = d3.select(this.el).append("div").classed("timecontrols", true).selectAll("div.config").data(tributary.time_controls).enter().append("div").classed("config", true);
-      tcs.each(function(d) {
-        if (that.model.get(d.name)) {
-          d3.select(this).classed("config_active", true);
-        }
+      var timecontrols = d3.select(this.el).select(".timecontrols").selectAll("div.config");
+      timecontrols.map(function() {
+        return this.dataset;
       });
-      tcs.append("span").text(function(d) {
-        return d.name;
-      });
-      tcs.append("span").text(function(d) {
-        return " " + d.description;
-      }).classed("description", true);
-      tcs.on("click", function(d) {
+      timecontrols.filter(function(d) {
+        return that.model.get(d.name);
+      }).classed("config_active", true);
+      timecontrols.on("click", function(d) {
         var tf = !that.model.get(d.name);
         d3.select(this).classed("config_active", tf);
         that.model.set(d.name, tf);
       });
-      var requireUI = d3.select(this.el).append("div").attr("id", "require-ui");
-      requireUI.append("span").classed("config_title", true).text("Require:");
-      var rc = requireUI.append("div").classed("requirecontrols", true);
-      var rcs = rc.selectAll("div.config").data(this.model.get("require")).enter().append("div").classed("config", true);
-      rcs.append("span").text(function(d) {
-        return d.name;
-      });
-      rcs.append("span").text(function(d) {
-        return " " + d.url;
-      }).classed("description", true);
-      rcs.append("span").text("x").classed("delete", true).on("click", function(d) {
+      var require = d3.select(this.el).select(".requirecontrols");
+      var plus = require.selectAll(".plus");
+      var add = require.selectAll(".add");
+      var name_input = require.select(".add").select("input.name");
+      var url_input = require.select(".add").select("input.url");
+      require.selectAll("div.config").datum(function() {
+        return this.dataset;
+      }).select("span.delete").datum(function() {
+        return this.dataset;
+      }).on("click", function(d) {
         var reqs = that.model.get("require");
         var ind = reqs.indexOf(d);
         reqs.splice(ind, 1);
         that.model.set("require", reqs);
         that.$el.empty();
         that.render();
+        add.style("display", "none");
       });
-      var plus = rc.append("div").classed("config", true);
-      plus.append("span").text("+ ");
-      var name_input = plus.append("div").text("name: ").style({
-        display: "none"
-      });
-      name_input.append("input").attr({
-        type: "text"
-      });
-      var url_input = plus.append("div").text("url: ").style({
-        display: "none"
-      });
-      url_input.append("input").text("url:").attr({
-        type: "text"
+      require.selectAll("div.config").on("click", function(d) {
+        add.style("display", "");
+        name_input.node().value = d.name;
+        url_input.node().value = d.url;
+        var done = function() {
+          var reqs = that.model.get("require");
+          var req = _.find(reqs, function(r) {
+            return r.name === d.name;
+          });
+          req.name = name_input.node().value;
+          req.url = url_input.node().value;
+          that.model.set("require", reqs);
+          that.model.require(function() {}, reqs);
+          that.$el.empty();
+          console.log(that);
+          that.render();
+        };
+        name_input.on("keypress", function() {
+          if (d3.event.charCode === 13) {
+            done();
+          }
+        });
+        url_input.on("keypress", function() {
+          if (d3.event.charCode === 13) {
+            done();
+          }
+        });
       });
       plus.on("click", function() {
-        name_input.style("display", "");
-        url_input.style("display", "");
-        name_input.select("input").node().focus();
+        add.style("display", "");
+        name_input.node().focus();
         var done = function() {
           var req = {
-            name: name_input.select("input").node().value,
-            url: url_input.select("input").node().value
+            name: name_input.node().value,
+            url: url_input.node().value
           };
           var reqs = that.model.get("require");
           reqs.push(req);
           that.model.set("require", reqs);
+          that.model.require(function() {}, reqs);
           that.$el.empty();
           console.log(that);
           that.render();
@@ -541,7 +550,6 @@ var Tributary = function() {
       }).enter().append("style").classed("csscontext", true).attr({
         type: "text/css"
       }).node();
-      console.log("style el", this.el);
     }
   });
   tributary.HTMLContext = tributary.Context.extend({
@@ -584,15 +592,11 @@ var Tributary = function() {
     render: function() {}
   });
   tributary.PanelView = Backbone.View.extend({
-    initialize: function() {
-      Handlebars.registerPartial("config", Handlebars.templates.config);
-      Handlebars.registerPartial("files", Handlebars.templates.files);
-    },
+    initialize: function() {},
     render: function() {
       var that = this;
       var template = Handlebars.templates.panel;
       var html = template({});
-      console.log("HELLO", html);
       this.$el.html(html);
     }
   });
@@ -625,7 +629,7 @@ var Tributary = function() {
     render: function() {
       var that = this;
       d3.select(this.el).classed("editor", true);
-      this.cm = CodeMirror(this.el, {
+      var codemirror_options = {
         mode: that.model.get("mode"),
         theme: "lesser-dark",
         lineNumbers: true,
@@ -633,7 +637,12 @@ var Tributary = function() {
           var code = that.cm.getValue();
           that.model.set("code", code);
         }
-      });
+      };
+      if (that.model.get("mode") === "json") {
+        codemirror_options.mode = "javascript";
+        codemirror_options.json = true;
+      }
+      this.cm = CodeMirror(this.el, codemirror_options);
       this.cm.setValue(this.model.get("code"));
       this.inlet = Inlet(this.cm);
       this.model.on("error", function() {
@@ -796,6 +805,10 @@ var Tributary = function() {
       var template = Handlebars.templates.files;
       var contexts = _.map(this.model.contexts, function(ctx) {
         return ctx.model.toJSON();
+      });
+      contexts = contexts.sort(function(a, b) {
+        if (a.filename < b.filename) return -1;
+        return 1;
       });
       var inlet = _.find(contexts, function(d) {
         return d.filename === "inlet.js";
@@ -1002,11 +1015,13 @@ var Tributary = function() {
         el: display.node()
       });
     } else if (type === "json") {
+      model.set("mode", "json");
       context = new tributary.JSONContext({
         config: config,
         model: model
       });
     } else if (type === "csv") {
+      model.set("mode", "text");
       context = new tributary.CSVContext({
         config: config,
         model: model
@@ -1017,17 +1032,20 @@ var Tributary = function() {
         model: model
       });
     } else if (type === "css") {
+      model.set("mode", "css");
       context = new tributary.CSSContext({
         config: config,
         model: model
       });
     } else if (type === "html") {
+      model.set("mode", "text/html");
       context = new tributary.HTMLContext({
         config: config,
         model: model,
         el: display.node()
       });
     } else if (type === "svg" && filename !== "inlet.svg") {
+      model.set("mode", "text/html");
       context = new tributary.SVGContext({
         config: config,
         model: model,
