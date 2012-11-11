@@ -100,27 +100,11 @@
     <!-- main tributary UI skeleton -->
     <div id="display">
     </div>
-    <div id="controls"></div>    
-    <div id="panel_handle"></div>
-    <div id="panelfiles_gui">
-        <div id="files"></div>        
-    </div>
-    <div id="panel">
-
-        <div id="edit"></div>
-        <div id="config">
-            
-            <div id="require">
-
-            </div>
-        </div>
+    <div class="tb_panel">
     </div>
     
-    <div id="panel_gui">
-        <span id="hide-panel">
-            <button id="hide-panel-button">X</button>
-        </span>
-    </div>
+    <div class="tb_controls"></div>
+    <div class="tb_panel_handle"></div>
     <div id="slider"></div>
 
 </div>
@@ -138,6 +122,8 @@
     <script src='/static/lib/three.min.js'></script>
     <script src="/static/lib/Stats.js"></script>
     <script src="/static/lib/jshint.js"></script>
+    <script src="/static/lib/handlebars-1.0.rc.1.js"></script>
+
 
  
     <!-- CodeMirror -->
@@ -161,6 +147,7 @@
     <script src="/static/lib/dat.gui.min.js"></script>
 
     <!-- Tributary -->
+    <script src="/static/templates.js"></script>
     <script src="/static/lib/inlet.js"></script>
     <script src='/static/tributary.js?v=0.534'></script>
 

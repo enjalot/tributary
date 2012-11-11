@@ -42,6 +42,18 @@ python app.py
 If you want to deploy behind apache, check out the sample apache config in server/sample_apache_config.txt
 If you want to setup wsgi there is a sample wsgi file in deploy/sample_tributary.wsgi (you can copy it into the base directory to match the sample apache config)
 
+Frontend JS src file compilation with make to static requires node.js and uglify-js
+```
+npm install
+```
+
+You need to compile the frontend code and templates using make:
+```
+make
+```
+You can check the Makefile to see how it's done with uglify and handlebars
+
+
 
 Reserved properties of the tributary object:
 tributary.initialize  
@@ -63,10 +75,6 @@ tributary.ease
 tributary.reverse  
 tributary.render  
 
-Frontend JS src file compilation with make to static requires node.js and uglify-js
-```
-npm install uglify-js
-```
 
 ### TODO:  
 

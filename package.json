@@ -21,6 +21,7 @@
   },
   "devDependencies": {
     "uglify-js": "1.2.3",
+    "handlebars": "1.0.7",
     "vows": "0.6.x",
     "canvas": "0.12.1"
   },

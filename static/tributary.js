@@ -97,6 +97,7 @@ var Tributary = function() {
     }
   });
   tributary.ConfigView = Backbone.View.extend({
+    initialize: function() {},
     render: function() {
       var that = this;
       d3.select(this.el).append("span").classed("config_title", true).text("Display:");
@@ -582,6 +583,35 @@ var Tributary = function() {
     },
     render: function() {}
   });
+  tributary.PanelView = Backbone.View.extend({
+    initialize: function() {
+      Handlebars.registerPartial("config", Handlebars.templates.config);
+      Handlebars.registerPartial("files", Handlebars.templates.files);
+    },
+    render: function() {
+      var that = this;
+      var template = Handlebars.templates.panel;
+      var html = template({});
+      console.log("HELLO", html);
+      this.$el.html(html);
+    }
+  });
+  tributary.make_editor = function(options) {
+    var editorParent = options.parent || tributary.edit;
+    var model = options.model;
+    if (options.container) {
+      container = options.container;
+    } else {
+      container = editorParent.append("div").attr("id", model.cid);
+    }
+    var editor;
+    editor = new tributary.Editor({
+      el: container.node(),
+      model: model
+    });
+    editor.render();
+    return editor;
+  };
   tributary.Editor = Backbone.View.extend({
     initialize: function() {
       this.config = this.model.get("config");
@@ -763,25 +793,31 @@ var Tributary = function() {
     initialize: function() {},
     render: function() {
       var that = this;
-      var fvs = d3.select(this.el).selectAll("div").data(this.model.contexts);
-      var fv = fvs.enter().append("div").classed("fv", true);
-      fv.on("click", function(d) {
+      var template = Handlebars.templates.files;
+      var contexts = _.map(this.model.contexts, function(ctx) {
+        return ctx.model.toJSON();
+      });
+      var inlet = _.find(contexts, function(d) {
+        return d.filename === "inlet.js";
+      });
+      contexts.splice(contexts.indexOf(inlet), 1);
+      contexts.unshift(inlet);
+      var context = {
+        contexts: contexts
+      };
+      $(this.el).html(template(context));
+      var fvs = d3.select(this.el).selectAll("div.fv");
+      fvs.on("click", function(d) {
+        var filename = this.dataset.filename;
+        var ctx = _.find(that.model.contexts, function(d) {
+          return d.model.get("filename") === filename;
+        });
         that.model.trigger("hide");
-        d.model.trigger("show");
+        ctx.model.trigger("show");
         tributary.events.trigger("show", "edit");
       });
-      fv.append("span").text(function(d) {
-        return d.model.get("filename");
-      });
-      var plus = d3.select(this.el).append("div").classed("fv", true);
-      plus.append("span").text("+");
-      var input = plus.append("input").attr({
-        type: "text"
-      }).style({
-        display: "none"
-      });
-      plus.on("click", function() {
-        input.style("display", "inline-block");
+      var plus = d3.select(this.el).selectAll("div.plus").on("click", function() {
+        var input = d3.select(this).select("input").style("display", "inline-block");
         input.node().focus();
         input.on("keypress", function() {
           if (d3.event.charCode === 13) {
@@ -793,11 +829,14 @@ var Tributary = function() {
               that.model.contexts.push(context);
               context.render();
               context.execute();
-              tributary.make_editor({
+              var editor = tributary.make_editor({
                 model: context.model
               });
               that.$el.empty();
               that.render();
+              that.model.trigger("hide");
+              context.model.trigger("show");
+              editor.cm.focus();
             } else {
               input.classed("input_error", true);
             }
@@ -997,21 +1036,6 @@ var Tributary = function() {
     } else {}
     return context;
   };
-  tributary.make_editor = function(options) {
-    var model = options.model;
-    if (options.container) {
-      container = options.container;
-    } else {
-      container = tributary.edit.append("div").attr("id", model.cid);
-    }
-    var editor;
-    editor = new tributary.Editor({
-      el: container.node(),
-      model: model
-    });
-    editor.render();
-    return editor;
-  };
   d3.selection.prototype.moveToFront = function() {
     return this.each(function() {
       this.parentNode.appendChild(this);
@@ -1025,7 +1049,21 @@ var Tributary = function() {
     var frag = range.createContextualFragment(svgpre + fragment + svgpost);
     var svgchildren = frag.childNodes[0].childNodes;
     for (var i = 0, l = svgchildren.length; i < l; i++) {
-      element.appendChild(svgchildren[i]);
+      element.appendChild(svgchildren[0]);
+    }
+  };
+  Handlebars.getTemplate = function(name, callback) {
+    if (Handlebars.templates === undefined || Handlebars.templates[name] === undefined) {
+      $.ajax({
+        url: "/static/templates/" + name + ".handlebars",
+        success: function(data) {
+          if (Handlebars.templates === undefined) {
+            Handlebars.templates = {};
+          }
+          Handlebars.templates[name] = Handlebars.compile(data);
+          if (callback) callback(template);
+        }
+      });
     }
   };
   tributary.batch = {};
@@ -1041,11 +1079,15 @@ var Tributary = function() {
   var mainfiles = [ "inlet.js", "sinwaves.js", "squarecircle.js" ];
   var display, panel_gui, panel, panel_handle, page, header;
   tributary.ui.setup = function() {
+    tributary.panel = new tributary.PanelView({
+      el: ".tb_panel"
+    });
+    tributary.panel.render();
     display = d3.select("#display");
-    panel_gui = d3.select("#panel_gui");
-    panel = d3.select("#panel");
-    panel_handle = d3.select("#panel_handle");
-    panelfile_gui = d3.select("#panelfiles_gui");
+    panel = d3.select(".tb_panel");
+    panel_gui = d3.selectAll("div.tb_panel_gui");
+    panelfile_gui = d3.select(".tb_panelfiles_gui");
+    panel_handle = d3.select(".tb_panel_handle");
     page = d3.select("#page");
     header = d3.select("#header");
     tributary.dims = {
@@ -1057,8 +1099,7 @@ var Tributary = function() {
       panel_width: 0,
       panel_height: 0,
       panel_gui_width: 0,
-      panel_gui_height: 31,
-      panelfiles_gui_height: 31
+      panel_gui_height: 31
     };
     tributary.events.on("resize", function() {
       var min_width = parseInt(panel.style("min-width"), 10);
@@ -1071,14 +1112,17 @@ var Tributary = function() {
       tributary.dims.panel_gui_width = tributary.dims.panel_width;
       tributary.dims.page_height = parseInt(page.style("height"), 10);
       tributary.dims.display_height = tributary.dims.page_height - parseInt(header.style("height"), 10);
-      tributary.dims.panel_height = tributary.dims.display_height - (tributary.dims.panel_gui_height + tributary.dims.panelfiles_gui_height);
+      tributary.dims.panel_height = tributary.dims.display_height - tributary.dims.panel_gui_height;
       display.style("width", tributary.dims.display_width + "px");
       panel.style("width", tributary.dims.panel_width + "px");
       panel_gui.style("width", tributary.dims.panel_gui_width + "px");
       panelfile_gui.style("width", tributary.dims.panel_gui_width + "px");
       panel.style("height", tributary.dims.panel_height + "px");
+      panel.selectAll(".panel").style("height", tributary.dims.panel_height + "px");
+      panel.selectAll(".CodeMirror").style("height", tributary.dims.panel_height - tributary.dims.panel_gui_height + "px");
       display.style("height", tributary.dims.display_height + "px");
       panel_gui.style("height", tributary.dims.panel_gui_height + "px");
+      panel_gui.style("margin-top", tributary.dims.panel_gui_height + "px");
       panel_handle.style("right", tributary.dims.panel_width + "px");
       tributary.sw = tributary.dims.display_width;
       tributary.sh = tributary.dims.display_height;
@@ -1105,13 +1149,13 @@ var Tributary = function() {
       return d;
     });
     tributary.events.on("show", function(name) {
-      $("#panel").children("div").css("display", "none");
-      panel.select("#" + name).style("display", "");
+      $(".tb_panel").children(".panel").css("display", "none");
+      panel.select(".tb_" + name).style("display", "");
       panel_gui.selectAll("div.pb").classed("gui_active", false);
-      panel_gui.select("#" + name + "_tab").classed("gui_active", true);
+      panel_gui.select(".tb_" + name + "_tab").classed("gui_active", true);
     });
     tributary.events.trigger("show", "edit");
-    $("#hide-panel-button").on("click", function() {
+    $(".tb_hide-panel-button").on("click", function() {
       tributary.events.trigger("hidepanel");
       $("#display").addClass("fullscreen");
       $("svg").addClass("fullscreen");
@@ -1124,17 +1168,17 @@ var Tributary = function() {
       $("#header").removeClass("dimheader");
     });
     tributary.events.on("hidepanel", function() {
-      $("#panel").hide();
-      $("#panel_gui").hide();
-      $("#panel_handle").hide();
-      $("#panelfiles_gui").hide();
+      $(".tb_panel").hide();
+      $(".tb_panel_gui").hide();
+      $(".tb_panel_handle").hide();
+      $(".tb_panelfiles_gui").hide();
       $("#show-codepanel").show();
     });
     tributary.events.on("showpanel", function() {
-      $("#panel").show();
-      $("#panel_gui").show();
-      $("#panel_handle").show();
-      $("#panelfiles_gui").show();
+      $(".tb_panel").show();
+      $(".tb_panel_gui").show();
+      $(".tb_panel_handle").show();
+      $(".tb_panelfiles_gui").show();
       $("#show-codepanel").hide();
     });
   };
@@ -1195,7 +1239,7 @@ var Tributary = function() {
       config.set("display", "svg");
     }
     config.set("endpoint", "");
-    var edit = panel.select("#edit");
+    var edit = panel.select(".tb_edit");
     tributary.edit = edit;
     ret.models.each(function(m) {
       type = m.get("type");
@@ -1211,29 +1255,32 @@ var Tributary = function() {
           context.execute();
         }
         tributary.make_editor({
-          model: m
+          model: m,
+          parent: edit
         });
+        m.trigger("hide");
       }
     });
     config.contexts.forEach(function(c) {
       if (mainfiles.indexOf(c.model.get("filename")) >= 0) {
+        c.model.trigger("show");
         tributary.autoinit = true;
         c.execute();
         tributary.autoinit = config.get("autoinit");
       }
     });
     var config_view = new tributary.ConfigView({
-      el: "#config",
+      el: ".tb_config",
       model: config
     });
     config_view.render();
     var files_view = new tributary.FilesView({
-      el: "#files",
+      el: ".tb_files",
       model: config
     });
     files_view.render();
     var controls_view = new tributary.ControlsView({
-      el: "#controls",
+      el: ".tb_controls",
       model: config
     });
     controls_view.render();

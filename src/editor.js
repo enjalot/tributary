@@ -1,4 +1,32 @@
 
+tributary.make_editor = function(options) {
+  //Creates a editor from a model and optional editor container
+  //{
+  //  model: REQUIRED
+  //  container: optional, default: editorParent.append("div") with model.cid as id
+  //  parent: optional, the parent element to append our container to, default: tributary.edit
+  //}
+
+  var editorParent = options.parent || tributary.edit;
+  var model = options.model;
+  if(options.container) {
+    container = options.container;
+  } else {
+    container = editorParent.append("div")
+      .attr("id", model.cid);
+  }
+  var editor;
+  editor = new tributary.Editor({
+    el: container.node(),
+    model: model
+  });
+  editor.render();
+  return editor;
+}
+
+
+
+
 //The editor view renders the CodeMirror editor and sets up the logic for interaction
 //with the code model 
 tributary.Editor = Backbone.View.extend({

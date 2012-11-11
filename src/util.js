@@ -104,30 +104,6 @@ tributary.make_context = function(options) {
 }
 
 
-tributary.make_editor = function(options) {
-  //Creates a editor from a model and optional editor container
-  //{
-  //  model: REQUIRED
-  //  container: optional, default: tributary.edit.append("div") with model.cid as id
-  //}
-
-  var model = options.model;
-  if(options.container) {
-    container = options.container;
-  } else {
-    container = tributary.edit.append("div")
-      .attr("id", model.cid);
-  }
-  var editor;
-  editor = new tributary.Editor({
-    el: container.node(),
-    model: model
-  });
-  editor.render();
-  return editor;
-}
-
-
 d3.selection.prototype.moveToFront = function() { 
   return this.each(function() { 
     this.parentNode.appendChild(this); 
@@ -145,11 +121,33 @@ tributary.appendSVGFragment = function(element, fragment) {
   var svgchildren = frag.childNodes[0].childNodes;
   //console.log(svgchildren);
   for(var i = 0, l = svgchildren.length; i < l; i++) {
-    element.appendChild(svgchildren[i]);
+    element.appendChild(svgchildren[0]);
   }
   
-  //appendChild
-}
+};
+
+//Handlebars getTemplate from:
+//http://berzniz.com/post/24743062344/handling-handlebars-js-like-a-pro
+//async:
+//http://www.jblotus.com/2011/05/24/keeping-your-handlebars-js-templates-organized/
+Handlebars.getTemplate = function(name, callback) {
+  if (Handlebars.templates === undefined || Handlebars.templates[name] === undefined) {
+    $.ajax({
+      url : '/static/templates/' + name + '.handlebars',
+      success : function(data) {
+        if (Handlebars.templates === undefined) {
+          Handlebars.templates = {};
+        }
+        Handlebars.templates[name] = Handlebars.compile(data);
+        if (callback) callback(template);
+      },
+      //async : false
+    });
+  }
+  //return Handlebars.templates[name];
+};
+
+
 
 
 

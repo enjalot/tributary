@@ -8,18 +8,24 @@ var mainfiles = ["inlet.js", "sinwaves.js", "squarecircle.js"];
 var display, panel_gui, panel, panel_handle, page, header;
 tributary.ui.setup = function() {
   //UI calculations, we control the dimensions of our various ui components with JS
-  //
+  
   //keep track of the screen width and height
   //display is the element where things get rendered into
+
+  tributary.panel = new tributary.PanelView({el: ".tb_panel"});
+  tributary.panel.render();
+
+
   display = d3.select("#display");
-  //panel gui controls what's shown in the panel
-  panel_gui = d3.select("#panel_gui");
   //panel holds the editors, and other controls
-  panel= d3.select("#panel");
+  panel= d3.select(".tb_panel");
+  //ui container for panel tabs (config/edit)
+  panel_gui = d3.selectAll("div.tb_panel_gui");
+  //ui container for file tabs
+  panelfile_gui = d3.select(".tb_panelfiles_gui");
   //the ui element for resizing the panel
-  panel_handle = d3.select("#panel_handle");
+  panel_handle = d3.select(".tb_panel_handle");
   
-  panelfile_gui = d3.select("#panelfiles_gui");
   
   page = d3.select("#page");
   header = d3.select("#header");
@@ -34,7 +40,7 @@ tributary.ui.setup = function() {
     panel_height: 0,
     panel_gui_width: 0,
     panel_gui_height: 31,
-    panelfiles_gui_height: 31
+    //panelfiles_gui_height: 31
   };
 
   //We control the layout of our UI completely with code, otherwise we are forcing CSS
@@ -55,7 +61,7 @@ tributary.ui.setup = function() {
 
     tributary.dims.page_height = parseInt(page.style("height"), 10);
     tributary.dims.display_height = tributary.dims.page_height - parseInt(header.style("height"),10);
-    tributary.dims.panel_height = tributary.dims.display_height - (tributary.dims.panel_gui_height + tributary.dims.panelfiles_gui_height);
+    tributary.dims.panel_height = tributary.dims.display_height - (tributary.dims.panel_gui_height);
 
     //we adjust the size of the ui with javascript because css sucks
     display.style("width", tributary.dims.display_width + "px");
@@ -65,9 +71,13 @@ tributary.ui.setup = function() {
 
 
     panel.style("height", tributary.dims.panel_height + "px");
+    //update all the inner panels
+    panel.selectAll(".panel").style("height", tributary.dims.panel_height + "px");
+    panel.selectAll(".CodeMirror").style("height", (tributary.dims.panel_height - tributary.dims.panel_gui_height) + "px");
+
     display.style("height", tributary.dims.display_height + "px");
     panel_gui.style("height", tributary.dims.panel_gui_height + "px");
-    //panel_gui.style("margin-top", tributary.dims.panel_gui_height + "px");
+    panel_gui.style("margin-top", tributary.dims.panel_gui_height + "px");
 
     panel_handle.style("right", tributary.dims.panel_width + "px");
 
@@ -85,7 +95,7 @@ tributary.ui.setup = function() {
       if(tributary.dims.display_percent + dx >= 0.0 && tributary.dims.display_percent + dx <= 1) {
         tributary.dims.display_percent += dx;
       } 
-      tributary.events.trigger("resize");
+     tributary.events.trigger("resize");
     })
   panel_handle.call(ph_drag);
 
@@ -114,17 +124,17 @@ tributary.ui.setup = function() {
   //Logic for tabs
   tributary.events.on("show", function(name) {
     //hide all panel divs
-    $("#panel").children("div")
+    $(".tb_panel").children(".panel")
       .css("display", "none");
 
     //show the one we want
-    panel.select("#" + name)
+    panel.select(".tb_" + name)
       .style("display", "");
 
     //update the panel_gui ui
     panel_gui.selectAll("div.pb")
       .classed("gui_active", false);
-    panel_gui.select("#" + name + "_tab")
+    panel_gui.select(".tb_" + name + "_tab")
       .classed("gui_active", true);
   });
   tributary.events.trigger("show", "edit");
@@ -132,7 +142,7 @@ tributary.ui.setup = function() {
   
   // Logic for hiding panel?
   
-  $('#hide-panel-button').on("click", function(){
+  $('.tb_hide-panel-button').on("click", function(){
       tributary.events.trigger("hidepanel");
       
       $('#display').addClass("fullscreen")
@@ -151,10 +161,10 @@ tributary.ui.setup = function() {
   
   tributary.events.on("hidepanel", function(){
       
-      $("#panel").hide();
-      $("#panel_gui").hide();
-      $("#panel_handle").hide();
-      $("#panelfiles_gui").hide();
+      $(".tb_panel").hide();
+      $(".tb_panel_gui").hide();
+      $(".tb_panel_handle").hide();
+      $(".tb_panelfiles_gui").hide();
 
       $('#show-codepanel').show();
       
@@ -162,10 +172,10 @@ tributary.ui.setup = function() {
   
   tributary.events.on("showpanel", function(){
       
-      $("#panel").show();
-      $("#panel_gui").show();
-      $("#panel_handle").show();
-      $("#panelfiles_gui").show();
+      $(".tb_panel").show();
+      $(".tb_panel_gui").show();
+      $(".tb_panel_handle").show();
+      $(".tb_panelfiles_gui").show();
 
       $('#show-codepanel').hide();
       
@@ -261,7 +271,7 @@ function _assemble(ret) {
   //we shouldn't save it from now on
   config.set("endpoint", "");
   
-  var edit = panel.select("#edit");
+  var edit = panel.select(".tb_edit");
   tributary.edit = edit;
 
   ret.models.each(function(m) {
@@ -287,7 +297,8 @@ function _assemble(ret) {
         context.execute();
       }
 
-      tributary.make_editor({model: m});
+      tributary.make_editor({model: m, parent:edit});
+      m.trigger("hide");
     }
   });
 
@@ -296,6 +307,7 @@ function _assemble(ret) {
     //select appropriate html ui containers
     // and create contexts
     if(mainfiles.indexOf(c.model.get("filename")) >= 0) {
+      c.model.trigger("show");
       //first load should auto init
       tributary.autoinit = true;
       c.execute();
@@ -303,23 +315,23 @@ function _assemble(ret) {
     }
   });
 
-  //fill in the file view
+  //fill in the config view
   var config_view = new tributary.ConfigView({
-    el: "#config",
+    el: ".tb_config",
     model: config,
   });
   config_view.render();
 
   //fill in the file view
   var files_view = new tributary.FilesView({
-    el: "#files",
+    el: ".tb_files",
     model: config,
   });
   files_view.render();
 
-  //fill in the control view
+  //fill in the control view (Config pane)
   var controls_view = new tributary.ControlsView({
-    el: "#controls",
+    el: ".tb_controls",
     model: config,
   });
   controls_view.render();

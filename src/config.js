@@ -56,6 +56,9 @@ tributary.Config = Backbone.Model.extend({
 // Config UI
 ////////////////////////////////////////////////////////////////////////
 tributary.ConfigView = Backbone.View.extend({
+  initialize: function() {
+
+  },
 
   render: function() {
     //TODO: split each of the sections into their own view? 
