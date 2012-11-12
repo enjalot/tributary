@@ -1,4 +1,5 @@
 
+//TODO: put all the ui.js logic in here
 //Build the panel
 tributary.PanelView = Backbone.View.extend({
   initialize: function() {
