@@ -1,0 +1,139 @@
+
+/* HEADER / TOPBAR STUFF */
+#header {
+    background-color: #3a3a3a;
+    background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(58, 58, 58)), to(rgb(38, 38, 38)));
+    background-image: -webkit-linear-gradient(top, rgb(58, 58, 58), rgb(38, 38, 38));
+    background-image: -moz-linear-gradient(top, rgb(58, 58, 58), rgb(38, 38, 38));
+    background-image: -o-linear-gradient(top, rgb(58, 58, 58), rgb(38, 38, 38));
+    background-image: -ms-linear-gradient(top, rgb(58, 58, 58), rgb(38, 38, 38));
+    background-image: linear-gradient(top, rgb(58, 58, 58), rgb(38, 38, 38));
+    filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,StartColorStr='#3a3a3a', EndColorStr='#262626');
+
+    
+    padding-left: 24px;
+    padding-right: 24px;
+    padding-top:    6px;
+    padding-bottom: 6px;
+    width: 100%;
+    height: 32px;
+
+
+    font-size: 14px !important;
+    color: white;
+    z-index: 200; /*lay header on top of datgui */
+    
+    -webkit-transition:all .62s ease-out;       
+       -moz-transition:all .62s ease-out;
+         -o-transition:all .62s ease-out;
+            transition:all .62s ease-out;
+}
+#header a:link, #header a:hover, #header a:visited { color: white; }
+
+
+#header button { padding: 4px; }
+
+#header #branding {
+    top: 4px;
+    text-shadow: 0px 1px 1px rgba(0,0,0,0.8); /* FF3.5+, Opera 9+, Saf1+, Chrome, IE10 */
+    background-color: rgba(0,0,0,0.5);
+    border-radius: 6px;
+    letter-spacing: 0.15em;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    padding-left: 8px;
+    padding-right: 8px;
+    position: absolute;
+    margin-right: 48px;
+    
+    background-color: rgba(0,0,0,0.1);
+      -webkit-box-shadow: inset 0px 0px 5px 0px rgba(0,0,0,0.2); /* Saf3-4, iOS 4.0.2 - 4.2, Android 2.3+ */
+          box-shadow: inset 0px 0px 5px 0px     rgba(0,0,0,0.2); /* Opera 10.5, IE9, FF4+, Chrome 6+, iOS 5 */
+}
+#gist-title {
+    color: white;
+    background-color: transparent;
+    border: 0;
+    border-bottom: 1px solid white;
+    padding: 1px 4px;
+    margin: 0 2px;
+    outline: none;
+    
+    -webkit-transition:all .3s linear ;       
+       -moz-transition:all .3s linear ;
+         -o-transition:all .3s linear ;
+            transition:all .3s linear ; 
+}
+#gist-title:hover {
+    background-color: white;
+    border-radius: 2px;
+    color: black;
+
+}
+#gist-title a:link { text-decoration: none; }
+
+
+/* When the panel is removed AKA "fullscreen mode" the
+   header gets the class "dimheader"                    */
+
+.dimheader {
+    -webkit-transition:all .2s ease-out ;       
+       -moz-transition:all .2s ease-out ;
+         -o-transition:all .2s ease-out ;
+            transition:all .2s ease-out ;
+            
+    background-image: none !important;
+    background-color: transparent !important;
+    color: black !important;
+    
+}
+.dimheader a:link, .dimheader a:hover, .dimheader a:visited { color: black !important; }
+.dimheader:hover { opacity: 1; }
+#save_gui {
+    position: absolute;
+    right: 5px;
+    /*right: 320px; */
+    top: 6px;
+}
+#save_gui button{ margin: 0 2px; }
+
+#datgui { top: 10px; }
+
+#gui {
+    padding: 12px;
+    border-radius: 6px;
+    position: fixed;
+    bottom: 32px;
+    left: 48px;
+    padding-top: 10px;
+    z-index: 1000;
+
+    background-color: rgba(255,255,255,0.72);
+    border: 1px solid rgba(0,0,0,0.35);
+}
+
+#gist_info {
+    display: inline-block;
+    margin-left: 148px;
+}
+
+#gist_info, #save_gui {
+    opacity: 0.24;
+    
+    -webkit-transition:all .24s ease-out .22s;       
+       -moz-transition:all .24s ease-out .22s;
+         -o-transition:all .24s ease-out .22s;
+            transition:all .24s ease-out .22s;
+}
+#gist_info:hover, #save_gui:hover {
+    opacity: 1 !important;
+}
+#loggedin{
+    display: inline-block;
+    margin-left: 148px;
+    font-size: 10px;
+}
+
+#panelgui .gui_active {
+    opacity: 1 !important;
+}
