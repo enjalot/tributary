@@ -134,19 +134,19 @@ tributary.ConfigView = Backbone.View.extend({
     require.selectAll("div.config")
       .datum(function() { return this.dataset; })
       .select("span.delete")
-      .datum(function() { return this.dataset; })
-      .on("click", function(d) {
-        var reqs = that.model.get("require");
-        var ind = reqs.indexOf(d);
-        reqs.splice(ind, 1);
-        that.model.set("require", reqs);
+        .datum(function() { return this.dataset; })
+        .on("click", function(d) {
+          var reqs = that.model.get("require");
+          var ind = reqs.indexOf(d);
+          reqs.splice(ind, 1);
+          that.model.set("require", reqs);
 
-        //rerender
-        that.$el.empty();
-        that.render();
+          //rerender
+          that.$el.empty();
+          that.render();
 
-        add.style("display", "none");
-      });
+          add.style("display", "none");
+        });
 
 
     require.selectAll("div.config")
@@ -170,7 +170,7 @@ tributary.ConfigView = Backbone.View.extend({
           
           //rerender the files view to show new file
           that.$el.empty();
-          console.log(that);
+          //console.log(that);
           that.render();
         };
 

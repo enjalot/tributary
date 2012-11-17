@@ -165,7 +165,6 @@ var Tributary = function() {
           that.model.set("require", reqs);
           that.model.require(function() {}, reqs);
           that.$el.empty();
-          console.log(that);
           that.render();
         };
         name_input.on("keypress", function() {
