@@ -1341,7 +1341,7 @@ var Tributary = function() {
   function setup_header(ret) {
     setup_save(ret.config);
     if (ret.user) {
-      var gist_uid = ret.user.userid;
+      var gist_uid = ret.user.id;
       if (gist_uid === tributary.userid) {
         var info_string = '<input id="gist-title" value="' + ret.gist.description + '" > by <!-- ya boy -->';
       } else {
@@ -1354,13 +1354,17 @@ var Tributary = function() {
       }
       $("#gist_info").html(info_string);
       if (ret.user.id !== tributary.userid) {
+        console.log("hmm");
+        $("#forkPanel").css("display", "none");
         $("#savePanel").attr("id", "forkPanel");
         setup_save(ret.config);
       }
-    }
-    if (isNaN(tributary.userid) || !ret.gist) {
-      $("#savePanel").attr("id", "forkPanel");
-      setup_save(ret.config);
+    } else {
+      if (isNaN(tributary.userid) || !ret.gist) {
+        $("#forkPanel").css("display", "none");
+        $("#savePanel").attr("id", "forkPanel");
+        setup_save(ret.config);
+      }
     }
     $("#gist-title").on("keydown", function() {
       console.log($("#gist-title").val());

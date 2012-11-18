@@ -358,7 +358,7 @@ function setup_header(ret){
   setup_save(ret.config);
 
   if(ret.user) {
-    var gist_uid = ret.user.userid;
+    var gist_uid = ret.user.id;
 
 
     /* TODO: setup editing of description as well as a save button */
@@ -373,31 +373,35 @@ function setup_header(ret){
         
 
 
-if(ret.user.url === "") {
-    info_string += ret.user.login;
-} else {
-    info_string += '<a href="' + ret.user.url + '">' + ret.user.login + '</a>';
-}    
+    if(ret.user.url === "") {
+      info_string += ret.user.login;
+    } else {
+      info_string += '<a href="' + ret.user.url + '">' + ret.user.login + '</a>';
+    }    
     
     $('#gist_info').html(info_string);
 
     if(ret.user.id !== tributary.userid) {
+      console.log("hmm")
       //$("#savePanel").attr("disabled", "true");
       //$("#savePanel").attr("class", "off");
+      $('#forkPanel').css("display", "none");
       $('#savePanel').attr("id", "forkPanel");
       setup_save(ret.config);
-      
     }
-  }
-  //if the user is not logged in, or no gist disable save
-  if(isNaN(tributary.userid) || !ret.gist) {
-    //$("#savePanel").attr("disabled", "true");
-    //$("#savePanel").attr("class", "off");
-    //$("#forkPanel").attr("disabled", "true");
-    //$("#forkPanel").attr("class", "minimal_off");
-    
-    $('#savePanel').attr("id", "forkPanel");
-    setup_save(ret.config);
+  } else {
+    //if the user is not logged in, or no gist disable save
+    if(isNaN(tributary.userid) || !ret.gist) {
+      //$("#savePanel").attr("disabled", "true");
+      //$("#savePanel").attr("class", "off");
+      //$("#forkPanel").attr("disabled", "true");
+      //$("#forkPanel").attr("class", "minimal_off");
+      
+      //$('#forkPanel').hide();
+      $('#forkPanel').css("display", "none");
+      $('#savePanel').attr("id", "forkPanel");
+      setup_save(ret.config);
+    }
   }
   
   
