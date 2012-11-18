@@ -526,6 +526,26 @@ var Tributary = function() {
     },
     render: function() {}
   });
+  tributary.TSVContext = tributary.Context.extend({
+    initialize: function() {
+      this.model.on("change:code", this.execute, this);
+      this.model.on("change:code", function() {
+        tributary.events.trigger("execute");
+      });
+    },
+    execute: function() {
+      try {
+        var json = d3.tsv.parse(this.model.get("code"));
+        tributary[this.model.get("name")] = json;
+      } catch (e) {
+        this.model.trigger("error", e);
+        return false;
+      }
+      this.model.trigger("noerror");
+      return true;
+    },
+    render: function() {}
+  });
   tributary.CSSContext = tributary.Context.extend({
     initialize: function() {
       this.model.on("change:code", this.execute, this);
@@ -1022,6 +1042,12 @@ var Tributary = function() {
     } else if (type === "csv") {
       model.set("mode", "text");
       context = new tributary.CSVContext({
+        config: config,
+        model: model
+      });
+    } else if (type === "tsv") {
+      model.set("mode", "text");
+      context = new tributary.TSVContext({
         config: config,
         model: model
       });

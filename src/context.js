@@ -482,6 +482,35 @@ tributary.CSVContext = tributary.Context.extend({
   },
 });
 
+//The TSV context evaluates js in the global namespace
+tributary.TSVContext = tributary.Context.extend({
+  initialize: function() {
+    this.model.on("change:code", this.execute, this);
+    this.model.on("change:code", function() {
+      tributary.events.trigger("execute");
+    });
+  },
+
+  execute: function() {
+    try {
+      var json = d3.tsv.parse(this.model.get("code"));
+      tributary[this.model.get("name")] = json;
+    } catch (e) {
+      this.model.trigger("error", e);
+      return false;
+    }
+    this.model.trigger("noerror");
+
+    return true;
+  },
+
+  render: function() {
+    //TSV context doesn't do anything on rendering
+  },
+});
+
+
+
 
 //The CSS context adds a style element to the head with the contents of the css
 tributary.CSSContext = tributary.Context.extend({
@@ -545,17 +574,6 @@ tributary.HTMLContext = tributary.Context.extend({
   },
 
   render: function() {
-    /*
-    this.el = d3.select("body")
-      .selectAll("div.htmlcontext")
-      .data([this.model], function(d) { return d.cid })
-      .enter()
-      .append("div")
-      .classed("htmlcontext", true)
-      .node();
-    */
-
-    
   },
 });
 
@@ -586,15 +604,6 @@ tributary.SVGContext = tributary.Context.extend({
   },
 
   render: function() {
-    /*
-    this.el = d3.select("body")
-      .selectAll("div.htmlcontext")
-      .data([this.model], function(d) { return d.cid })
-      .enter()
-      .append("div")
-      .classed("htmlcontext", true)
-      .node();
-      */
   },
 
 });

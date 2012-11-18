@@ -74,6 +74,12 @@ tributary.make_context = function(options) {
       config: config,
       model: model,
     });
+  } else if(type === "tsv") {
+    model.set("mode", "text")
+    context = new tributary.TSVContext({
+      config: config,
+      model: model,
+    });
   } else if(type === "js") {
     context = new tributary.JSContext({
       config: config,
