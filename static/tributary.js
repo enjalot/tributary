@@ -1297,7 +1297,7 @@ var Tributary = function() {
         if (mainfiles.indexOf(m.get("filename")) < 0) {
           context.execute();
         }
-        tributary.make_editor({
+        context.editor = tributary.make_editor({
           model: m,
           parent: edit
         });
@@ -1337,6 +1337,7 @@ var Tributary = function() {
     tributary.events.on("resize", function() {
       config.set("display_percent", tributary.dims.display_percent);
     });
+    tributary.config = config;
   }
   function setup_header(ret) {
     setup_save(ret.config);

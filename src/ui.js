@@ -297,7 +297,7 @@ function _assemble(ret) {
         context.execute();
       }
 
-      tributary.make_editor({model: m, parent:edit});
+      context.editor = tributary.make_editor({model: m, parent:edit});
       m.trigger("hide");
     }
   });
@@ -350,6 +350,7 @@ function _assemble(ret) {
   tributary.events.on("resize", function() {
     config.set("display_percent", tributary.dims.display_percent);
   });
+  tributary.config = config;
 
 } 
 
