@@ -1337,7 +1337,7 @@ var Tributary = function() {
     tributary.events.on("resize", function() {
       config.set("display_percent", tributary.dims.display_percent);
     });
-    tributary.config = config;
+    tributary.__config__ = config;
   }
   function setup_header(ret) {
     setup_save(ret.config);

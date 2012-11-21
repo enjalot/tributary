@@ -350,7 +350,7 @@ function _assemble(ret) {
   tributary.events.on("resize", function() {
     config.set("display_percent", tributary.dims.display_percent);
   });
-  tributary.config = config;
+  tributary.__config__ = config;
 
 } 
 
