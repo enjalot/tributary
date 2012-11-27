@@ -859,6 +859,10 @@ var Tributary = function() {
         ctx.model.trigger("show");
         tributary.events.trigger("show", "edit");
       });
+      fvs.attr("class", function(d, i) {
+        var filetype = this.dataset.filename.split(".")[1];
+        return "fv type-" + filetype;
+      });
       var plus = d3.select(this.el).selectAll("div.plus").on("click", function() {
         var input = d3.select(this).select("input").style("display", "inline-block");
         input.node().focus();
@@ -880,6 +884,10 @@ var Tributary = function() {
               that.model.trigger("hide");
               context.model.trigger("show");
               editor.cm.focus();
+              fvs.attr("class", function(d, i) {
+                var filetype = this.dataset.filename.split(".")[1];
+                return "fv type-" + filetype;
+              });
             } else {
               input.classed("input_error", true);
             }

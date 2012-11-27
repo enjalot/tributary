@@ -3,7 +3,7 @@
 //GUI for loading files
 tributary.FilesView = Backbone.View.extend({
   initialize: function() {
-    
+
   },
   render: function() {
     var that = this;
@@ -18,7 +18,7 @@ tributary.FilesView = Backbone.View.extend({
     var inlet = _.find(contexts, function(d) { return d.filename === "inlet.js" });
     contexts.splice(contexts.indexOf(inlet), 1);
     contexts.unshift(inlet);
-    
+
     var context ={
       contexts: contexts
     };
@@ -34,6 +34,12 @@ tributary.FilesView = Backbone.View.extend({
       ctx.model.trigger("show");
       tributary.events.trigger("show", "edit");
     });
+
+    fvs.attr("class", function(d,i){
+      var filetype = this.dataset.filename.split(".")[1]
+
+      return "fv type-"+filetype;
+    })
 
     //the new file button
     var plus = d3.select(this.el).selectAll("div.plus")
@@ -51,13 +57,19 @@ tributary.FilesView = Backbone.View.extend({
               context.render();
               context.execute();
               var editor = tributary.make_editor({model: context.model});
-              
+
               //rerender the files view to show new file
               that.$el.empty();
               that.render();
               that.model.trigger("hide");
               context.model.trigger("show");
               editor.cm.focus();
+
+              fvs.attr("class", function(d,i){
+                var filetype = this.dataset.filename.split(".")[1]
+
+                return "fv type-"+filetype;
+              })
 
 
             } else {
@@ -66,7 +78,7 @@ tributary.FilesView = Backbone.View.extend({
           }
         });
     });
-    
+
   },
 });
 
