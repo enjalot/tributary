@@ -123,8 +123,6 @@ tributary.ConfigView = Backbone.View.extend({
     var editorcontrols = d3.select(this.el)
     .select(".editorcontrols");
 
-    console.log("EDITOR CONTROLS", editorcontrols);
-
     editorcontrols.selectAll("div.config")
       .on("click", function(d) {
         if($(this).attr("data-name") == "log-errors") {

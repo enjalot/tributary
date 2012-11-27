@@ -134,7 +134,6 @@ var Tributary = function() {
         that.model.set(d.name, tf);
       });
       var editorcontrols = d3.select(this.el).select(".editorcontrols");
-      console.log("EDITOR CONTROLS", editorcontrols);
       editorcontrols.selectAll("div.config").on("click", function(d) {
         if ($(this).attr("data-name") == "log-errors") {
           if (tributary.hint == true && tributary.trace == true) {
@@ -646,9 +645,23 @@ var Tributary = function() {
     render: function() {
       var that = this;
       d3.select(this.el).classed("editor", true);
+      filetype = that.model.get("filename").split(".")[1];
+      if (filetype == "js") {
+        var editor_theme = "lesser-dark";
+      } else if (filetype == "svg") {
+        var editor_theme = "vibrant-ink";
+      } else if (filetype == "html") {
+        var editor_theme = "ambiance";
+      } else if (filetype == "coffee") {
+        var editor_theme = "elegant";
+      } else if (filetype == "css") {
+        var editor_theme = "elegant";
+      } else {
+        var editor_theme = "lesser-dark";
+      }
       var codemirror_options = {
         mode: that.model.get("mode"),
-        theme: "lesser-dark",
+        theme: editor_theme,
         lineNumbers: true,
         onChange: function() {
           var code = that.cm.getValue();
