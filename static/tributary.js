@@ -133,6 +133,23 @@ var Tributary = function() {
         d3.select(this).classed("config_active", tf);
         that.model.set(d.name, tf);
       });
+      var editorcontrols = d3.select(this.el).select(".editorcontrols");
+      console.log("EDITOR CONTROLS", editorcontrols);
+      editorcontrols.selectAll("div.config").on("click", function(d) {
+        if ($(this).attr("data-name") == "log-errors") {
+          if (tributary.hint == true && tributary.trace == true) {
+            $(this).removeClass("config_active");
+            tributary.hint = false;
+            tributary.trace = false;
+            tributary.events.trigger("execute");
+          } else {
+            tributary.hint = true;
+            tributary.trace = true;
+            tributary.events.trigger("execute");
+            $(this).addClass("config_active");
+          }
+        }
+      });
       var require = d3.select(this.el).select(".requirecontrols");
       var plus = require.selectAll(".plus");
       var add = require.selectAll(".tb_add");

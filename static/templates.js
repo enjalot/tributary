@@ -60,11 +60,11 @@ function program5(depth0,data) {
   stack1 = depth0.time_controls;
   stack1 = helpers.each.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(3, program3, data)});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n</div>\n\n<div class=\"requirecontrols\">\n  <div class=config_title>External Scripts:</div>\n  ";
+  buffer += "\n</div>\n\n<div class=\"editorcontrols\">\n  <span class=\"config_title\">Editor Controls:</span>\n    <div class=\"config\" data-name=\"log-errors\">\n      <span>Log errors</span>\n      <span class=\"description\">Show JSHint errors in the console</span>\n    </div>\n</div>\n\n<div class=\"requirecontrols\">\n  <div class=config_title>External Scripts:</div>\n  ";
   stack1 = depth0.requires;
   stack1 = helpers.each.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(5, program5, data)});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n  <div class=\"plus\">\n    +\n  </div>\n\n  <div class=\"tb_add\" style=\"display:none;\">\n    <div>name: <input type=text class=\"name\"></input></div>\n    <div>url: <input type=text class=\"url\"></input></div>\n  </div>\n\n  \n</div>\n\n\n\n";
+  buffer += "\n  <div class=\"plus\">\n    +\n  </div>\n\n  <div class=\"tb_add\" style=\"display:none;\">\n    <div>name: <input type=text class=\"name\"></input></div>\n    <div>url: <input type=text class=\"url\"></input></div>\n  </div>\n\n\n</div>\n\n\n\n";
   return buffer;});
 templates['editor'] = template(function (Handlebars,depth0,helpers,partials,data) {
   helpers = helpers || Handlebars.helpers;

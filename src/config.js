@@ -2,7 +2,7 @@
 //The config model is the glue that binds together a particular configurtion
 //of tributary components
 tributary.Config = Backbone.Model.extend({
-  defaults: {        
+  defaults: {
       description: "Another Inlet",
       endpoint: "tributary",
       display: "svg",
@@ -61,15 +61,15 @@ tributary.ConfigView = Backbone.View.extend({
   },
 
   render: function() {
-    //TODO: split each of the sections into their own view? 
+    //TODO: split each of the sections into their own view?
     //at least the require stuff probably
     var that = this;
 
     var template = Handlebars.templates.config;
     //inlet.js comes first
-    
+
     var context ={
-      displays: tributary.displays, 
+      displays: tributary.displays,
       time_controls: tributary.time_controls,
       requires: this.model.get("require")
     };
@@ -117,13 +117,43 @@ tributary.ConfigView = Backbone.View.extend({
     });
 
 
+    // Editor controls config section
+
+
+    var editorcontrols = d3.select(this.el)
+    .select(".editorcontrols");
+
+    console.log("EDITOR CONTROLS", editorcontrols);
+
+    editorcontrols.selectAll("div.config")
+      .on("click", function(d) {
+        if($(this).attr("data-name") == "log-errors") {
+
+          if (tributary.hint == true && tributary.trace == true) {
+            $(this).removeClass("config_active")
+            tributary.hint = false;
+            tributary.trace = false;
+            tributary.events.trigger("execute");
+          }
+          else {
+            //alert("Error logging initiated");
+            tributary.hint = true;
+            tributary.trace = true;
+            tributary.events.trigger("execute");
+
+            $(this).addClass("config_active");
+          }
+
+        }
+        })
+
+    // Require / External files config section
+
     var require = d3.select(this.el)
       .select(".requirecontrols");
 
-    var plus = require
-      .selectAll(".plus");
-    var add= require
-      .selectAll(".tb_add");
+    var plus = require.selectAll(".plus");
+    var add= require.selectAll(".tb_add");
 
 
     var name_input = require.select(".tb_add")
@@ -159,7 +189,7 @@ tributary.ConfigView = Backbone.View.extend({
         var done = function() {
           //create a new require
 
-          
+
           var reqs = that.model.get("require");
           var req = _.find(reqs, function(r) { return r.name === d.name; });
           req.name = name_input.node().value;
@@ -167,7 +197,7 @@ tributary.ConfigView = Backbone.View.extend({
 
           that.model.set("require", reqs);
           that.model.require(function() {}, reqs);
-          
+
           //rerender the files view to show new file
           that.$el.empty();
           console.log(that);
@@ -193,7 +223,7 @@ tributary.ConfigView = Backbone.View.extend({
       name_input.node().focus();
       var done = function() {
         //create a new require
-        var req = { 
+        var req = {
           name: name_input.node().value,
           url: url_input.node().value
         };
@@ -201,7 +231,7 @@ tributary.ConfigView = Backbone.View.extend({
         reqs.push(req);
         that.model.set("require", reqs);
         that.model.require(function() {}, reqs);
-        
+
         //rerender the files view to show new file
         that.$el.empty();
         console.log(that);
@@ -221,22 +251,22 @@ tributary.ConfigView = Backbone.View.extend({
         }
       });
     });
- 
+
 
     /*
 
-      
-    
+
+
     //Add require.js UI
-    
+
     var requireUI = d3.select(this.el).append("div").attr("id", "require-ui")
     requireUI.append("span")
       .classed("config_title", true)
       .text("Require:");
-     
+
     var rc = requireUI.append("div")
       .classed("requirecontrols", true);
-    var rcs = rc 
+    var rcs = rc
       .selectAll("div.config")
       .data(this.model.get("require"))
       .enter()
@@ -279,7 +309,7 @@ tributary.ConfigView = Backbone.View.extend({
       .attr({
         type: "text"
       });
-      
+
     var url_input = plus.append("div").text("url: ")
       .style({
         display: "none"
@@ -290,7 +320,7 @@ tributary.ConfigView = Backbone.View.extend({
       .attr({
         type: "text"
       });
-    
+
     plus.on("click", function() {
       name_input
         .style("display","");
@@ -305,7 +335,7 @@ tributary.ConfigView = Backbone.View.extend({
         var reqs = that.model.get("require");
         reqs.push(req);
         that.model.set("require", reqs);
-        
+
         //rerender the files view to show new file
         that.$el.empty();
         console.log(that);
