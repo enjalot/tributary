@@ -11,12 +11,8 @@ tributary.CodeModel = Backbone.Model.extend({
     mode: "javascript",
   
     //this configuration is mostly for the editor
-    config: {
-      coffee: false,
-      vim: false,
-      emacs: false,
-      hide: false
-    }
+    vim: false,
+    emacs: false,
 
   },
 

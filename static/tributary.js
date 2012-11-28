@@ -15,12 +15,8 @@ var Tributary = function() {
       name: "inlet",
       type: "js",
       mode: "javascript",
-      config: {
-        coffee: false,
-        vim: false,
-        emacs: false,
-        hide: false
-      }
+      vim: false,
+      emacs: false
     },
     initialize: function() {
       this.binder();
@@ -1280,6 +1276,10 @@ var Tributary = function() {
       $(".tb_panel_handle").hide();
       $(".tb_panelfiles_gui").hide();
       $("#show-codepanel").show();
+      console.log("in hide panel", tributary.__config__);
+      if (tributary.__config__) {
+        tributary.__config__.set("hidepanel", true);
+      }
     });
     tributary.events.on("showpanel", function() {
       $(".tb_panel").show();
@@ -1287,6 +1287,9 @@ var Tributary = function() {
       $(".tb_panel_handle").show();
       $(".tb_panelfiles_gui").show();
       $("#show-codepanel").hide();
+      if (tributary.__config__) {
+        tributary.__config__.set("hidepanel", false);
+      }
     });
   };
   tributary.ui.assemble = function(gistid) {
@@ -1401,6 +1404,11 @@ var Tributary = function() {
     tributary.events.on("resize", function() {
       config.set("display_percent", tributary.dims.display_percent);
     });
+    if (config.get("hidepanel")) {
+      tributary.events.trigger("hidepanel");
+    } else {
+      tributary.events.trigger("showpanel");
+    }
     tributary.__config__ = config;
   }
   function setup_header(ret) {

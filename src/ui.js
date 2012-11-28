@@ -168,6 +168,11 @@ tributary.ui.setup = function() {
 
       $('#show-codepanel').show();
       
+      //we want to save the panel show/hide in the config
+      console.log("in hide panel", tributary.__config__)
+      if(tributary.__config__) {
+        tributary.__config__.set("hidepanel", true);
+      }
   })
   
   tributary.events.on("showpanel", function(){
@@ -178,6 +183,10 @@ tributary.ui.setup = function() {
       $(".tb_panelfiles_gui").show();
 
       $('#show-codepanel').hide();
+
+      if(tributary.__config__) {
+        tributary.__config__.set("hidepanel", false);
+      }
       
   })
 
@@ -350,8 +359,13 @@ function _assemble(ret) {
   tributary.events.on("resize", function() {
     config.set("display_percent", tributary.dims.display_percent);
   });
-  tributary.__config__ = config;
 
+  if(config.get("hidepanel")) {
+    tributary.events.trigger("hidepanel")
+  } else {
+    tributary.events.trigger("showpanel");
+  }
+  tributary.__config__ = config;
 } 
 
 function setup_header(ret){
