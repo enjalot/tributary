@@ -454,6 +454,58 @@ tributary.JSContext = tributary.Context.extend({
 
 });
 
+//Coffeescript Context
+tributary.CoffeeContext = tributary.Context.extend({
+  initialize: function() {
+    this.model.on("change:code", this.execute, this);
+    this.model.on("change:code", function() {
+      tributary.events.trigger("execute");
+    });
+  },
+
+  execute: function() {
+
+    var js = this.model.handle_coffee();
+    //TODO: use coffee compilation to give errors/warnings
+    /*
+    if(js.length > 0) {
+      var hints = JSHINT(js, {
+        asi: true,
+        laxcomma: true,
+        laxbreak: true,
+        loopfunc: true,
+        smarttabs: true,
+        sub: true
+      })
+      if(!hints) {
+        this.model.trigger("jshint", JSHINT.errors);
+        //for now, we can let the user continue incase JSHINT is too strict
+        //this.model.trigger("error", null);
+        //return false;
+      } else {
+        this.model.trigger("nojshint");
+      }
+    }
+    */
+
+    try {
+      eval(js);
+    } catch (e) {
+      this.model.trigger("error", e);
+      return false;
+    }
+    this.model.trigger("noerror");
+
+    return true;
+  },
+
+  render: function() {
+    //JS context doesn't do anything on rendering
+  },
+
+});
+
+
 
 //The CSV context evaluates js in the global namespace
 tributary.CSVContext = tributary.Context.extend({

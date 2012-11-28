@@ -36,7 +36,7 @@ var Tributary = function() {
     },
     handle_coffee: function() {
       var js = this.get("code");
-      if (this.get("config").coffee) {
+      if (this.get("mode") === "coffeescript") {
         js = CoffeeScript.compile(js, {
           bare: true
         });
@@ -511,6 +511,26 @@ var Tributary = function() {
           this.model.trigger("nojshint");
         }
       }
+      try {
+        eval(js);
+      } catch (e) {
+        this.model.trigger("error", e);
+        return false;
+      }
+      this.model.trigger("noerror");
+      return true;
+    },
+    render: function() {}
+  });
+  tributary.CoffeeContext = tributary.Context.extend({
+    initialize: function() {
+      this.model.on("change:code", this.execute, this);
+      this.model.on("change:code", function() {
+        tributary.events.trigger("execute");
+      });
+    },
+    execute: function() {
+      var js = this.model.handle_coffee();
       try {
         eval(js);
       } catch (e) {
@@ -1091,6 +1111,12 @@ var Tributary = function() {
       });
     } else if (type === "js") {
       context = new tributary.JSContext({
+        config: config,
+        model: model
+      });
+    } else if (type === "coffee") {
+      model.set("mode", "coffeescript");
+      context = new tributary.CoffeeContext({
         config: config,
         model: model
       });

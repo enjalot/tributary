@@ -85,6 +85,12 @@ tributary.make_context = function(options) {
       config: config,
       model: model,
     });
+  } else if(type === "coffee") {
+    model.set("mode", "coffeescript")
+    context = new tributary.CoffeeContext({
+      config: config,
+      model: model,
+    });
   } else if(type === "css") {
     model.set("mode", "css")
     context = new tributary.CSSContext({
