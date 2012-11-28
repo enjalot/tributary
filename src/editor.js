@@ -28,7 +28,7 @@ tributary.make_editor = function(options) {
 
 
 //The editor view renders the CodeMirror editor and sets up the logic for interaction
-//with the code model 
+//with the code model
 tributary.Editor = Backbone.View.extend({
   initialize: function() {
 
@@ -50,10 +50,31 @@ tributary.Editor = Backbone.View.extend({
       .classed("editor", true)
 
 
+    filetype = that.model.get("filename").split(".")[1];
+
+    if(filetype == "js") {
+      var editor_theme = "lesser-dark";
+    }
+    else if(filetype == "svg") {
+      var editor_theme = "vibrant-ink"
+    }
+    else if(filetype == "html") {
+      var editor_theme = "ambiance"
+    }
+    else if(filetype == "coffee"){
+      var editor_theme = "elegant"
+    }
+    else if(filetype == "css"){
+      var editor_theme = "elegant"
+    }
+    else {
+      var editor_theme = "lesser-dark"
+    }
+
     var codemirror_options = {
         //value: "function myScript(){return 100;}\n",
         mode: that.model.get("mode"),
-        theme: "lesser-dark",
+        theme: editor_theme,
         lineNumbers: true,
         onChange: function() {
           var code = that.cm.getValue();
@@ -127,7 +148,7 @@ tributary.Editor = Backbone.View.extend({
         //TODO: fix this shit?
       }
 
-        
+
 
       olderrors = _.clone(errors);
 

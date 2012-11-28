@@ -133,6 +133,22 @@ var Tributary = function() {
         d3.select(this).classed("config_active", tf);
         that.model.set(d.name, tf);
       });
+      var editorcontrols = d3.select(this.el).select(".editorcontrols");
+      editorcontrols.selectAll("div.config").on("click", function(d) {
+        if ($(this).attr("data-name") == "log-errors") {
+          if (tributary.hint == true && tributary.trace == true) {
+            $(this).removeClass("config_active");
+            tributary.hint = false;
+            tributary.trace = false;
+            tributary.events.trigger("execute");
+          } else {
+            tributary.hint = true;
+            tributary.trace = true;
+            tributary.events.trigger("execute");
+            $(this).addClass("config_active");
+          }
+        }
+      });
       var require = d3.select(this.el).select(".requirecontrols");
       var plus = require.selectAll(".plus");
       var add = require.selectAll(".tb_add");
@@ -648,9 +664,23 @@ var Tributary = function() {
     render: function() {
       var that = this;
       d3.select(this.el).classed("editor", true);
+      filetype = that.model.get("filename").split(".")[1];
+      if (filetype == "js") {
+        var editor_theme = "lesser-dark";
+      } else if (filetype == "svg") {
+        var editor_theme = "vibrant-ink";
+      } else if (filetype == "html") {
+        var editor_theme = "ambiance";
+      } else if (filetype == "coffee") {
+        var editor_theme = "elegant";
+      } else if (filetype == "css") {
+        var editor_theme = "elegant";
+      } else {
+        var editor_theme = "lesser-dark";
+      }
       var codemirror_options = {
         mode: that.model.get("mode"),
-        theme: "lesser-dark",
+        theme: editor_theme,
         lineNumbers: true,
         onChange: function() {
           var code = that.cm.getValue();
@@ -848,6 +878,10 @@ var Tributary = function() {
         ctx.model.trigger("show");
         tributary.events.trigger("show", "edit");
       });
+      fvs.attr("class", function(d, i) {
+        var filetype = this.dataset.filename.split(".")[1];
+        return "fv type-" + filetype;
+      });
       var plus = d3.select(this.el).selectAll("div.plus").on("click", function() {
         var input = d3.select(this).select("input").style("display", "inline-block");
         input.node().focus();
@@ -869,6 +903,10 @@ var Tributary = function() {
               that.model.trigger("hide");
               context.model.trigger("show");
               editor.cm.focus();
+              fvs.attr("class", function(d, i) {
+                var filetype = this.dataset.filename.split(".")[1];
+                return "fv type-" + filetype;
+              });
             } else {
               input.classed("input_error", true);
             }
