@@ -8,6 +8,151 @@ var Tributary = function() {
   window.addEventListener("resize", function(event) {
     tributary.events.trigger("resize", event);
   });
+  var mainfiles = [ "inlet.js", "inlet.coffee", "sinwaves.js", "squarecircle.js" ];
+  tributary.displays = [ {
+    name: "svg",
+    description: "creates an <svg> element for you to use"
+  }, {
+    name: "canvas",
+    description: "creates a <canvas> element and gives you a Context for the canvas"
+  }, {
+    name: "webgl",
+    description: "gives you a Three.js WebGLRenderer scene"
+  }, {
+    name: "div",
+    description: "gives you a plain old <div>"
+  } ];
+  tributary.time_controls = [ {
+    name: "play",
+    description: "gives you a play button, and tributary.t. if you provide tributary.run(g,t) it will be executed in a run loop"
+  }, {
+    name: "loop",
+    description: "gives you a loop where tributary.t goes from 0 to 1."
+  }, {
+    name: "restart",
+    description: "assumes you only want tributary.init(g) to be run when the restart button is clicked"
+  } ];
+  tributary.make_context = function(options) {
+    var context, model, display, type;
+    var config = options.config;
+    if (options.model) {
+      model = options.model;
+      filename = model.get("filename");
+      type = model.get("type");
+    } else {
+      var filename, content;
+      if (options.filename) {
+        filename = options.filename;
+      } else {
+        filename = "inlet.js";
+      }
+      if (options.content) {
+        content = options.content;
+      } else {
+        content = "";
+      }
+      var fn = filename.split(".");
+      type = fn[fn.length - 1];
+      model = new tributary.CodeModel({
+        name: fn[0],
+        filename: filename,
+        code: content
+      });
+    }
+    if (options.display) {
+      display = options.display;
+    } else {
+      display = d3.select("#display");
+    }
+    model.set("type", type);
+    if (mainfiles.indexOf(filename) >= 0) {
+      context = new tributary.TributaryContext({
+        config: config,
+        model: model,
+        el: display.node()
+      });
+    } else if (type === "json") {
+      model.set("mode", "json");
+      context = new tributary.JSONContext({
+        config: config,
+        model: model
+      });
+    } else if (type === "csv") {
+      model.set("mode", "text");
+      context = new tributary.CSVContext({
+        config: config,
+        model: model
+      });
+    } else if (type === "tsv") {
+      model.set("mode", "text");
+      context = new tributary.TSVContext({
+        config: config,
+        model: model
+      });
+    } else if (type === "js") {
+      context = new tributary.JSContext({
+        config: config,
+        model: model
+      });
+    } else if (type === "coffee") {
+      model.set("mode", "coffeescript");
+      context = new tributary.CoffeeContext({
+        config: config,
+        model: model
+      });
+    } else if (type === "css") {
+      model.set("mode", "css");
+      context = new tributary.CSSContext({
+        config: config,
+        model: model
+      });
+    } else if (type === "html") {
+      model.set("mode", "text/html");
+      context = new tributary.HTMLContext({
+        config: config,
+        model: model,
+        el: display.node()
+      });
+    } else if (type === "svg" && filename !== "inlet.svg") {
+      model.set("mode", "text/html");
+      context = new tributary.SVGContext({
+        config: config,
+        model: model,
+        el: display.node()
+      });
+    } else {}
+    return context;
+  };
+  d3.selection.prototype.moveToFront = function() {
+    return this.each(function() {
+      this.parentNode.appendChild(this);
+    });
+  };
+  tributary.appendSVGFragment = function(element, fragment) {
+    var svgpre = "<svg xmlns=http://www.w3.org/2000/svg xmlns:xlink=http://www.w3.org/1999/xlink>";
+    var svgpost = "</svg>";
+    var range = document.createRange();
+    range.selectNode(element);
+    var frag = range.createContextualFragment(svgpre + fragment + svgpost);
+    var svgchildren = frag.childNodes[0].childNodes;
+    for (var i = 0, l = svgchildren.length; i < l; i++) {
+      element.appendChild(svgchildren[0]);
+    }
+  };
+  Handlebars.getTemplate = function(name, callback) {
+    if (Handlebars.templates === undefined || Handlebars.templates[name] === undefined) {
+      $.ajax({
+        url: "/static/templates/" + name + ".handlebars",
+        success: function(data) {
+          if (Handlebars.templates === undefined) {
+            Handlebars.templates = {};
+          }
+          Handlebars.templates[name] = Handlebars.compile(data);
+          if (callback) callback(template);
+        }
+      });
+    }
+  };
   tributary.CodeModel = Backbone.Model.extend({
     defaults: {
       code: "",
@@ -15,6 +160,7 @@ var Tributary = function() {
       name: "inlet",
       type: "js",
       mode: "javascript",
+      "default": true,
       vim: false,
       emacs: false
     },
@@ -61,6 +207,7 @@ var Tributary = function() {
       display: "svg",
       "public": true,
       require: [],
+      fileconfigs: {},
       tab: "edit",
       display_percent: .7,
       play: false,
@@ -319,7 +466,7 @@ var Tributary = function() {
     },
     execute: function() {
       var js = this.model.handle_coffee();
-      if (js.length > 0) {
+      if (js.length > 0 && this.model.get("type") !== "coffee") {
         var hints = JSHINT(js, {
           asi: true,
           laxcomma: true,
@@ -646,9 +793,56 @@ var Tributary = function() {
     initialize: function() {},
     render: function() {
       var that = this;
+      var panel_data = [ "edit", "config" ];
       var template = Handlebars.templates.panel;
-      var html = template({});
+      var html = template(panel_data);
       this.$el.html(html);
+      panel = d3.select(".tb_panel");
+      panel_gui = d3.selectAll("div.tb_panel_gui");
+      var pb_w = 60;
+      var panel_buttons = panel_gui.selectAll("div.pb").on("click", function(d) {
+        tributary.events.trigger("show", d);
+      });
+      tributary.events.on("show", function(name) {
+        $(".tb_panel").children(".panel").css("display", "none");
+        panel.select(".tb_" + name).style("display", "");
+        panel_gui.selectAll("div.pb").classed("gui_active", false);
+        panel_gui.select(".tb_" + name + "_tab").classed("gui_active", true);
+      });
+      tributary.events.trigger("show", "edit");
+      $(".tb_hide-panel-button").on("click", function() {
+        tributary.events.trigger("hidepanel");
+        $("#display").addClass("fullscreen");
+        $("svg").addClass("fullscreen");
+        $("#header").addClass("dimheader");
+      });
+      $("#show-codepanel-button").on("click", function() {
+        tributary.events.trigger("showpanel");
+        $("#display").removeClass("fullscreen");
+        $("svg").removeClass("fullscreen");
+        $("#header").removeClass("dimheader");
+      });
+      tributary.events.on("hidepanel", function() {
+        $(".tb_panel").hide();
+        $(".tb_panel_gui").hide();
+        $(".tb_panel_handle").hide();
+        $(".tb_panelfiles_gui").hide();
+        $("#show-codepanel").show();
+        console.log("in hide panel", tributary.__config__);
+        if (tributary.__config__) {
+          tributary.__config__.set("hidepanel", true);
+        }
+      });
+      tributary.events.on("showpanel", function() {
+        $(".tb_panel").show();
+        $(".tb_panel_gui").show();
+        $(".tb_panel_handle").show();
+        $(".tb_panelfiles_gui").show();
+        $("#show-codepanel").hide();
+        if (tributary.__config__) {
+          tributary.__config__.set("hidepanel", false);
+        }
+      });
     }
   });
   tributary.make_editor = function(options) {
@@ -669,7 +863,6 @@ var Tributary = function() {
   };
   tributary.Editor = Backbone.View.extend({
     initialize: function() {
-      this.config = this.model.get("config");
       this.model.on("show", function() {
         d3.select(this.el).style("display", "");
       }, this);
@@ -677,9 +870,35 @@ var Tributary = function() {
         d3.select(this.el).style("display", "none");
       }, this);
     },
+    getConfig: function() {
+      var fileconfigs = tributary.__config__.get("fileconfigs");
+      var fileconfig = fileconfigs[this.model.get("filename")];
+      if (!fileconfig) return this.defaultConfig();
+      return fileconfig;
+    },
+    setConfig: function(key, value) {
+      var fileconfigs = tributary.__config__.get("fileconfigs");
+      var fileconfig = fileconfigs[this.model.get("filename")];
+      fileconfig[key] = value;
+      var fileconfigs = tributary.__config__.set("fileconfigs", fileconfigs);
+    },
+    defaultConfig: function() {
+      var fileconfigs = tributary.__config__.get("fileconfigs");
+      var fileconfig = {
+        "default": true,
+        vim: false,
+        emacs: false
+      };
+      fileconfigs[this.model.get("filename")] = fileconfig;
+      var fileconfigs = tributary.__config__.set("fileconfigs", fileconfigs);
+      return fileconfig;
+    },
     render: function() {
       var that = this;
-      d3.select(this.el).classed("editor", true);
+      var dis = d3.select(this.el).classed("editor", true);
+      var template = Handlebars.templates.editor;
+      var html = template(this.getConfig());
+      this.$el.html(html);
       filetype = that.model.get("filename").split(".")[1];
       if (filetype == "js") {
         var editor_theme = "lesser-dark";
@@ -719,6 +938,11 @@ var Tributary = function() {
       var olderrors = [];
       this.model.on("jshint", function(errors) {
         var err;
+        for (var i = olderrors.length; i--; ) {
+          err = olderrors[i];
+          that.cm.setLineClass(err.line - 1, null, null);
+          that.cm.setMarker(err.line - 1, "%N%", null);
+        }
         try {
           var oldlines = _.pluck(olderrors, "line");
           var lines = _.pluck(errors, "line");
@@ -743,9 +967,49 @@ var Tributary = function() {
         olderrors = _.clone(errors);
       });
       this.model.on("nojshint", function() {
-        for (var i = that.cm.lineCount(); i--; ) {
-          that.cm.setLineClass(i, null, null);
+        if (olderrors.length) {
+          for (var i = that.cm.lineCount(); i--; ) {
+            that.cm.setLineClass(i, null, null);
+            that.cm.setMarker(i, "%N%", null);
+          }
+          olderrors = [];
         }
+      });
+      var toolbar = dis.select(".toolbar");
+      var settings = dis.select(".settings").on("click", function() {
+        toolbar.classed("hidden", !toolbar.classed("hidden"));
+      });
+      toolbar.selectAll(".radio").on("change", function() {
+        that.setConfig("default", false);
+        that.setConfig("vim", false);
+        that.setConfig("emacs", false);
+        that.setConfig(this.value, true);
+        that.cm.setOption("keyMap", this.value);
+      });
+      toolbar.select(".delete").on("click", function() {
+        var filename = that.model.get("filename");
+        var name = that.model.get("name");
+        delete that.model;
+        tributary.__config__.unset(filename);
+        var context = _.find(tributary.__config__.contexts, function(d) {
+          return d.model.get("filename") === filename;
+        });
+        var ind = tributary.__config__.contexts.indexOf(context);
+        tributary.__config__.contexts.splice(ind, 1);
+        delete context;
+        if (!tributary.__config__.todelete) {
+          tributary.__config__.todelete = [];
+        }
+        tributary.__config__.todelete.push(filename);
+        that.$el.remove();
+        delete that;
+        d3.select(".tb_files").selectAll("div.fv").each(function() {
+          if (this.dataset.filename === filename) {
+            $(this).remove();
+          }
+        });
+        var othertab = tributary.__config__.contexts[0].model;
+        othertab.trigger("show");
       });
     }
   });
@@ -796,6 +1060,7 @@ var Tributary = function() {
         ret.config = new tributary.Config;
       }
       var files = _.keys(data.files);
+      fileconfigs = ret.config.get("fileconfigs") || {};
       ret.models = new tributary.CodeModels;
       var fsplit, model, context, i = 0, ext;
       files.forEach(function(f) {
@@ -810,7 +1075,15 @@ var Tributary = function() {
           });
           ret.models.add(model);
         }
+        if (!fileconfigs[f]) {
+          fileconfigs[f] = {
+            "default": true,
+            vim: false,
+            emacs: false
+          };
+        }
       });
+      ret.config.set("fileconfigs", fileconfigs);
       ret.config.require(callback, ret);
     }
   };
@@ -821,11 +1094,17 @@ var Tributary = function() {
       "public": config.get("public"),
       files: {}
     };
+    console.log("config contexts", config.contexts);
     config.contexts.forEach(function(context) {
       gist.files[context.model.get("filename")] = {
         content: context.model.get("code")
       };
     });
+    if (config.todelete) {
+      config.todelete.forEach(function(filename) {
+        gist.files[filename] = null;
+      });
+    }
     gist.files["config.json"] = {
       content: JSON.stringify(config.toJSON())
     };
@@ -868,7 +1147,7 @@ var Tributary = function() {
     render: function() {
       var that = this;
       var template = Handlebars.templates.files;
-      var contexts = _.map(this.model.contexts, function(ctx) {
+      var contexts = _.map(tributary.__config__.contexts, function(ctx) {
         return ctx.model.toJSON();
       });
       contexts = contexts.sort(function(a, b) {
@@ -876,10 +1155,12 @@ var Tributary = function() {
         return 1;
       });
       var inlet = _.find(contexts, function(d) {
-        return d.filename === "inlet.js";
+        return d.filename === "inlet.js" || d.filename === "inlet.coffee";
       });
-      contexts.splice(contexts.indexOf(inlet), 1);
-      contexts.unshift(inlet);
+      if (inlet) {
+        contexts.splice(contexts.indexOf(inlet), 1);
+        contexts.unshift(inlet);
+      }
       var context = {
         contexts: contexts
       };
@@ -1026,149 +1307,6 @@ var Tributary = function() {
       }
     }
   });
-  tributary.displays = [ {
-    name: "svg",
-    description: "creates an <svg> element for you to use"
-  }, {
-    name: "canvas",
-    description: "creates a <canvas> element and gives you a Context for the canvas"
-  }, {
-    name: "webgl",
-    description: "gives you a Three.js WebGLRenderer scene"
-  }, {
-    name: "div",
-    description: "gives you a plain old <div>"
-  } ];
-  tributary.time_controls = [ {
-    name: "play",
-    description: "gives you a play button, and tributary.t. if you provide tributary.run(g,t) it will be executed in a run loop"
-  }, {
-    name: "loop",
-    description: "gives you a loop where tributary.t goes from 0 to 1."
-  }, {
-    name: "restart",
-    description: "assumes you only want tributary.init(g) to be run when the restart button is clicked"
-  } ];
-  tributary.make_context = function(options) {
-    var context, model, display, type;
-    var config = options.config;
-    if (options.model) {
-      model = options.model;
-      filename = model.get("filename");
-      type = model.get("type");
-    } else {
-      var filename, content;
-      if (options.filename) {
-        filename = options.filename;
-      } else {
-        filename = "inlet.js";
-      }
-      if (options.content) {
-        content = options.content;
-      } else {
-        content = "";
-      }
-      var fn = filename.split(".");
-      type = fn[fn.length - 1];
-      model = new tributary.CodeModel({
-        name: fn[0],
-        filename: filename,
-        code: content
-      });
-    }
-    if (options.display) {
-      display = options.display;
-    } else {
-      display = d3.select("#display");
-    }
-    if (mainfiles.indexOf(filename) >= 0) {
-      context = new tributary.TributaryContext({
-        config: config,
-        model: model,
-        el: display.node()
-      });
-    } else if (type === "json") {
-      model.set("mode", "json");
-      context = new tributary.JSONContext({
-        config: config,
-        model: model
-      });
-    } else if (type === "csv") {
-      model.set("mode", "text");
-      context = new tributary.CSVContext({
-        config: config,
-        model: model
-      });
-    } else if (type === "tsv") {
-      model.set("mode", "text");
-      context = new tributary.TSVContext({
-        config: config,
-        model: model
-      });
-    } else if (type === "js") {
-      context = new tributary.JSContext({
-        config: config,
-        model: model
-      });
-    } else if (type === "coffee") {
-      model.set("mode", "coffeescript");
-      context = new tributary.CoffeeContext({
-        config: config,
-        model: model
-      });
-    } else if (type === "css") {
-      model.set("mode", "css");
-      context = new tributary.CSSContext({
-        config: config,
-        model: model
-      });
-    } else if (type === "html") {
-      model.set("mode", "text/html");
-      context = new tributary.HTMLContext({
-        config: config,
-        model: model,
-        el: display.node()
-      });
-    } else if (type === "svg" && filename !== "inlet.svg") {
-      model.set("mode", "text/html");
-      context = new tributary.SVGContext({
-        config: config,
-        model: model,
-        el: display.node()
-      });
-    } else {}
-    return context;
-  };
-  d3.selection.prototype.moveToFront = function() {
-    return this.each(function() {
-      this.parentNode.appendChild(this);
-    });
-  };
-  tributary.appendSVGFragment = function(element, fragment) {
-    var svgpre = "<svg xmlns=http://www.w3.org/2000/svg xmlns:xlink=http://www.w3.org/1999/xlink>";
-    var svgpost = "</svg>";
-    var range = document.createRange();
-    range.selectNode(element);
-    var frag = range.createContextualFragment(svgpre + fragment + svgpost);
-    var svgchildren = frag.childNodes[0].childNodes;
-    for (var i = 0, l = svgchildren.length; i < l; i++) {
-      element.appendChild(svgchildren[0]);
-    }
-  };
-  Handlebars.getTemplate = function(name, callback) {
-    if (Handlebars.templates === undefined || Handlebars.templates[name] === undefined) {
-      $.ajax({
-        url: "/static/templates/" + name + ".handlebars",
-        success: function(data) {
-          if (Handlebars.templates === undefined) {
-            Handlebars.templates = {};
-          }
-          Handlebars.templates[name] = Handlebars.compile(data);
-          if (callback) callback(template);
-        }
-      });
-    }
-  };
   tributary.batch = {};
   tributary.batch._execute = function() {
     var funcs = _.functions(this);
@@ -1179,7 +1317,6 @@ var Tributary = function() {
     });
   };
   tributary.ui = {};
-  var mainfiles = [ "inlet.js", "sinwaves.js", "squarecircle.js" ];
   var display, panel_gui, panel, panel_handle, page, header;
   tributary.ui.setup = function() {
     tributary.panel = new tributary.PanelView({
@@ -1208,10 +1345,12 @@ var Tributary = function() {
       var min_width = parseInt(panel.style("min-width"), 10);
       tributary.dims.page_width = parseInt(page.style("width"), 10);
       if (tributary.dims.page_width - tributary.dims.page_width * tributary.dims.display_percent < min_width) {
-        return;
+        tributary.dims.display_width = tributary.dims.page_width - min_width;
+        tributary.dims.panel_width = min_width;
+      } else {
+        tributary.dims.display_width = tributary.dims.page_width * tributary.dims.display_percent;
+        tributary.dims.panel_width = tributary.dims.page_width - tributary.dims.display_width;
       }
-      tributary.dims.display_width = tributary.dims.page_width * tributary.dims.display_percent;
-      tributary.dims.panel_width = tributary.dims.page_width - tributary.dims.display_width;
       tributary.dims.panel_gui_width = tributary.dims.panel_width;
       tributary.dims.page_height = parseInt(page.style("height"), 10);
       tributary.dims.display_height = tributary.dims.page_height - parseInt(header.style("height"), 10);
@@ -1306,6 +1445,7 @@ var Tributary = function() {
   };
   function _assemble(ret) {
     var config = ret.config;
+    tributary.__config__ = config;
     config.contexts = [];
     var context;
     var edel;
@@ -1409,7 +1549,6 @@ var Tributary = function() {
     } else {
       tributary.events.trigger("showpanel");
     }
-    tributary.__config__ = config;
   }
   function setup_header(ret) {
     setup_save(ret.config);

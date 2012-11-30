@@ -9,12 +9,14 @@ tributary.make_editor = function(options) {
 
   var editorParent = options.parent || tributary.edit;
   var model = options.model;
+
   if(options.container) {
     container = options.container;
   } else {
     container = editorParent.append("div")
       .attr("id", model.cid);
   }
+
   var editor;
   editor = new tributary.Editor({
     el: container.node(),
@@ -31,8 +33,6 @@ tributary.make_editor = function(options) {
 //with the code model
 tributary.Editor = Backbone.View.extend({
   initialize: function() {
-
-    this.config = this.model.get("config");
     //TODO: drag and drop
 
     this.model.on("show", function() {
@@ -43,11 +43,40 @@ tributary.Editor = Backbone.View.extend({
     }, this);
 
   },
+  getConfig: function() {
+    var fileconfigs = tributary.__config__.get("fileconfigs");
+    var fileconfig = fileconfigs[this.model.get("filename")]
+    if(!fileconfig) return this.defaultConfig();
+    return fileconfig;
+  },
+  setConfig: function(key,value) {
+    var fileconfigs = tributary.__config__.get("fileconfigs");
+    var fileconfig = fileconfigs[this.model.get("filename")]
+    fileconfig[key] = value;
+    var fileconfigs = tributary.__config__.set("fileconfigs", fileconfigs);
+  },
+  defaultConfig: function() {
+    var fileconfigs = tributary.__config__.get("fileconfigs");
+    var fileconfig = {
+      default: true,
+      vim: false,
+      emacs: false
+    };
+    fileconfigs[this.model.get("filename")] = fileconfig;
+    var fileconfigs = tributary.__config__.set("fileconfigs", fileconfigs);
+    return fileconfig;
+  },
   render: function() {
     var that = this;
 
-    d3.select(this.el)
+    var dis = d3.select(this.el)
       .classed("editor", true)
+
+    //create the toolbar 
+    var template = Handlebars.templates.editor;
+    var html = template(this.getConfig());
+    this.$el.html(html);
+
 
 
     filetype = that.model.get("filename").split(".")[1];
@@ -109,14 +138,11 @@ tributary.Editor = Backbone.View.extend({
       //d3.select(that.el).selectAll(".linenumbererror").classed("linenumbererror", false);
       //d3.selectAll("pre.linenumbererror").classed("linenumbererror", false);
       var err;
-      /*
       for(var i = olderrors.length; i--;) {
         err = olderrors[i];
-        console.log("indof", err)
         that.cm.setLineClass(err.line-1, null, null);
-        //that.cm.setMarker(err.line-1, "%N%", null);
+        that.cm.setMarker(err.line-1, "%N%", null);
       }
-      */
 
       //console.log(olderrors, errors)
       //TODO: this actually misses sometimes, when you hit enter all the lines
@@ -148,18 +174,77 @@ tributary.Editor = Backbone.View.extend({
         //TODO: fix this shit?
       }
 
-
-
       olderrors = _.clone(errors);
 
     });
 
     this.model.on("nojshint", function() {
-      //turn off highlighting of any error lines
-      for(var i = that.cm.lineCount(); i--;) {
-        that.cm.setLineClass(i, null, null);
+      if(olderrors.length) {
+        //turn off highlighting of any error lines
+        for(var i = that.cm.lineCount(); i--;) {
+          that.cm.setLineClass(i, null, null);
+          that.cm.setMarker(i, "%N%", null);
+        }
+        olderrors = [];
       }
     })
+
+
+    //Setup toolbar functionality
+    var toolbar = dis.select(".toolbar");
+    var settings = dis.select(".settings")
+      .on("click", function() {
+        toolbar.classed("hidden", !toolbar.classed("hidden"))
+      })
+
+
+    toolbar.selectAll(".radio")
+      .on("change", function() {
+        that.setConfig("default", false)
+        that.setConfig("vim", false)
+        that.setConfig("emacs", false)
+        that.setConfig(this.value, true)
+        that.cm.setOption("keyMap", this.value)
+      })
+
+    toolbar.select(".delete")
+      .on("click", function() {
+        var filename = that.model.get("filename");
+        var name = that.model.get("name");
+        //delete the model
+        delete that.model;
+        //delete the file from the config
+        tributary.__config__.unset(filename);
+        //delete the context
+        var context = _.find(tributary.__config__.contexts, function(d) {
+          return d.model.get("filename") === filename;
+        })
+        var ind = tributary.__config__.contexts.indexOf(context);
+        tributary.__config__.contexts.splice(ind,1);
+        delete context;
+        
+        if(!tributary.__config__.todelete) {
+          tributary.__config__.todelete = [];
+        }
+        tributary.__config__.todelete.push(filename);
+
+        //delete the editor
+        that.$el.remove();
+        delete that;
+
+        //remove the tab
+        d3.select(".tb_files").selectAll("div.fv")
+          .each(function() {
+            if(this.dataset.filename === filename) {
+              $(this).remove();
+            }
+          })
+
+        //show the first context available
+        var othertab = tributary.__config__.contexts[0].model;
+        othertab.trigger("show");
+      })
+
 
   }
 });

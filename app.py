@@ -11,10 +11,10 @@ try:
     #application: https://github.com/settings/applications
     #And setup local_settings.py (you can copy from local_settings_example.py and fill in the keys)
     from local_settings import GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET, FLASK_SECRET_KEY
+    app.secret_key = FLASK_SECRET_KEY
 except:
     pass
 
-app.secret_key = FLASK_SECRET_KEY
 
 base_url = "/"
 #We assume a default filename of inlet.js to grab from the gist

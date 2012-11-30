@@ -63,6 +63,9 @@ tributary.gist = function(id, callback) {
     //Go through the files and create appropriate models for them
     var files = _.keys(data.files);
     //console.log("files", files)
+
+    //per-file configurations
+    fileconfigs = ret.config.get("fileconfigs") || {};
     
     ret.models = new tributary.CodeModels();
     var fsplit, model, context, i = 0, ext;
@@ -82,8 +85,13 @@ tributary.gist = function(id, callback) {
         ret.models.add(model);
       }
 
-      
+      if(!fileconfigs[f]) {
+        //defaults for fileconfigs
+        fileconfigs[f] = { "default": true, "vim": false, "emacs": false };
+      }
+
     });
+    ret.config.set("fileconfigs", fileconfigs);
 
     ret.config.require(callback, ret);
     //callback(ret);
@@ -100,13 +108,19 @@ tributary.save_gist = function(config, saveorfork, callback) {
       files: {}
   };
 
+  console.log("config contexts", config.contexts)
   //save each model back into the gist
   config.contexts.forEach(function(context) {
     gist.files[context.model.get("filename")] = {
-        content: context.model.get("code")
+      content: context.model.get("code"),
     };
   });
 
+  if(config.todelete) {
+    config.todelete.forEach(function(filename) {
+      gist.files[filename] = null;
+    })
+  }
   //save config
   gist.files["config.json"] = {
     content: JSON.stringify(config.toJSON())

@@ -11,13 +11,16 @@ tributary.FilesView = Backbone.View.extend({
     var template = Handlebars.templates.files;
 
     //render all the file tabs
-    var contexts = _.map(this.model.contexts, function(ctx) { return ctx.model.toJSON(); });
+    //var contexts = _.map(this.model.contexts, function(ctx) { return ctx.model.toJSON(); });
+    var contexts = _.map(tributary.__config__.contexts, function(ctx) { return ctx.model.toJSON(); });
     //sort by filename
     contexts = contexts.sort(function(a,b) { if(a.filename < b.filename) return -1; return 1; });
-    //inlet.js comes first
-    var inlet = _.find(contexts, function(d) { return d.filename === "inlet.js" });
-    contexts.splice(contexts.indexOf(inlet), 1);
-    contexts.unshift(inlet);
+    //inlet.js comes first TODO: mainfile comes first (TributaryContext)
+    var inlet = _.find(contexts, function(d) { return d.filename === "inlet.js" || d.filename === "inlet.coffee" });
+    if(inlet) { 
+      contexts.splice(contexts.indexOf(inlet), 1);
+      contexts.unshift(inlet);
+    }
 
     var context ={
       contexts: contexts

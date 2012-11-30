@@ -1,9 +1,5 @@
 tributary.ui = {};
 
-//list of old filenames that are broken by the change.
-//TODO: decide if want to allow for arbitrary file to be the tributary context, in config somehow?
-var mainfiles = ["inlet.js", "sinwaves.js", "squarecircle.js"];
-
 
 var display, panel_gui, panel, panel_handle, page, header;
 tributary.ui.setup = function() {
@@ -18,7 +14,7 @@ tributary.ui.setup = function() {
 
   display = d3.select("#display");
   //panel holds the editors, and other controls
-  panel= d3.select(".tb_panel");
+  panel = d3.select(".tb_panel");
   //ui container for panel tabs (config/edit)
   panel_gui = d3.selectAll("div.tb_panel_gui");
   //ui container for file tabs
@@ -50,13 +46,14 @@ tributary.ui.setup = function() {
     tributary.dims.page_width = parseInt(page.style("width"), 10);
     //if the panel width goes below the minimum width, don't resize
     if( tributary.dims.page_width - tributary.dims.page_width * tributary.dims.display_percent < min_width ) {
-      return;
+      //return;
+      tributary.dims.display_width = tributary.dims.page_width - min_width
+      tributary.dims.panel_width = min_width;
+    } else {
+      //calculate how big we want our display to be
+      tributary.dims.display_width = tributary.dims.page_width * tributary.dims.display_percent;
+      tributary.dims.panel_width = tributary.dims.page_width - tributary.dims.display_width;
     }
-
-
-    //calculate how big we want our display to be
-    tributary.dims.display_width = tributary.dims.page_width * tributary.dims.display_percent;
-    tributary.dims.panel_width = tributary.dims.page_width - tributary.dims.display_width;
     tributary.dims.panel_gui_width = tributary.dims.panel_width;
 
     tributary.dims.page_height = parseInt(page.style("height"), 10);
@@ -100,96 +97,7 @@ tributary.ui.setup = function() {
   panel_handle.call(ph_drag);
 
 
-  ////////////////////////////////////////////////////////////////////////
-  // Setup the Panel GUI for switching between windows in the panel
-  ////////////////////////////////////////////////////////////////////////
   
-  var panel_data = ["edit", "config"]; // Add "require" to this array to get array tab
-  
-  
-  var pb_w = 60; //width of each button
-  var panel_buttons = panel_gui.selectAll("div.pb")
-    .data(panel_data)
-    .enter()
-    .append("div")
-    .classed("pb", true)
-    .attr({
-      id: function(d) { return d + "_tab"; },
-    })
-  .on("click", function(d) {
-    tributary.events.trigger("show", d);
-  })
-  .text(function(d) { return d; });
- 
-  //Logic for tabs
-  tributary.events.on("show", function(name) {
-    //hide all panel divs
-    $(".tb_panel").children(".panel")
-      .css("display", "none");
-
-    //show the one we want
-    panel.select(".tb_" + name)
-      .style("display", "");
-
-    //update the panel_gui ui
-    panel_gui.selectAll("div.pb")
-      .classed("gui_active", false);
-    panel_gui.select(".tb_" + name + "_tab")
-      .classed("gui_active", true);
-  });
-  tributary.events.trigger("show", "edit");
-  
-  
-  // Logic for hiding panel?
-  
-  $('.tb_hide-panel-button').on("click", function(){
-      tributary.events.trigger("hidepanel");
-      
-      $('#display').addClass("fullscreen")
-      $('svg').addClass("fullscreen")
-      
-      $('#header').addClass("dimheader");
-      
-  })
-  $('#show-codepanel-button').on("click", function(){
-      tributary.events.trigger("showpanel");
-      $('#display').removeClass("fullscreen");
-      $('svg').removeClass("fullscreen")
-      
-      $('#header').removeClass("dimheader");
-  })
-  
-  tributary.events.on("hidepanel", function(){
-      
-      $(".tb_panel").hide();
-      $(".tb_panel_gui").hide();
-      $(".tb_panel_handle").hide();
-      $(".tb_panelfiles_gui").hide();
-
-      $('#show-codepanel').show();
-      
-      //we want to save the panel show/hide in the config
-      console.log("in hide panel", tributary.__config__)
-      if(tributary.__config__) {
-        tributary.__config__.set("hidepanel", true);
-      }
-  })
-  
-  tributary.events.on("showpanel", function(){
-      
-      $(".tb_panel").show();
-      $(".tb_panel_gui").show();
-      $(".tb_panel_handle").show();
-      $(".tb_panelfiles_gui").show();
-
-      $('#show-codepanel').hide();
-
-      if(tributary.__config__) {
-        tributary.__config__.set("hidepanel", false);
-      }
-      
-  })
-
 };
 
 
@@ -220,6 +128,7 @@ tributary.ui.assemble = function(gistid) {
 //callback function to handle response from gist unpacking
 function _assemble(ret) {
   var config = ret.config;
+  tributary.__config__ = config;
 
   config.contexts = [];
   var context;
@@ -365,7 +274,6 @@ function _assemble(ret) {
   } else {
     tributary.events.trigger("showpanel");
   }
-  tributary.__config__ = config;
 } 
 
 function setup_header(ret){
@@ -375,18 +283,15 @@ function setup_header(ret){
   if(ret.user) {
     var gist_uid = ret.user.id;
 
-
     /* TODO: setup editing of description as well as a save button */
     if(gist_uid === tributary.userid) {
-        //make editable description
-        var info_string = '<input id="gist-title" value="' + ret.gist.description + '" > by <!-- ya boy -->';
+      //make editable description
+      var info_string = '<input id="gist-title" value="' + ret.gist.description + '" > by <!-- ya boy -->';
     }
     else {
-        //make the description and attribution
-        var info_string = '"<span id="gist-title-static"><a href="' + ret.gist.html_url + '">' + ret.gist.description + '</a></span>" by ';        
+      //make the description and attribution
+      var info_string = '"<span id="gist-title-static"><a href="' + ret.gist.html_url + '">' + ret.gist.description + '</a></span>" by ';        
     }
-        
-
 
     if(ret.user.url === "") {
       info_string += ret.user.login;

@@ -1,4 +1,10 @@
 
+//list of old filenames that are broken by the change.
+//TODO: decide if want to allow for arbitrary file to be the tributary context, in config somehow?
+var mainfiles = ["inlet.js", "inlet.coffee", "sinwaves.js", "squarecircle.js"];
+
+
+
 //Tributary display options
 tributary.displays = [
   {name:"svg", description: "creates an <svg> element for you to use"},
@@ -56,6 +62,7 @@ tributary.make_context = function(options) {
     display = d3.select("#display"); 
   }
   
+  model.set("type", type);
   if(mainfiles.indexOf(filename) >= 0 ) {//  === "inlet.js") {
     context = new tributary.TributaryContext({
       config: config,

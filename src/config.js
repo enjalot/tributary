@@ -8,6 +8,7 @@ tributary.Config = Backbone.Model.extend({
       display: "svg",
       public: true,
       require: [], //require modules will be like : {name:"crossfilter", url:"/static/lib/crossfilter.min.js"}
+      fileconfigs: {}, //per-file configurations (editor specific)
       tab: "edit",
       display_percent: 0.7,
 

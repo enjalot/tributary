@@ -141,10 +141,9 @@ tributary.TributaryContext = tributary.Context.extend({
 
   execute: function() {   
     var js = this.model.handle_coffee();
-    //jshint step
-    
 
-    if(js.length > 0) {
+    //jshint step
+    if(js.length > 0 && this.model.get("type") !== "coffee") {
       var hints = JSHINT(js, {
         asi: true,
         laxcomma: true,

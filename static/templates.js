@@ -68,10 +68,37 @@ function program5(depth0,data) {
   return buffer;});
 templates['editor'] = template(function (Handlebars,depth0,helpers,partials,data) {
   helpers = helpers || Handlebars.helpers;
+  var buffer = "", stack1, self=this;
+
+function program1(depth0,data) {
   
+  
+  return "checked";}
 
+function program3(depth0,data) {
+  
+  
+  return "checked";}
 
-  return "<div class=\"tb_editortopbar\">\n</div>\n\n<div class=\"tb_editor\">\n</div>\n\n\n\n";});
+function program5(depth0,data) {
+  
+  
+  return "checked";}
+
+  buffer += "<div class=\"toolbar hidden\">\n  <label>default<input type=\"radio\" class=\"radio\" name=\"editmode\" value=\"default\" ";
+  stack1 = depth0['default'];
+  stack1 = helpers['if'].call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(1, program1, data)});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "></input></label>\n  <label>vim<input type=\"radio\" class=\"radio\" name=\"editmode\" value=\"vim\" ";
+  stack1 = depth0.vim;
+  stack1 = helpers['if'].call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(3, program3, data)});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "></input></label>\n  <label>emacs<input type=\"radio\" class=\"radio\" name=\"editmode\" value=\"emacs\" ";
+  stack1 = depth0.emacs;
+  stack1 = helpers['if'].call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(5, program5, data)});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "></input></label>\n\n  <button value=\"delete\" class=\"delete\">remove</button>\n</div>\n\n<div class=\"settings\">\nS\n</div>\n";
+  return buffer;});
 templates['files'] = template(function (Handlebars,depth0,helpers,partials,data) {
   helpers = helpers || Handlebars.helpers;
   var buffer = "", stack1, functionType="function", escapeExpression=this.escapeExpression, self=this;
@@ -95,8 +122,21 @@ function program1(depth0,data) {
   return buffer;});
 templates['panel'] = template(function (Handlebars,depth0,helpers,partials,data) {
   helpers = helpers || Handlebars.helpers;
+  var buffer = "", stack1, functionType="function", escapeExpression=this.escapeExpression, self=this;
+
+function program1(depth0,data) {
   
+  var buffer = "";
+  buffer += "\n        <div class=\"pb\" id=";
+  depth0 = typeof depth0 === functionType ? depth0() : depth0;
+  buffer += escapeExpression(depth0) + "_tab>";
+  depth0 = typeof depth0 === functionType ? depth0() : depth0;
+  buffer += escapeExpression(depth0) + "</div>\n      ";
+  return buffer;}
 
-
-  return "<div class=\"tb_paneltopbar\">\n  <div class=\"tb_panelfiles_gui\">\n    <div class=\"tb_files\">\n    </div>\n  </div>\n</div>\n\n<div class=\"tb_edit panel\">\n</div>\n\n<div class=\"tb_config panel\">\n</div>\n\n<div class=\"tb_panelbottombar\">\n  <div class=\"tb_panel_gui\">\n      <span class=\"tb_hide-panel\">\n        <button class=\"tb_hide-panel-button\">X</button>\n      </span>\n  </div>\n</div>\n\n";});
+  buffer += "<div class=\"tb_paneltopbar\">\n  <div class=\"tb_panelfiles_gui\">\n    <div class=\"tb_files\">\n    </div>\n  </div>\n</div>\n\n<div class=\"tb_edit panel\">\n</div>\n\n<div class=\"tb_config panel\">\n</div>\n\n<div class=\"tb_panelbottombar\">\n  <div class=\"tb_panel_gui\">\n      <span class=\"tb_hide-panel\">\n        <button class=\"tb_hide-panel-button\">X</button>\n      </span>\n      ";
+  stack1 = helpers.each.call(depth0, depth0, {hash:{},inverse:self.noop,fn:self.program(1, program1, data)});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n  </div>\n</div>\n\n";
+  return buffer;});
 })();
