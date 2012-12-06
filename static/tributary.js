@@ -978,6 +978,7 @@ var Tributary = function() {
       var toolbar = dis.select(".toolbar");
       var settings = dis.select(".settings").on("click", function() {
         toolbar.classed("hidden", !toolbar.classed("hidden"));
+        settings.classed("active-settings", !toolbar.classed("hidden"));
       });
       toolbar.selectAll(".radio").on("change", function() {
         that.setConfig("default", false);
@@ -986,7 +987,7 @@ var Tributary = function() {
         that.setConfig(this.value, true);
         that.cm.setOption("keyMap", this.value);
       });
-      toolbar.select(".delete").on("click", function() {
+      toolbar.select("#delete-file").on("click", function() {
         var filename = that.model.get("filename");
         var name = that.model.get("name");
         delete that.model;
@@ -1379,57 +1380,6 @@ var Tributary = function() {
       tributary.events.trigger("resize");
     });
     panel_handle.call(ph_drag);
-    var panel_data = [ "edit", "config" ];
-    var pb_w = 60;
-    var panel_buttons = panel_gui.selectAll("div.pb").data(panel_data).enter().append("div").classed("pb", true).attr({
-      id: function(d) {
-        return d + "_tab";
-      }
-    }).on("click", function(d) {
-      tributary.events.trigger("show", d);
-    }).text(function(d) {
-      return d;
-    });
-    tributary.events.on("show", function(name) {
-      $(".tb_panel").children(".panel").css("display", "none");
-      panel.select(".tb_" + name).style("display", "");
-      panel_gui.selectAll("div.pb").classed("gui_active", false);
-      panel_gui.select(".tb_" + name + "_tab").classed("gui_active", true);
-    });
-    tributary.events.trigger("show", "edit");
-    $(".tb_hide-panel-button").on("click", function() {
-      tributary.events.trigger("hidepanel");
-      $("#display").addClass("fullscreen");
-      $("svg").addClass("fullscreen");
-      $("#header").addClass("dimheader");
-    });
-    $("#show-codepanel-button").on("click", function() {
-      tributary.events.trigger("showpanel");
-      $("#display").removeClass("fullscreen");
-      $("svg").removeClass("fullscreen");
-      $("#header").removeClass("dimheader");
-    });
-    tributary.events.on("hidepanel", function() {
-      $(".tb_panel").hide();
-      $(".tb_panel_gui").hide();
-      $(".tb_panel_handle").hide();
-      $(".tb_panelfiles_gui").hide();
-      $("#show-codepanel").show();
-      console.log("in hide panel", tributary.__config__);
-      if (tributary.__config__) {
-        tributary.__config__.set("hidepanel", true);
-      }
-    });
-    tributary.events.on("showpanel", function() {
-      $(".tb_panel").show();
-      $(".tb_panel_gui").show();
-      $(".tb_panel_handle").show();
-      $(".tb_panelfiles_gui").show();
-      $("#show-codepanel").hide();
-      if (tributary.__config__) {
-        tributary.__config__.set("hidepanel", false);
-      }
-    });
   };
   tributary.ui.assemble = function(gistid) {
     tributary.trace = false;

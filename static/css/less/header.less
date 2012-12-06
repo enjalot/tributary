@@ -10,7 +10,7 @@
     background-image: linear-gradient(top, rgb(58, 58, 58), rgb(38, 38, 38));
     filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,StartColorStr='#3a3a3a', EndColorStr='#262626');
 
-    
+
     padding-left: 24px;
     padding-right: 24px;
     padding-top:    6px;
@@ -22,8 +22,8 @@
     font-size: 14px !important;
     color: white;
     z-index: 200; /*lay header on top of datgui */
-    
-    -webkit-transition:all .62s ease-out;       
+
+    -webkit-transition:all .62s ease-out;
        -moz-transition:all .62s ease-out;
          -o-transition:all .62s ease-out;
             transition:all .62s ease-out;
@@ -45,7 +45,7 @@
     padding-right: 8px;
     position: absolute;
     margin-right: 48px;
-    
+
     background-color: rgba(0,0,0,0.1);
       -webkit-box-shadow: inset 0px 0px 5px 0px rgba(0,0,0,0.2); /* Saf3-4, iOS 4.0.2 - 4.2, Android 2.3+ */
           box-shadow: inset 0px 0px 5px 0px     rgba(0,0,0,0.2); /* Opera 10.5, IE9, FF4+, Chrome 6+, iOS 5 */
@@ -58,11 +58,11 @@
     padding: 1px 4px;
     margin: 0 2px;
     outline: none;
-    
-    -webkit-transition:all .3s linear ;       
+
+    -webkit-transition:all .3s linear ;
        -moz-transition:all .3s linear ;
          -o-transition:all .3s linear ;
-            transition:all .3s linear ; 
+            transition:all .3s linear ;
 }
 #gist-title:hover {
     background-color: white;
@@ -77,15 +77,15 @@
    header gets the class "dimheader"                    */
 
 .dimheader {
-    -webkit-transition:all .2s ease-out ;       
+    -webkit-transition:all .2s ease-out ;
        -moz-transition:all .2s ease-out ;
          -o-transition:all .2s ease-out ;
             transition:all .2s ease-out ;
-            
+
     background-image: none !important;
     background-color: transparent !important;
     color: black !important;
-    
+
 }
 .dimheader a:link, .dimheader a:hover, .dimheader a:visited { color: black !important; }
 .dimheader:hover { opacity: 1; }
@@ -119,8 +119,8 @@
 
 #gist_info, #save_gui {
     opacity: 0.24;
-    
-    -webkit-transition:all .24s ease-out .22s;       
+
+    -webkit-transition:all .24s ease-out .22s;
        -moz-transition:all .24s ease-out .22s;
          -o-transition:all .24s ease-out .22s;
             transition:all .24s ease-out .22s;
@@ -136,4 +136,112 @@
 
 #panelgui .gui_active {
     opacity: 1 !important;
+}
+
+.config div{
+    text-align: right;
+}
+
+.config input {
+    background-color: black;
+    border: 1px solid #999;
+    border-radius: 4px;
+    padding: 4px;
+    color: white;
+    outline: none;
+}
+.config input:active {
+    border: 1px solid black;
+}
+
+#controls {
+    padding: 16px;
+    text-align: center;
+    position: fixed;
+    bottom: 12px;
+    left: 12px;
+/*    width: 298px; */
+/*    height: 72px;
+    overflow: auto; */
+    border-radius: 4px;
+
+    background-color: rgba(210,210,215,0.38);
+}
+#controls button {
+    margin: 0 6px;
+}
+
+/* the draggable handle for resizing the panel */
+#panel_handle {
+    display:block;
+    width: 5px;
+    height: 100%;
+    background-color:#262626;
+    border-left: 1px solid #000;
+    border-right: 1px solid #000;
+    position:absolute;
+    cursor: ew-resize;
+}
+
+#hide-panel {
+    z-index: 99999;
+    position: absolute;
+    margin-top: 6px;
+}
+#hide-panel-button {
+    width: 32px;
+    height: 18px;
+    text-align: center;
+    font-size: 13px;
+    cursor: pointer;
+    display:inline-block;
+    padding: 1px 2px;
+    margin: 0 3px;
+    color: #fff;
+    background-color: #595959;
+    color: #BABABA;
+    font-weight: bold;
+    text-transform: capitalize;
+
+    border-radius: 4px;
+
+    float: right;
+
+    /*background-color: #404041;*/
+    background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(64, 64, 65, 1.00)), to(rgba(8, 8, 8, 0.75)));
+    background-image: -webkit-linear-gradient(top, rgba(64, 64, 65, 1.00), rgba(8, 8, 8, 0.75));
+    background-image: -moz-linear-gradient(top, rgba(64, 64, 65, 1.00), rgba(8, 8, 8, 0.75));
+    background-image: -o-linear-gradient(top, rgba(64, 64, 65, 1.00), rgba(8, 8, 8, 0.75));
+    background-image: -ms-linear-gradient(top, rgba(64, 64, 65, 1.00), rgba(8, 8, 8, 0.75));
+    background-image: linear-gradient(top, rgba(64, 64, 65, 1.00), rgba(8, 8, 8, 0.75));
+    filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,StartColorStr='#404041', EndColorStr='#080808');
+
+    border: 1px solid black;
+
+    opacity: 0.5;
+}
+#hide-panel-button:hover {
+    opacity: 1;
+    background-color: #2f2f30;
+    background-image: -webkit-gradient(radial, 50% 100%,0,50% 100%,200, from(rgb(34, 34, 34)), to(rgb(47, 47, 48)));
+    background-image: -webkit-radial-gradient(50% 100%, rgb(47, 47, 48), rgb(34, 34, 34));
+    background-image: -moz-radial-gradient(50% 100%, rgb(47, 47, 48), rgb(34, 34, 34));
+    background-image: -o-radial-gradient(50% 100%, rgb(47, 47, 48), rgb(34, 34, 34));
+    background-image: -ms-radial-gradient(50% 100%, rgb(47, 47, 48), rgb(34, 34, 34));
+    background-image: radial-gradient(50% 100%, rgb(47, 47, 48), rgb(34, 34, 34));
+    color: #858585;
+
+}
+
+#show-codepanel {
+    display: inline-block;
+}
+
+/* 4 constituents of the panel */
+#edit{
+    width: 100%;
+    height: 100%;
+}
+.error {
+    border-right: 2px solid red !important;
 }

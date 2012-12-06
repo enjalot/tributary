@@ -437,3 +437,60 @@
     background-color: rgba(8,8,8,0.80);
 }
 */
+
+
+
+/* the draggable handle for resizing the panel */
+#panel_handle {
+    display:block;
+    width: 5px;
+    height: 100%;
+    background-color:#262626;
+    border-left: 1px solid #000;
+    border-right: 1px solid #000;
+    position:absolute;
+    cursor: ew-resize;
+}
+
+#show-codepanel {
+    display: inline-block;
+}
+
+/* 4 constituents of the panel */
+#edit{
+    width: 100%;
+    height: 100%;
+}
+.error {
+    border-right: 2px solid red !important;
+}
+
+
+#save_gui button {
+    border: 0;
+    border-radius: 2px;
+
+    opacity: 0.5;
+    -webkit-transition:all .2s ease-out;
+       -moz-transition:all .2s ease-out;
+         -o-transition:all .2s ease-out;
+            transition:all .2s ease-out;
+
+    &:hover {
+        opacity: 1;
+
+        text-shadow:rgba(250, 250, 250, 0.5) 0px 1px 1px;
+
+        background-color: #ebebeb;
+        background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(235, 235, 235)), to(rgb(193, 193, 193)));
+        background-image: -webkit-linear-gradient(top, rgb(235, 235, 235), rgb(193, 193, 193));
+        background-image: -moz-linear-gradient(top, rgb(235, 235, 235), rgb(193, 193, 193));
+        background-image: -o-linear-gradient(top, rgb(235, 235, 235), rgb(193, 193, 193));
+        background-image: -ms-linear-gradient(top, rgb(235, 235, 235), rgb(193, 193, 193));
+        background-image: linear-gradient(top, rgb(235, 235, 235), rgb(193, 193, 193));
+        filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,StartColorStr='#ebebeb', EndColorStr='#c1c1c1');
+
+
+
+    }
+}

@@ -72,7 +72,7 @@ tributary.Editor = Backbone.View.extend({
     var dis = d3.select(this.el)
       .classed("editor", true)
 
-    //create the toolbar 
+    //create the toolbar
     var template = Handlebars.templates.editor;
     var html = template(this.getConfig());
     this.$el.html(html);
@@ -195,6 +195,8 @@ tributary.Editor = Backbone.View.extend({
     var settings = dis.select(".settings")
       .on("click", function() {
         toolbar.classed("hidden", !toolbar.classed("hidden"))
+
+        settings.classed("active-settings", !toolbar.classed("hidden"))
       })
 
 
@@ -207,7 +209,7 @@ tributary.Editor = Backbone.View.extend({
         that.cm.setOption("keyMap", this.value)
       })
 
-    toolbar.select(".delete")
+    toolbar.select("#delete-file")
       .on("click", function() {
         var filename = that.model.get("filename");
         var name = that.model.get("name");
@@ -222,7 +224,7 @@ tributary.Editor = Backbone.View.extend({
         var ind = tributary.__config__.contexts.indexOf(context);
         tributary.__config__.contexts.splice(ind,1);
         delete context;
-        
+
         if(!tributary.__config__.todelete) {
           tributary.__config__.todelete = [];
         }

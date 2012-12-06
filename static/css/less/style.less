@@ -17,12 +17,12 @@ html { -webkit-font-smoothing: antialiased; }
 /* hand cursor on clickable input elements */
 label, input[type=button], input[type=submit], button { cursor: pointer; }
 
-html, body, div, span, object, iframe, h1, h2, h3, h4, h5, h6, 
-p, blockquote, pre, a, abbr, address, cite, code, del, dfn, em, 
-img, ins, kbd, q, samp, small, strong, sub, sup, var, b, i, hr, 
-dl, dt, dd, ol, ul, li, fieldset, form, label, legend, 
+html, body, div, span, object, iframe, h1, h2, h3, h4, h5, h6,
+p, blockquote, pre, a, abbr, address, cite, code, del, dfn, em,
+img, ins, kbd, q, samp, small, strong, sub, sup, var, b, i, hr,
+dl, dt, dd, ol, ul, li, fieldset, form, label, legend,
 table, caption, tbody, tfoot, thead, tr, th, td,
-article, aside, canvas, details, figure, figcaption, hgroup, 
+article, aside, canvas, details, figure, figcaption, hgroup,
 menu, footer, header, nav, section, summary, time, mark, audio, video {
 	margin: 0;
 	padding: 0;
@@ -43,7 +43,7 @@ a img {border: 0;}
 @highlight: #b5bfcb;
 
 /* Link color, hover/visited will be generated from this */
-@linkcolor: #10206d;	
+@linkcolor: #10206d;
 
 /* Selection colours (easy to forget) */
 
@@ -55,7 +55,7 @@ body {-webkit-tap-highlight-color: @highlight;}
 
 //////////////////////////////////////////////////////////////
 
-/*		Default Layout: 992px. 
+/*		Default Layout: 992px.
 		Gutters: 24px.
 		Outer margins: 48px.
 		Leftover space for scrollbars @1024px: 32px.
@@ -124,7 +124,7 @@ px      68    160    252    344    436    528    620    712    */
 
 
 @media only screen and (min-width: 768px) and (max-width: 991px) {
-/*	
+/*
 	body {
 		width: 712px;
 		padding: 32px 28px 60px;
@@ -143,12 +143,12 @@ cols    1     2      3
 px      68    160    252    */
 
 @media only screen and (max-width: 767px) {
-/*	
+/*
 	body {
 		width: 252px;
 		padding: 24px 34px 60px;
 	}
-*/	
+*/
 }
 
 
@@ -162,12 +162,12 @@ cols    1     2      3      4      5
 px      68    160    252    344    436    */
 
 @media only screen and (min-width: 480px) and (max-width: 767px) {
-/*	
+/*
 	body {
 		width: 436px;
 		padding: 24px 22px 48px;
 	}
-*/	
+*/
 }
 
 
@@ -201,7 +201,7 @@ px      68    160    252    344    436    */
   @media all and (-webkit-min-device-pixel-ratio : 1.5) {
     background-image: url(@at2x_path);
     background-size: @w @h;
-  }  
+  }
 }
 
 /*---------------------------------------------------
@@ -260,7 +260,7 @@ px      68    160    252    344    436    */
   -webkit-border-radius: @radius;
   -moz-border-radius: @radius;
   border-radius: @radius;
-  -moz-background-clip: padding; -webkit-background-clip: padding-box; background-clip: padding-box; 
+  -moz-background-clip: padding; -webkit-background-clip: padding-box; background-clip: padding-box;
 }
 .border-radius(@topright: 0, @bottomright: 0, @bottomleft: 0, @topleft: 0) {
   -webkit-border-top-right-radius: @topright;
@@ -275,7 +275,7 @@ px      68    160    252    344    436    */
   border-bottom-right-radius: @bottomright;
   border-bottom-left-radius: @bottomleft;
   border-top-left-radius: @topleft;
-  -moz-background-clip: padding; -webkit-background-clip: padding-box; background-clip: padding-box; 
+  -moz-background-clip: padding; -webkit-background-clip: padding-box; background-clip: padding-box;
 }
 .opacity(@opacity: 0.5) {
   -moz-opacity: @opacity;
