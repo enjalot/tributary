@@ -101,6 +101,12 @@ a {
     float:left;
 }
 
+// Fix problem with UI slider being weird because
+// a:link's get a transition and it's a link for some reason
+.ui-slider-handle {
+  transition-duration: 0s !important;
+}
+
 // Bring in the panel styling
 
 @import "panel.less";

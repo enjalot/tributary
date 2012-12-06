@@ -174,6 +174,9 @@ a:visited {
 #display {
   float: left;
 }
+.ui-slider-handle {
+  transition-duration: 0s !important;
+}
 .tb_panel {
   position: relative;
   background-color: #262626;
@@ -792,72 +795,6 @@ a:visited {
 }
 #controls button {
   margin: 0 6px;
-}
-/* the draggable handle for resizing the panel */
-#panel_handle {
-  display: block;
-  width: 5px;
-  height: 100%;
-  background-color: #262626;
-  border-left: 1px solid #000;
-  border-right: 1px solid #000;
-  position: absolute;
-  cursor: ew-resize;
-}
-#hide-panel {
-  z-index: 99999;
-  position: absolute;
-  margin-top: 6px;
-}
-#hide-panel-button {
-  width: 32px;
-  height: 18px;
-  text-align: center;
-  font-size: 13px;
-  cursor: pointer;
-  display: inline-block;
-  padding: 1px 2px;
-  margin: 0 3px;
-  color: #fff;
-  background-color: #595959;
-  color: #BABABA;
-  font-weight: bold;
-  text-transform: capitalize;
-  border-radius: 4px;
-  float: right;
-  /*background-color: #404041;*/
-
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#404041), to(rgba(8, 8, 8, 0.75)));
-  background-image: -webkit-linear-gradient(top, #404041, rgba(8, 8, 8, 0.75));
-  background-image: -moz-linear-gradient(top, #404041, rgba(8, 8, 8, 0.75));
-  background-image: -o-linear-gradient(top, #404041, rgba(8, 8, 8, 0.75));
-  background-image: -ms-linear-gradient(top, #404041, rgba(8, 8, 8, 0.75));
-  background-image: linear-gradient(top, #404041, rgba(8, 8, 8, 0.75));
-  filter: progid:dximagetransform.microsoft.gradient(GradientType=0, StartColorStr='#404041', EndColorStr='#080808');
-  border: 1px solid black;
-  opacity: 0.5;
-}
-#hide-panel-button:hover {
-  opacity: 1;
-  background-color: #2f2f30;
-  background-image: -webkit-gradient(radial, 50% 100%, 0, 50% 100%, 200, from(#222222), to(#2f2f30));
-  background-image: -webkit-radial-gradient(50% 100%, #2f2f30, #222222);
-  background-image: -moz-radial-gradient(50% 100%, #2f2f30, #222222);
-  background-image: -o-radial-gradient(50% 100%, #2f2f30, #222222);
-  background-image: -ms-radial-gradient(50% 100%, #2f2f30, #222222);
-  background-image: radial-gradient(50% 100%, #2f2f30, #222222);
-  color: #858585;
-}
-#show-codepanel {
-  display: inline-block;
-}
-/* 4 constituents of the panel */
-#edit {
-  width: 100%;
-  height: 100%;
-}
-.error {
-  border-right: 2px solid red !important;
 }
 /* TOOLBAR STUFF */
 .editor {
