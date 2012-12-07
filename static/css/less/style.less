@@ -110,6 +110,44 @@ a {
   -moz-transition: none !important;
 }
 
+
+.tb_hide-panel-button:hover {
+
+
+}
+
+.tb_controls button {
+    width: 48px;
+    //height: 20px;
+    text-align: center;
+    font-size: 12px;
+    cursor: pointer;
+    display:inline-block;
+    padding: 1px 2px;
+    margin: 0 3px;
+    color: #fff;
+    background-color: #cccccc;
+    color: #4c4c4c;
+    font-weight: bold;
+    text-transform: capitalize;
+
+    border-radius: 4px;
+
+    border: 1px solid #808080;
+
+    opacity: 0.5;
+
+    -webkit-transition:all .08s ease-out;
+       -moz-transition:all .08s ease-out;
+         -o-transition:all .08s ease-out;
+            transition:all .08s ease-out;
+
+    &:hover{
+      opacity: 1;
+      border: 1px solid black;
+    }
+}
+
 // Bring in the panel styling
 
 @import "panel.less";
