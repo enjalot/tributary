@@ -9,12 +9,6 @@ tributary.CodeModel = Backbone.Model.extend({
     name: "inlet",
     type: "js", 
     mode: "javascript",
-  
-    //this configuration is mostly for the editor
-    default: true,
-    vim: false,
-    emacs: false,
-
   },
 
   //we have default behavior for handling some events

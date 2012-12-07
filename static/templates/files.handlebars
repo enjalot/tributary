@@ -1,7 +1,7 @@
 {{#each contexts}}
   <div class=fv data-filename={{this.filename}}>
       {{this.filename}}
-    <!-- TODO: delete files <div class=config delete>x</div> -->
+    <button value="delete" class="delete-file"><img src="/static/img/remove@2x.png" style="width: 14px; height: 14px;" /></button>
   </div>
 {{/each}}
 

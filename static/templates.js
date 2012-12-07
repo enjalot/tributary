@@ -97,7 +97,7 @@ function program5(depth0,data) {
   stack1 = depth0.emacs;
   stack1 = helpers['if'].call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(5, program5, data)});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "></input></label>\n\n  <button value=\"delete\" id=\"delete-file\"><img src=\"/static/img/remove@2x.png\" style=\"width: 14px; height: 14px;\" /></button>\n</div>\n\n<div class=\"settings\">\n<img src=\"/static/img/settings@2x.png\" style=\"width: 14px; height: 14px;\" />\n</div>\n";
+  buffer += "></input></label>\n\n  <label class=\"fontSize\">Font Size:<label class='plusFontSize'>+</label><label class='minusFontSize'>-</label></label>\n</div>\n\n<div class=\"settings\">\n<img src=\"/static/img/settings@2x.png\" style=\"width: 14px; height: 14px;\" />\n</div>\n";
   return buffer;});
 templates['files'] = template(function (Handlebars,depth0,helpers,partials,data) {
   helpers = helpers || Handlebars.helpers;
@@ -112,7 +112,7 @@ function program1(depth0,data) {
   buffer += escapeExpression(stack1) + ">\n      ";
   stack1 = depth0.filename;
   stack1 = typeof stack1 === functionType ? stack1() : stack1;
-  buffer += escapeExpression(stack1) + "\n    <!-- TODO: delete files <div class=config delete>x</div> -->\n  </div>\n";
+  buffer += escapeExpression(stack1) + "\n    <button value=\"delete\" class=\"delete-file\"><img src=\"/static/img/remove@2x.png\" style=\"width: 14px; height: 14px;\" /></button>\n  </div>\n";
   return buffer;}
 
   stack1 = depth0.contexts;
@@ -129,7 +129,9 @@ function program1(depth0,data) {
   var buffer = "";
   buffer += "\n        <div class=\"pb\" id=";
   depth0 = typeof depth0 === functionType ? depth0() : depth0;
-  buffer += escapeExpression(depth0) + "_tab>";
+  buffer += escapeExpression(depth0) + "_tab data-name=";
+  depth0 = typeof depth0 === functionType ? depth0() : depth0;
+  buffer += escapeExpression(depth0) + ">";
   depth0 = typeof depth0 === functionType ? depth0() : depth0;
   buffer += escapeExpression(depth0) + "</div>\n      ";
   return buffer;}

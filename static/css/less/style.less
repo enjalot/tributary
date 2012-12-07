@@ -104,7 +104,10 @@ a {
 // Fix problem with UI slider being weird because
 // a:link's get a transition and it's a link for some reason
 .ui-slider-handle {
-  transition-duration: 0s !important;
+  /*transition-duration: 0s !important;*/
+  transition: none !important;
+  -webkit-transition: none !important;
+  -moz-transition: none !important;
 }
 
 // Bring in the panel styling

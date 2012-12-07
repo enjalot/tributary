@@ -87,7 +87,7 @@ tributary.gist = function(id, callback) {
 
       if(!fileconfigs[f]) {
         //defaults for fileconfigs
-        fileconfigs[f] = { "default": true, "vim": false, "emacs": false };
+        fileconfigs[f] = { "default": true, "vim": false, "emacs": false, "fontSize": 12 };
       }
 
     });
@@ -108,7 +108,6 @@ tributary.save_gist = function(config, saveorfork, callback) {
       files: {}
   };
 
-  console.log("config contexts", config.contexts)
   //save each model back into the gist
   config.contexts.forEach(function(context) {
     gist.files[context.model.get("filename")] = {
