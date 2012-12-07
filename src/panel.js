@@ -28,7 +28,7 @@ tributary.PanelView = Backbone.View.extend({
     var pb_w = 60; //width of each button
     var panel_buttons = panel_gui.selectAll("div.pb")
     .on("click", function(d) {
-      tributary.events.trigger("show", d);
+      tributary.events.trigger("show", this.dataset.name);
     })
    
     //Logic for tabs

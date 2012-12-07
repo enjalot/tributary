@@ -3,11 +3,11 @@ http://lesscss.org/ dark theme
 Ported to CodeMirror by Peter Kroon
 */
 .CodeMirror{
-  line-height: 15px !important;
+  line-height: 15px;/*!important;*/
 }
 .cm-s-lesser-dark {
   font-family: 'Bitstream Vera Sans Mono', 'DejaVu Sans Mono', 'Monaco', Courier, monospace !important !important;
-  font-size:12px !important;
+  font-size:12px; /*!important;*/
 }
 
 .cm-s-lesser-dark { background: #262626 !important; color: #EBEFE7 !important; text-shadow: 0 -1px 1px #262626 !important; }

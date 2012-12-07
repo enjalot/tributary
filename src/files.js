@@ -32,9 +32,11 @@ tributary.FilesView = Backbone.View.extend({
     var fvs = d3.select(this.el).selectAll("div.fv")
     fvs.on("click", function(d) {
       var filename = this.dataset.filename;
-      var ctx = _.find(that.model.contexts, function(d) { return d.model.get("filename") === filename; });
-      that.model.trigger("hide");
-      ctx.model.trigger("show");
+      if(that.model) {
+        var ctx = _.find(tributary.__config__.contexts, function(d) { return d.model.get("filename") === filename; });
+        that.model.trigger("hide");
+        ctx.model.trigger("show");
+      }
       tributary.events.trigger("show", "edit");
     });
 
@@ -43,6 +45,50 @@ tributary.FilesView = Backbone.View.extend({
 
       return "fv type-"+filetype;
     })
+
+    //delete
+    fvs.select(".delete-file")
+      .style("z-index", 1000)
+      .on("click", function() {
+        var dataset = this.parentNode.dataset
+        var filename = dataset.filename;
+        var name = dataset.filename.split(".")[0];
+
+        //delete the model
+        delete that.model;
+        //delete the file from the config
+        tributary.__config__.unset(filename);
+        //delete the context
+        var context = _.find(tributary.__config__.contexts, function(d) {
+          return d.model.get("filename") === filename;
+        })
+        //delete the editor
+        context.model.trigger("delete");
+
+        var ind = tributary.__config__.contexts.indexOf(context);
+        tributary.__config__.contexts.splice(ind,1);
+        delete context;
+
+        if(!tributary.__config__.todelete) {
+          tributary.__config__.todelete = [];
+        }
+        tributary.__config__.todelete.push(filename);
+
+        
+        //remove the tab
+        d3.select(".tb_files").selectAll("div.fv")
+          .each(function() {
+            if(this.dataset.filename === filename) {
+              $(this).remove();
+            }
+          })
+
+        //show the first context available
+        var othertab = tributary.__config__.contexts[0].model;
+        othertab.trigger("show");
+        d3.event.stopPropagation();
+      })
+
 
     //the new file button
     var plus = d3.select(this.el).selectAll("div.plus")
@@ -54,9 +100,9 @@ tributary.FilesView = Backbone.View.extend({
           //they hit enter
           if(d3.event.charCode === 13) {
             //create a new file with the given name
-            var context = tributary.make_context({ filename: input.node().value, config: that.model });
+            var context = tributary.make_context({ filename: input.node().value, config: tributary.__config__ });
             if(context) {
-              that.model.contexts.push(context);
+              tributary.__config__.contexts.push(context);
               context.render();
               context.execute();
               var editor = tributary.make_editor({model: context.model});
@@ -64,13 +110,13 @@ tributary.FilesView = Backbone.View.extend({
               //rerender the files view to show new file
               that.$el.empty();
               that.render();
-              that.model.trigger("hide");
+              //that.model.trigger("hide");
+              tributary.__config__.contexts.forEach(function(c) { c.model.trigger("hide") });
               context.model.trigger("show");
               editor.cm.focus();
 
               fvs.attr("class", function(d,i){
                 var filetype = this.dataset.filename.split(".")[1]
-
                 return "fv type-"+filetype;
               })
 

@@ -19,8 +19,8 @@ var Tributary = function() {
     name: "webgl",
     description: "gives you a Three.js WebGLRenderer scene"
   }, {
-    name: "div",
-    description: "gives you a plain old <div>"
+    name: "html",
+    description: "gives you <div id=display>"
   } ];
   tributary.time_controls = [ {
     name: "play",
@@ -159,10 +159,7 @@ var Tributary = function() {
       filename: "inlet.js",
       name: "inlet",
       type: "js",
-      mode: "javascript",
-      "default": true,
-      vim: false,
-      emacs: false
+      mode: "javascript"
     },
     initialize: function() {
       this.binder();
@@ -801,7 +798,7 @@ var Tributary = function() {
       panel_gui = d3.selectAll("div.tb_panel_gui");
       var pb_w = 60;
       var panel_buttons = panel_gui.selectAll("div.pb").on("click", function(d) {
-        tributary.events.trigger("show", d);
+        tributary.events.trigger("show", this.dataset.name);
       });
       tributary.events.on("show", function(name) {
         $(".tb_panel").children(".panel").css("display", "none");
@@ -869,6 +866,9 @@ var Tributary = function() {
       this.model.on("hide", function() {
         d3.select(this.el).style("display", "none");
       }, this);
+      this.model.on("delete", function() {
+        this.$el.remove();
+      }, this);
     },
     getConfig: function() {
       var fileconfigs = tributary.__config__.get("fileconfigs");
@@ -887,7 +887,8 @@ var Tributary = function() {
       var fileconfig = {
         "default": true,
         vim: false,
-        emacs: false
+        emacs: false,
+        fontSize: 12
       };
       fileconfigs[this.model.get("filename")] = fileconfig;
       var fileconfigs = tributary.__config__.set("fileconfigs", fileconfigs);
@@ -987,31 +988,36 @@ var Tributary = function() {
         that.setConfig(this.value, true);
         that.cm.setOption("keyMap", this.value);
       });
-      toolbar.select("#delete-file").on("click", function() {
-        var filename = that.model.get("filename");
-        var name = that.model.get("name");
-        delete that.model;
-        tributary.__config__.unset(filename);
-        var context = _.find(tributary.__config__.contexts, function(d) {
-          return d.model.get("filename") === filename;
+      toolbar.select(".plusFontSize").on("click", function() {
+        var fileconfig = that.getConfig();
+        var fontSize = fileconfig.fontSize + 1;
+        that.setConfig("fontSize", fontSize);
+        var wrap = that.cm.getWrapperElement();
+        d3.select(wrap).select(".CodeMirror-scroll").style({
+          "font-size": fontSize + "px",
+          "line-height": fontSize + "px"
         });
-        var ind = tributary.__config__.contexts.indexOf(context);
-        tributary.__config__.contexts.splice(ind, 1);
-        delete context;
-        if (!tributary.__config__.todelete) {
-          tributary.__config__.todelete = [];
-        }
-        tributary.__config__.todelete.push(filename);
-        that.$el.remove();
-        delete that;
-        d3.select(".tb_files").selectAll("div.fv").each(function() {
-          if (this.dataset.filename === filename) {
-            $(this).remove();
-          }
-        });
-        var othertab = tributary.__config__.contexts[0].model;
-        othertab.trigger("show");
+        that.cm.refresh();
       });
+      toolbar.select(".minusFontSize").on("click", function() {
+        var fileconfig = that.getConfig();
+        var fontSize = fileconfig.fontSize - 1;
+        that.setConfig("fontSize", fontSize);
+        var wrap = that.cm.getWrapperElement();
+        d3.select(wrap).select(".CodeMirror-scroll").style({
+          "font-size": fontSize + "px",
+          "line-height": fontSize + "px"
+        });
+        that.cm.refresh();
+      });
+      var fileconfig = that.getConfig();
+      var fontSize = fileconfig.fontSize;
+      var wrap = that.cm.getWrapperElement();
+      d3.select(wrap).select(".CodeMirror-scroll").style({
+        "font-size": fontSize + "px",
+        "line-height": fontSize + "px"
+      });
+      that.cm.refresh();
     }
   });
   tributary.gist = function(id, callback) {
@@ -1080,7 +1086,8 @@ var Tributary = function() {
           fileconfigs[f] = {
             "default": true,
             vim: false,
-            emacs: false
+            emacs: false,
+            fontSize: 12
           };
         }
       });
@@ -1095,7 +1102,6 @@ var Tributary = function() {
       "public": config.get("public"),
       files: {}
     };
-    console.log("config contexts", config.contexts);
     config.contexts.forEach(function(context) {
       gist.files[context.model.get("filename")] = {
         content: context.model.get("code")
@@ -1169,16 +1175,44 @@ var Tributary = function() {
       var fvs = d3.select(this.el).selectAll("div.fv");
       fvs.on("click", function(d) {
         var filename = this.dataset.filename;
-        var ctx = _.find(that.model.contexts, function(d) {
-          return d.model.get("filename") === filename;
-        });
-        that.model.trigger("hide");
-        ctx.model.trigger("show");
+        if (that.model) {
+          var ctx = _.find(tributary.__config__.contexts, function(d) {
+            return d.model.get("filename") === filename;
+          });
+          that.model.trigger("hide");
+          ctx.model.trigger("show");
+        }
         tributary.events.trigger("show", "edit");
       });
       fvs.attr("class", function(d, i) {
         var filetype = this.dataset.filename.split(".")[1];
         return "fv type-" + filetype;
+      });
+      fvs.select(".delete-file").style("z-index", 1e3).on("click", function() {
+        var dataset = this.parentNode.dataset;
+        var filename = dataset.filename;
+        var name = dataset.filename.split(".")[0];
+        delete that.model;
+        tributary.__config__.unset(filename);
+        var context = _.find(tributary.__config__.contexts, function(d) {
+          return d.model.get("filename") === filename;
+        });
+        context.model.trigger("delete");
+        var ind = tributary.__config__.contexts.indexOf(context);
+        tributary.__config__.contexts.splice(ind, 1);
+        delete context;
+        if (!tributary.__config__.todelete) {
+          tributary.__config__.todelete = [];
+        }
+        tributary.__config__.todelete.push(filename);
+        d3.select(".tb_files").selectAll("div.fv").each(function() {
+          if (this.dataset.filename === filename) {
+            $(this).remove();
+          }
+        });
+        var othertab = tributary.__config__.contexts[0].model;
+        othertab.trigger("show");
+        d3.event.stopPropagation();
       });
       var plus = d3.select(this.el).selectAll("div.plus").on("click", function() {
         var input = d3.select(this).select("input").style("display", "inline-block");
@@ -1187,10 +1221,10 @@ var Tributary = function() {
           if (d3.event.charCode === 13) {
             var context = tributary.make_context({
               filename: input.node().value,
-              config: that.model
+              config: tributary.__config__
             });
             if (context) {
-              that.model.contexts.push(context);
+              tributary.__config__.contexts.push(context);
               context.render();
               context.execute();
               var editor = tributary.make_editor({
@@ -1198,7 +1232,9 @@ var Tributary = function() {
               });
               that.$el.empty();
               that.render();
-              that.model.trigger("hide");
+              tributary.__config__.contexts.forEach(function(c) {
+                c.model.trigger("hide");
+              });
               context.model.trigger("show");
               editor.cm.focus();
               fvs.attr("class", function(d, i) {

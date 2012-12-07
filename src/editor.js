@@ -34,13 +34,16 @@ tributary.make_editor = function(options) {
 tributary.Editor = Backbone.View.extend({
   initialize: function() {
     //TODO: drag and drop
-
     this.model.on("show", function() {
       d3.select(this.el).style("display", "");
     }, this);
     this.model.on("hide", function() {
       d3.select(this.el).style("display", "none");
     }, this);
+
+    this.model.on("delete", function() {
+      this.$el.remove();
+    }, this)
 
   },
   getConfig: function() {
@@ -60,7 +63,8 @@ tributary.Editor = Backbone.View.extend({
     var fileconfig = {
       default: true,
       vim: false,
-      emacs: false
+      emacs: false,
+      fontSize: 12
     };
     fileconfigs[this.model.get("filename")] = fileconfig;
     var fileconfigs = tributary.__config__.set("fileconfigs", fileconfigs);
@@ -209,6 +213,48 @@ tributary.Editor = Backbone.View.extend({
         that.cm.setOption("keyMap", this.value)
       })
 
+
+    toolbar.select(".plusFontSize")
+      .on("click", function() {
+        var fileconfig = that.getConfig();
+        var fontSize = fileconfig.fontSize + 1;
+        that.setConfig("fontSize", fontSize);
+        var wrap = that.cm.getWrapperElement();
+        d3.select(wrap).select(".CodeMirror-scroll")
+          .style({
+            "font-size": fontSize + "px",
+            "line-height": fontSize + "px"
+          })
+		    that.cm.refresh();
+      })
+
+    toolbar.select(".minusFontSize")
+      .on("click", function() {
+        var fileconfig = that.getConfig();
+        var fontSize = fileconfig.fontSize - 1;
+        that.setConfig("fontSize", fontSize);
+        var wrap = that.cm.getWrapperElement();
+        d3.select(wrap).select(".CodeMirror-scroll")
+          .style({
+            "font-size": fontSize + "px",
+            "line-height": fontSize + "px"
+          })
+		    that.cm.refresh();
+      })
+
+
+    var fileconfig = that.getConfig();
+    var fontSize = fileconfig.fontSize;
+    var wrap = that.cm.getWrapperElement();
+    d3.select(wrap).select(".CodeMirror-scroll")
+      .style({
+        "font-size": fontSize + "px",
+        "line-height": fontSize + "px"
+      })
+    that.cm.refresh();
+
+
+    /*
     toolbar.select("#delete-file")
       .on("click", function() {
         var filename = that.model.get("filename");
@@ -246,6 +292,7 @@ tributary.Editor = Backbone.View.extend({
         var othertab = tributary.__config__.contexts[0].model;
         othertab.trigger("show");
       })
+      */
 
 
   }

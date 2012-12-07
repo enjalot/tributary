@@ -133,7 +133,7 @@ img::-moz-selection {
 body {
   -webkit-tap-highlight-color: #b5bfcb;
 }
-/*		Default Layout: 992px. 
+/*		Default Layout: 992px.
 		Gutters: 24px.
 		Outer margins: 48px.
 		Leftover space for scrollbars @1024px: 32px.
@@ -173,6 +173,13 @@ a:visited {
 }
 #display {
   float: left;
+}
+.ui-slider-handle {
+  /*transition-duration: 0s !important;*/
+
+  transition: none !important;
+  -webkit-transition: none !important;
+  -moz-transition: none !important;
 }
 .tb_panel {
   position: relative;
@@ -250,6 +257,7 @@ a:visited {
 }
 .gui_active {
   opacity: 1;
+  display: block !important;
   color: #D5D5D5;
   text-shadow: rgba(10, 10, 10, 0.62) 0 1px 3px;
   /*background-color: #080808;*/
@@ -481,6 +489,18 @@ a:visited {
 .fv.type-html {
   background-color: blue !important;
 }
+.fv .delete-file {
+  /*
+    position: absolute;
+    right: 0;
+    */
+
+}
+.fv button {
+  padding: 1px 4px;
+  border: 0;
+  background-color: transparent;
+}
 .fv,
 .plus {
   opacity: 0.7;
@@ -574,6 +594,49 @@ a:visited {
     background-color: rgba(8,8,8,0.80);
 }
 */
+/* the draggable handle for resizing the panel */
+#panel_handle {
+  display: block;
+  width: 5px;
+  height: 100%;
+  background-color: #262626;
+  border-left: 1px solid #000;
+  border-right: 1px solid #000;
+  position: absolute;
+  cursor: ew-resize;
+}
+#show-codepanel {
+  display: inline-block;
+}
+/* 4 constituents of the panel */
+#edit {
+  width: 100%;
+  height: 100%;
+}
+.error {
+  border-right: 2px solid red !important;
+}
+#save_gui button {
+  border: 0;
+  border-radius: 2px;
+  opacity: 0.5;
+  -webkit-transition: all 0.2s ease-out;
+  -moz-transition: all 0.2s ease-out;
+  -o-transition: all 0.2s ease-out;
+  transition: all 0.2s ease-out;
+}
+#save_gui button:hover {
+  opacity: 1;
+  text-shadow: rgba(250, 250, 250, 0.5) 0px 1px 1px;
+  background-color: #ebebeb;
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#ebebeb), to(#c1c1c1));
+  background-image: -webkit-linear-gradient(top, #ebebeb, #c1c1c1);
+  background-image: -moz-linear-gradient(top, #ebebeb, #c1c1c1);
+  background-image: -o-linear-gradient(top, #ebebeb, #c1c1c1);
+  background-image: -ms-linear-gradient(top, #ebebeb, #c1c1c1);
+  background-image: linear-gradient(top, #ebebeb, #c1c1c1);
+  filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0, StartColorStr='#ebebeb', EndColorStr='#c1c1c1');
+}
 /* HEADER / TOPBAR STUFF */
 #header {
   background-color: #3a3a3a;
@@ -718,17 +781,145 @@ a:visited {
 #panelgui .gui_active {
   opacity: 1 !important;
 }
+.config div {
+  text-align: right;
+}
+.config input {
+  background-color: black;
+  border: 1px solid #999;
+  border-radius: 4px;
+  padding: 4px;
+  color: white;
+  outline: none;
+}
+.config input:active {
+  border: 1px solid black;
+}
+#controls {
+  padding: 16px;
+  text-align: center;
+  position: fixed;
+  bottom: 12px;
+  left: 12px;
+  /*    width: 298px; */
+
+  /*    height: 72px;
+    overflow: auto; */
+
+  border-radius: 4px;
+  background-color: rgba(210, 210, 215, 0.38);
+}
+#controls button {
+  margin: 0 6px;
+}
+/* the draggable handle for resizing the panel */
+#panel_handle {
+  display: block;
+  width: 5px;
+  height: 100%;
+  background-color: #262626;
+  border-left: 1px solid #000;
+  border-right: 1px solid #000;
+  position: absolute;
+  cursor: ew-resize;
+}
+#hide-panel {
+  z-index: 99999;
+  position: absolute;
+  margin-top: 6px;
+}
+#hide-panel-button {
+  width: 32px;
+  height: 18px;
+  text-align: center;
+  font-size: 13px;
+  cursor: pointer;
+  display: inline-block;
+  padding: 1px 2px;
+  margin: 0 3px;
+  color: #fff;
+  background-color: #595959;
+  color: #BABABA;
+  font-weight: bold;
+  text-transform: capitalize;
+  border-radius: 4px;
+  float: right;
+  /*background-color: #404041;*/
+
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#404041), to(rgba(8, 8, 8, 0.75)));
+  background-image: -webkit-linear-gradient(top, #404041, rgba(8, 8, 8, 0.75));
+  background-image: -moz-linear-gradient(top, #404041, rgba(8, 8, 8, 0.75));
+  background-image: -o-linear-gradient(top, #404041, rgba(8, 8, 8, 0.75));
+  background-image: -ms-linear-gradient(top, #404041, rgba(8, 8, 8, 0.75));
+  background-image: linear-gradient(top, #404041, rgba(8, 8, 8, 0.75));
+  filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0, StartColorStr='#404041', EndColorStr='#080808');
+  border: 1px solid black;
+  opacity: 0.5;
+}
+#hide-panel-button:hover {
+  opacity: 1;
+  background-color: #2f2f30;
+  background-image: -webkit-gradient(radial, 50% 100%, 0, 50% 100%, 200, from(#222222), to(#2f2f30));
+  background-image: -webkit-radial-gradient(50% 100%, #2f2f30, #222222);
+  background-image: -moz-radial-gradient(50% 100%, #2f2f30, #222222);
+  background-image: -o-radial-gradient(50% 100%, #2f2f30, #222222);
+  background-image: -ms-radial-gradient(50% 100%, #2f2f30, #222222);
+  background-image: radial-gradient(50% 100%, #2f2f30, #222222);
+  color: #858585;
+}
+#show-codepanel {
+  display: inline-block;
+}
+/* 4 constituents of the panel */
+#edit {
+  width: 100%;
+  height: 100%;
+}
+.error {
+  border-right: 2px solid red !important;
+}
 /* TOOLBAR STUFF */
 .editor {
   /*position: relative;*/
 
 }
 .editor .settings {
-  position: relative;
-  float: right;
-  margin-top: -15px;
-  margin-right: 0px;
-  color: white;
+  position: absolute;
+  right: 2px;
+  top: 8px;
+  padding: 4px 4px 2px 4px;
+  border-radius: 2px;
+  background-color: white;
+  opacity: 0.35;
+  -webkit-transition: all 0.3s ease-in;
+  -moz-transition: all 0.3s ease-in;
+  -o-transition: all 0.3s ease-in;
+  transition: all 0.3s ease-in;
+}
+.editor .settings:hover {
+  opacity: 0.45;
+  background-color: #ebebeb;
+  background-image: -webkit-gradient(linear, left bottom, right top, from(#ebebeb), to(#969696));
+  background-image: -webkit-linear-gradient(left bottom, #ebebeb, #969696);
+  background-image: -moz-linear-gradient(left bottom, #ebebeb, #969696);
+  background-image: -o-linear-gradient(left bottom, #ebebeb, #969696);
+  background-image: -ms-linear-gradient(left bottom, #ebebeb, #969696);
+  background-image: linear-gradient(left bottom, #ebebeb, #969696);
+  filter: progid:DXImageTransform.Microsoft.gradient(GradientType=1, StartColorStr='#ebebeb', EndColorStr='#969696');
+}
+.active-settings {
+  background-color: #ebebeb;
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#ebebeb), to(#aaaaaa));
+  background-image: -webkit-linear-gradient(top, #ebebeb, #aaaaaa);
+  background-image: -moz-linear-gradient(top, #ebebeb, #aaaaaa);
+  background-image: -o-linear-gradient(top, #ebebeb, #aaaaaa);
+  background-image: -ms-linear-gradient(top, #ebebeb, #aaaaaa);
+  background-image: linear-gradient(top, #ebebeb, #aaaaaa);
+  filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0, StartColorStr='#ebebeb', EndColorStr='#aaaaaa');
+  opacity: 0.9 !important;
+}
+.active-settings:hover {
+  opacity: 0.8 !important;
 }
 .editor .hidden {
   display: none;
@@ -755,6 +946,53 @@ a:visited {
 .ui-slider-handle {
   outline: none !important;
 }
+.toolbar {
+  font-size: 12px;
+  background-color: #666666;
+  padding: 2px 4px;
+  padding-bottom: 3px;
+}
+.toolbar label {
+  text-transform: capitalize;
+}
+.toolbar button {
+  padding: 1px 4px;
+  border: 0;
+  background-color: transparent;
+}
+.toolbar input[type=radio] {
+  cursor: pointer;
+  -webkit-appearance: none;
+  background: #fff;
+  border-radius: 3px;
+  border: 1px solid #d5d5d5;
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  vertical-align: text-top;
+  padding: 0;
+}
+.toolbar input[type=radio]:hover {
+  color: black;
+  border: 1px solid #c5c5c5;
+}
+.toolbar input[type="radio"]:checked:after {
+  content: "\00a0";
+  display: block;
+  position: relative;
+  left: 1px;
+  top: 1px;
+  height: 10px;
+  width: 10px;
+  border-radius: 50%;
+  background: #a5a5a5;
+}
+.toolbar input[type="radio"]:checked:after:hover {
+  background-color: black;
+}
+.toolbar .fontSize {
+  margin-left: 30px;
+}
 /*		Tablet Layout: 768px.
 		Gutters: 24px.
 		Outer margins: 28px.
@@ -763,7 +1001,7 @@ a:visited {
 cols    1     2      3      4      5      6      7      8
 px      68    160    252    344    436    528    620    712    */
 @media only screen and (min-width: 768px) and (max-width: 991px) {
-  /*	
+  /*
   	body {
   		width: 712px;
   		padding: 32px 28px 60px;
@@ -778,7 +1016,7 @@ px      68    160    252    344    436    528    620    712    */
 cols    1     2      3
 px      68    160    252    */
 @media only screen and (max-width: 767px) {
-  /*	
+  /*
   	body {
   		width: 252px;
   		padding: 24px 34px 60px;
@@ -793,7 +1031,7 @@ px      68    160    252    */
 cols    1     2      3      4      5
 px      68    160    252    344    436    */
 @media only screen and (min-width: 480px) and (max-width: 767px) {
-  /*	
+  /*
   	body {
   		width: 436px;
   		padding: 24px 22px 48px;

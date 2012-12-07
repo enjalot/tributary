@@ -10,7 +10,7 @@ tributary.displays = [
   {name:"svg", description: "creates an <svg> element for you to use"},
   {name:"canvas", description: "creates a <canvas> element and gives you a Context for the canvas"},
   {name:"webgl", description: "gives you a Three.js WebGLRenderer scene"},
-  {name:"div", description: "gives you a plain old <div>"},
+  {name:"html", description: "gives you <div id=display>"},
 ];
 
 //TODO: add icons
