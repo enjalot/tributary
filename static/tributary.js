@@ -941,8 +941,10 @@ var Tributary = function() {
         var err;
         for (var i = olderrors.length; i--; ) {
           err = olderrors[i];
-          that.cm.setLineClass(err.line - 1, null, null);
-          that.cm.setMarker(err.line - 1, "%N%", null);
+          if (err) {
+            that.cm.setLineClass(err.line - 1, null, null);
+            that.cm.setMarker(err.line - 1, "%N%", null);
+          }
         }
         try {
           var oldlines = _.pluck(olderrors, "line");

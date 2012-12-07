@@ -144,8 +144,10 @@ tributary.Editor = Backbone.View.extend({
       var err;
       for(var i = olderrors.length; i--;) {
         err = olderrors[i];
-        that.cm.setLineClass(err.line-1, null, null);
-        that.cm.setMarker(err.line-1, "%N%", null);
+        if(err) {
+          that.cm.setLineClass(err.line-1, null, null);
+          that.cm.setMarker(err.line-1, "%N%", null);
+        }
       }
 
       //console.log(olderrors, errors)
