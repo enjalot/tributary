@@ -254,7 +254,7 @@ def github_authenticated():
 # Request a brand new Gist and return the Gist ID.
 def fork__req_new(old_gist_id, data, token=None):
     url = 'https://api.github.com/gists'
-    data = data.encode('utf-8')
+    #data = data.encode('utf-8')
 
     old_data = fetch_gist_content(old_gist_id, token)
     gist_history = ""
@@ -295,8 +295,7 @@ def save__req_update(old_gist_id, new_gist_id, data, token=None):
 
     url = 'https://api.github.com/gists/' + new_gist_id
 
-    data = data.encode('utf-8')
-#    print "DATA:",data
+    #data = data.encode('utf-8') #    print "DATA:",data
 #    print "TOKEN: ",token
 
     old_data = fetch_gist_content(old_gist_id, token)
