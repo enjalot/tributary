@@ -358,7 +358,6 @@ tributary.TributaryContext = tributary.Context.extend({
     controls.staticMoving = false;
     controls.dynamicDampingFactor = 0.15;
 
-    controls.keys = [ 65, 83, 68 ];
     tributary.controls = controls;
     
 

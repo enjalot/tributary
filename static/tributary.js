@@ -601,7 +601,6 @@ var Tributary = function() {
       controls.noPan = false;
       controls.staticMoving = false;
       controls.dynamicDampingFactor = .15;
-      controls.keys = [ 65, 83, 68 ];
       tributary.controls = controls;
       tributary.render = function() {
         if (tributary.useThreejsControls) {
@@ -955,14 +954,14 @@ var Tributary = function() {
       var olderrors = [];
       this.model.on("jshint", function(errors) {
         var err;
-        for (var i = olderrors.length; i--; ) {
-          err = olderrors[i];
-          if (err) {
-            that.cm.setLineClass(err.line - 1, null, null);
-            that.cm.setMarker(err.line - 1, "%N%", null);
-          }
-        }
         try {
+          for (var i = olderrors.length; i--; ) {
+            err = olderrors[i];
+            if (err) {
+              that.cm.setLineClass(err.line - 1, null, null);
+              that.cm.setMarker(err.line - 1, "%N%", null);
+            }
+          }
           var oldlines = _.pluck(olderrors, "line");
           var lines = _.pluck(errors, "line");
           var diff = _.difference(oldlines, lines);
