@@ -85,7 +85,9 @@
         var tb = Tributary();
         var config = new tb.Config();
 
-        var model = new tb.CodeModel();
+        var model = new tb.CodeModel({
+          code: 'var svg = d3.select("svg").append("circle")\n  .attr({r:10,cx:100,cy:100});'
+        });
 
         var context = new tb.TributaryContext({
           config: config,
@@ -99,6 +101,7 @@
           el: d3.select("#editor").node()
         });
         editor.render();
+        tb.events.trigger("execute");
 
         }());
     </script>
