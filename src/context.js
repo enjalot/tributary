@@ -19,6 +19,8 @@ tributary.TributaryContext = tributary.Context.extend({
       tributary.events.trigger("execute");
     });
     tributary.events.on("execute", this.execute, this);
+
+    if(!tributary.__config__) tributary.__config__ = this.options.config;
  
 
     //if the user has modified the code, we want to protect them from losing their work

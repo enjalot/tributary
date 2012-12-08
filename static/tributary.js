@@ -374,6 +374,7 @@ var Tributary = function() {
         tributary.events.trigger("execute");
       });
       tributary.events.on("execute", this.execute, this);
+      if (!tributary.__config__) tributary.__config__ = this.options.config;
       this.model.on("change:code", function() {
         if (!window.onbeforeunload) {
           $(window).on("beforeunload", function() {
