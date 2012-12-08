@@ -59,6 +59,7 @@ tributary.TributaryContext = tributary.Context.extend({
     tributary.t = 0;
     tributary.dt = config.get("dt");
     tributary.reverse = false;
+    tributary.useThreejsControls = true;
 
     tributary.render = function() {};
     //convenience function
@@ -345,8 +346,27 @@ tributary.TributaryContext = tributary.Context.extend({
     */
     //tributary.renderer.render( tributary.scene, tributary.camera );
 
+    var controls = new THREE.TrackballControls( tributary.camera );
+    controls.target.set( 0, 0, 0 );
+    controls.rotateSpeed = 1.0;
+    controls.zoomSpeed = 1.2;
+    controls.panSpeed = 0.8;
+
+    controls.noZoom = false;
+    controls.noPan = false;
+
+    controls.staticMoving = false;
+    controls.dynamicDampingFactor = 0.15;
+
+    controls.keys = [ 65, 83, 68 ];
+    tributary.controls = controls;
+    
+
     tributary.render = function() {
-        tributary.renderer.render( tributary.scene, tributary.camera );
+      if(tributary.useThreejsControls) {
+        tributary.controls.update();
+      }
+      tributary.renderer.render( tributary.scene, tributary.camera );
     };
     tributary.render();
     

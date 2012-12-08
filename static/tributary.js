@@ -399,6 +399,7 @@ var Tributary = function() {
       tributary.t = 0;
       tributary.dt = config.get("dt");
       tributary.reverse = false;
+      tributary.useThreejsControls = true;
       tributary.render = function() {};
       tributary.execute = function() {
         if (tributary.run !== undefined) {
@@ -591,7 +592,21 @@ var Tributary = function() {
       tributary.renderer = new THREE.WebGLRenderer;
       tributary.renderer.setSize(tributary.sw, tributary.sh);
       container.appendChild(tributary.renderer.domElement);
+      var controls = new THREE.TrackballControls(tributary.camera);
+      controls.target.set(0, 0, 0);
+      controls.rotateSpeed = 1;
+      controls.zoomSpeed = 1.2;
+      controls.panSpeed = .8;
+      controls.noZoom = false;
+      controls.noPan = false;
+      controls.staticMoving = false;
+      controls.dynamicDampingFactor = .15;
+      controls.keys = [ 65, 83, 68 ];
+      tributary.controls = controls;
       tributary.render = function() {
+        if (tributary.useThreejsControls) {
+          tributary.controls.update();
+        }
         tributary.renderer.render(tributary.scene, tributary.camera);
       };
       tributary.render();
