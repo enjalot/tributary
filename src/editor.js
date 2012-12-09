@@ -142,17 +142,20 @@ tributary.Editor = Backbone.View.extend({
       //d3.select(that.el).selectAll(".linenumbererror").classed("linenumbererror", false);
       //d3.selectAll("pre.linenumbererror").classed("linenumbererror", false);
       var err;
-      for(var i = olderrors.length; i--;) {
-        err = olderrors[i];
-        that.cm.setLineClass(err.line-1, null, null);
-        that.cm.setMarker(err.line-1, "%N%", null);
-      }
-
-      //console.log(olderrors, errors)
       //TODO: this actually misses sometimes, when you hit enter all the lines
       //will be different from last time
       try {
-        var oldlines = _.pluck(olderrors, "line");
+
+        for(var i = olderrors.length; i--;) {
+          err = olderrors[i];
+          if(err) {
+            that.cm.setLineClass(err.line-1, null, null);
+            that.cm.setMarker(err.line-1, "%N%", null);
+          }
+        }
+
+      //console.log(olderrors, errors)
+              var oldlines = _.pluck(olderrors, "line");
         var lines = _.pluck(errors, "line");
         var diff = _.difference(oldlines, lines);
         //console.log("diff", diff);

@@ -374,6 +374,7 @@ var Tributary = function() {
         tributary.events.trigger("execute");
       });
       tributary.events.on("execute", this.execute, this);
+      if (!tributary.__config__) tributary.__config__ = this.options.config;
       this.model.on("change:code", function() {
         if (!window.onbeforeunload) {
           $(window).on("beforeunload", function() {
@@ -398,6 +399,7 @@ var Tributary = function() {
       tributary.t = 0;
       tributary.dt = config.get("dt");
       tributary.reverse = false;
+      tributary.useThreejsControls = true;
       tributary.render = function() {};
       tributary.execute = function() {
         if (tributary.run !== undefined) {
@@ -590,7 +592,20 @@ var Tributary = function() {
       tributary.renderer = new THREE.WebGLRenderer;
       tributary.renderer.setSize(tributary.sw, tributary.sh);
       container.appendChild(tributary.renderer.domElement);
+      var controls = new THREE.TrackballControls(tributary.camera);
+      controls.target.set(0, 0, 0);
+      controls.rotateSpeed = 1;
+      controls.zoomSpeed = 1.2;
+      controls.panSpeed = .8;
+      controls.noZoom = false;
+      controls.noPan = false;
+      controls.staticMoving = false;
+      controls.dynamicDampingFactor = .15;
+      tributary.controls = controls;
       tributary.render = function() {
+        if (tributary.useThreejsControls) {
+          tributary.controls.update();
+        }
         tributary.renderer.render(tributary.scene, tributary.camera);
       };
       tributary.render();
@@ -939,12 +954,14 @@ var Tributary = function() {
       var olderrors = [];
       this.model.on("jshint", function(errors) {
         var err;
-        for (var i = olderrors.length; i--; ) {
-          err = olderrors[i];
-          that.cm.setLineClass(err.line - 1, null, null);
-          that.cm.setMarker(err.line - 1, "%N%", null);
-        }
         try {
+          for (var i = olderrors.length; i--; ) {
+            err = olderrors[i];
+            if (err) {
+              that.cm.setLineClass(err.line - 1, null, null);
+              that.cm.setMarker(err.line - 1, "%N%", null);
+            }
+          }
           var oldlines = _.pluck(olderrors, "line");
           var lines = _.pluck(errors, "line");
           var diff = _.difference(oldlines, lines);
