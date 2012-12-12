@@ -233,7 +233,6 @@ tributary.ConfigView = Backbone.View.extend({
 
         //rerender the files view to show new file
         that.$el.empty();
-        console.log(that);
         that.render();
       };
 

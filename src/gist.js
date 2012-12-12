@@ -13,6 +13,8 @@ tributary.gist = function(id, callback) {
   var url = 'https://api.github.com/gists/' + id + cachebust;
   $.ajax({
     url: url,
+    contentType: 'application/json',
+    dataType: 'json',
     success: handle_gist,
     error: function(e) {
       console.log(e)
@@ -20,6 +22,8 @@ tributary.gist = function(id, callback) {
       url = "/gist/" + id + cachebust;
       $.ajax({
         url: url,
+        contentType: 'application/json',
+        dataType: 'json',
         success: handle_gist,
         error: function(er) {
           console.log(er)

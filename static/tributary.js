@@ -347,7 +347,6 @@ var Tributary = function() {
           that.model.set("require", reqs);
           that.model.require(function() {}, reqs);
           that.$el.empty();
-          console.log(that);
           that.render();
         };
         name_input.on("keypress", function() {
@@ -840,7 +839,6 @@ var Tributary = function() {
         $(".tb_panel_handle").hide();
         $(".tb_panelfiles_gui").hide();
         $("#show-codepanel").show();
-        console.log("in hide panel", tributary.__config__);
         if (tributary.__config__) {
           tributary.__config__.set("hidepanel", true);
         }
@@ -1044,12 +1042,16 @@ var Tributary = function() {
     var url = "https://api.github.com/gists/" + id + cachebust;
     $.ajax({
       url: url,
+      contentType: "application/json",
+      dataType: "json",
       success: handle_gist,
       error: function(e) {
         console.log(e);
         url = "/gist/" + id + cachebust;
         $.ajax({
           url: url,
+          contentType: "application/json",
+          dataType: "json",
           success: handle_gist,
           error: function(er) {
             console.log(er);
@@ -1569,7 +1571,6 @@ var Tributary = function() {
       }
       $("#gist_info").html(info_string);
       if (ret.user.id !== tributary.userid) {
-        console.log("hmm");
         $("#forkPanel").css("display", "none");
         $("#savePanel").attr("id", "forkPanel");
         setup_save(ret.config);
@@ -1581,7 +1582,7 @@ var Tributary = function() {
         setup_save(ret.config);
       }
     }
-    $("#gist-title").on("keydown", function() {
+    $("#gist-title").on("keyup", function() {
       console.log($("#gist-title").val());
       ret.config.set("description", $("#gist-title").val());
     });

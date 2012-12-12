@@ -79,7 +79,6 @@ tributary.PanelView = Backbone.View.extend({
         $('#show-codepanel').show();
         
         //we want to save the panel show/hide in the config
-        console.log("in hide panel", tributary.__config__)
         if(tributary.__config__) {
           tributary.__config__.set("hidepanel", true);
         }

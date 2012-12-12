@@ -302,7 +302,6 @@ function setup_header(ret){
     $('#gist_info').html(info_string);
 
     if(ret.user.id !== tributary.userid) {
-      console.log("hmm")
       //$("#savePanel").attr("disabled", "true");
       //$("#savePanel").attr("class", "off");
       $('#forkPanel').css("display", "none");
@@ -324,8 +323,7 @@ function setup_header(ret){
     }
   }
   
-  
-  $("#gist-title").on("keydown", function(){
+  $("#gist-title").on("keyup", function(){
       console.log($("#gist-title").val());  
       ret.config.set("description", $("#gist-title").val())
   })  
