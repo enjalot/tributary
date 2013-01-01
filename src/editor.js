@@ -136,6 +136,9 @@ tributary.Editor = Backbone.View.extend({
     });
 
 
+
+    /*
+      //TODO: fix line highlighting with codemirror 3.0 api
     var olderrors = [];
     this.model.on("jshint", function(errors) {
       //turn off highlighting of any error lines
@@ -196,6 +199,8 @@ tributary.Editor = Backbone.View.extend({
         olderrors = [];
       }
     })
+
+    */
 
 
     //Setup toolbar functionality

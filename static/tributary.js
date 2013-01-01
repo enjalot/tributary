@@ -949,48 +949,6 @@ var Tributary = function() {
       this.model.on("noerror", function() {
         d3.select(that.el).select(".CodeMirror-gutter").classed("error", false);
       });
-      var olderrors = [];
-      this.model.on("jshint", function(errors) {
-        var err;
-        try {
-          for (var i = olderrors.length; i--; ) {
-            err = olderrors[i];
-            if (err) {
-              that.cm.setLineClass(err.line - 1, null, null);
-              that.cm.setMarker(err.line - 1, "%N%", null);
-            }
-          }
-          var oldlines = _.pluck(olderrors, "line");
-          var lines = _.pluck(errors, "line");
-          var diff = _.difference(oldlines, lines);
-          var line;
-          for (i = diff.length; i--; ) {
-            line = diff[i];
-            that.cm.setLineClass(line - 1, null, null);
-            that.cm.setMarker(line - 1, "%N%", null);
-          }
-          for (var i = errors.length; i--; ) {
-            err = errors[i];
-            if (err) {
-              that.cm.setLineClass(err.line - 1, null, "lineerror");
-              that.cm.setMarker(err.line - 1, "%N%", "linenumbererror");
-              if (tributary.hint) {
-                console.log("Error on line: " + err.line + " (" + that.model.get("filename") + ") reason: " + err.reason);
-              }
-            }
-          }
-        } catch (e) {}
-        olderrors = _.clone(errors);
-      });
-      this.model.on("nojshint", function() {
-        if (olderrors.length) {
-          for (var i = that.cm.lineCount(); i--; ) {
-            that.cm.setLineClass(i, null, null);
-            that.cm.setMarker(i, "%N%", null);
-          }
-          olderrors = [];
-        }
-      });
       var toolbar = dis.select(".toolbar");
       var settings = dis.select(".settings").on("click", function() {
         toolbar.classed("hidden", !toolbar.classed("hidden"));
