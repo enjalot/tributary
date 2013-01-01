@@ -84,7 +84,7 @@ tributary.ConfigView = Backbone.View.extend({
       .selectAll("div.config");
 
     var initdisplay = this.model.get("display");
-    displays.map(function() { return this.dataset; })
+    displays.datum(function() { return this.dataset; })
     displays.filter(function(d) {
       return d.name === initdisplay;
     })
@@ -102,7 +102,7 @@ tributary.ConfigView = Backbone.View.extend({
       .select(".timecontrols")
       .selectAll("div.config");
 
-    timecontrols.map(function() { return this.dataset; })
+    timecontrols.datum(function() { return this.dataset; })
     timecontrols.filter(function(d) {
       return that.model.get(d.name);
     })

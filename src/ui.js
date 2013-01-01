@@ -299,6 +299,8 @@ function setup_header(ret){
       info_string += '<a href="' + ret.user.url + '">' + ret.user.login + '</a>';
     }    
     
+    d3.select("title").text(ret.gist.description || "Tributary")
+    //$('title').html(info_string);
     $('#gist_info').html(info_string);
 
     if(ret.user.id !== tributary.userid) {
@@ -324,8 +326,9 @@ function setup_header(ret){
   }
   
   $("#gist-title").on("keyup", function(){
-      console.log($("#gist-title").val());  
+      //console.log($("#gist-title").val());  
       ret.config.set("description", $("#gist-title").val())
+      d3.select("title").text($("#gist-title").val())
   })  
 }
 

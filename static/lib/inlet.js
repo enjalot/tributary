@@ -86,8 +86,8 @@ var Inlet = (function() {
                 // position slider centered above the cursor
                 //TODO: take in y_offset as a parameter
                 var y_offset = 15;
-                var sliderTop = cursorOffset.y - y_offset;
-                var sliderLeft = cursorOffset.x - slider.width()/2;
+                var sliderTop = cursorOffset.top - y_offset;
+                var sliderLeft = cursorOffset.left - slider.width()/2;
 
                 slider.offset({top: sliderTop - 10, left: sliderLeft});
 
@@ -106,8 +106,8 @@ var Inlet = (function() {
                     picker.update(color);
 
                     //TODO: make positioning of color picker configurable
-                    var top = cursorOffset.y - 210 + "px";
-                    var left = cursorOffset.x - 75 + "px";
+                    var top = cursorOffset.top - 210 + "px";
+                    var left = cursorOffset.left - 75 + "px";
                     $("#ColorPicker").css('position', "absolute");
                     $("#ColorPicker").css('top', top);
                     $("#ColorPicker").css('left', left);

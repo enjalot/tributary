@@ -109,11 +109,6 @@ tributary.Editor = Backbone.View.extend({
         mode: that.model.get("mode"),
         theme: editor_theme,
         lineNumbers: true,
-        onChange: function() {
-          var code = that.cm.getValue();
-          //TODO: local storage?
-          that.model.set("code", code);
-        }
     }
     if(that.model.get("mode") === "json") {
       codemirror_options.mode = "javascript";
@@ -121,6 +116,12 @@ tributary.Editor = Backbone.View.extend({
     }
     //we render the codemirror instance into the el
     this.cm = CodeMirror(this.el, codemirror_options);
+
+    this.cm.on("change", function() {
+      var code = that.cm.getValue();
+      //TODO: local storage?
+      that.model.set("code", code);
+    })
 
     this.cm.setValue(this.model.get("code"));
     this.inlet = Inlet(this.cm);

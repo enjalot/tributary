@@ -49,8 +49,8 @@ Color.Picker = function (props) {
 	var plugin = document.createElement("div");
 	plugin.id = props.id || "ColorPicker";
     plugin.className = "ColorPicker";
-	var pickerWidth = this.size + this.hueWidth * (this.doAlpha ? 2 : 1) + this.margin - 6;
-	var pickerHeight = this.size + this.margin * 2;
+	var pickerWidth = this.size + this.hueWidth * (this.doAlpha ? 2 : 1) + this.margin * 3 - 6;
+	var pickerHeight = this.size + this.margin * 5;
 	plugin.style.height = pickerHeight + "px";
 	plugin.style.width = pickerWidth + "px";
 	plugin.style.display = props.display ? "block" : "none";
@@ -452,21 +452,21 @@ var dragElement = function(props) {
 		var coord = XY(e);
 		switch (props.type) {
 			case "move": 
-				props.callback(event, {
+				props.callback(props.event, {
 					x: coord.x + oX - eX,
 					y: coord.y + oY - eY,
 					state: state
 				});
 				break;
 			case "difference": 
-				props.callback(event, {
+				props.callback(props.event, {
 					x: coord.x - oX,
 					y: coord.y - oY,
 					state: state
 				});
 				break;
 			default: // "absolute"
-				props.callback(event, {
+				props.callback(props.event, {
 					x: coord.x,
 					y: coord.y,
 					state: state

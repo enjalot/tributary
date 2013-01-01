@@ -249,7 +249,7 @@ var Tributary = function() {
       $(this.el).html(template(context));
       var displays = d3.select(this.el).select(".displaycontrols").selectAll("div.config");
       var initdisplay = this.model.get("display");
-      displays.map(function() {
+      displays.datum(function() {
         return this.dataset;
       });
       displays.filter(function(d) {
@@ -262,7 +262,7 @@ var Tributary = function() {
         tributary.events.trigger("execute");
       });
       var timecontrols = d3.select(this.el).select(".timecontrols").selectAll("div.config");
-      timecontrols.map(function() {
+      timecontrols.datum(function() {
         return this.dataset;
       });
       timecontrols.filter(function(d) {
@@ -930,17 +930,17 @@ var Tributary = function() {
       var codemirror_options = {
         mode: that.model.get("mode"),
         theme: editor_theme,
-        lineNumbers: true,
-        onChange: function() {
-          var code = that.cm.getValue();
-          that.model.set("code", code);
-        }
+        lineNumbers: true
       };
       if (that.model.get("mode") === "json") {
         codemirror_options.mode = "javascript";
         codemirror_options.json = true;
       }
       this.cm = CodeMirror(this.el, codemirror_options);
+      this.cm.on("change", function() {
+        var code = that.cm.getValue();
+        that.model.set("code", code);
+      });
       this.cm.setValue(this.model.get("code"));
       this.inlet = Inlet(this.cm);
       this.model.on("error", function() {
@@ -1569,6 +1569,7 @@ var Tributary = function() {
       } else {
         info_string += '<a href="' + ret.user.url + '">' + ret.user.login + "</a>";
       }
+      d3.select("title").text(ret.gist.description || "Tributary");
       $("#gist_info").html(info_string);
       if (ret.user.id !== tributary.userid) {
         $("#forkPanel").css("display", "none");
@@ -1583,8 +1584,8 @@ var Tributary = function() {
       }
     }
     $("#gist-title").on("keyup", function() {
-      console.log($("#gist-title").val());
       ret.config.set("description", $("#gist-title").val());
+      d3.select("title").text($("#gist-title").val());
     });
   }
   function setup_save(config) {
