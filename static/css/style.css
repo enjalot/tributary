@@ -178,6 +178,9 @@ a:visited {
   width: 100%;
   height: 100%;
 }
+.inlet_slider {
+  z-index: 100;
+}
 .ui-slider-handle {
   /*transition-duration: 0s !important;*/
 
