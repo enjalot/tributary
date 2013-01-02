@@ -180,6 +180,7 @@ a:visited {
 }
 .inlet_slider {
   z-index: 100;
+  opacity: 0.8;
 }
 .ui-slider-handle {
   /*transition-duration: 0s !important;*/
