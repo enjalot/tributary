@@ -1,5 +1,47 @@
-var _ = {};
 var Inlet = (function() {
+    //include a little bit of underscore.js for min and max
+    var _ = {};
+    _.min = function(obj, iterator, context) {
+      if (!iterator && _.isArray(obj) && obj[0] === +obj[0] && obj.length < 65535) {
+        return Math.min.apply(Math, obj);
+      }
+      if (!iterator && _.isEmpty(obj)) return Infinity;
+      var result = {computed : Infinity, value: Infinity};
+      each(obj, function(value, index, list) {
+        var computed = iterator ? iterator.call(context, value, index, list) : value;
+        computed < result.computed && (result = {value : value, computed : computed});
+      });
+      return result.value;
+    };
+    _.max = function(obj, iterator, context) {
+      if (!iterator && _.isArray(obj) && obj[0] === +obj[0] && obj.length < 65535) {
+        return Math.max.apply(Math, obj);
+      }
+      if (!iterator && _.isEmpty(obj)) return -Infinity;
+      var result = {computed : -Infinity, value: -Infinity};
+      each(obj, function(value, index, list) {
+        var computed = iterator ? iterator.call(context, value, index, list) : value;
+        computed >= result.computed && (result = {value : value, computed : computed});
+      });
+      return result.value;
+    };
+    var nativeIsArray = Array.isArray
+    _.isArray = nativeIsArray || function(obj) {
+      return toString.call(obj) == '[object Array]';
+    };
+    _.isObject = function(obj) {
+      return obj === Object(obj);
+    };
+    _.isEmpty = function(obj) {
+      if (obj == null) return true;
+      if (_.isArray(obj) || _.isString(obj)) return obj.length === 0;
+      for (var key in obj) if (_.has(obj, key)) return false;
+      return true;
+    };
+    _.has = function(obj, key) {
+        return hasOwnProperty.call(obj, key);
+    };
+
     function inlet(ed) {
         var editor = ed;
         var slider;
@@ -130,46 +172,5 @@ var Inlet = (function() {
         }
     }
     return inlet;
+
 })();
- _.min = function(obj, iterator, context) {
-    if (!iterator && _.isArray(obj) && obj[0] === +obj[0] && obj.length < 65535) {
-      return Math.min.apply(Math, obj);
-    }
-    if (!iterator && _.isEmpty(obj)) return Infinity;
-    var result = {computed : Infinity, value: Infinity};
-    each(obj, function(value, index, list) {
-      var computed = iterator ? iterator.call(context, value, index, list) : value;
-      computed < result.computed && (result = {value : value, computed : computed});
-    });
-    return result.value;
-  };
-
-_.max = function(obj, iterator, context) {
-    if (!iterator && _.isArray(obj) && obj[0] === +obj[0] && obj.length < 65535) {
-      return Math.max.apply(Math, obj);
-    }
-    if (!iterator && _.isEmpty(obj)) return -Infinity;
-    var result = {computed : -Infinity, value: -Infinity};
-    each(obj, function(value, index, list) {
-      var computed = iterator ? iterator.call(context, value, index, list) : value;
-      computed >= result.computed && (result = {value : value, computed : computed});
-    });
-    return result.value;
-  };
-
-var nativeIsArray = Array.isArray
-_.isArray = nativeIsArray || function(obj) {
-  return toString.call(obj) == '[object Array]';
-};
-_.isObject = function(obj) {
-  return obj === Object(obj);
-};
-_.isEmpty = function(obj) {
-  if (obj == null) return true;
-  if (_.isArray(obj) || _.isString(obj)) return obj.length === 0;
-  for (var key in obj) if (_.has(obj, key)) return false;
-  return true;
-};
-_.has = function(obj, key) {
-    return hasOwnProperty.call(obj, key);
-  };
