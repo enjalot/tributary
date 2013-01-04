@@ -39,8 +39,7 @@ var Inlet = (function() {
                 var start = {"line":cursor.line, "ch":token.start};
                 var end = {"line":cursor.line, "ch":token.end};
                 start.ch = start.ch + token.string.indexOf("#");
-                console.log("token string", token.string);
-                end.ch = start.ch + 7;
+                end.ch = start.ch + token.string.length;
                 //editor.replaceRange('"#' + newcolor.toUpperCase() + '"', start, end);
                 editor.replaceRange('#' + newcolor.toUpperCase(), start, end);
             }
