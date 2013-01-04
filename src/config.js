@@ -3,7 +3,7 @@
 //of tributary components
 tributary.Config = Backbone.Model.extend({
   defaults: {
-      description: "Another Inlet",
+      description: "An inlet to Tributary",
       endpoint: "tributary",
       display: "svg",
       public: true,

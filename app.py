@@ -255,6 +255,7 @@ def github_authenticated():
 def fork__req_new(old_gist_id, data, token=None):
     url = 'https://api.github.com/gists'
     #data = data.encode('utf-8')
+    #print "DATA", data
 
     old_data = fetch_gist_content(old_gist_id, token)
     gist_history = ""
@@ -264,7 +265,10 @@ def fork__req_new(old_gist_id, data, token=None):
     # print "Old_gist_id = ", old_gist_id
     new_data = json.loads(data)
     if old_gist_id is None:
-        markdown = ""
+        default = "An inlet to tributary"
+        markdown = new_data.get("config", {}).get("description", default)
+        if len(markdown) <= 0:
+            markdown = default
     else:
         markdown = "<br/><a href=\"https://gist.github.com/" + old_gist_id + "\">Gist #" + old_gist_id  + "</a> "
     new_data["files"]["_.md"] = {"content": markdown + gist_history}
