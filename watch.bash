@@ -18,12 +18,12 @@ daemon() {
             chsum3=`find static/templates/ -type f -exec md5 {} \;`
         fi
         sleep 2
-        chsum6=`find static/css/less/ -type f -exec md5 {} \;`
-        if [[ $chsum5 != $chsum6 ]] ; then           
-            make
-            chsum5=`find static/css/less/ -type f -exec md5 {} \;`
-        fi
-        sleep 2
+        #chsum6=`find static/css/less/ -type f -exec md5 {} \;`
+        #if [[ $chsum5 != $chsum6 ]] ; then           
+        #    make
+        #    chsum5=`find static/css/less/ -type f -exec md5 {} \;`
+        #fi
+        #sleep 2
 
     done
 
