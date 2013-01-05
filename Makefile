@@ -47,6 +47,7 @@ tributary.js: Makefile
 
 handlebars: Makefile
 	$(HANDLEBARS_COMPILER) static/templates/* > static/templates.js
+	$(HANDLEBARS_COMPILER) templates/*.handlebars > templates/server-templates.js
 
 less: Makefile
 	$(LESS_COMPILER)  static/css/style.less > static/css/style.css 

@@ -7,9 +7,8 @@
           type="image/png"
           href="/static/img/favicon.32.png" />
 
-    <title>{% block title %}{% endblock %}</title>
+    <title>Tributary</title>
 
-    {% block default_style %}
     <link href='http://fonts.googleapis.com/css?family=Ubuntu:400,700' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" href="/static/lib/CodeMirror3/lib/codemirror.css">
     <link rel="stylesheet" href="/static/lib/CodeMirror3/lib/util/dialog.css">
@@ -26,10 +25,7 @@
     <link rel="shortcut icon" href="/static/img/favicon.ico">
 
     <link rel='stylesheet' type='text/css' href='/static/css/style.css' />
-    {% endblock %}
 
-    {% block style %}
-    {% endblock %}
 
 
     <script type="text/javascript">
@@ -49,30 +45,21 @@
 <body>
 
 <div id='page'>
-    {% block chrome %}
     <div id="header">
         <div id="branding">
-        {% block branding%}
           <h1><a href="http://tributary.io">Tributary</a></h1>
-        {% endblock %}
         </div>
          <img id="syncing" src="/static/img/ej_long_loader.3.gif" style="display: none;"/>
-<!--        <div id="syncing">
-            <svg id="syncing-svg">
-
-            </svg>
-        </div>
--->
 
         <div id="gist_info"></div>
         <div id="save_gui">
-            {% if not loggedin %}
+          {{#if loggedin }}
+            <a href="http://github.com/{{ username }}">{{ user.login }}</a>
+            <button id='loginPanel' class="button_on"> Logout </button>
+          {{ else }}
             anon
             <button id='loginPanel' class="button_on"> Login </button>
-            {% else %}
-            <a href="http://github.com/{{ username }}">{{ username }}</a>
-            <button id='loginPanel' class="button_on"> Logout </button>
-            {% endif %}
+          {{/if}}
 
             <button id='savePanel' class="button_on">
                 Save
@@ -91,7 +78,6 @@
 
     <br>
     </div>
-    {% endblock %}
 
     <!-- main tributary UI skeleton -->
     <div id="display">
@@ -154,20 +140,12 @@
     <script type="text/javascript">
         var tb = Tributary();
         //provide global trib object
-        tb.loggedin = "{{ loggedin }}" === "True";
-        tb.username = "{{ username }}";
-        tb.avatar = "{{ avatar }}";
-        tb.userid = parseInt("{{ userid }}");
-        tb.userurl = "{{ userurl }}";
+        tb.loggedin = "{{ loggedin }}";
+        tb.username = "{{ user.login }}";
+        tb.avatar = "{{ user.avatar_url }}"; tb.userid = parseInt("{{ userid }}");
+        tb.userurl = "{{ user.html_url }}";
     </script>
 
-
-
-    <!--
-    <script src='/static/trib.js'></script>
-    -->
-    {% block scripts %}
-    {% endblock %}
 
     <script type="text/javascript">
 
@@ -180,14 +158,12 @@
         document.body.onmousedown=function(){return false};
     document.body.style.cursor = "default";
 
-    {% block jsinit %}
     //TODO: for old endpoints do:
     //tb.endpoint = "delta";
-    {% endblock %}
 
     tb.ui.setup();
     //assemble the UI
-    tb.ui.assemble("{{gist}}");
+    tb.ui.assemble("{{ gistid }}");
 
     </script>
 <!--
