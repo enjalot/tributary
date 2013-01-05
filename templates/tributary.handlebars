@@ -53,6 +53,7 @@
     <div id="header">
         <div id="branding">
         {% block branding%}
+          <h1><a href="http://tributary.io">Tributary</a></h1>
         {% endblock %}
         </div>
          <img id="syncing" src="/static/img/ej_long_loader.3.gif" style="display: none;"/>
@@ -180,6 +181,8 @@
     document.body.style.cursor = "default";
 
     {% block jsinit %}
+    //TODO: for old endpoints do:
+    //tb.endpoint = "delta";
     {% endblock %}
 
     tb.ui.setup();
