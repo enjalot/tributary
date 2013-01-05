@@ -25,8 +25,8 @@ find you want to make your own view.
 
 It's not too hard, just adding one endpoint to the backend, making a new template html and a new view javascript file.
 
-If you want to have github authentication working you will need to setup a github app and fill out the local_settings.py (see local_settings_example.py)
-The FLASK_SECRET_KEY is just a random string that's supposed to be unique to protect your sessions
+If you want to have github authentication working you will need to setup a
+github app and fill out the settings.js (see settings-example.js)
 
 On the backend tributary only depends on Flask:
 ```
