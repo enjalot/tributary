@@ -41,13 +41,9 @@ function index(req, res, next) {
 };
 
 //API endpoint for fetching a gist from github
-app.get("/gist/:gistid", getgist);
-function getgist(req, res, next) {
-  var url = 'https://api.github.com/gists/' + req.params.gistid
-    + "?client_id=" + settings.GITHUB_CLIENT_ID 
-    + "&client_secret=" + settings.GITHUB_CLIENT_SECRET;
-
-  request(url, function(error, response, body) {
+app.get("/gist/:gistid", getgist_endpoint);
+function getgist_endpoint(req, res, next) {
+  getgist(req.params.gistid, function(error, response, body) {
     if (!error && response.statusCode == 200) {
       res.header("Content-Type", 'application/json');
       res.send(body);
@@ -55,6 +51,14 @@ function getgist(req, res, next) {
       res.send(response.statusCode);
     }
   })
+}
+
+function getgist(gistid, callback) {
+  var url = 'https://api.github.com/gists/' + gistid
+    + "?client_id=" + settings.GITHUB_CLIENT_ID 
+    + "&client_secret=" + settings.GITHUB_CLIENT_SECRET;
+
+  request(url, callback)
 }
 
 //Base view in tributary.
@@ -103,38 +107,41 @@ function save_endpoint(req,res,next) {
 app.post('/tributary/fork', fork_endpoint)
 app.post('/tributary/fork/:gistid', fork_endpoint)
 function fork_endpoint(req,res,next) {
-  var data = req.body.gist;
-  
+  var data = req.body.gist; 
   var token = req.session.access_token;
   var user = req.session.user;
   var gistid = req.params['gistid'];
 
-  if(!gistid) {
-    //No id, so creating a new gist
-    console.log("creating new gist");
-    newgist(data, token, onResponse);
-  } else if(!user) {
-    //anan user, so create anon fork
-    console.log("creating anon gist");
-    fork(gistid, data, token, onResponse);
-  } else {
-    //logged in user can't fork themselves
-    //so fork a anon and then fork that...
-    console.log("forking self");
-    fork(gistid, data, undefined, function(err, response) {
-      console.log(err, response);
-      console.log("anon fork id", response.id);
-      fork(response.id, response, token, onResponse);
-    })
-  }
+  //get the user of this gist
+  getgist(gistid, function(err, response, body) {
+    if(!err && response.statusCode === 200) {
+      var oldgist = JSON.parse(body);
 
-  //save(req.params['gistid'], data, token, onResponse);
+      if(!gistid || !user) {
+          //No id, so creating a new gist
+          //or anan user, can't make anon fork so create new gist
+          console.log("creating new gist");
+          newgist(data, token, onResponse);
+        } else if( !oldgist.user || oldgist.user.id !== user.id) {
+          console.log("forking gist");
+          fork(gistid, data, token, onResponse);
+        } else {
+          //logged in user can't fork themselves
+          //so create a new gist
+          console.log("forking self");
+          newgist(data, token, onResponse);
+        }
+
+    } else {
+      res.send(response)
+    }
+  })
 
   function onResponse(err, response) {
     if(!err) {
       //post fork 
       console.log("pre post fork", response.id);
-      after_fork(response, function(error, newgist) {
+      after_fork(data, response, function(error, newgist) {
         if(!error) {
           return res.send(newgist);
         }
@@ -205,18 +212,17 @@ function fork(gistid, data, token, callback) {
   console.log("URL", url)
   var method = "POST";
   var headers = {
-      'content-type': 'application/json'
-     , 'accept': 'application/json'
+     // 'content-type': 'application/json'
+     //, 'accept': 'application/json'
   };
   if(token) {
     headers['Authorization'] = 'token ' + token;
   }
 
-  request.post({
+  request({
     url: url,
-    //body: "{}",
-    json: {},
-    //method: method,
+    method: method,
+    body: "{}",
     headers: headers
   }, onResponse)
 
@@ -231,11 +237,11 @@ function fork(gistid, data, token, callback) {
 }
 
 //post save functionality
-function after_fork(gist, callback) {
+function after_fork(oldgist, newgist, callback) {
   //update/set raw url for thumbnail in config
 
   //update history in _.md and provide live urls
-  callback(null, gist);
+  callback(null, newgist);
 }
 
 //post save functionality
