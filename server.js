@@ -1,13 +1,31 @@
 var express = require('express');
+var MongoStore = require('connect-mongo')(express)
 var settings = require('./settings');
 var request = require('request');
-GLOBAL.Handlebars = require('handlebars');
 
+//SERVER SIDE TEMPLATES
+GLOBAL.Handlebars = require('handlebars');
 require('./templates/server-templates');
+
+
+//SESSION SETUP
+var ONE_YEAR = 1000 * 60 * 60 * 24 * 365;
+var mongoConf = {
+  type: 'Mongo',
+  host: 'localhost',
+  port: 27017,
+  db: 'tributary'
+}
+
 
 var app = express()
   .use(express.cookieParser())
-  .use(express.session({ secret: settings.SECRET }))
+  .use(express.bodyParser())
+  .use(express.session({ 
+    secret: settings.SECRET,
+    cookie: {maxAge: ONE_YEAR},
+    store: new MongoStore(mongoConf)
+  }))
   .use('/static', express.static(__dirname + '/static'))
   /*
    * allow CORS?
@@ -39,11 +57,14 @@ function getgist(req, res, next) {
   })
 }
 
-//
+//Base view in tributary.
 app.get('/inlet', inlet)
 app.get('/inlet/:gistid', inlet)
+app.get('/tributary', inlet)
+app.get('/tributary/:gistid', inlet)
 function inlet(req,res,next) {
 
+  console.log("loggedin?", req.session.user ? true: false)
   var template = Handlebars.templates.inlet;
   var html = template({
     user: req.session.user,
@@ -55,6 +76,173 @@ function inlet(req,res,next) {
 }
 
 
+//Save an inlet
+app.post('/tributary/save', save_endpoint)
+app.post('/tributary/save/:gistid', save_endpoint)
+function save_endpoint(req,res,next) {
+  var data = req.body.gist;
+  var token = req.session.access_token;
+  var gistid = req.params['gistid'];
+  save(gistid, data, token, function(err, response) {
+    if(!err) {
+      //post save
+      after_save(response, function(error, newgist) {
+        if(!error) {
+          return res.send(newgist);
+        }
+        res.send(error);
+      })
+      //return updated gist
+    } else {
+      res.send(err);
+    }
+  })
+}
+
+//Fork an inlet
+app.post('/tributary/fork', fork_endpoint)
+app.post('/tributary/fork/:gistid', fork_endpoint)
+function fork_endpoint(req,res,next) {
+  var data = req.body.gist;
+  
+  var token = req.session.access_token;
+  var user = req.session.user;
+  var gistid = req.params['gistid'];
+
+  if(!gistid) {
+    //No id, so creating a new gist
+    console.log("creating new gist");
+    newgist(data, token, onResponse);
+  } else if(!user) {
+    //anan user, so create anon fork
+    console.log("creating anon gist");
+    fork(gistid, data, token, onResponse);
+  } else {
+    //logged in user can't fork themselves
+    //so fork a anon and then fork that...
+    console.log("forking self");
+    fork(gistid, data, undefined, function(err, response) {
+      console.log(err, response);
+      console.log("anon fork id", response.id);
+      fork(response.id, response, token, onResponse);
+    })
+  }
+
+  //save(req.params['gistid'], data, token, onResponse);
+
+  function onResponse(err, response) {
+    if(!err) {
+      //post fork 
+      console.log("pre post fork", response.id);
+      after_fork(response, function(error, newgist) {
+        if(!error) {
+          return res.send(newgist);
+        }
+        res.send(error);
+      })
+    } else {
+      res.send(err);
+    }
+  }
+}
+
+function newgist(data, token, callback) {
+  //USER saves new gist
+  var url = 'https://api.github.com/gists'
+  var method = "POST";
+  var headers = {
+      'content-type': 'application/json'
+    , 'accept': 'application/json'
+  };
+  if(token) {
+    headers['Authorization'] = 'token ' + token;
+  }
+
+  request({
+    url: url,
+    body: data.toString(),
+    method: method,
+    headers: headers
+  }, onResponse)
+
+  function onResponse(error, response, body) {
+    if (!error && response.statusCode == 201) {
+      callback(null, JSON.parse(body));
+    } else {
+      callback(error, null);
+    }
+  }
+}
+function save(gistid, data, token, callback) {
+  //USER saves over existing gist
+  var url = 'https://api.github.com/gists/' + gistid
+  var method = "PATCH";
+  var headers = {
+      'content-type': 'application/json'
+    , 'accept': 'application/json'
+    , 'Authorization': 'token ' + token
+  };
+
+  request(url,{
+    body: data.toString(),
+    method: method,
+    headers: headers
+  }, onResponse)
+
+  function onResponse(error, response, body) {
+    if (!error && response.statusCode == 200) {
+      callback(null, JSON.parse(body));
+    } else {
+      callback(error, null);
+    }
+  }    
+}
+
+//Fork an inlet
+function fork(gistid, data, token, callback) {
+  //USER saves over existing gist
+  var url = 'https://api.github.com/gists/' + gistid + '/forks'
+  console.log("URL", url)
+  var method = "POST";
+  var headers = {
+      'content-type': 'application/json'
+     , 'accept': 'application/json'
+  };
+  if(token) {
+    headers['Authorization'] = 'token ' + token;
+  }
+
+  request.post({
+    url: url,
+    //body: "{}",
+    json: {},
+    //method: method,
+    headers: headers
+  }, onResponse)
+
+  function onResponse(error, response, body) {
+    console.log("FORK RESPONSE", error, response.statusCode, body);
+    if (!error && response.statusCode == 201) {
+      callback(null, JSON.parse(body));
+    } else {
+      callback(error, null);
+    }
+  }    
+}
+
+//post save functionality
+function after_fork(gist, callback) {
+  //update/set raw url for thumbnail in config
+
+  //update history in _.md and provide live urls
+  callback(null, gist);
+}
+
+//post save functionality
+function after_save(gist, callback) {
+  //update the raw url for the thumbnail
+  callback(null, gist);
+}
 
 
 /*
@@ -79,7 +267,7 @@ function github_authenticated(req,res,next) {
         request("https://api.github.com/user?access_token=" + access_token, function(e,r,b){ 
           if (!e && r.statusCode == 200) {
             //store info about the user in the session
-            req.session.user = b;
+            req.session.user = JSON.parse(b);
             
             //redirect to where the user was
             if(req.query.state && req.query.state !== "/undefined"){

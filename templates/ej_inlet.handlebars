@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8"/>
+	<title>Tributary</title>
+	<!-- Place favicon.ico and apple-touch-icon.png in the root of your domain and delete these references 
+	<link rel="shortcut icon" href="/favicon.ico">
+  -->
+  <link rel="icon"
+    type="image/png"
+    href="/static/img/favicon.32.png" />
+  <link rel="shortcut icon" href="/static/img/favicon.ico">
+
+	<!--[if lt IE 9]>
+		<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+	<link rel="stylesheet" media="all" href=""/>
+	<meta name="viewport" content="width=device-width, initial-scale=1"/>
+	<!-- Adding "maximum-scale=1" fixes the Mobile Safari auto-zoom bug: http://filamentgroup.com/examples/iosScaleBug/ -->
+
+  <link rel="stylesheet" href="/static/css/trib-fontello.css">
+  <link rel="stylesheet" href="/static/css/animation.css">
+
+  <link href='http://fonts.googleapis.com/css?family=Ubuntu:400,700' rel='stylesheet' type='text/css'>
+	<link href='http://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+  <link rel="stylesheet" href="/static/lib/CodeMirror3/lib/codemirror.css">
+  <link rel="stylesheet" href="/static/lib/CodeMirror3/lib/util/dialog.css">
+  <link rel="stylesheet" href="/static/lib/CodeMirror3/theme/night.css">
+  <link rel="stylesheet" href="/static/lib/CodeMirror3/theme/lesser-dark.css">
+  <link rel="stylesheet" href="/static/lib/CodeMirror3/theme/vibrant-ink.css">
+  <link rel="stylesheet" href="/static/lib/CodeMirror3/theme/ambiance.css">
+  <link rel="stylesheet" href="/static/lib/CodeMirror3/theme/elegant.css">
+
+  <link rel='stylesheet' type='text/css' href='http://yui.yahooapis.com/2.9.0/build/reset/reset-min.css' />
+  <link rel='stylesheet' type='text/css' href='/static/lib/slider/css/humanity/jquery-ui-slider.css' />
+  <link href="/static/lib/colorpicker/Color.Picker.Classic.css" rel="stylesheet" type="text/css" />
+
+	<!-- LESS framework stylesheet
+	Should be compiled from style.less
+	I use http://wearekiss.com/simpless for auto-compiling on save
+	-->
+	<link rel="stylesheet" href="/static/css/style.css" type="text/css" media="screen" title="Primary Stylesheet" charset="utf-8">
+
+  <script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-30237258-1']);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+          var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+          ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+          var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+  </script>
+
+  <script id="tributary_loader" type="text/javascript"></script>
+
+
+</head>
+<body>
+<div id="container">
+	<header id="title">
+		<h1>Tributary</h1>
+
+		<section id="inlet-info">
+			<span id="inlet-title">{{ title}}</span>
+			by
+			<span class="user-avatar"><img  id="avatar"/></span>
+			<span id="inlet-author">{{author}}</span>
+
+			<button id="save" title="Save current state">
+				Save
+			</button>
+			<i class="icon-load animate-spin"></i>
+		</section>
+
+
+
+		<section id="login">
+			<span id="current-user"><span class="user-avatar"><img  id="avatar"/></span>{{loggedInUser}}</span>
+			<button>{{login}} <i class="icon-github"></i></button>
+		</section>
+	</header>
+
+	<section id="display">
+		<img src="http://f.cl.ly/items/130j3F1C3g412Z3O3M2d/Screen%20Shot%202013-01-05%20at%2012.09.00%20AM.png" />
+	</section>
+
+	<aside id="panel">
+		<section id="files">
+			<ul id="file-list">
+				<li class="active-file file filetype-js">inlet.js <i class="icon-cancel-circle delete-file"></i></li>
+				<li class="file filetype-css">file.css <i class="icon-cancel delete-file"></i></li>
+				<li class="file filetype-json">file.json <i class="icon-cancel delete-file"></i></li>
+				<li class="file filetype-html">file.html <i class="icon-cancel delete-file"></i></li>
+				<li class="file filetype-coffeescript">file.coffee <i class="icon-cancel delete-file"></i></li>
+
+				<li id="add-file">+</li>
+			</ul>
+		</section>
+
+		<section id="config" >
+			<button id="config-toggle">Config</button>
+
+
+			<div id="config-content" style="display: none;">
+				<h4>Display <i class="explain-this-shit icon-help-circled"></i></h4>
+				<select>
+					<option value="svg">SVG</option>
+					<option value="canvas">Canvas</option>
+					<option value="webgl">WebGL</option>
+					<option value="html">HTML</option>
+				</select>
+
+				<h4>Time Controls <i class="explain-this-shit icon-help-circled"></i></h4>
+				<button id="play">Play</button>
+				<button id="loop">Loop</button>
+				<button id="restart">Restart</button>
+			</div>
+		</section>
+
+		<section id="code">
+			<pre>
+#panel {
+  padding-top: 68px;
+  width: 30%;
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  height: 100%;
+  overflow-y: auto;
+
+  background-color: white;
+
+  #files {
+        padding: 1px 2px;
+        border-bottom: 2px solid rgba(0,0,0,0.7);
+        margin-top: 0;
+  }
+  #file-list {
+    list-style: none;
+    font-size: 0.6em;
+    width: 90%;
+    padding-bottom: 6px;
+    padding-right: 32px;
+    overflow-x: auto;
+
+    li {
+      opacity: 0.8;
+      cursor: pointer;
+      display: inline-block;
+      border: 1px solid #CCC;
+      padding: 2px 6px;
+      line-height: 1.5em;
+      border-radius: 4px;
+      margin: 2px 1px;
+
+      text-shadow:rgba(245, 245, 245, 0.5) 0px 1px 1px;
+
+      /*background-color: #717071;*/
+      background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(113, 112, 113, 0.72)), to(rgba(227, 226, 228, 0.60)));
+      background-image: -webkit-linear-gradient(top, rgba(113, 112, 113, 0.72), rgba(227, 226, 228, 0.60));
+      background-image: -moz-linear-gradient(top, rgba(113, 112, 113, 0.72), rgba(227, 226, 228, 0.60));
+      background-image: -o-linear-gradient(top, rgba(113, 112, 113, 0.72), rgba(227, 226, 228, 0.60));
+      background-image: -ms-linear-gradient(top, rgba(113, 112, 113, 0.72), rgba(227, 226, 228, 0.60));
+      background-image: linear-gradient(top, rgba(113, 112, 113, 0.72), rgba(227, 226, 228, 0.60));
+      filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,StartColorStr='#717071', EndColorStr='#e3e2e4');
+
+
+
+    }
+    li.active-file {
+      opacity: 1 !important;
+      border: 1px solid black;
+      font-weight: bold;
+
+      /*background-color: #f8f7fa;*/
+      background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(248, 247, 250, 0.60)), to(rgba(169, 168, 169, 0.73)));
+      background-image: -webkit-linear-gradient(top, rgba(248, 247, 250, 0.60), rgba(169, 168, 169, 0.73));
+      background-image: -moz-linear-gradient(top, rgba(248, 247, 250, 0.60), rgba(169, 168, 169, 0.73));
+      background-image: -o-linear-gradient(top, rgba(248, 247, 250, 0.60), rgba(169, 168, 169, 0.73));
+      background-image: -ms-linear-gradient(top, rgba(248, 247, 250, 0.60), rgba(169, 168, 169, 0.73));
+      background-image: linear-gradient(top, rgba(248, 247, 250, 0.60), rgba(169, 168, 169, 0.73));
+      filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,StartColorStr='#f8f7fa', EndColorStr='#a9a8a9');
+
+      -webkit-box-shadow:0 1px 2px 0 rgba(0,0,0,0.2); /* Saf3.0+, Chrome */
+         -moz-box-shadow:0 1px 2px 0 rgba(0,0,0,0.2); /* FF3.5+ */
+              box-shadow:0 1px 2px 0 rgba(0,0,0,0.2); /* Opera 10.5, IE 9.0 */
+    }
+    #add-file {
+      position: fixed;
+      right: 6px;
+      width: 32px;
+      text-align: center;
+    }
+
+
+
+    .filetype-js { background-color: #0CADE4; }
+    .filetype-css { background-color: #F5660A; }
+    .filetype-json { background-color: #FFB913; }
+    .filetype-html { background-color: #F6066B; }
+    .filetype-coffeescript { background-color: #CDE338; }
+  }
+}
+			</pre>
+		</section>
+
+	</aside>
+
+</div>
+
+
+
+    <!-- Essential 3rd party libraries -->
+    <script src="/static/lib/d3.min.js"></script>
+    <script src="/static/lib/jquery-1.7.min.js"></script>
+    <script src="/static/lib/underscore-min.js"></script>
+    <script src="/static/lib/underscore.math.js"></script>
+    <script src="/static/lib/backbone-min.js"></script>
+    <script src="/static/lib/coffee-script.js"></script>
+    <script src="/static/lib/require.js"></script>
+    <script src='/static/lib/three.min.js'></script>
+    <script src="/static/lib/Stats.js"></script>
+    <script src="/static/lib/jshint.js"></script>
+    <script src="/static/lib/handlebars-1.0.rc.1.js"></script>
+
+
+
+    <!-- CodeMirror -->
+    <script src="/static/lib/CodeMirror3/lib/codemirror.js"></script>
+    <script src="/static/lib/CodeMirror3/lib/util/searchcursor.js"></script>
+    <script src="/static/lib/CodeMirror3/lib/util/search.js"></script>
+    <script src="/static/lib/CodeMirror3/lib/util/dialog.js"></script>
+    <script src="/static/lib/CodeMirror3/lib/util/runmode.js"></script>
+
+    <script src="/static/lib/CodeMirror3/mode/javascript/javascript.js"></script>
+    <script src="/static/lib/CodeMirror3/mode/css/css.js"></script>
+    <script src="/static/lib/CodeMirror3/mode/xml/xml.js"></script>
+    <script src="/static/lib/CodeMirror3/mode/htmlmixed/htmlmixed.js"></script>
+    <script src="/static/lib/CodeMirror3/mode/coffeescript/coffeescript.js"></script>
+    <script src="/static/lib/CodeMirror3/keymap/vim.js"></script>
+    <script src="/static/lib/CodeMirror3/keymap/emacs.js"></script>
+
+    <!-- UI components TODO: replace with pure d3 -->
+    <script src="/static/lib/jquery-ui.1.8.16.custom.min.js"></script>
+    <script src='/static/lib/slider/js/jquery.ui.slider.js'></script>
+    <!-- https://github.com/mudcube/Color-Picker -->
+    <script src="/static/lib/colorpicker/Color.Picker.Classic.js" type="text/javascript"></script>
+    <script src="/static/lib/colorpicker/Color.Space.js" type="text/javascript"></script>
+    <script src="/static/lib/dat.gui.min.js"></script>
+
+    <!-- Tributary -->
+    <script src="/static/templates.js"></script>
+    <script src="/static/lib/inlet.js"></script>
+    <script src='/static/tributary.js?v=0.7'></script>
+
+
+    <script type="text/javascript">
+        var tb = Tributary();
+        //provide global trib object
+        tb.loggedin = "{{ loggedin }}";
+        tb.username = "{{ user.login }}";
+        tb.avatar = "{{ user.avatar_url }}"; tb.userid = parseInt("{{ userid }}");
+        tb.userurl = "{{ user.html_url }}";
+    </script>
+
+
+    <script type="text/javascript">
+
+    //get rid of selection when dragging things
+    /*
+    if(typeof document.body.style.MozUserSelect!="undefined")
+        document.body.style.MozUserSelect="none";
+    else if(typeof document.body.onselectstart!="undefined")
+        document.body.onselectstart=function(){return false};
+    else
+        document.body.onmousedown=function(){return false};
+    document.body.style.cursor = "default";
+    */
+
+    //TODO: for old endpoints do:
+    //tb.endpoint = "delta";
+
+    tb.ui.setup();
+    //assemble the UI
+    tb.ui.assemble("{{ gistid }}");
+
+    </script>
+
+    <!-- TODO: move this into code 
+		<script>
+			$("#config-toggle").on("click", function(){
+				$("#config-content").toggle();
+			})
+		</script>
+    -->
+
+
+<!--
+<script>document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1"></' + 'script>')</script>
+-->
+
+</body>
+</html>

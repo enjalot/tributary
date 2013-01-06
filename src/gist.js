@@ -163,6 +163,7 @@ tributary.save_gist = function(config, saveorfork, callback) {
       if(typeof(data) === "string") {
         data = JSON.parse(data);
       }
+      //TODO: add in error checking
       var newgist = data.id;
       var newurl = "/inlet/" + newgist;
       callback(newurl, newgist);

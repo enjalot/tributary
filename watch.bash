@@ -25,6 +25,14 @@ daemon() {
         #fi
         #sleep 2
 
+        #chsum8=`find templates/*.handlebars -type f -exec md5 {} \;`
+        #if [[ $chsum7 != $chsum8 ]] ; then           
+        #    make
+        #    chsum7=`find static/templates/*.handlebars -type f -exec md5 {} \;`
+        #fi
+        #sleep 2
+
+
     done
 
 }

@@ -1,0 +1,145 @@
+
+/* TOOLBAR STUFF */
+
+.editor {
+  /*position: relative;*/
+}
+.editor .settings {
+
+  background-color: white;
+
+  //color: white;
+  //padding: 2px 1px;
+  position: absolute;
+  right: 2px;
+  top: 8px;
+  padding: 4px 4px 2px 4px;
+  border-radius: 2px;
+
+  background-color: white;
+  opacity: 0.35;
+  -webkit-transition:all .3s ease-in ;
+     -moz-transition:all .3s ease-in ;
+       -o-transition:all .3s ease-in ;
+          transition:all .3s ease-in ;
+
+  &:hover {
+    opacity: 0.45;
+    background-color: #ebebeb;
+    background-image: -webkit-gradient(linear, left bottom, right top, from(rgb(235, 235, 235)), to(rgb(150, 150, 150)));
+    background-image: -webkit-linear-gradient(left bottom, rgb(235, 235, 235), rgb(150, 150, 150));
+    background-image: -moz-linear-gradient(left bottom, rgb(235, 235, 235), rgb(150, 150, 150));
+    background-image: -o-linear-gradient(left bottom, rgb(235, 235, 235), rgb(150, 150, 150));
+    background-image: -ms-linear-gradient(left bottom, rgb(235, 235, 235), rgb(150, 150, 150));
+    background-image: linear-gradient(left bottom, rgb(235, 235, 235), rgb(150, 150, 150));
+    filter: progid:DXImageTransform.Microsoft.gradient(GradientType=1,StartColorStr='#ebebeb', EndColorStr='#969696');
+  }
+
+}
+
+.active-settings {
+
+  background-color: #ebebeb;
+  background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(235, 235, 235)), to(rgb(170, 170, 170)));
+  background-image: -webkit-linear-gradient(top, rgb(235, 235, 235), rgb(170, 170, 170));
+  background-image: -moz-linear-gradient(top, rgb(235, 235, 235), rgb(170, 170, 170));
+  background-image: -o-linear-gradient(top, rgb(235, 235, 235), rgb(170, 170, 170));
+  background-image: -ms-linear-gradient(top, rgb(235, 235, 235), rgb(170, 170, 170));
+  background-image: linear-gradient(top, rgb(235, 235, 235), rgb(170, 170, 170));
+  filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,StartColorStr='#ebebeb', EndColorStr='#aaaaaa');
+
+  opacity: 0.9 !important;
+
+  &:hover {
+    opacity: 0.8 !important;
+  }
+}
+
+.editor .toolbar {
+}
+
+.editor .hidden {
+   display: none;
+}
+
+.editor .toolbar .radio {
+  margin-left: 5px;
+  font-size: 20px;
+}
+.editor .toolbar label {
+  color: white;
+  margin-left: 5px;
+  font-size: 12px;
+}
+
+.lineerror {
+  background: #A23232 !important;
+  opacity: 0.1;
+  border: 1px solid red !important;/*#A23232;*/
+}
+
+.linenumbererror {
+  color: #A23232 !important;
+}
+.ui-slider-handle {
+    outline: none !important;
+}
+
+.toolbar {
+  font-size: 12px;
+  background-color: #666666;
+  padding: 2px 4px;
+  padding-bottom: 3px;
+
+  label {
+    text-transform: capitalize;
+  }
+
+  button {
+    padding: 1px 4px;
+    border: 0;
+    background-color: transparent;
+  }
+
+  input[type=radio] {
+    cursor: pointer;
+    -webkit-appearance:none;
+    background:#fff;
+    border-radius:3px;
+
+    border:1px solid #d5d5d5;
+    display:inline-block;
+    width:14px;
+    height:14px;
+
+    vertical-align:text-top;
+    padding: 0;
+
+      &:hover {
+        color: black;
+        border: 1px solid #c5c5c5;
+      }
+    }
+
+    input[type="radio"]:checked:after {
+      content:"\00a0";
+      display:block;
+      position:relative;
+      left:1px;
+      top:1px;
+      height:10px;
+      width:10px;
+      border-radius: 50%;
+
+      background:#a5a5a5;
+
+      &:hover {
+        background-color: black;
+      }
+    }
+
+  .fontSize {
+    margin-left: 30px;
+  }
+
+}

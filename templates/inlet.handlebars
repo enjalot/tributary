@@ -136,13 +136,13 @@
     <script src="/static/lib/inlet.js"></script>
     <script src='/static/tributary.js?v=0.7'></script>
 
-
     <script type="text/javascript">
         var tb = Tributary();
         //provide global trib object
         tb.loggedin = "{{ loggedin }}";
         tb.username = "{{ user.login }}";
-        tb.avatar = "{{ user.avatar_url }}"; tb.userid = parseInt("{{ userid }}");
+        tb.avatar = "{{ user.avatar_url }}"; 
+        tb.userid = parseInt("{{user.id}}");
         tb.userurl = "{{ user.html_url }}";
     </script>
 
