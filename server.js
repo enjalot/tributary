@@ -21,7 +21,7 @@ var mongoConf = {
 var app = express()
   .use(express.cookieParser())
   .use(express.bodyParser())
-  .use(express.session({ 
+  .use(express.session({
     secret: settings.SECRET,
     cookie: {maxAge: ONE_YEAR},
     store: new MongoStore(mongoConf)
@@ -41,9 +41,19 @@ function index(req, res, next) {
 };
 
 //API endpoint for fetching a gist from github
+<<<<<<< Updated upstream
 app.get("/gist/:gistid", getgist_endpoint);
 function getgist_endpoint(req, res, next) {
   getgist(req.params.gistid, function(error, response, body) {
+=======
+app.get("/gist/:gistid", getgist);
+function getgist(req, res, next) {
+  var url = 'https://api.github.com/gists/' + req.params.gistid
+    + "?client_id=" + settings.GITHUB_CLIENT_ID
+    + "&client_secret=" + settings.GITHUB_CLIENT_SECRET;
+
+  request(url, function(error, response, body) {
+>>>>>>> Stashed changes
     if (!error && response.statusCode == 200) {
       res.header("Content-Type", 'application/json');
       res.send(body);
@@ -69,7 +79,9 @@ app.get('/tributary/:gistid', inlet)
 function inlet(req,res,next) {
 
   console.log("loggedin?", req.session.user ? true: false)
-  var template = Handlebars.templates.inlet;
+  //var template = Handlebars.templates.inlet;
+  var template = Handlebars.templates.ej_inlet;
+
   var html = template({
     user: req.session.user,
     loggedin: req.session.user ? true : false,
@@ -107,7 +119,12 @@ function save_endpoint(req,res,next) {
 app.post('/tributary/fork', fork_endpoint)
 app.post('/tributary/fork/:gistid', fork_endpoint)
 function fork_endpoint(req,res,next) {
+<<<<<<< Updated upstream
   var data = req.body.gist; 
+=======
+  var data = req.body.gist;
+
+>>>>>>> Stashed changes
   var token = req.session.access_token;
   var user = req.session.user;
   var gistid = req.params['gistid'];
@@ -139,7 +156,7 @@ function fork_endpoint(req,res,next) {
 
   function onResponse(err, response) {
     if(!err) {
-      //post fork 
+      //post fork
       console.log("pre post fork", response.id);
       after_fork(data, response, function(error, newgist) {
         if(!error) {
@@ -202,7 +219,7 @@ function save(gistid, data, token, callback) {
     } else {
       callback(error, null);
     }
-  }    
+  }
 }
 
 //Fork an inlet
@@ -233,7 +250,7 @@ function fork(gistid, data, token, callback) {
     } else {
       callback(error, null);
     }
-  }    
+  }
 }
 
 //post save functionality
@@ -262,19 +279,19 @@ function github_authenticated(req,res,next) {
 
     // request an access token
     request({
-      url:'https://github.com/login/oauth/access_token', 
+      url:'https://github.com/login/oauth/access_token',
       json: data,
       headers: headers
     }, function(error, response, body) {
       if (!error && response.statusCode == 200) {
         var access_token = body.access_token;
         req.session.access_token = access_token;
-    
-        request("https://api.github.com/user?access_token=" + access_token, function(e,r,b){ 
+
+        request("https://api.github.com/user?access_token=" + access_token, function(e,r,b){
           if (!e && r.statusCode == 200) {
             //store info about the user in the session
             req.session.user = JSON.parse(b);
-            
+
             //redirect to where the user was
             if(req.query.state && req.query.state !== "/undefined"){
               res.redirect(req.query.state)
@@ -295,8 +312,8 @@ app.get('/github-login/:product', github_login)
 app.get('/github-login/:product/:id', github_login)
 function github_login(req,res,next) {
   var product, id;
-  var url = "https://github.com/login/oauth/authorize?client_id=" 
-      + settings.GITHUB_CLIENT_ID 
+  var url = "https://github.com/login/oauth/authorize?client_id="
+      + settings.GITHUB_CLIENT_ID
       + "&scope=gist";
 
   if(req.params['product']) {
