@@ -41,19 +41,9 @@ function index(req, res, next) {
 };
 
 //API endpoint for fetching a gist from github
-<<<<<<< Updated upstream
 app.get("/gist/:gistid", getgist_endpoint);
 function getgist_endpoint(req, res, next) {
   getgist(req.params.gistid, function(error, response, body) {
-=======
-app.get("/gist/:gistid", getgist);
-function getgist(req, res, next) {
-  var url = 'https://api.github.com/gists/' + req.params.gistid
-    + "?client_id=" + settings.GITHUB_CLIENT_ID
-    + "&client_secret=" + settings.GITHUB_CLIENT_SECRET;
-
-  request(url, function(error, response, body) {
->>>>>>> Stashed changes
     if (!error && response.statusCode == 200) {
       res.header("Content-Type", 'application/json');
       res.send(body);
@@ -65,7 +55,7 @@ function getgist(req, res, next) {
 
 function getgist(gistid, callback) {
   var url = 'https://api.github.com/gists/' + gistid
-    + "?client_id=" + settings.GITHUB_CLIENT_ID 
+    + "?client_id=" + settings.GITHUB_CLIENT_ID
     + "&client_secret=" + settings.GITHUB_CLIENT_SECRET;
 
   request(url, callback)
@@ -79,9 +69,7 @@ app.get('/tributary/:gistid', inlet)
 function inlet(req,res,next) {
 
   console.log("loggedin?", req.session.user ? true: false)
-  //var template = Handlebars.templates.inlet;
   var template = Handlebars.templates.ej_inlet;
-
   var html = template({
     user: req.session.user,
     loggedin: req.session.user ? true : false,
@@ -119,12 +107,7 @@ function save_endpoint(req,res,next) {
 app.post('/tributary/fork', fork_endpoint)
 app.post('/tributary/fork/:gistid', fork_endpoint)
 function fork_endpoint(req,res,next) {
-<<<<<<< Updated upstream
-  var data = req.body.gist; 
-=======
   var data = req.body.gist;
-
->>>>>>> Stashed changes
   var token = req.session.access_token;
   var user = req.session.user;
   var gistid = req.params['gistid'];
@@ -353,5 +336,4 @@ function github_logout(req,res,next) {
 app.listen(settings.port, function() {
   console.log("tributary running on port", settings.port);
 });
-
 
