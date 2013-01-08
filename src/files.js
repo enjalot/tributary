@@ -17,19 +17,37 @@ tributary.FilesView = Backbone.View.extend({
     contexts = contexts.sort(function(a,b) { if(a.filename < b.filename) return -1; return 1; });
     //inlet.js comes first TODO: mainfile comes first (TributaryContext)
     var inlet = _.find(contexts, function(d) { return d.filename === "inlet.js" || d.filename === "inlet.coffee" });
-    if(inlet) { 
+    if(inlet) {
       contexts.splice(contexts.indexOf(inlet), 1);
       contexts.unshift(inlet);
     }
 
+    /*
     var context ={
       contexts: contexts
     };
-    $(this.el).html(template(context));
+    */
 
+    //$(this.el).html(template(context));
+    console.log("CONTEXT", contexts)
+
+    var filelist = d3.select("#file-list")
+    .selectAll("li")
+    .data(contexts)
+
+    filelist.enter()
+    .append("li")
+      .text(function(d,i){
+        return d.filename
+      })
+    .attr("class", function(d){
+        return "file "+"filetype-"+d.type
+    })
+
+    filelist.exit().remove()
 
     //setup the event handlers for the file tabs
-    var fvs = d3.select(this.el).selectAll("div.fv")
+    var fvs = d3.select(this.el).selectAll("li.fv")
     fvs.on("click", function(d) {
       var filename = this.dataset.filename;
       if(that.model) {
@@ -74,7 +92,7 @@ tributary.FilesView = Backbone.View.extend({
         }
         tributary.__config__.todelete.push(filename);
 
-        
+
         //remove the tab
         d3.select(".tb_files").selectAll("div.fv")
           .each(function() {

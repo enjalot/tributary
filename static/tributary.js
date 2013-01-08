@@ -199,7 +199,7 @@ var Tributary = function() {
   });
   tributary.Config = Backbone.Model.extend({
     defaults: {
-      description: "An inlet to Tributary",
+      description: "Tributary inlet",
       endpoint: "tributary",
       display: "svg",
       "public": true,
@@ -808,10 +808,10 @@ var Tributary = function() {
       var template = Handlebars.templates.panel;
       var html = template(panel_data);
       this.$el.html(html);
-      panel = d3.select(".tb_panel");
-      panel_gui = d3.selectAll("div.tb_panel_gui");
+      panel = d3.select("#panel");
+      panel_gui = d3.selectAll("#file-list");
       var pb_w = 60;
-      var panel_buttons = panel_gui.selectAll("div.pb").on("click", function(d) {
+      var panel_buttons = panel_gui.selectAll("#file-list li").on("click", function(d) {
         tributary.events.trigger("show", this.dataset.name);
       });
       tributary.events.on("show", function(name) {
@@ -821,38 +821,6 @@ var Tributary = function() {
         panel_gui.select(".tb_" + name + "_tab").classed("gui_active", true);
       });
       tributary.events.trigger("show", "edit");
-      $(".tb_hide-panel-button").on("click", function() {
-        tributary.events.trigger("hidepanel");
-        $("#display").addClass("fullscreen");
-        $("svg").addClass("fullscreen");
-        $("#header").addClass("dimheader");
-      });
-      $("#show-codepanel-button").on("click", function() {
-        tributary.events.trigger("showpanel");
-        $("#display").removeClass("fullscreen");
-        $("svg").removeClass("fullscreen");
-        $("#header").removeClass("dimheader");
-      });
-      tributary.events.on("hidepanel", function() {
-        $(".tb_panel").hide();
-        $(".tb_panel_gui").hide();
-        $(".tb_panel_handle").hide();
-        $(".tb_panelfiles_gui").hide();
-        $("#show-codepanel").show();
-        if (tributary.__config__) {
-          tributary.__config__.set("hidepanel", true);
-        }
-      });
-      tributary.events.on("showpanel", function() {
-        $(".tb_panel").show();
-        $(".tb_panel_gui").show();
-        $(".tb_panel_handle").show();
-        $(".tb_panelfiles_gui").show();
-        $("#show-codepanel").hide();
-        if (tributary.__config__) {
-          tributary.__config__.set("hidepanel", false);
-        }
-      });
     }
   });
   tributary.make_editor = function(options) {
@@ -1145,11 +1113,15 @@ var Tributary = function() {
         contexts.splice(contexts.indexOf(inlet), 1);
         contexts.unshift(inlet);
       }
-      var context = {
-        contexts: contexts
-      };
-      $(this.el).html(template(context));
-      var fvs = d3.select(this.el).selectAll("div.fv");
+      console.log("CONTEXT", contexts);
+      var filelist = d3.select("#file-list").selectAll("li").data(contexts);
+      filelist.enter().append("li").text(function(d, i) {
+        return d.filename;
+      }).attr("class", function(d) {
+        return "file " + "filetype-" + d.type;
+      });
+      filelist.exit().remove();
+      var fvs = d3.select(this.el).selectAll("li.fv");
       fvs.on("click", function(d) {
         var filename = this.dataset.filename;
         if (that.model) {
@@ -1338,12 +1310,12 @@ var Tributary = function() {
     });
     tributary.panel.render();
     display = d3.select("#display");
-    panel = d3.select(".tb_panel");
+    panel = d3.select("#panel");
     panel_gui = d3.selectAll("div.tb_panel_gui");
-    panelfile_gui = d3.select(".tb_panelfiles_gui");
+    panelfile_gui = d3.select("#file-list");
     panel_handle = d3.select(".tb_panel_handle");
-    page = d3.select("#page");
-    header = d3.select("#header");
+    page = d3.select("#container");
+    header = d3.select("#title");
     tributary.dims = {
       display_percent: .7,
       page_width: 0,
@@ -1356,32 +1328,8 @@ var Tributary = function() {
       panel_gui_height: 31
     };
     tributary.events.on("resize", function() {
-      var min_width = parseInt(panel.style("min-width"), 10);
-      tributary.dims.page_width = parseInt(page.style("width"), 10);
-      if (tributary.dims.page_width - tributary.dims.page_width * tributary.dims.display_percent < min_width) {
-        tributary.dims.display_width = tributary.dims.page_width - min_width;
-        tributary.dims.panel_width = min_width;
-      } else {
-        tributary.dims.display_width = tributary.dims.page_width * tributary.dims.display_percent;
-        tributary.dims.panel_width = tributary.dims.page_width - tributary.dims.display_width;
-      }
-      tributary.dims.panel_gui_width = tributary.dims.panel_width;
-      tributary.dims.page_height = parseInt(page.style("height"), 10);
-      tributary.dims.display_height = tributary.dims.page_height - parseInt(header.style("height"), 10);
-      tributary.dims.panel_height = tributary.dims.display_height - tributary.dims.panel_gui_height;
-      display.style("width", tributary.dims.display_width + "px");
-      panel.style("width", tributary.dims.panel_width + "px");
-      panel_gui.style("width", tributary.dims.panel_gui_width + "px");
-      panelfile_gui.style("width", tributary.dims.panel_gui_width + "px");
-      panel.style("height", tributary.dims.panel_height + "px");
-      panel.selectAll(".panel").style("height", tributary.dims.panel_height + "px");
-      panel.selectAll(".CodeMirror").style("height", tributary.dims.panel_height - tributary.dims.panel_gui_height + "px");
-      display.style("height", tributary.dims.display_height + "px");
-      panel_gui.style("height", tributary.dims.panel_gui_height + "px");
-      panel_gui.style("margin-top", tributary.dims.panel_gui_height + "px");
-      panel_handle.style("right", tributary.dims.panel_width + "px");
-      tributary.sw = tributary.dims.display_width;
-      tributary.sh = tributary.dims.display_height;
+      tributary.sw = 600;
+      tributary.sh = 600;
       tributary.events.trigger("execute");
     });
     tributary.events.trigger("resize");
@@ -1488,7 +1436,7 @@ var Tributary = function() {
     });
     config_view.render();
     var files_view = new tributary.FilesView({
-      el: ".tb_files",
+      el: "#file-list",
       model: config
     });
     files_view.render();
@@ -1517,30 +1465,13 @@ var Tributary = function() {
     setup_save(ret.config);
     if (ret.user) {
       var gist_uid = ret.user.id;
-      if (gist_uid === tributary.userid) {
-        var info_string = '<input id="gist-title" value="' + ret.gist.description + '" > by <!-- ya boy -->';
-      } else {
-        var info_string = '"<span id="gist-title-static"><a href="' + ret.gist.html_url + '">' + ret.gist.description + '</a></span>" by ';
-      }
-      if (ret.user.url === "") {
-        info_string += ret.user.login;
-      } else {
-        info_string += '<a href="' + ret.user.url + '">' + ret.user.login + "</a>";
-      }
-      d3.select("title").text(ret.gist.description || "Tributary");
-      $("#gist_info").html(info_string);
-      console.log("USER ID", ret.user.id, tributary.userid);
-      if (ret.user.id !== tributary.userid) {
-        $("#forkPanel").css("display", "none");
-        $("#savePanel").attr("id", "forkPanel");
-        setup_save(ret.config);
-      }
-    } else {
-      if (isNaN(tributary.userid) || !ret.gist) {
-        $("#forkPanel").css("display", "none");
-        $("#savePanel").attr("id", "forkPanel");
-        setup_save(ret.config);
-      }
+      console.log("RET", ret);
+      $("#inlet-author").text(ret.user.login);
+      $("#inlet-title").text(ret.gist.description);
+      $("#avatar").attr("src", function(d) {
+        return "http://2.gravatar.com/avatar/" + ret.user.gravatar_id;
+      });
+      d3.select("title").text("Tributary | " + ret.gist.description || "Tributary");
     }
     $("#gist-title").on("keyup", function() {
       ret.config.set("description", $("#gist-title").val());
@@ -1567,6 +1498,7 @@ var Tributary = function() {
       });
     });
     $("#loginPanel").on("click", function(e) {
+      alert("log in pressed");
       tributary.login_gist(tributary.loggedin, function(newurl, newgist) {
         window.onunload = false;
         window.onbeforeunload = false;

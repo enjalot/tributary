@@ -76,10 +76,10 @@
 
 		<section id="login">
 			{{#if loggedin}}
-      <span id="current-user"><span class="user-avatar"><img id="avatar" src="{{ user.avatar }}"/></span> {{ user.login }}</span>
-			<button>Log out</button>
+      <span id="current-user"><span class="user-avatar"><img id="avatar" src="{{ user.avatar }}"/></span>{{ user.login }}</span>
+			<button id="loginPanel">Log out</button>
       {{else}}
-      <button>Log in <i class="icon-github"></i></button>
+      <button id="loginPanel">Log in <i class="icon-github"></i></button>
       {{/if}}
 		</section>
 	</header>
@@ -91,13 +91,6 @@
 	<aside id="panel">
 		<section id="files">
 			<ul id="file-list">
-				<li class="active-file file filetype-js">inlet.js <i class="icon-cancel-circle delete-file"></i></li>
-				<li class="file filetype-css">file.css <i class="icon-cancel delete-file"></i></li>
-				<li class="file filetype-json">file.json <i class="icon-cancel delete-file"></i></li>
-				<li class="file filetype-html">file.html <i class="icon-cancel delete-file"></i></li>
-				<li class="file filetype-coffeescript">file.coffee <i class="icon-cancel delete-file"></i></li>
-
-				<li id="add-file">+</li>
 			</ul>
 		</section>
 
@@ -122,9 +115,7 @@
 		</section>
 
 		<section id="code">
-			<pre>
-        code code code code
-			</pre>
+
 		</section>
 
 	</aside>
