@@ -57,8 +57,9 @@ function getgist(gistid, callback) {
   var url = 'https://api.github.com/gists/' + gistid
     + "?client_id=" + settings.GITHUB_CLIENT_ID 
     + "&client_secret=" + settings.GITHUB_CLIENT_SECRET;
+  console.log(url);
 
-  request(url, callback)
+  request.get(url, callback);
 }
 
 //Base view in tributary.
@@ -68,7 +69,6 @@ app.get('/tributary', inlet)
 app.get('/tributary/:gistid', inlet)
 function inlet(req,res,next) {
 
-  console.log("loggedin?", req.session.user ? true: false)
   var template = Handlebars.templates.inlet;
   var html = template({
     user: req.session.user,
@@ -113,16 +113,29 @@ function fork_endpoint(req,res,next) {
   var gistid = req.params['gistid'];
 
   //get the user of this gist
-  getgist(gistid, function(err, response, body) {
-    if(!err && response.statusCode === 200) {
-      var oldgist = JSON.parse(body);
+  if(!gistid || !user) {
+    //No id, so creating a new gist
+    //or anan user, can't make anon fork so create new gist
+    console.log("creating new gist");
+    newgist(data, token, function (err, response) {
+      if(!err) {
+        console.log("after fork");
+        after_fork(undefined, response, token, function(error, newgist) {
+          if(!error) {
+            return res.send(newgist);
+          }
+          res.send(error);
+        })
+      } else {
+        res.send(err);
+      }
+    })
+  } else {
+    getgist(gistid, function(err, response, body) {
+      if(!err && response.statusCode === 200) {
+        var oldgist = JSON.parse(body);
 
-      if(!gistid || !user) {
-          //No id, so creating a new gist
-          //or anan user, can't make anon fork so create new gist
-          console.log("creating new gist");
-          newgist(data, token, onResponse);
-        } else if( !oldgist.user || oldgist.user.id !== user.id) {
+        if( !oldgist.user || oldgist.user.id !== user.id) {
           console.log("forking gist");
           fork(gistid, data, token, onResponse);
         } else {
@@ -132,24 +145,22 @@ function fork_endpoint(req,res,next) {
           newgist(data, token, onResponse);
         }
 
-    } else {
-      res.send(response)
-    }
-  })
-
-  function onResponse(err, response) {
-    if(!err) {
-      //post fork 
-      console.log("pre post fork", response.id);
-      after_fork(data, response, function(error, newgist) {
-        if(!error) {
-          return res.send(newgist);
+        function onResponse(err, response) {
+          if(!err) {
+            //post fork. but only if user is authenticated
+            console.log("after fork");
+            after_fork(oldgist, response, token, function(error, newgist) {
+              if(!error) {
+                return res.send(newgist);
+              }
+              res.send(error);
+            })
+          }
         }
-        res.send(error);
-      })
-    } else {
-      res.send(err);
-    }
+      } else {
+        res.send(response.statusCode);
+      }
+    })
   }
 }
 
@@ -191,7 +202,7 @@ function save(gistid, data, token, callback) {
   };
 
   request(url,{
-    body: data.toString(),
+    body: JSON.stringify(data),
     method: method,
     headers: headers
   }, onResponse)
@@ -207,16 +218,12 @@ function save(gistid, data, token, callback) {
 
 //Fork an inlet
 function fork(gistid, data, token, callback) {
-  //USER saves over existing gist
+  //NOTE: this will only work when an authenticated user
+  //forks a gist that is not his or hers
   var url = 'https://api.github.com/gists/' + gistid + '/forks'
-  console.log("URL", url)
   var method = "POST";
   var headers = {
-     // 'content-type': 'application/json'
-     //, 'accept': 'application/json'
-  };
-  if(token) {
-    headers['Authorization'] = 'token ' + token;
+    'Authorization': 'token ' + token
   }
 
   request({
@@ -227,7 +234,6 @@ function fork(gistid, data, token, callback) {
   }, onResponse)
 
   function onResponse(error, response, body) {
-    console.log("FORK RESPONSE", error, response.statusCode, body);
     if (!error && response.statusCode == 201) {
       callback(null, JSON.parse(body));
     } else {
@@ -237,11 +243,31 @@ function fork(gistid, data, token, callback) {
 }
 
 //post save functionality
-function after_fork(oldgist, newgist, callback) {
+function after_fork(oldgist, newgist, token, callback) {
+  //update history in _.md and provide live urls
+  //check for existing _.md in oldgist
+  var gist_hist = "";
+  try {
+    gist_hist = oldgist.files["_.md"].content;
+  } catch (e) {
+  } finally {
+  }
+
+  var markdown = "[ <a href=\"http://tributary.io/inlet/" + newgist.id +"\">Launch: " + newgist.description + "</a> ] " 
+    + newgist.id 
+    + " by " + newgist.user.login 
+    + "<br>"
+
+  markdown += gist_hist;
+  newgist.files['_.md'] = {
+    "content": markdown
+  }
+  
   //update/set raw url for thumbnail in config
 
-  //update history in _.md and provide live urls
-  callback(null, newgist);
+  save(newgist.id, newgist, token, callback);
+
+
 }
 
 //post save functionality
