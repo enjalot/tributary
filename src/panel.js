@@ -25,7 +25,9 @@ tributary.PanelView = Backbone.View.extend({
     // Setup the Panel GUI for switching between windows in the panel
     ////////////////////////////////////////////////////////////////////////
 
-    var pb_w = 60; //width of each button
+    //var pb_w = 60; //width of each button
+
+
     var panel_buttons = panel_gui.selectAll("#file-list li")
     .on("click", function(d) {
       tributary.events.trigger("show", this.dataset.name);

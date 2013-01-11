@@ -1,4 +1,3 @@
-
 tributary.make_editor = function(options) {
   //Creates a editor from a model and optional editor container
   //{

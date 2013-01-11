@@ -84,8 +84,8 @@ tributary.ui.setup = function() {
     tributary.sh = tributary.dims.display_height;
     */
 
-    tributary.sw = 600;
-    tributary.sh = 600;
+    tributary.sw = $("#display").width() - $("#panel").width();
+    tributary.sh = $("#display").height();
 
     tributary.events.trigger("execute");
   });

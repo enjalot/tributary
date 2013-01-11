@@ -810,7 +810,6 @@ var Tributary = function() {
       this.$el.html(html);
       panel = d3.select("#panel");
       panel_gui = d3.selectAll("#file-list");
-      var pb_w = 60;
       var panel_buttons = panel_gui.selectAll("#file-list li").on("click", function(d) {
         tributary.events.trigger("show", this.dataset.name);
       });
@@ -1328,8 +1327,8 @@ var Tributary = function() {
       panel_gui_height: 31
     };
     tributary.events.on("resize", function() {
-      tributary.sw = 600;
-      tributary.sh = 600;
+      tributary.sw = $("#display").width() - $("#panel").width();
+      tributary.sh = $("#display").height();
       tributary.events.trigger("execute");
     });
     tributary.events.trigger("resize");
