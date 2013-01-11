@@ -18,9 +18,13 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1"/>
 	<!-- Adding "maximum-scale=1" fixes the Mobile Safari auto-zoom bug: http://filamentgroup.com/examples/iosScaleBug/ -->
 
-  <link rel="stylesheet" href="/static/css/trib-fontello.css">
-  <link rel="stylesheet" href="/static/css/animation.css">
-	<link href='http://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" href="/static/css/trib-fontello.css">
+<link rel="stylesheet" href="/static/css/animation.css">
+<link href='http://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+
+<!-- Add jQuery -->
+<script src="/static/lib/jquery-1.7.min.js"></script>
+
 
   <script type="text/javascript">
       var _gaq = _gaq || [];
@@ -99,7 +103,7 @@
 
 
 			<div id="config-content" style="display: none;">
-				<h4>Display <i class="explain-this-shit icon-help-circled"></i></h4>
+				<h4>Display <small><i class="explain-this-shit icon-help-circled"></i></small></h4>
 				<select>
 					<option value="svg">SVG</option>
 					<option value="canvas">Canvas</option>
@@ -107,12 +111,25 @@
 					<option value="html">HTML</option>
 				</select>
 
-				<h4>Time Controls <i class="explain-this-shit icon-help-circled"></i></h4>
+				<h4>Time Controls <small><i class="explain-this-shit icon-help-circled"></i></small></h4>
 				<button id="play">Play</button>
 				<button id="loop">Loop</button>
 				<button id="restart">Restart</button>
 			</div>
 		</section>
+
+		<script>
+		$("#config-toggle").on("click", function(){
+			$("#config-content").toggle();
+
+			if($("#config-toggle").text() == "Config"){
+				$("#config-toggle").text("Close Config")
+			}
+			else {
+				$("#config-toggle").text("Config")
+			}
+		})
+		</script>
 
 		<section id="code">
 
@@ -128,7 +145,6 @@
 
 <!-- Essential 3rd party libraries -->
 <script src="/static/lib/d3.min.js"></script>
-<script src="/static/lib/jquery-1.7.min.js"></script>
 <script src="/static/lib/underscore-min.js"></script>
 <script src="/static/lib/underscore.math.js"></script>
 <script src="/static/lib/backbone-min.js"></script>
