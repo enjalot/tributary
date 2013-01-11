@@ -450,10 +450,11 @@ section:last-child {
   background-color: #CDE338;
 }
 #panel #config {
+  display: none;
   z-index: 6;
   padding: 12px;
   position: fixed;
-  bottom: 0;
+  top: 0;
   margin-bottom: 0;
   border-top: 1px solid rgba(10, 10, 10, 0.2);
   background-color: rgba(255, 255, 255, 0.95);
@@ -461,12 +462,9 @@ section:last-child {
   text-align: center;
 }
 #code {
-  margin-top: 2.9em;
-  padding-top: 5em;
+  margin-top: 1.4em;
   height: 100%;
   width: 100%;
-  position: fixed;
-  bottom: 0;
   overflow-y: auto;
   overflow-x: auto;
 }
@@ -478,10 +476,6 @@ section:last-child {
 }
 #code .toolbar.hidden {
   display: none;
-}
-#code .settings {
-  position: absolute;
-  right: 2px;
 }
 /*		Tablet Layout: 768px.
 		Gutters: 24px.

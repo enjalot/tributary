@@ -257,6 +257,8 @@ section {
 }
 
 @panelwidth: 400px;
+@fileheight: 2.2em;
+
 #panel {
   padding-top: @titleheight;
   //width: 30%;
@@ -269,7 +271,6 @@ section {
   //overflow-y: hidden;
 
   background-color: white;
-
   #files {
         z-index: 6;
         position: fixed;
@@ -278,7 +279,7 @@ section {
         border-bottom: 2px solid rgba(0,0,0,0.1);
         margin-top: 0;
         background-color: rgba(245,245,245,0.1);
-        height: 2.2em;
+        height: @fileheight;
         overflow-y: auto;
         width: @panelwidth;
         overflow: hidden;
@@ -382,10 +383,11 @@ section {
 
 
   #config {
+    display: none;
     z-index: 6;
     padding: 12px;
     position: fixed;
-    bottom: 0;
+    top: 0;
     margin-bottom: 0;
     border-top: 1px solid rgba(10,10,10,0.2);
     background-color: rgba(255,255,255,0.95);
@@ -396,16 +398,17 @@ section {
 }
 #code {
   //padding: 12px;
-  margin-top: @titleheight - .6em;
-  padding-top: @titleheight + 1.5em;
+  margin-top: 1.4em;
+  //padding-top: @titleheight + 1.5em;
 
   //height: 80%;
   height: 100%;
   width: 100%;
-  position: fixed;
-  bottom: 0;
+
   overflow-y: auto;
   overflow-x: auto;
+
+
 
   .CodeMirror {
     height: 100%;
@@ -415,8 +418,7 @@ section {
     font-size: 11px;
   }
   .settings {
-    position: absolute;
-    right: 2px;
+
   }
 }
 
