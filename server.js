@@ -297,6 +297,7 @@ function after_fork(oldgist, newgist, token, callback) {
 
   var inlet_data = {
     gistid: newgist.id
+  , time: new Date()
   //, thumbnail: thumbnail_url
   }
  
