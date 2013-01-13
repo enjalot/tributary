@@ -428,6 +428,8 @@ function github_logout(req,res,next) {
 //app.get('/latest/edits')
 //app.get('/latest/forks')
 
+//app.get('/most/viewed')
+//app.get('/most/forked')
 
 
 app.listen(settings.port, function() {
