@@ -49,8 +49,8 @@ function index(req, res, next) {
   res.sendfile(__dirname + '/templates/index.html');
 };
 
-app.get("/svgopen2012", index);
-function index(req, res, next) {
+app.get("/svgopen2012", svgopen);
+function svgopen(req, res, next) {
   res.sendfile(__dirname + '/templates/svgopen2012.html');
 };
 
