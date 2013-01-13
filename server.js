@@ -59,28 +59,13 @@ function index(req, res, next) {
 app.get("/gist/:gistid", getgist_endpoint);
 function getgist_endpoint(req, res, next) {
   getgist(req.params.gistid, function(error, response, body) {
-    if (!error && response.statusCode == 200) {
+    if (!error && response.statusCode == 200) { 
       res.header("Content-Type", 'application/json');
       res.send(body);
     } else {
       res.send(response.statusCode);
     }
-  })
-  //record this visit
-  var visit = {
-    gistid: req.params.gistid
-  , time: new Date()
-  }
-  var user = req.session.user;
-  if(user) {
-    visit.user = {
-      id: user.id 
-    , login: user.login
-    }
-  }
-  $visits.insert(visit, function(err, res) { if(err) console.log(err) });
-
-
+  }) 
 }
 
 function getgist(gistid, callback) {
@@ -97,11 +82,27 @@ app.get('/inlet/:gistid', inlet)
 app.get('/tributary', inlet)
 app.get('/tributary/:gistid', inlet)
 function inlet(req,res,next) {
+  var gistid = req.params['gistid'];
+  var user = req.session.user;
+  if(gistid) {
+    //record this visit
+    var visit = {
+      gistid: gistid
+    , time: new Date()
+    }
+    if(user) {
+      visit.user = {
+        id: user.id 
+      , login: user.login
+      }
+    }
+    $visits.save(visit, function(err, res) { if(err) console.log(err) });
+  }
   var template = Handlebars.templates.inlet;
   var html = template({
-    user: req.session.user,
-    loggedin: req.session.user ? true : false,
-    gistid: req.params['gistid']
+    user: user,
+    loggedin: user ? true : false,
+    gistid: gistid
   });
   res.send(html);
 }
@@ -421,6 +422,12 @@ function github_logout(req,res,next) {
   }
   res.redirect(product + id);
 }
+
+
+//app.get('/latest/created')
+//app.get('/latest/edits')
+//app.get('/latest/forks')
+
 
 
 app.listen(settings.port, function() {
