@@ -24,6 +24,8 @@ var db = mongo.db(mongoConf.host + ':' + mongoConf.port + '/' + mongoConf.db + '
 var $users = db.collection("users");
 //collection where we store info on inlets that are created and saved
 var $inlets = db.collection("inlets");
+//collection where we store visits (specifically to particular inlets)
+var $visits = db.collection("visits");
 
 var app = express()
   .use(express.cookieParser())
@@ -64,6 +66,21 @@ function getgist_endpoint(req, res, next) {
       res.send(response.statusCode);
     }
   })
+  //record this visit
+  var visit = {
+    gistid: req.params.gistid
+  , time: new Date()
+  }
+  var user = req.session.user;
+  if(user) {
+    visit.user = {
+      id: user.id 
+    , login: user.login
+    }
+  }
+  $visits.insert(visit, function(err, res) { if(err) console.log(err) });
+
+
 }
 
 function getgist(gistid, callback) {
@@ -97,12 +114,10 @@ function save_endpoint(req,res,next) {
   var token = req.session.access_token;
   var gistid = req.params['gistid'];
   save(gistid, data, token, function(err, response) {
-    console.log("error, resp", err, response)
     if(!err) {
       //post save
       after_save(response, function(error, newgist) {
         if(!error) {
-          console.log("resp", newgist);
           return res.send(newgist);
         }
         res.send(error);
@@ -222,9 +237,7 @@ function save(gistid, data, token, callback) {
   }, onResponse)
 
   function onResponse(error, response, body) {
-    console.log("code", response.statusCode)
     if (!error && response.statusCode == 200) {
-      console.log("body", body)
       callback(null, JSON.parse(body));
     } else {
       callback(error, response.statusCode);
@@ -281,14 +294,43 @@ function after_fork(oldgist, newgist, token, callback) {
   
   //update/set raw url for thumbnail in config
 
+  var inlet_data = {
+    gistid: newgist.id
+  //, thumbnail: thumbnail_url
+  }
+ 
+  if(newgist.user) {
+    inlet_data.user = {
+      id: newgist.user.id
+      , login: newgist.user.login
+    }
+  }
+
+  //update mongo
+  if(oldgist) {
+    //this is a fork, update the old gist
+    inlet_data.parent = oldgist.id;    
+  }
+  $inlets.save(inlet_data, function(err, result) { if(err) console.error(err); });
+
   save(newgist.id, JSON.stringify(newgist), token, callback);
-
-
 }
 
 //post save functionality
 function after_save(gist, callback) {
   //update the raw url for the thumbnail
+
+  //save info in mongo
+  $inlets.update({ gistid: gist.id} , {
+    gistid: gist.id
+    , user: {
+      id: gist.user.id
+    , login: gist.user.login
+    }
+  , lastSave: new Date()
+  //,  thumbnail: thumbnail_url 
+  }, { upsert: true }, function(err, result) { if(err) console.error(err); });
+
   callback(null, gist);
 }
 
@@ -316,6 +358,12 @@ function github_authenticated(req,res,next) {
           if (!e && r.statusCode == 200) {
             //store info about the user in the session
             req.session.user = JSON.parse(b);
+            var user = req.session.user;
+            
+            $users.update({ id: user.id} 
+            , user
+            , { upsert: true }, function(err, result) { if(err) console.error(err); });
+
             
             //redirect to where the user was
             if(req.query.state && req.query.state !== "/undefined"){

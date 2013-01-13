@@ -303,7 +303,6 @@ function setup_header(ret){
     //$('title').html(info_string);
     $('#gist_info').html(info_string);
 
-    console.log("USER ID", ret.user.id, tributary.userid);
     if(ret.user.id !== tributary.userid) {
       //$("#savePanel").attr("disabled", "true");
       //$("#savePanel").attr("class", "off");

@@ -1529,7 +1529,6 @@ var Tributary = function() {
       }
       d3.select("title").text(ret.gist.description || "Tributary");
       $("#gist_info").html(info_string);
-      console.log("USER ID", ret.user.id, tributary.userid);
       if (ret.user.id !== tributary.userid) {
         $("#forkPanel").css("display", "none");
         $("#savePanel").attr("id", "forkPanel");
