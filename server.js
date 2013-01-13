@@ -68,7 +68,6 @@ app.get('/inlet/:gistid', inlet)
 app.get('/tributary', inlet)
 app.get('/tributary/:gistid', inlet)
 function inlet(req,res,next) {
-
   var template = Handlebars.templates.inlet;
   var html = template({
     user: req.session.user,
@@ -76,8 +75,9 @@ function inlet(req,res,next) {
     gistid: req.params['gistid']
   });
   res.send(html);
-
 }
+
+
 
 
 //Save an inlet
