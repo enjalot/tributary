@@ -1,0 +1,104 @@
+
+body {
+    width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#menu {
+    position: fixed;
+    top: 0px;
+    right: 0px;
+    width: 150px;
+}
+#menu ul{
+    list-style-type: none;
+    padding-top: 3px;
+    padding-bottom: 3px;
+}
+#menu a{
+    font-family: Open Sans;
+    font-size: 20px;
+    text-decoration: none;
+    color: white;
+    margin-left: 5px;
+}
+
+.view {
+    width: 900px;
+    float: left;
+    font-family: Open Sans;
+    margin-bottom: 100px;
+}
+.view a {
+    color: rgba(0, 0, 0, 0.5);
+}
+.title {
+    font-size: 30px;
+    font-weight: 800;
+}
+
+.first {
+    margin-left: 10px;
+}
+.next {
+    float: right;
+    margin-right: 10px;
+}
+
+iframe {
+    overflow: hidden;
+}
+/*
+
+
+var colors = {
+  "tributary": ["#0066b2", "#4D86B1"],
+  "delta": ["#00b5bd", "#53BABE"],
+  
+};
+ */
+
+#tributaryli {
+    background-color: #0066b2;
+}
+#tributary {
+    background-color: #4D86B1;
+}
+
+#deltali {
+    background-color: #00b5bd;
+}
+#delta {
+    background-color: #53BABE;
+}
+
+
+#cypressli {
+    background-color: #5c2d90;
+}
+#cypress {
+    background-color: #705291;
+}
+
+#bigfishli {
+    background-color: #F16FC8;
+}
+#bigfish {
+    background-color: #F0A5D8;
+}
+
+#flyli {
+    background-color: #BFB816;
+}
+#fly {
+    background-color: #BEBB74;
+}
+
+#curiosityli {
+    background-color: #CC2027;
+}
+#curiosity {
+    background-color: #CE6367;
+}
+

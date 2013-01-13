@@ -28,15 +28,13 @@ It's not too hard, just adding one endpoint to the backend, making a new templat
 If you want to have github authentication working you will need to setup a
 github app and fill out the settings.js (see settings-example.js)
 
-On the backend tributary only depends on Flask:
-```
-sudo easy_install flask
-```
+On the backend tributary only depends on node and mongodb:
 To deploy locally run
 ```
 git clone https://github.com/enjalot/tributary
 cd ./tributary
-python app.py
+npm install
+node server.js
 ```
 
 If you want to deploy behind apache, check out the sample apache config in server/sample_apache_config.txt
@@ -51,7 +49,9 @@ You need to compile the frontend code and templates using make:
 ```
 make
 ```
-You can check the Makefile to see how it's done with uglify and handlebars
+You can check the Makefile to see how it's done with uglify and handlebars.
+there is also a watch.sh bash script which will recompile the frontend code
+when any files change.
 
 
 

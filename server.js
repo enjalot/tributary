@@ -7,7 +7,6 @@ var request = require('request');
 GLOBAL.Handlebars = require('handlebars');
 require('./templates/server-templates');
 
-
 //SESSION SETUP
 var ONE_YEAR = 1000 * 60 * 60 * 24 * 365;
 var mongoConf = {
@@ -17,6 +16,14 @@ var mongoConf = {
   db: 'tributary'
 }
 
+//MONGO SETUP
+var mongo = require('mongoskin');
+var db = mongo.db(mongoConf.host + ':' + mongoConf.port + '/' + mongoConf.db + '?auto_reconnect');
+
+//collection to store some info on our users
+var $users = db.collection("users");
+//collection where we store info on inlets that are created and saved
+var $inlets = db.collection("inlets");
 
 var app = express()
   .use(express.cookieParser())
@@ -40,6 +47,12 @@ function index(req, res, next) {
   res.sendfile(__dirname + '/templates/index.html');
 };
 
+app.get("/svgopen2012", index);
+function index(req, res, next) {
+  res.sendfile(__dirname + '/templates/svgopen2012.html');
+};
+
+
 //API endpoint for fetching a gist from github
 app.get("/gist/:gistid", getgist_endpoint);
 function getgist_endpoint(req, res, next) {
@@ -57,7 +70,6 @@ function getgist(gistid, callback) {
   var url = 'https://api.github.com/gists/' + gistid
     + "?client_id=" + settings.GITHUB_CLIENT_ID 
     + "&client_secret=" + settings.GITHUB_CLIENT_SECRET;
-  console.log(url);
 
   request.get(url, callback);
 }
@@ -77,9 +89,6 @@ function inlet(req,res,next) {
   res.send(html);
 }
 
-
-
-
 //Save an inlet
 app.post('/tributary/save', save_endpoint)
 app.post('/tributary/save/:gistid', save_endpoint)
@@ -88,10 +97,12 @@ function save_endpoint(req,res,next) {
   var token = req.session.access_token;
   var gistid = req.params['gistid'];
   save(gistid, data, token, function(err, response) {
+    console.log("error, resp", err, response)
     if(!err) {
       //post save
       after_save(response, function(error, newgist) {
         if(!error) {
+          console.log("resp", newgist);
           return res.send(newgist);
         }
         res.send(error);
@@ -191,6 +202,7 @@ function newgist(data, token, callback) {
     }
   }
 }
+
 function save(gistid, data, token, callback) {
   //USER saves over existing gist
   var url = 'https://api.github.com/gists/' + gistid
@@ -201,17 +213,21 @@ function save(gistid, data, token, callback) {
     , 'Authorization': 'token ' + token
   };
 
+  var string = data.toString();
+
   request(url,{
-    body: JSON.stringify(data),
+    body: string,
     method: method,
     headers: headers
   }, onResponse)
 
   function onResponse(error, response, body) {
+    console.log("code", response.statusCode)
     if (!error && response.statusCode == 200) {
+      console.log("body", body)
       callback(null, JSON.parse(body));
     } else {
-      callback(error, null);
+      callback(error, response.statusCode);
     }
   }    
 }
@@ -265,7 +281,7 @@ function after_fork(oldgist, newgist, token, callback) {
   
   //update/set raw url for thumbnail in config
 
-  save(newgist.id, newgist, token, callback);
+  save(newgist.id, JSON.stringify(newgist), token, callback);
 
 
 }
