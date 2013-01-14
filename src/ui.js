@@ -83,8 +83,13 @@ tributary.ui.setup = function() {
     tributary.sw = tributary.dims.display_width;
     tributary.sh = tributary.dims.display_height;
     */
+    if($("#display").width() > 767) {
+      tributary.sw = $("#display").width() - $("#panel").width();
+    }
+    else {
+      tributary.sw = $("#display").width();
+    }
 
-    tributary.sw = $("#display").width() - $("#panel").width();
     tributary.sh = $("#display").height();
 
     tributary.events.trigger("execute");

@@ -35,8 +35,10 @@ tributary.FilesView = Backbone.View.extend({
 
     filelist.enter()
     .append("li")
-      .text(function(d,i){
-        return d.filename
+      .html(function(d,i){
+        var fileTabText = d.filename
+        fileTabText += ' <i class="icon-cancel delete-file"></i>'
+        return fileTabText
       })
     .attr("class", function(d){
         return "file "+"filetype-"+d.type
@@ -45,7 +47,7 @@ tributary.FilesView = Backbone.View.extend({
     filelist.exit().remove()
 
     //setup the event handlers for the file tabs
-    var fvs = d3.select(this.el).selectAll("li.fv")
+    var fvs = d3.select(this.el).selectAll("li")
     fvs.on("click", function(d) {
       var filename = this.dataset.filename;
       if(that.model) {
@@ -56,11 +58,6 @@ tributary.FilesView = Backbone.View.extend({
       tributary.events.trigger("show", "edit");
     });
 
-    fvs.attr("class", function(d,i){
-      var filetype = this.dataset.filename.split(".")[1]
-
-      return "fv type-"+filetype;
-    })
 
     //delete
     fvs.select(".delete-file")

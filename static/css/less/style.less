@@ -3,7 +3,7 @@
   by Joni Korpi
   License: http://opensource.org/licenses/mit-license.php */
 
-/*	Resets   */
+/*  Resets   */
 /* apply a natural box layout model to all elements */
 /* from http://paulirish.com/2012/box-sizing-border-box-ftw/ */
 * { -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box; }
@@ -13,11 +13,11 @@ html { -webkit-font-smoothing: antialiased; }
 
 
 pre {
-	padding: 15px;
-	white-space: pre; /* CSS2 */
-	white-space: pre-wrap; /* CSS 2.1 */
-	white-space: pre-line; /* CSS 3 (and 2.1 as well, actually) */
-	word-wrap: break-word; /* IE */
+  padding: 15px;
+  white-space: pre; /* CSS2 */
+  white-space: pre-wrap; /* CSS 2.1 */
+  white-space: pre-line; /* CSS 3 (and 2.1 as well, actually) */
+  word-wrap: break-word; /* IE */
 }
 
 /* hand cursor on clickable input elements */
@@ -30,9 +30,9 @@ dl, dt, dd, ol, ul, li, fieldset, form, label, legend,
 table, caption, tbody, tfoot, thead, tr, th, td,
 article, aside, canvas, details, figure, figcaption, hgroup,
 menu, footer, header, nav, section, summary, time, mark, audio, video {
-	margin: 0;
-	padding: 0;
-	border: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
 }
 
 article, aside, canvas, figure, figure img, figcaption, hgroup,
@@ -40,8 +40,8 @@ footer, header, nav, section, audio, video { display: block; }
 
 a img {border: 0;}
 
-/*	Color variables
-	------------------	*/
+/*  Color variables
+  ------------------  */
 
 @fontcolor: #333333;
 @bgcolor: #e6e6e6;
@@ -53,44 +53,44 @@ a img {border: 0;}
 
 /* Selection colours (easy to forget) */
 
-::selection 	 	{background: @highlight;}
-::-moz-selection 	{background: @highlight;}
-img::selection 		{background: transparent;}
-img::-moz-selection	{background: transparent;}
+::selection     {background: @highlight;}
+::-moz-selection  {background: @highlight;}
+img::selection    {background: transparent;}
+img::-moz-selection {background: transparent;}
 body {-webkit-tap-highlight-color: @highlight;}
 
 em { background: fade(@highlight, 50%); }
 
-/*	Typography presets
-	------------------	*/
+/*  Typography presets
+  ------------------  */
 .huge, h1 {
-	color: darken(@fontcolor, 35%);
-	font-size: 3.75em;
-	line-height: 1.1em;
-	letter-spacing: -1px;
-	font-weight: 800;
-	margin-bottom: 18px;
+  color: darken(@fontcolor, 35%);
+  font-size: 3.75em;
+  line-height: 1.1em;
+  letter-spacing: -1px;
+  font-weight: 800;
+  margin-bottom: 18px;
 }
 .large, h2 {
-	color: darken(@fontcolor, 12%);
-	font-size: 2.75em;
-	line-height: 2em;
-	font-weight: 800;
-	line-height: 1.5em;
-	margin-bottom: 8px;
+  color: darken(@fontcolor, 12%);
+  font-size: 2.75em;
+  line-height: 2em;
+  font-weight: 800;
+  line-height: 1.5em;
+  margin-bottom: 8px;
 }
 .bigger, h3 {
-	color: darken(@fontcolor, 10%);
-	font-size: 1.75em;
-	line-height: 1.5em;
-	font-weight: 800;
+  color: darken(@fontcolor, 10%);
+  font-size: 1.75em;
+  line-height: 1.5em;
+  font-weight: 800;
     margin: 8px 0;
 }
 .big, h4 {
-	color: darken(@fontcolor, 7%);
-	font-size: 1.5em;
-	line-height: 1.5em;
-	font-weight: 700;
+  color: darken(@fontcolor, 7%);
+  font-size: 1.5em;
+  line-height: 1.5em;
+  font-weight: 700;
     margin: 8px 0;
 }
 .small, small {
@@ -101,34 +101,34 @@ em { background: fade(@highlight, 50%); }
 
 // Font sizes for mobile
 @media only screen and (max-width: 767px) {
-	.huge, h1 {
-    	font-size: 2.5em;
-    	line-height: 1.1em;
-    	margin-bottom: 12px;
+  .huge, h1 {
+      font-size: 2.5em;
+      line-height: 1.1em;
+      margin-bottom: 12px;
     }
 
     .large, h2 {
-    	color: darken(@fontcolor, 12%);
-    	font-size: 2em;
-    	line-height: 1.3em;
-    	font-weight: 800;
-    	line-height: 1.4em;
-    	margin-bottom: 6px;
+      color: darken(@fontcolor, 12%);
+      font-size: 2em;
+      line-height: 1.3em;
+      font-weight: 800;
+      line-height: 1.4em;
+      margin-bottom: 6px;
     }
 
     .bigger, h3 {
-    	color: darken(@fontcolor, 10%);
-    	font-size: 1.75em;
-    	line-height: 1.2em;
-    	font-weight: 800;
+      color: darken(@fontcolor, 10%);
+      font-size: 1.75em;
+      line-height: 1.2em;
+      font-weight: 800;
         margin: 6px 0;
     }
 
     .big, h4 {
-    	color: darken(@fontcolor, 7%);
-    	font-size: 1.4em;
-    	line-height: 1.5em;
-    	font-weight: 700;
+      color: darken(@fontcolor, 7%);
+      font-size: 1.4em;
+      line-height: 1.5em;
+      font-weight: 700;
         margin: 8px 0;
     }
 }
@@ -142,10 +142,10 @@ p {
 
 
 
-/*		Default Layout: 992px.
-		Gutters: 24px.
-		Outer margins: 48px.
-		Leftover space for scrollbars @1024px: 32px.
+/*    Default Layout: 992px.
+    Gutters: 24px.
+    Outer margins: 48px.
+    Leftover space for scrollbars @1024px: 32px.
 -------------------------------------------------------------------------------
 cols    1     2      3      4      5      6      7      8      9      10
 px      68    160    252    344    436    528    620    712    804    896    */
@@ -159,10 +159,10 @@ body {
 
   height: 100%;
   line-height: 1.45em;
-  font-size: 1.3em;
+  font-size: 1.2em;
   //max-width: 896px;
   width: 100%;
-  padding: 32px 48px 84px;
+  padding: 32px 12px;
   background: @bgcolor;
   color: @fontcolor;
   -webkit-text-size-adjust: 100%; /* Stops Mobile Safari from auto-adjusting font-sizes */
@@ -175,12 +175,19 @@ body {
 }
 
 a {
-	&:link{
-		color: @linkcolor;
-	 	.transition(0.24s, ease-in-out);
-	}
-	&:hover { color: darken(@linkcolor, 10%); }
-	&:visited { color: darken(@linkcolor, 15%); }
+  &:link{
+    color: @linkcolor;
+    .transition(0.24s, ease-in-out);
+  }
+  &:hover { color: darken(@linkcolor, 10%); }
+  &:visited { color: darken(@linkcolor, 15%); }
+}
+
+.inlet_slider {
+  z-index: 9;
+  a {
+    .transition(0.01s, linear)
+  }
 }
 
 section {
@@ -205,6 +212,11 @@ section {
 
   font-size: 0.8em;
   text-align: center;
+
+  -webkit-box-shadow:0 2px 3px 0 rgba(0,0,0,0.2); /* Saf3.0+, Chrome */
+     -moz-box-shadow:0 2px 3px 0 rgba(0,0,0,0.2); /* FF3.5+ */
+          box-shadow:0 2px 3px 0 rgba(0,0,0,0.2); /* Opera 10.5, IE 9.0 */
+
 
   h1 {
     display: inline-block;
@@ -248,6 +260,7 @@ section {
   }
 }
 #display {
+  border-radius: 6px;
   z-index: 0;
   width: 100%;
   height: 100%;
@@ -256,26 +269,33 @@ section {
   left: 0;
 }
 
-@panelwidth: 400px;
-@fileheight: 2.2em;
+@panelwidth: 35%;
+@fileheight: 2.4em;
 
 #panel {
   padding-top: @titleheight;
   //width: 30%;
   width: @panelwidth;
-  min-width: @panelwidth;
+  //min-width: 300px;
   position: fixed;
   right: 0;
   bottom: 0;
   height: 100%;
   //overflow-y: hidden;
 
+  border-radius: 10px15;
+
   background-color: white;
+
+  -webkit-box-shadow:-3px 0 6px 1px rgba(0,0,0,0.15); /* Saf3.0+, Chrome */
+     -moz-box-shadow:-3px 0 6px 1px rgba(0,0,0,0.15); /* FF3.5+ */
+          box-shadow:-3px 0 6px 1px rgba(0,0,0,0.15); /* Opera 10.5, IE 9.0 */
+
   #files {
         z-index: 6;
         position: fixed;
-        top: @titleheight - .6em;
-        padding: 2px 4px;
+        top: @titleheight - .7em;
+        padding: 6px 4px;
         border-bottom: 2px solid rgba(0,0,0,0.1);
         margin-top: 0;
         background-color: rgba(245,245,245,0.1);
@@ -293,9 +313,9 @@ section {
         background-image: linear-gradient(top, rgba(235, 235, 235, 1.00), rgba(255, 255, 255, 0.16));
         filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,StartColorStr='#ebebeb', EndColorStr='#ffffff');
 
-        -webkit-box-shadow:inset 0 -4px 1em 1px rgba(5,5,5,0.3); /* Saf3.0+, Chrome */
-           -moz-box-shadow:inset 0 -4px 1em 1px rgba(5,5,5,0.3); /* FF3.5+ */
-                box-shadow:inset 0 -4px 1em 1px rgba(5,5,5,0.3); /* Opera 10.5, IE 9.0 */
+        -webkit-box-shadow:inset 0 -4px 1em 1px rgba(5,5,5,0.15); /* Saf3.0+, Chrome */
+           -moz-box-shadow:inset 0 -4px 1em 1px rgba(5,5,5,0.15); /* FF3.5+ */
+                box-shadow:inset 0 -4px 1em 1px rgba(5,5,5,0.15); /* Opera 10.5, IE 9.0 */
 
 
         //width: 100%;
@@ -323,8 +343,8 @@ section {
       opacity: 0.8;
       cursor: pointer;
       display: inline-block;
-      border: 1px solid #CCC;
-      padding: 2px 6px;
+      border: none;
+      padding: 3px 7px;
       line-height: 1.5em;
       border-radius: 4px;
       margin: 2px 1px;
@@ -362,6 +382,7 @@ section {
               box-shadow:0 1px 2px 0 rgba(0,0,0,0.2); /* Opera 10.5, IE 9.0 */
     }
     #add-file {
+      display: none;
       /*
       position: fixed;
       top: @titleheight + 0.4em;
@@ -383,22 +404,28 @@ section {
 
 
   #config {
-    display: none;
+    font-size: 11px;
+    //display: none;
     z-index: 6;
-    padding: 12px;
+    padding: 2px;
     position: fixed;
-    top: 0;
+    bottom: 0;
     margin-bottom: 0;
     border-top: 1px solid rgba(10,10,10,0.2);
     background-color: rgba(255,255,255,0.95);
 
     width: @panelwidth;
     text-align: center;
+
+    button {
+      font-size: 1em;
+    }
   }
 }
 #code {
   //padding: 12px;
-  margin-top: 1.4em;
+  margin-top: 1.6em;
+
   //padding-top: @titleheight + 1.5em;
 
   //height: 80%;
@@ -412,13 +439,14 @@ section {
 
   .CodeMirror {
     height: 100%;
+    margin-bottom: 40px;
   }
   .toolbar {
     &.hidden { display: none;}
     font-size: 11px;
   }
   .settings {
-
+    display: none;
   }
 }
 
@@ -428,23 +456,24 @@ section {
 
 
 
-/*		Tablet Layout: 768px.
-		Gutters: 24px.
-		Outer margins: 28px.
-		Inherits styles from: Default Layout.
+/*    Tablet Layout: 768px.
+    Gutters: 24px.
+    Outer margins: 28px.
+    Inherits styles from: Default Layout.
 -----------------------------------------------------------------
 cols    1     2      3      4      5      6      7      8
 px      68    160    252    344    436    528    620    712    */
 
 @media only screen and (min-width: 768px) and (max-width: 991px) {
-/*
-	body {
-		max-width: 712px;
-		width: 80%;
-		padding: 32px 28px 60px;
-		font-size: 1.1em;
-	}
-*/
+
+  body {
+    //max-width: 712px;
+    //width: 80%;
+    //padding: 32px 28px 60px;
+    padding: none;
+    font-size: 1.1em;
+  }
+
 
 
 }
@@ -459,28 +488,69 @@ px      68    160    252    344    436    528    620    712    */
 
 
 
-/*		Mobile Layout: 320px.
-		Gutters: 24px.
-		Outer margins: 34px.
-		Inherits styles from: Default Layout.
+/*    Mobile Layout: 320px.
+    Gutters: 24px.
+    Outer margins: 34px.
+    Inherits styles from: Default Layout.
 ---------------------------------------------
 cols    1     2      3
 px      68    160    252    */
 
 @media only screen and (max-width: 767px) {
-/*
-	body {
-		width: 252px;
-		padding: 24px 34px 60px;
 
-		font-size: 1em;
-		line-height: 1.5em;
-	}
-*/
+  body {
+    //width: 252px;
+    //padding: 24px 34px 60px;
+    width: 100%;
+    padding: none;
+    height: auto;
+    font-size: 1em;
+    line-height: 1.5em;
+  }
+
   #title {
     h1 {
+      display: none;
       top: .2em;
     }
+
+    #inlet-author {
+      display: none;
+    }
+  }
+
+  #display {
+    position:relative;
+    width: 100%;
+  }
+  #panel {
+  //height: 400px;
+  width: 100%;
+  padding-top: 0;
+  position:relative;
+
+  -webkit-box-shadow:0 0 8px 1px rgba(0,0,0,0.2); /* Saf3.0+, Chrome */
+     -moz-box-shadow:0 0 8px 1px rgba(0,0,0,0.2); /* FF3.5+ */
+          box-shadow:0 0 8px 1px rgba(0,0,0,0.2); /* Opera 10.5, IE 9.0 */
+
+  border-radius: 10px;
+  #files {
+    top: 0;
+    position: relative;
+    width: 100%;
+  }
+  #config {
+    border-top: none;
+    position: relative;
+    width: 100%;
+  }
+  #code {
+    margin-top: 2px;
+
+    .CodeMirror {
+      margin-bottom: 0;
+    }
+  }
   }
 }
 
@@ -496,21 +566,21 @@ px      68    160    252    */
 
 
 
-/*		Wide Mobile Layout: 480px.
-		Gutters: 24px.
-		Outer margins: 22px.
-		Inherits styles from: Default Layout, Mobile Layout.
+/*    Wide Mobile Layout: 480px.
+    Gutters: 24px.
+    Outer margins: 22px.
+    Inherits styles from: Default Layout, Mobile Layout.
 ------------------------------------------------------------
 cols    1     2      3      4      5
 px      68    160    252    344    436    */
 
 @media only screen and (min-width: 480px) and (max-width: 767px) {
-/*
-	body {
-		width: 436px;
-		padding: 8px 10px;
-	}
-*/
+
+  body {
+    //width: 436px;
+    padding: none;
+  }
+
 }
 
 

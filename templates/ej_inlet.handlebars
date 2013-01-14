@@ -43,10 +43,13 @@
 <link rel="stylesheet" href="/static/lib/CodeMirror3/lib/codemirror.css">
 <link rel="stylesheet" href="/static/lib/CodeMirror3/lib/util/dialog.css">
 <link rel="stylesheet" href="/static/lib/CodeMirror3/theme/night.css">
-<link rel="stylesheet" href="/static/lib/CodeMirror3/theme/lesser-dark.css">
 <link rel="stylesheet" href="/static/lib/CodeMirror3/theme/vibrant-ink.css">
 <link rel="stylesheet" href="/static/lib/CodeMirror3/theme/ambiance.css">
 <link rel="stylesheet" href="/static/lib/CodeMirror3/theme/elegant.css">
+
+<!-- Add EJ modified lesser dark -->
+<link rel="stylesheet" href="/static/lib/CodeMirror3/theme/ej.css">
+
 
 <link rel='stylesheet' type='text/css' href='http://yui.yahooapis.com/2.9.0/build/reset/reset-min.css' />
 <link rel='stylesheet' type='text/css' href='/static/lib/slider/css/humanity/jquery-ui-slider.css' />
@@ -96,6 +99,8 @@
 		<section id="files">
 			<ul id="file-list">
 			</ul>
+			<li id="add-file">+</li>
+
 		</section>
 
 		<section id="config" >
@@ -218,7 +223,7 @@ tb.ui.assemble("{{ gistid }}");
 
 
 
-
+<script>document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1"></' + 'script>')</script>
 
 
 

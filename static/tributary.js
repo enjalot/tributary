@@ -1115,13 +1115,15 @@ var Tributary = function() {
       }
       console.log("CONTEXT", contexts);
       var filelist = d3.select("#file-list").selectAll("li").data(contexts);
-      filelist.enter().append("li").text(function(d, i) {
-        return d.filename;
+      filelist.enter().append("li").html(function(d, i) {
+        var fileTabText = d.filename;
+        fileTabText += ' <i class="icon-cancel delete-file"></i>';
+        return fileTabText;
       }).attr("class", function(d) {
         return "file " + "filetype-" + d.type;
       });
       filelist.exit().remove();
-      var fvs = d3.select(this.el).selectAll("li.fv");
+      var fvs = d3.select(this.el).selectAll("li");
       fvs.on("click", function(d) {
         var filename = this.dataset.filename;
         if (that.model) {
@@ -1132,10 +1134,6 @@ var Tributary = function() {
           ctx.model.trigger("show");
         }
         tributary.events.trigger("show", "edit");
-      });
-      fvs.attr("class", function(d, i) {
-        var filetype = this.dataset.filename.split(".")[1];
-        return "fv type-" + filetype;
       });
       fvs.select(".delete-file").style("z-index", 1e3).on("click", function() {
         var dataset = this.parentNode.dataset;
@@ -1328,7 +1326,11 @@ var Tributary = function() {
       panel_gui_height: 31
     };
     tributary.events.on("resize", function() {
-      tributary.sw = $("#display").width() - $("#panel").width();
+      if ($("#display").width() > 767) {
+        tributary.sw = $("#display").width() - $("#panel").width();
+      } else {
+        tributary.sw = $("#display").width();
+      }
       tributary.sh = $("#display").height();
       tributary.events.trigger("execute");
     });
