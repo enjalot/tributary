@@ -90,6 +90,11 @@ tributary.ui.setup = function() {
       tributary.sw = $("#display").width();
     }
 
+    if ( $("#container").hasClass("fullscreen") ){
+      console.log("Fullscreen")
+      tributary.sw = $("#display").width();
+    }
+
     tributary.sh = $("#display").height();
 
     tributary.events.trigger("execute");
