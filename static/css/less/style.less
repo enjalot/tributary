@@ -420,6 +420,12 @@ section {
     button {
       font-size: 1em;
     }
+
+    .config-content {
+      border-bottom: 2px solid #e6e6e6;
+      margin-bottom: 1.4em;
+      padding-bottom: 0.5em;
+    }
   }
 }
 #code {
@@ -450,6 +456,52 @@ section {
   }
 }
 
+#library-checklist {
+  li {
+    text-align: left;
+
+    width: 28%;
+    margin: 8px 10px;
+    display: inline-block;
+  }
+}
+
+
+
+.fullscreen {
+  #panel {
+    display: none;
+  }
+  #display {
+    width: 100%;
+    height: 100%;
+  }
+  #title {
+    background-color: transparent;
+    box-shadow: none;
+
+    text-shadow:rgba(5, 5, 5, 0.8) 0px 1px 1px;
+
+    /*background-color: #212121;*/
+    background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(33, 33, 33, 1.00)), to(rgba(255, 255, 255, 0.00)));
+    background-image: -webkit-linear-gradient(top, rgba(33, 33, 33, 1.00), rgba(255, 255, 255, 0.00));
+    background-image: -moz-linear-gradient(top, rgba(33, 33, 33, 1.00), rgba(255, 255, 255, 0.00));
+    background-image: -o-linear-gradient(top, rgba(33, 33, 33, 1.00), rgba(255, 255, 255, 0.00));
+    background-image: -ms-linear-gradient(top, rgba(33, 33, 33, 1.00), rgba(255, 255, 255, 0.00));
+    background-image: linear-gradient(top, rgba(33, 33, 33, 1.00), rgba(255, 255, 255, 0.00));
+    filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,StartColorStr='#212121', EndColorStr='#ffffff');
+
+    opacity: 0.5;
+
+    .transition(.8s, ease-out);
+
+    &:hover {
+      opacity: 1;
+    }
+
+
+  }
+}
 
 
 
@@ -552,8 +604,15 @@ px      68    160    252    */
     }
   }
   }
-}
 
+
+
+  .fullscreen {
+    #title {
+      opacity: 1;
+    }
+  }
+}
 
 
 
@@ -727,6 +786,12 @@ input[type=checkbox],
    height: 1.25em;
    -webkit-border-radius: 0.25em;
    vertical-align: text-top;
+ }
+
+ input[type=checkbox]:checked {
+  background-color: #333333;
+  background-image: none;
+  border: 2px solid black;
  }
 input[type=radio] {
     -webkit-border-radius: 2em; /* Make radios round */

@@ -492,6 +492,11 @@ section:last-child {
 #panel #config button {
   font-size: 1em;
 }
+#panel #config .config-content {
+  border-bottom: 2px solid #e6e6e6;
+  margin-bottom: 1.4em;
+  padding-bottom: 0.5em;
+}
 #code {
   margin-top: 1.6em;
   height: 100%;
@@ -511,6 +516,40 @@ section:last-child {
 }
 #code .settings {
   display: none;
+}
+#library-checklist li {
+  text-align: left;
+  width: 28%;
+  margin: 8px 10px;
+  display: inline-block;
+}
+.fullscreen #panel {
+  display: none;
+}
+.fullscreen #display {
+  width: 100%;
+  height: 100%;
+}
+.fullscreen #title {
+  background-color: transparent;
+  box-shadow: none;
+  text-shadow: rgba(5, 5, 5, 0.8) 0px 1px 1px;
+  /*background-color: #212121;*/
+
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#212121), to(rgba(255, 255, 255, 0)));
+  background-image: -webkit-linear-gradient(top, #212121, rgba(255, 255, 255, 0));
+  background-image: -moz-linear-gradient(top, #212121, rgba(255, 255, 255, 0));
+  background-image: -o-linear-gradient(top, #212121, rgba(255, 255, 255, 0));
+  background-image: -ms-linear-gradient(top, #212121, rgba(255, 255, 255, 0));
+  background-image: linear-gradient(top, #212121, rgba(255, 255, 255, 0));
+  filter: progid:dximagetransform.microsoft.gradient(GradientType=0, StartColorStr='#212121', EndColorStr='#ffffff');
+  opacity: 0.5;
+  -webkit-transition: all 0.8s ease-out;
+  -moz-transition: all 0.8s ease-out;
+  transition: all 0.8s ease-out;
+}
+.fullscreen #title:hover {
+  opacity: 1;
 }
 /*    Tablet Layout: 768px.
     Gutters: 24px.
@@ -581,6 +620,9 @@ px      68    160    252    */
   }
   #panel #code .CodeMirror {
     margin-bottom: 0;
+  }
+  .fullscreen #title {
+    opacity: 1;
   }
 }
 /*    Wide Mobile Layout: 480px.
@@ -732,6 +774,11 @@ input[type=radio] {
   height: 1.25em;
   -webkit-border-radius: 0.25em;
   vertical-align: text-top;
+}
+input[type=checkbox]:checked {
+  background-color: #333333;
+  background-image: none;
+  border: 2px solid black;
 }
 input[type=radio] {
   -webkit-border-radius: 2em;

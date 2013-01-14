@@ -88,7 +88,11 @@
       {{else}}
       <button id="loginPanel">Log in <i class="icon-github"></i></button>
       {{/if}}
+
+      	<button id="exit-fullscreen" style="display: none;">Exit fullscreen</button>
+
 		</section>
+
 	</header>
 
 	<section id="display">
@@ -105,9 +109,7 @@
 
 		<section id="config" >
 			<button id="config-toggle">Config</button>
-
-
-			<div id="config-content" style="display: none;">
+			<div id="config-content" class="config-content" style="display: none;">
 				<h4>Display <small><i class="explain-this-shit icon-help-circled"></i></small></h4>
 				<select>
 					<option value="svg">SVG</option>
@@ -121,6 +123,19 @@
 				<button id="loop">Loop</button>
 				<button id="restart">Restart</button>
 			</div>
+
+			<button id="library-toggle">Add libraries</button>
+				<div id="library-content" class="config-content" style="display: none;">
+					<ul id="library-checklist">
+					<li> <input type="checkbox" checked="checked"/> Underscore </li>
+					<li> <input type="checkbox" checked="checked"/> D3 </li>
+					<li> <input type="checkbox" /> Tabletop </li>
+					<li> <input type="checkbox" /> Paper.js </li>
+					<li> <input type="checkbox" /> Kartogram </li>
+					<li> <input type="checkbox" /> TopoJSON </li>
+				</div>
+
+			<button id="fullscreen">Fullscreen</button>
 		</section>
 
 		<script>
@@ -133,6 +148,26 @@
 			else {
 				$("#config-toggle").text("Config")
 			}
+		})
+
+		$("#library-toggle").on("click", function(){
+			$("#library-content").toggle();
+
+			if($("#library-toggle").text() == "Add libraries"){
+				$("#library-toggle").text("Close libraries")
+			}
+			else {
+				$("#library-toggle").text("Add libraries")
+			}
+		})
+
+		$("#fullscreen").on("click", function(){
+			$("#container").addClass("fullscreen")
+			$("#exit-fullscreen").show();
+		})
+		$("#exit-fullscreen").on("click", function(){
+			$("#exit-fullscreen").hide();
+			$("#container").removeClass("fullscreen")
 		})
 		</script>
 
