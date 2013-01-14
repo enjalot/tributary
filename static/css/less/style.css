@@ -276,6 +276,7 @@ a:visited {
   -webkit-transition: all 0.01s linear;
   -moz-transition: all 0.01s linear;
   transition: all 0.01s linear;
+  outline: none;
 }
 section {
   margin: 12px 0;
@@ -560,7 +561,7 @@ cols    1     2      3      4      5      6      7      8
 px      68    160    252    344    436    528    620    712    */
 @media only screen and (min-width: 768px) and (max-width: 991px) {
   body {
-    padding: none;
+    padding: 0;
     font-size: 1.1em;
   }
 }
@@ -574,10 +575,13 @@ px      68    160    252    */
 @media only screen and (max-width: 767px) {
   body {
     width: 100%;
-    padding: none;
+    padding: 0;
     height: auto;
     font-size: 1em;
     line-height: 1.5em;
+  }
+  #title {
+    position: relative;
   }
   #title h1 {
     display: none;
@@ -586,7 +590,12 @@ px      68    160    252    */
   #title #inlet-author {
     display: none;
   }
+  #title #login {
+    position: relative;
+  }
   #display {
+    top: 0;
+    margin-top: 0;
     position: relative;
     width: 100%;
   }

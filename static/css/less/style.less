@@ -186,7 +186,8 @@ a {
 .inlet_slider {
   z-index: 9;
   a {
-    .transition(0.01s, linear)
+    .transition(0.01s, linear);
+    outline: none;
   }
 }
 
@@ -522,8 +523,9 @@ px      68    160    252    344    436    528    620    712    */
     //max-width: 712px;
     //width: 80%;
     //padding: 32px 28px 60px;
-    padding: none;
+    padding: 0;
     font-size: 1.1em;
+    background-color: blue;
   }
 
 
@@ -558,9 +560,11 @@ px      68    160    252    */
     height: auto;
     font-size: 1em;
     line-height: 1.5em;
+
   }
 
   #title {
+    position: relative;
     h1 {
       display: none;
       top: .2em;

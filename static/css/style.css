@@ -2,7 +2,7 @@
   http://lessframework.com
   by Joni Korpi
   License: http://opensource.org/licenses/mit-license.php */
-/*	Resets   */
+/*  Resets   */
 /* apply a natural box layout model to all elements */
 /* from http://paulirish.com/2012/box-sizing-border-box-ftw/ */
 * {
@@ -129,8 +129,8 @@ video {
 a img {
   border: 0;
 }
-/*	Color variables
-	------------------	*/
+/*  Color variables
+  ------------------  */
 /* Highlight color, when user selects text */
 /* Link color, hover/visited will be generated from this */
 /* Selection colours (easy to forget) */
@@ -152,8 +152,8 @@ body {
 em {
   background: rgba(255, 249, 162, 0.5);
 }
-/*	Typography presets
-	------------------	*/
+/*  Typography presets
+  ------------------  */
 .huge,
 h1 {
   color: #000000;
@@ -230,10 +230,10 @@ small {
 p {
   margin: 0.6em 0;
 }
-/*		Default Layout: 992px.
-		Gutters: 24px.
-		Outer margins: 48px.
-		Leftover space for scrollbars @1024px: 32px.
+/*    Default Layout: 992px.
+    Gutters: 24px.
+    Outer margins: 48px.
+    Leftover space for scrollbars @1024px: 32px.
 -------------------------------------------------------------------------------
 cols    1     2      3      4      5      6      7      8      9      10
 px      68    160    252    344    436    528    620    712    804    896    */
@@ -276,6 +276,7 @@ a:visited {
   -webkit-transition: all 0.01s linear;
   -moz-transition: all 0.01s linear;
   transition: all 0.01s linear;
+  outline: none;
 }
 section {
   margin: 12px 0;
@@ -551,33 +552,36 @@ section:last-child {
 .fullscreen #title:hover {
   opacity: 1;
 }
-/*		Tablet Layout: 768px.
-		Gutters: 24px.
-		Outer margins: 28px.
-		Inherits styles from: Default Layout.
+/*    Tablet Layout: 768px.
+    Gutters: 24px.
+    Outer margins: 28px.
+    Inherits styles from: Default Layout.
 -----------------------------------------------------------------
 cols    1     2      3      4      5      6      7      8
 px      68    160    252    344    436    528    620    712    */
 @media only screen and (min-width: 768px) and (max-width: 991px) {
   body {
-    padding: none;
+    padding: 0;
     font-size: 1.1em;
   }
 }
-/*		Mobile Layout: 320px.
-		Gutters: 24px.
-		Outer margins: 34px.
-		Inherits styles from: Default Layout.
+/*    Mobile Layout: 320px.
+    Gutters: 24px.
+    Outer margins: 34px.
+    Inherits styles from: Default Layout.
 ---------------------------------------------
 cols    1     2      3
 px      68    160    252    */
 @media only screen and (max-width: 767px) {
   body {
     width: 100%;
-    padding: none;
+    padding: 0;
     height: auto;
     font-size: 1em;
     line-height: 1.5em;
+  }
+  #title {
+    position: relative;
   }
   #title h1 {
     display: none;
@@ -586,7 +590,12 @@ px      68    160    252    */
   #title #inlet-author {
     display: none;
   }
+  #title #login {
+    position: relative;
+  }
   #display {
+    top: 0;
+    margin-top: 0;
     position: relative;
     width: 100%;
   }
@@ -625,10 +634,10 @@ px      68    160    252    */
     opacity: 1;
   }
 }
-/*		Wide Mobile Layout: 480px.
-		Gutters: 24px.
-		Outer margins: 22px.
-		Inherits styles from: Default Layout, Mobile Layout.
+/*    Wide Mobile Layout: 480px.
+    Gutters: 24px.
+    Outer margins: 22px.
+    Inherits styles from: Default Layout, Mobile Layout.
 ------------------------------------------------------------
 cols    1     2      3      4      5
 px      68    160    252    344    436    */
