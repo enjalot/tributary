@@ -4,7 +4,7 @@ tributary.ui = {};
 var display, panel_gui, panel, panel_handle, page, header;
 tributary.ui.setup = function() {
   //UI calculations, we control the dimensions of our various ui components with JS
-  
+
   //keep track of the screen width and height
   //display is the element where things get rendered into
 
@@ -14,17 +14,17 @@ tributary.ui.setup = function() {
 
   display = d3.select("#display");
   //panel holds the editors, and other controls
-  panel = d3.select(".tb_panel");
+  panel = d3.select("#panel");
   //ui container for panel tabs (config/edit)
   panel_gui = d3.selectAll("div.tb_panel_gui");
   //ui container for file tabs
-  panelfile_gui = d3.select(".tb_panelfiles_gui");
+  panelfile_gui = d3.select("#file-list");
   //the ui element for resizing the panel
   panel_handle = d3.select(".tb_panel_handle");
-  
-  
-  page = d3.select("#page");
-  header = d3.select("#header");
+
+
+  page = d3.select("#container");
+  header = d3.select("#title");
 
   tributary.dims = {
     display_percent: 0.70,
@@ -39,9 +39,11 @@ tributary.ui.setup = function() {
     //panelfiles_gui_height: 31
   };
 
+
   //We control the layout of our UI completely with code, otherwise we are forcing CSS
   //to do something it wasn't meant to do, make an application...
   tributary.events.on("resize", function() {
+    /*
     var min_width = parseInt(panel.style("min-width"), 10);
     tributary.dims.page_width = parseInt(page.style("width"), 10);
     //if the panel width goes below the minimum width, don't resize
@@ -80,6 +82,20 @@ tributary.ui.setup = function() {
 
     tributary.sw = tributary.dims.display_width;
     tributary.sh = tributary.dims.display_height;
+    */
+    if($("#display").width() > 767) {
+      tributary.sw = $("#display").width() - $("#panel").width();
+    }
+    else {
+      tributary.sw = $("#display").width();
+    }
+
+    if ( $("#container").hasClass("fullscreen") ){
+      console.log("Fullscreen")
+      tributary.sw = $("#display").width();
+    }
+
+    tributary.sh = $("#display").height();
 
     tributary.events.trigger("execute");
   });
@@ -91,13 +107,13 @@ tributary.ui.setup = function() {
       var dx = d3.event.dx/tributary.dims.page_width;
       if(tributary.dims.display_percent + dx >= 0.0 && tributary.dims.display_percent + dx <= 1) {
         tributary.dims.display_percent += dx;
-      } 
+      }
      tributary.events.trigger("resize");
     })
   panel_handle.call(ph_drag);
 
 
-  
+
 };
 
 
@@ -142,7 +158,6 @@ function _assemble(ret) {
   if(tributary.endpoint) {
     endpoint = tributary.endpoint;
   }
-
   if(endpoint === "delta") {
     config.set("display", "svg");
     config.set("play", true);
@@ -163,13 +178,13 @@ function _assemble(ret) {
     config.set("display", "webgl");
     config.set("play", true);
     config.set("autoinit", true);
-    
+
   } else if (endpoint === "bigfish") {
     config.set("display", "svg");
     config.set("play", true);
     config.set("autoinit", false);
     config.set("restart", true);
-    
+
   } else if (endpoint === "fly") {
     config.set("display", "canvas");
     config.set("play", true);
@@ -188,7 +203,7 @@ function _assemble(ret) {
   //endpoint is for backwards compatibility
   //we shouldn't save it from now on
   config.set("endpoint", "");
-  
+
   var edit = panel.select(".tb_edit");
   tributary.edit = edit;
 
@@ -242,7 +257,7 @@ function _assemble(ret) {
 
   //fill in the file view
   var files_view = new tributary.FilesView({
-    el: ".tb_files",
+    el: "#file-list",
     model: config,
   });
   files_view.render();
@@ -274,7 +289,7 @@ function _assemble(ret) {
   } else {
     tributary.events.trigger("showpanel");
   }
-} 
+}
 
 function setup_header(ret){
 
@@ -283,26 +298,34 @@ function setup_header(ret){
   if(ret.user) {
     var gist_uid = ret.user.id;
 
-    /* TODO: setup editing of description as well as a save button */
+    /* TODO: setup editing of description as well as a save button
     if(gist_uid === tributary.userid) {
       //make editable description
       var info_string = '<input id="gist-title" value="' + ret.gist.description + '" > by <!-- ya boy -->';
     }
     else {
       //make the description and attribution
-      var info_string = '"<span id="gist-title-static"><a href="' + ret.gist.html_url + '">' + ret.gist.description + '</a></span>" by ';        
+      var info_string = '"<span id="gist-title-static"><a href="' + ret.gist.html_url + '">' + ret.gist.description + '</a></span>" by ';
     }
 
     if(ret.user.url === "") {
       info_string += ret.user.login;
     } else {
       info_string += '<a href="' + ret.user.url + '">' + ret.user.login + '</a>';
-    }    
-    
-    d3.select("title").text(ret.gist.description || "Tributary")
-    //$('title').html(info_string);
-    $('#gist_info').html(info_string);
+    }
+    */
+    console.log("RET", ret)
+    $("#inlet-author").text(ret.user.login)
+    $("#inlet-title").text(ret.gist.description)
+    $("#avatar").attr("src", function(d){
+      return "http://2.gravatar.com/avatar/"+ret.user.gravatar_id
+    })
 
+    d3.select("title").text("Tributary | "+ret.gist.description || "Tributary")
+    //$('title').html(info_string);
+    //$('#gist_info').html(info_string);
+
+    /*
     if(ret.user.id !== tributary.userid) {
       //$("#savePanel").attr("disabled", "true");
       //$("#savePanel").attr("class", "off");
@@ -317,20 +340,24 @@ function setup_header(ret){
       //$("#savePanel").attr("class", "off");
       //$("#forkPanel").attr("disabled", "true");
       //$("#forkPanel").attr("class", "minimal_off");
-      
+
       //$('#forkPanel').hide();
       $('#forkPanel').css("display", "none");
       $('#savePanel').attr("id", "forkPanel");
       setup_save(ret.config);
     }
+
+   */
   }
-  
+
   $("#gist-title").on("keyup", function(){
-      //console.log($("#gist-title").val());  
+      //console.log($("#gist-title").val());
       ret.config.set("description", $("#gist-title").val())
       d3.select("title").text($("#gist-title").val())
-  })  
+  })
+
 }
+
 
 function setup_save(config) {
   //Setup the save panel
@@ -355,11 +382,12 @@ function setup_save(config) {
   });
   //Setup the login button
   $('#loginPanel').on('click', function(e) {
+    alert("log in pressed");
     tributary.login_gist(tributary.loggedin, function(newurl, newgist) {
       window.onunload = false;
       window.onbeforeunload = false;
       window.location = newurl;
-    }); 
+    });
   });
 }
 

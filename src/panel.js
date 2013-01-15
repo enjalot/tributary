@@ -9,7 +9,7 @@ tributary.PanelView = Backbone.View.extend({
   render: function() {
     var that = this;
 
-    var panel_data = ["edit", "config"]; 
+    var panel_data = ["edit", "config"];
 
     var template = Handlebars.templates.panel;
     var html = template(panel_data);
@@ -17,20 +17,22 @@ tributary.PanelView = Backbone.View.extend({
     this.$el.html(html);
 
     //panel holds the editors, and other controls
-    panel = d3.select(".tb_panel");
+    panel = d3.select("#panel");
     //ui container for panel tabs (config/edit)
-    panel_gui = d3.selectAll("div.tb_panel_gui");
+    panel_gui = d3.selectAll("#file-list");
 
     ////////////////////////////////////////////////////////////////////////
     // Setup the Panel GUI for switching between windows in the panel
     ////////////////////////////////////////////////////////////////////////
-    
-    var pb_w = 60; //width of each button
-    var panel_buttons = panel_gui.selectAll("div.pb")
+
+    //var pb_w = 60; //width of each button
+
+
+    var panel_buttons = panel_gui.selectAll("#file-list li")
     .on("click", function(d) {
       tributary.events.trigger("show", this.dataset.name);
     })
-   
+
     //Logic for tabs
     tributary.events.on("show", function(name) {
       //hide all panel divs
@@ -48,44 +50,44 @@ tributary.PanelView = Backbone.View.extend({
         .classed("gui_active", true);
     });
     tributary.events.trigger("show", "edit");
-    
-    
+
+
     // Logic for hiding panel?
-    
+    /*
     $('.tb_hide-panel-button').on("click", function(){
         tributary.events.trigger("hidepanel");
-        
+
         $('#display').addClass("fullscreen")
         $('svg').addClass("fullscreen")
-        
+
         $('#header').addClass("dimheader");
-        
+
     })
     $('#show-codepanel-button').on("click", function(){
         tributary.events.trigger("showpanel");
         $('#display').removeClass("fullscreen");
         $('svg').removeClass("fullscreen")
-        
+
         $('#header').removeClass("dimheader");
     })
-    
+
     tributary.events.on("hidepanel", function(){
-        
+
         $(".tb_panel").hide();
         $(".tb_panel_gui").hide();
         $(".tb_panel_handle").hide();
         $(".tb_panelfiles_gui").hide();
 
         $('#show-codepanel').show();
-        
+
         //we want to save the panel show/hide in the config
         if(tributary.__config__) {
           tributary.__config__.set("hidepanel", true);
         }
     })
-    
+
     tributary.events.on("showpanel", function(){
-        
+
         $(".tb_panel").show();
         $(".tb_panel_gui").show();
         $(".tb_panel_handle").show();
@@ -96,10 +98,10 @@ tributary.PanelView = Backbone.View.extend({
         if(tributary.__config__) {
           tributary.__config__.set("hidepanel", false);
         }
-        
+
     })
 
-
+    */
   },
 });
 

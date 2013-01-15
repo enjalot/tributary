@@ -1,4 +1,3 @@
-
 tributary.make_editor = function(options) {
   //Creates a editor from a model and optional editor container
   //{
@@ -16,6 +15,8 @@ tributary.make_editor = function(options) {
     container = editorParent.append("div")
       .attr("id", model.cid);
   }
+
+  container = d3.select("#code")
 
   var editor;
   editor = new tributary.Editor({
