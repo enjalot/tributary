@@ -119,7 +119,7 @@ function save_endpoint(req,res,next) {
     if(!err) {
       //post save
       after_save(response, function(error, newgist) {
-        if(!error) {
+        if(!error && newgist) {
           return res.send(newgist);
         }
         res.send(error);
@@ -147,6 +147,7 @@ function fork_endpoint(req,res,next) {
     console.log("creating new gist");
     newgist(data, token, function (err, response) {
       if(!err) {
+        if(!user) return res.send(response);
         console.log("after fork");
         after_fork(undefined, response, token, function(error, newgist) {
           if(!error) {
@@ -284,9 +285,12 @@ function after_fork(oldgist, newgist, token, callback) {
   } finally {
   }
 
+  var user = newgist.user;
+  var name = "anon";
+  if(newgist.user) name = newgist.user.login;
   var markdown = "[ <a href=\"http://tributary.io/inlet/" + newgist.id +"\">Launch: " + newgist.description + "</a> ] " 
     + newgist.id 
-    + " by " + newgist.user.login 
+    + " by " + name
     + "<br>"
 
   markdown += gist_hist;

@@ -293,7 +293,6 @@ function _assemble(ret) {
 
 function setup_header(ret){
 
-  setup_save(ret.config);
 
   if(ret.user) {
     var gist_uid = ret.user.id;
@@ -314,7 +313,7 @@ function setup_header(ret){
       info_string += '<a href="' + ret.user.url + '">' + ret.user.login + '</a>';
     }
     */
-    console.log("RET", ret)
+    //console.log("RET", ret)
     $("#inlet-author").text(ret.user.login)
     $("#inlet-title").text(ret.gist.description)
     $("#avatar").attr("src", function(d){
@@ -322,6 +321,20 @@ function setup_header(ret){
     })
 
     d3.select("title").text("Tributary | "+ret.gist.description || "Tributary")
+
+    if(ret.user.id !== tributary.userid) {
+      $('#fork').css("display", "none");
+      ret.config.saveType = "fork";
+    } else {
+      $('#fork').css("display", "");
+    }
+  } else {
+     //if the user is not logged in, or no gist we use fork
+    if(isNaN(tributary.userid) || !ret.gist) {
+      $('#fork').css("display", "none");
+      ret.config.saveType = "fork";
+    }
+  }
     //$('title').html(info_string);
     //$('#gist_info').html(info_string);
 
@@ -348,7 +361,8 @@ function setup_header(ret){
     }
 
    */
-  }
+  
+  setup_save(ret.config);
 
   $("#gist-title").on("keyup", function(){
       //console.log($("#gist-title").val());
@@ -361,20 +375,24 @@ function setup_header(ret){
 
 function setup_save(config) {
   //Setup the save panel
-  $('#savePanel').off("click");
-  $('#savePanel').on('click', function(e) {
+  $('#save').off("click");
+  $('#save').on('click', function(e) {
     console.log("saving!")
     d3.select("#syncing").style("display", "block");
-    tributary.save_gist(config, "save", function(newurl, newgist) {
+    tributary.save_gist(config, config.saveType, function(newurl, newgist) {
       d3.select("#syncing").style("display", "none");
-      //window.location = newurl;
+      if(config.saveType === "fork") {
+        window.onunload = false;
+        window.onbeforeunload = false;
+        window.location = newurl;
+      }
     });
   });
-  $('#forkPanel').off("click");
-  $('#forkPanel').on('click', function(e) {
+  $('#fork').off("click");
+  $('#fork').on('click', function(e) {
     console.log("forking!")
     d3.select("#syncing").style("display", "block");
-    tributary.save_gist(config, "fork", function(newurl, newgist) {
+    tributary.save_gist(config, config.saveType, function(newurl, newgist) {
       window.onunload = false;
       window.onbeforeunload = false;
       window.location = newurl;
@@ -382,7 +400,6 @@ function setup_save(config) {
   });
   //Setup the login button
   $('#loginPanel').on('click', function(e) {
-    alert("log in pressed");
     tributary.login_gist(tributary.loggedin, function(newurl, newgist) {
       window.onunload = false;
       window.onbeforeunload = false;

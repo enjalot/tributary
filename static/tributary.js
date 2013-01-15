@@ -1468,43 +1468,57 @@ var Tributary = function() {
     }
   }
   function setup_header(ret) {
-    setup_save(ret.config);
     if (ret.user) {
       var gist_uid = ret.user.id;
-      console.log("RET", ret);
       $("#inlet-author").text(ret.user.login);
       $("#inlet-title").text(ret.gist.description);
       $("#avatar").attr("src", function(d) {
         return "http://2.gravatar.com/avatar/" + ret.user.gravatar_id;
       });
       d3.select("title").text("Tributary | " + ret.gist.description || "Tributary");
+      if (ret.user.id !== tributary.userid) {
+        $("#fork").css("display", "none");
+        ret.config.saveType = "fork";
+      } else {
+        $("#fork").css("display", "");
+      }
+    } else {
+      if (isNaN(tributary.userid) || !ret.gist) {
+        $("#fork").css("display", "none");
+        ret.config.saveType = "fork";
+      }
     }
+    setup_save(ret.config);
     $("#gist-title").on("keyup", function() {
       ret.config.set("description", $("#gist-title").val());
       d3.select("title").text($("#gist-title").val());
     });
   }
   function setup_save(config) {
-    $("#savePanel").off("click");
-    $("#savePanel").on("click", function(e) {
+    $("#save").off("click");
+    $("#save").on("click", function(e) {
       console.log("saving!");
       d3.select("#syncing").style("display", "block");
-      tributary.save_gist(config, "save", function(newurl, newgist) {
+      tributary.save_gist(config, config.saveType, function(newurl, newgist) {
         d3.select("#syncing").style("display", "none");
+        if (config.saveType === "fork") {
+          window.onunload = false;
+          window.onbeforeunload = false;
+          window.location = newurl;
+        }
       });
     });
-    $("#forkPanel").off("click");
-    $("#forkPanel").on("click", function(e) {
+    $("#fork").off("click");
+    $("#fork").on("click", function(e) {
       console.log("forking!");
       d3.select("#syncing").style("display", "block");
-      tributary.save_gist(config, "fork", function(newurl, newgist) {
+      tributary.save_gist(config, config.saveType, function(newurl, newgist) {
         window.onunload = false;
         window.onbeforeunload = false;
         window.location = newurl;
       });
     });
     $("#loginPanel").on("click", function(e) {
-      alert("log in pressed");
       tributary.login_gist(tributary.loggedin, function(newurl, newgist) {
         window.onunload = false;
         window.onbeforeunload = false;
