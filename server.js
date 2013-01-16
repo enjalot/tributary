@@ -426,14 +426,110 @@ function github_logout(req,res,next) {
   res.redirect(product + id);
 }
 
+//API
 
-//app.get('/latest/created')
-//app.get('/latest/edits')
-//app.get('/latest/forks')
+app.get('/api/latest/created', latest_created)
+function latest_created(req, res, next) {
+  var query = {};
+  //TODO: pagination
+  var limit = 200;
+  $inlets.find(query, {limit: limit}).sort({ time: -1 }).toArray(function(err, inlets) {
+    if(err) res.send(err);
+    res.send(inlets);
+  })
+}
+app.get('/api/latest/forks', latest_forks)
+function latest_forks(req, res, next) {
+  var query = {
+    parent: {$exists: true}
+  };
+  //TODO: pagination
+  var limit = 200;
+  $inlets.find(query, {limit: limit}).sort({ time: -1 }).toArray(function(err, inlets) {
+    if(err) res.send(err);
+    res.send(inlets);
+  })
+}
+
+app.get('/api/users', api_users) 
+function api_users(req,res,next) {
+  var query = {};
+  //TODO: pagination
+  var limit = 200;
+  var fields = {
+    name: 1,
+    login: 1,
+    avatar_url: 1,
+    html_url: 1,
+  }
+  var opts = {
+    limit: limit
+  }
+  //TODO: make sure this is secure in the future
+  $users.find(query, fields, opts).sort({ time: 1 }).toArray(function(err, users) {
+    if(err) res.send(err);
+    res.send(users);
+  })
+
+}
+
+
+app.get('/api/user/:login/latest', user_latest)
+function user_latest(req,res,next) {
+  var query = { "user.login": req.params.login };
+  //TODO: pagination
+  var limit = 200;
+  $inlets.find(query, {limit: limit}).sort({ time: -1 }).toArray(function(err, inlets) {
+    if(err) res.send(err);
+    res.send(inlets);
+  })
+}
+
+//Reporting API
+app.get('/api/counts/inlets', counts_inlets) 
+app.get('/api/counts/inlets/:start/:end', counts_inlets) 
+function counts_inlets(req,res,next) {
+  var start = req.params.start || new Date(new Date() - (24 * 60 * 60 * 1000));
+  var end = req.params.end || new Date();
+  var query = dateQuery(start, end);
+  //TODO: pagination
+  var limit = 200;
+  $inlets.count(query, {limit: limit}, function(err, ninlets) {
+    if(err) res.send(err);
+    res.send({
+      start: start,
+      end: end,
+      count:ninlets
+    });
+  });
+}
+app.get('/api/counts/visits', counts_visits) 
+app.get('/api/counts/visits/:start/:end', counts_visits) 
+function counts_visits(req,res,next) {
+  var start = req.params.start || new Date(new Date() - (24 * 60 * 60 * 1000));
+  var end = req.params.end || new Date();
+  var query = dateQuery(start, end);
+  //TODO: pagination
+  var limit = 200;
+  $visits.count(query, {limit: limit}, function(err, nvisits) {
+    if(err) res.send(err);
+    res.send({
+      start: start,
+      end: end,
+      count:nvisits
+    });
+  });
+}
 
 //app.get('/most/viewed')
 //app.get('/most/forked')
 
+function dateQuery(start, end) {
+  var query = {
+    $and: [ { time: { $gt: new Date(start)}}, { time:{ $lte: new Date(end)}}],
+  }
+  return query;
+}
 
 app.listen(settings.port, function() {
   console.log("tributary running on port", settings.port);
