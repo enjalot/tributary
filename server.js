@@ -338,9 +338,9 @@ function after_save(gist, callback) {
     mgist.user = {
       id: gist.user.id
     , login: gist.user.login
-    , lastSave: new Date()
     //,  thumbnail: thumbnail_url 
     }
+    mgist.lastSave = new Date();
     $inlets.update({ gistid: gist.id}, mgist, {upsert:true}, function(err, result) { if(err) console.error(err); });
   })
   callback(null, gist);
