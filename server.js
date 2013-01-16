@@ -326,17 +326,24 @@ function after_fork(oldgist, newgist, token, callback) {
 function after_save(gist, callback) {
   //update the raw url for the thumbnail
 
-  //save info in mongo
-  $inlets.update({ gistid: gist.id} , {
-    gistid: gist.id
-    , user: {
+  //save info in mongo.
+  //if gist doesn't exist in mongo, we create it, otherwise we update it.
+  $inlets.findOne({gistid: gist.id}, function(err, mgist) {
+    console.log("err", err, "gist", mgist);
+    if(!mgist) {
+      mgist = { 
+        gistid: gist.id,
+        time: new Date()
+      }
+    }
+    mgist.user = {
       id: gist.user.id
     , login: gist.user.login
+    , lastSave: new Date()
+    //,  thumbnail: thumbnail_url 
     }
-  , lastSave: new Date()
-  //,  thumbnail: thumbnail_url 
-  }, { upsert: true }, function(err, result) { if(err) console.error(err); });
-
+    $inlets.update({ gistid: gist.id}, mgist, {upsert:true}, function(err, result) { if(err) console.error(err); });
+  })
   callback(null, gist);
 }
 
