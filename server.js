@@ -30,7 +30,7 @@ var $visits = db.collection("visits");
 var app = express()
   .use(express.cookieParser())
   .use(express.bodyParser())
-  .use(express.session({ 
+  .use(express.session({
     secret: settings.SECRET,
     cookie: {maxAge: ONE_YEAR},
     store: new MongoStore(mongoConf)
@@ -70,7 +70,7 @@ function getgist_endpoint(req, res, next) {
 
 function getgist(gistid, callback) {
   var url = 'https://api.github.com/gists/' + gistid
-    + "?client_id=" + settings.GITHUB_CLIENT_ID 
+    + "?client_id=" + settings.GITHUB_CLIENT_ID
     + "&client_secret=" + settings.GITHUB_CLIENT_SECRET;
 
   request.get(url, callback);
@@ -118,7 +118,7 @@ function save_endpoint(req,res,next) {
     if(!err) {
       //post save
       after_save(response, function(error, newgist) {
-        if(!error) {
+        if(!error && newgist) {
           return res.send(newgist);
         }
         res.send(error);
@@ -134,7 +134,7 @@ function save_endpoint(req,res,next) {
 app.post('/tributary/fork', fork_endpoint)
 app.post('/tributary/fork/:gistid', fork_endpoint)
 function fork_endpoint(req,res,next) {
-  var data = req.body.gist; 
+  var data = req.body.gist;
   var token = req.session.access_token;
   var user = req.session.user;
   var gistid = req.params['gistid'];
@@ -146,6 +146,7 @@ function fork_endpoint(req,res,next) {
     console.log("creating new gist");
     newgist(data, token, function (err, response) {
       if(!err) {
+        if(!user) return res.send(response);
         console.log("after fork");
         after_fork(undefined, response, token, function(error, newgist) {
           if(!error) {
@@ -243,7 +244,7 @@ function save(gistid, data, token, callback) {
     } else {
       callback(error, response.statusCode);
     }
-  }    
+  }
 }
 
 //Fork an inlet
@@ -269,7 +270,7 @@ function fork(gistid, data, token, callback) {
     } else {
       callback(error, null);
     }
-  }    
+  }
 }
 
 //post save functionality
@@ -283,9 +284,12 @@ function after_fork(oldgist, newgist, token, callback) {
   } finally {
   }
 
+  var user = newgist.user;
+  var name = "anon";
+  if(newgist.user) name = newgist.user.login;
   var markdown = "[ <a href=\"http://tributary.io/inlet/" + newgist.id +"\">Launch: " + newgist.description + "</a> ] " 
     + newgist.id 
-    + " by " + newgist.user.login 
+    + " by " + name
     + "<br>"
 
   markdown += gist_hist;
@@ -348,15 +352,15 @@ function github_authenticated(req,res,next) {
 
     // request an access token
     request({
-      url:'https://github.com/login/oauth/access_token', 
+      url:'https://github.com/login/oauth/access_token',
       json: data,
       headers: headers
     }, function(error, response, body) {
       if (!error && response.statusCode == 200) {
         var access_token = body.access_token;
         req.session.access_token = access_token;
-    
-        request("https://api.github.com/user?access_token=" + access_token, function(e,r,b){ 
+
+        request("https://api.github.com/user?access_token=" + access_token, function(e,r,b){
           if (!e && r.statusCode == 200) {
             //store info about the user in the session
             req.session.user = JSON.parse(b);
@@ -365,8 +369,6 @@ function github_authenticated(req,res,next) {
             $users.update({ id: user.id} 
             , user
             , { upsert: true }, function(err, result) { if(err) console.error(err); });
-
-            
             //redirect to where the user was
             if(req.query.state && req.query.state !== "/undefined"){
               res.redirect(req.query.state)
@@ -387,8 +389,8 @@ app.get('/github-login/:product', github_login)
 app.get('/github-login/:product/:id', github_login)
 function github_login(req,res,next) {
   var product, id;
-  var url = "https://github.com/login/oauth/authorize?client_id=" 
-      + settings.GITHUB_CLIENT_ID 
+  var url = "https://github.com/login/oauth/authorize?client_id="
+      + settings.GITHUB_CLIENT_ID
       + "&scope=gist";
 
   if(req.params['product']) {
@@ -436,5 +438,3 @@ function github_logout(req,res,next) {
 app.listen(settings.port, function() {
   console.log("tributary running on port", settings.port);
 });
-
-
