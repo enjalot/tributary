@@ -27,7 +27,7 @@ tributary.FilesView = Backbone.View.extend({
     */
 
     //$(this.el).html(template(context));
-    console.log("CONTEXT", contexts)
+    //console.log("CONTEXT", contexts)
 
     var filelist = d3.select("#file-list")
     .selectAll("li")

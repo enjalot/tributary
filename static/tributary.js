@@ -1113,7 +1113,6 @@ var Tributary = function() {
         contexts.splice(contexts.indexOf(inlet), 1);
         contexts.unshift(inlet);
       }
-      console.log("CONTEXT", contexts);
       var filelist = d3.select("#file-list").selectAll("li").data(contexts);
       filelist.enter().append("li").html(function(d, i) {
         var fileTabText = d.filename;
