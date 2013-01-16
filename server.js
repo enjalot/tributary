@@ -329,7 +329,6 @@ function after_save(gist, callback) {
   //save info in mongo.
   //if gist doesn't exist in mongo, we create it, otherwise we update it.
   $inlets.findOne({gistid: gist.id}, function(err, mgist) {
-    console.log("err", err, "gist", mgist);
     if(!mgist) {
       mgist = { 
         gistid: gist.id,
