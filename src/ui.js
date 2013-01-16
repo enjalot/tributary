@@ -8,8 +8,8 @@ tributary.ui.setup = function() {
   //keep track of the screen width and height
   //display is the element where things get rendered into
 
-  tributary.panel = new tributary.PanelView({el: ".tb_panel"});
-  tributary.panel.render();
+  //tributary.panel = new tributary.PanelView({el: ".tb_panel"});
+  //tributary.panel.render();
 
 
   display = d3.select("#display");
@@ -204,7 +204,7 @@ function _assemble(ret) {
   //we shouldn't save it from now on
   config.set("endpoint", "");
 
-  var edit = panel.select(".tb_edit");
+  var edit = d3.select("#code");
   tributary.edit = edit;
 
   ret.models.each(function(m) {
@@ -248,12 +248,6 @@ function _assemble(ret) {
     }
   });
 
-  //fill in the config view
-  var config_view = new tributary.ConfigView({
-    el: ".tb_config",
-    model: config,
-  });
-  config_view.render();
 
   //fill in the file view
   var files_view = new tributary.FilesView({
@@ -261,6 +255,15 @@ function _assemble(ret) {
     model: config,
   });
   files_view.render();
+
+  /*
+  //fill in the config view
+  var config_view = new tributary.ConfigView({
+    el: ".tb_config",
+    model: config,
+  });
+  config_view.render();
+  */
 
   //fill in the control view (Config pane)
   var controls_view = new tributary.ControlsView({

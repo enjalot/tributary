@@ -742,6 +742,9 @@ var Tributary = function() {
       this.model.on("change:code", function() {
         tributary.events.trigger("execute");
       });
+      this.model.on("delete", function() {
+        d3.select(this.el).remove();
+      }, this);
     },
     execute: function() {
       try {
@@ -808,16 +811,10 @@ var Tributary = function() {
       var template = Handlebars.templates.panel;
       var html = template(panel_data);
       this.$el.html(html);
-      panel = d3.select("#panel");
-      panel_gui = d3.selectAll("#file-list");
-      var panel_buttons = panel_gui.selectAll("#file-list li").on("click", function(d) {
-        tributary.events.trigger("show", this.dataset.name);
-      });
+      var panel = d3.select("#panel");
       tributary.events.on("show", function(name) {
         $(".tb_panel").children(".panel").css("display", "none");
         panel.select(".tb_" + name).style("display", "");
-        panel_gui.selectAll("div.pb").classed("gui_active", false);
-        panel_gui.select(".tb_" + name + "_tab").classed("gui_active", true);
       });
       tributary.events.trigger("show", "edit");
     }
@@ -830,7 +827,6 @@ var Tributary = function() {
     } else {
       container = editorParent.append("div").attr("id", model.cid);
     }
-    container = d3.select("#code");
     var editor;
     editor = new tributary.Editor({
       el: container.node(),
@@ -1113,28 +1109,22 @@ var Tributary = function() {
         contexts.splice(contexts.indexOf(inlet), 1);
         contexts.unshift(inlet);
       }
-      var filelist = d3.select("#file-list").selectAll("li").data(contexts);
-      filelist.enter().append("li").html(function(d, i) {
-        var fileTabText = d.filename;
-        fileTabText += ' <i class="icon-cancel delete-file"></i>';
-        return fileTabText;
-      }).attr("class", function(d) {
-        return "file " + "filetype-" + d.type;
-      });
-      filelist.exit().remove();
-      var fvs = d3.select(this.el).selectAll("li");
-      fvs.on("click", function(d) {
+      $(this.el).html(template({
+        contexts: contexts
+      }));
+      var filelist = d3.select("#file-list").selectAll("li.file");
+      filelist.on("click", function(d) {
         var filename = this.dataset.filename;
         if (that.model) {
           var ctx = _.find(tributary.__config__.contexts, function(d) {
             return d.model.get("filename") === filename;
           });
+          console.log("FOUND", ctx, ctx.model.get("filename"));
           that.model.trigger("hide");
           ctx.model.trigger("show");
         }
-        tributary.events.trigger("show", "edit");
       });
-      fvs.select(".delete-file").style("z-index", 1e3).on("click", function() {
+      filelist.select(".delete-file").style("z-index", 1e3).on("click", function() {
         var dataset = this.parentNode.dataset;
         var filename = dataset.filename;
         var name = dataset.filename.split(".")[0];
@@ -1151,7 +1141,7 @@ var Tributary = function() {
           tributary.__config__.todelete = [];
         }
         tributary.__config__.todelete.push(filename);
-        d3.select(".tb_files").selectAll("div.fv").each(function() {
+        d3.select(that.el).selectAll("li.file").each(function() {
           if (this.dataset.filename === filename) {
             $(this).remove();
           }
@@ -1160,7 +1150,8 @@ var Tributary = function() {
         othertab.trigger("show");
         d3.event.stopPropagation();
       });
-      var plus = d3.select(this.el).selectAll("div.plus").on("click", function() {
+      var plus = d3.select(this.el).select(".add-file").on("click", function() {
+        console.log("SUP");
         var input = d3.select(this).select("input").style("display", "inline-block");
         input.node().focus();
         input.on("keypress", function() {
@@ -1183,12 +1174,8 @@ var Tributary = function() {
               });
               context.model.trigger("show");
               editor.cm.focus();
-              fvs.attr("class", function(d, i) {
-                var filetype = this.dataset.filename.split(".")[1];
-                return "fv type-" + filetype;
-              });
             } else {
-              input.classed("input_error", true);
+              input.classed("error", true);
             }
           }
         });
@@ -1302,10 +1289,6 @@ var Tributary = function() {
   tributary.ui = {};
   var display, panel_gui, panel, panel_handle, page, header;
   tributary.ui.setup = function() {
-    tributary.panel = new tributary.PanelView({
-      el: ".tb_panel"
-    });
-    tributary.panel.render();
     display = d3.select("#display");
     panel = d3.select("#panel");
     panel_gui = d3.selectAll("div.tb_panel_gui");
@@ -1405,7 +1388,7 @@ var Tributary = function() {
       config.set("display", "svg");
     }
     config.set("endpoint", "");
-    var edit = panel.select(".tb_edit");
+    var edit = d3.select("#code");
     tributary.edit = edit;
     ret.models.each(function(m) {
       type = m.get("type");
@@ -1435,11 +1418,6 @@ var Tributary = function() {
         tributary.autoinit = config.get("autoinit");
       }
     });
-    var config_view = new tributary.ConfigView({
-      el: ".tb_config",
-      model: config
-    });
-    config_view.render();
     var files_view = new tributary.FilesView({
       el: "#file-list",
       model: config

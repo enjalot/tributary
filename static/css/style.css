@@ -375,7 +375,7 @@ section:last-child {
   background-color: rgba(245, 245, 245, 0.1);
   height: 2.4em;
   overflow-y: auto;
-  width: 35%;
+  width: 100%;
   overflow: hidden;
   background-color: transparent;
   /*background-color: #ebebeb;*/
@@ -399,7 +399,7 @@ section:last-child {
 }
 #panel #file-list {
   height: 100%;
-  width: 35%;
+  width: 100%;
   white-space: nowrap;
   overflow-x: scroll;
   overflow-y: hidden;
@@ -452,16 +452,24 @@ section:last-child {
   /* Opera 10.5, IE 9.0 */
 
 }
-#panel #file-list #add-file {
-  display: none;
-  /*
-      position: fixed;
-      top: @titleheight + 0.4em;
-      right: 6px;
-      */
-
-  width: 32px;
+#panel #file-list .delete-file {
+  z-index: 1000;
+}
+#panel #file-list .add-file {
+  min-width: 32px;
   text-align: center;
+}
+#panel #file-list .add-file input {
+  width: 62px;
+  color: white;
+  background-color: transparent;
+  outline: none;
+  border: 0px solid transparent;
+  border-bottom: 1px solid #999;
+  padding: 1px 4px;
+}
+#panel #file-list .add-file input.error {
+  border-bottom: 1px solid red;
 }
 #panel #file-list .filetype-js {
   background-color: #0CADE4;
@@ -504,6 +512,9 @@ section:last-child {
   width: 100%;
   overflow-y: auto;
   overflow-x: auto;
+}
+#code .editor {
+  height: 100%;
 }
 #code .CodeMirror {
   height: 100%;

@@ -20,47 +20,27 @@ tributary.FilesView = Backbone.View.extend({
       contexts.unshift(inlet);
     }
 
-    /*
-    var context ={
+    $(this.el).html(template({
       contexts: contexts
-    };
-    */
-
-    //$(this.el).html(template(context));
-    //console.log("CONTEXT", contexts)
+    }));
 
     var filelist = d3.select("#file-list")
-    .selectAll("li")
-    .data(contexts)
-
-    filelist.enter()
-    .append("li")
-      .html(function(d,i){
-        var fileTabText = d.filename
-        fileTabText += ' <i class="icon-cancel delete-file"></i>'
-        return fileTabText
-      })
-    .attr("class", function(d){
-        return "file "+"filetype-"+d.type
-    })
-
-    filelist.exit().remove()
+      .selectAll("li.file")
 
     //setup the event handlers for the file tabs
-    var fvs = d3.select(this.el).selectAll("li")
-    fvs.on("click", function(d) {
+    filelist.on("click", function(d) {
       var filename = this.dataset.filename;
       if(that.model) {
         var ctx = _.find(tributary.__config__.contexts, function(d) { return d.model.get("filename") === filename; });
+        console.log("FOUND", ctx, ctx.model.get("filename"))
         that.model.trigger("hide");
         ctx.model.trigger("show");
       }
-      tributary.events.trigger("show", "edit");
     });
 
 
     //delete
-    fvs.select(".delete-file")
+    filelist.select(".delete-file")
       .style("z-index", 1000)
       .on("click", function() {
         var dataset = this.parentNode.dataset
@@ -89,7 +69,7 @@ tributary.FilesView = Backbone.View.extend({
 
 
         //remove the tab
-        d3.select(".tb_files").selectAll("div.fv")
+        d3.select(that.el).selectAll("li.file")
           .each(function() {
             if(this.dataset.filename === filename) {
               $(this).remove();
@@ -104,10 +84,12 @@ tributary.FilesView = Backbone.View.extend({
 
 
     //the new file button
-    var plus = d3.select(this.el).selectAll("div.plus")
+    var plus = d3.select(this.el).select(".add-file")
       .on("click", function() {
+        console.log("SUP")
         var input = d3.select(this).select("input")
           .style("display","inline-block");
+
         input.node().focus();
         input.on("keypress", function() {
           //they hit enter
@@ -128,14 +110,16 @@ tributary.FilesView = Backbone.View.extend({
               context.model.trigger("show");
               editor.cm.focus();
 
+              /*
               fvs.attr("class", function(d,i){
                 var filetype = this.dataset.filename.split(".")[1]
                 return "fv type-"+filetype;
               })
+              */
 
 
             } else {
-              input.classed("input_error", true);
+              input.classed("error", true);
             }
           }
         });

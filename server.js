@@ -99,7 +99,7 @@ function inlet(req,res,next) {
     $visits.save(visit, function(err, res) { if(err) console.log(err) });
   }
   //var template = Handlebars.templates.inlet;
-  var template = Handlebars.templates.ej_inlet;
+  var template = Handlebars.templates.inlet;
   var html = template({
     user: user,
     loggedin: user ? true : false,

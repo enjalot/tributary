@@ -302,7 +302,7 @@ section {
         background-color: rgba(245,245,245,0.1);
         height: @fileheight;
         overflow-y: auto;
-        width: @panelwidth;
+        width: 100%;
         overflow: hidden;
         background-color: transparent;
         /*background-color: #ebebeb;*/
@@ -325,7 +325,7 @@ section {
   }
   #file-list {
     height: 100%;
-    width: @panelwidth;
+    width: 100%;
     white-space: nowrap;
     overflow-x: scroll;
     overflow-y: hidden;
@@ -382,17 +382,33 @@ section {
          -moz-box-shadow:0 1px 2px 0 rgba(0,0,0,0.2); /* FF3.5+ */
               box-shadow:0 1px 2px 0 rgba(0,0,0,0.2); /* Opera 10.5, IE 9.0 */
     }
-    #add-file {
-      display: none;
-      /*
-      position: fixed;
-      top: @titleheight + 0.4em;
-      right: 6px;
-      */
-      width: 32px;
-      text-align: center;
+
+    .delete-file {
+      z-index: 1000;
     }
 
+    .add-file {
+      //position: fixed;
+      //top: @titleheight + 0.4em;
+      //right: 6px;
+      min-width: 32px;
+      text-align: center;
+
+      input {
+        width: 62px;
+        color: white;
+        background-color: transparent;
+        outline: none;
+        border: 0px solid transparent;
+        border-bottom: 1px solid #999;
+        padding:1px 4px;
+      }
+
+      input.error {
+          border-bottom: 1px solid red;
+      }
+
+    }
 
 
     .filetype-js { background-color: #0CADE4; }
@@ -401,6 +417,9 @@ section {
     .filetype-html { background-color: #F6066B; }
     .filetype-coffeescript { background-color: #CDE338; }
   }
+
+  
+
 
 
 
@@ -443,6 +462,9 @@ section {
   overflow-x: auto;
 
 
+  .editor {
+    height: 100%;
+  }
 
   .CodeMirror {
     height: 100%;

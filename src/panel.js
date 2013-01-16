@@ -17,21 +17,15 @@ tributary.PanelView = Backbone.View.extend({
     this.$el.html(html);
 
     //panel holds the editors, and other controls
-    panel = d3.select("#panel");
+    var panel = d3.select("#panel");
     //ui container for panel tabs (config/edit)
-    panel_gui = d3.selectAll("#file-list");
 
     ////////////////////////////////////////////////////////////////////////
     // Setup the Panel GUI for switching between windows in the panel
     ////////////////////////////////////////////////////////////////////////
 
-    //var pb_w = 60; //width of each button
 
-
-    var panel_buttons = panel_gui.selectAll("#file-list li")
-    .on("click", function(d) {
-      tributary.events.trigger("show", this.dataset.name);
-    })
+    
 
     //Logic for tabs
     tributary.events.on("show", function(name) {
@@ -44,10 +38,12 @@ tributary.PanelView = Backbone.View.extend({
         .style("display", "");
 
       //update the panel_gui ui
+      /*
       panel_gui.selectAll("div.pb")
         .classed("gui_active", false);
       panel_gui.select(".tb_" + name + "_tab")
         .classed("gui_active", true);
+      */
     });
     tributary.events.trigger("show", "edit");
 

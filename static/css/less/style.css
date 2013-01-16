@@ -453,12 +453,11 @@ section:last-child {
 
 }
 #panel #file-list #add-file {
-  display: none;
   /*
-      position: fixed;
-      top: @titleheight + 0.4em;
-      right: 6px;
-      */
+    position: fixed;
+    top: @titleheight + 0.4em;
+    right: 6px;
+  */
 
   width: 32px;
   text-align: center;

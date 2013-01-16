@@ -16,8 +16,6 @@ tributary.make_editor = function(options) {
       .attr("id", model.cid);
   }
 
-  container = d3.select("#code")
-
   var editor;
   editor = new tributary.Editor({
     el: container.node(),
