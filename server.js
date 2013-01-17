@@ -479,6 +479,7 @@ function api_users(req,res,next) {
   var fields = {
     name: 1,
     login: 1,
+    id: 1,
     avatar_url: 1,
     html_url: 1,
     inlets: 1
