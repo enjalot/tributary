@@ -75,7 +75,7 @@
 
       <button id="save" title="Save current state">Save</button>
       <button id="fork" title="Save a copy" style="display:none;">Fork</button>
-      
+
 			<i class="icon-load animate-spin" style="opacity: 0;"></i>
 		</section>
 
@@ -83,7 +83,7 @@
 
 		<section id="login">
 			{{#if loggedin}}
-      <span id="current-user"><span class="user-avatar"><img id="avatar" src="{{ user.avatar }}"/></span>{{ user.login }}</span>
+      <span id="current-user"><span class="user-avatar"><img id="avatar" src="{{avatar_url}}"/></span>{{ user.login }}</span>
 			<button id="loginPanel">Log out</button>
       {{else}}
       <button id="loginPanel">Log in <i class="icon-github"></i></button>

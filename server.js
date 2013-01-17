@@ -59,13 +59,13 @@ function svgopen(req, res, next) {
 app.get("/gist/:gistid", getgist_endpoint);
 function getgist_endpoint(req, res, next) {
   getgist(req.params.gistid, function(error, response, body) {
-    if (!error && response.statusCode == 200) { 
+    if (!error && response.statusCode == 200) {
       res.header("Content-Type", 'application/json');
       res.send(body);
     } else {
       res.send(response.statusCode);
     }
-  }) 
+  })
 }
 
 function getgist(gistid, callback) {
@@ -92,7 +92,7 @@ function inlet(req,res,next) {
     }
     if(user) {
       visit.user = {
-        id: user.id 
+        id: user.id
       , login: user.login
       }
     }
@@ -102,10 +102,12 @@ function inlet(req,res,next) {
   var template = Handlebars.templates.inlet;
   var html = template({
     user: user,
+    avatar_url: user.avatar_url,
     loggedin: user ? true : false,
     gistid: gistid
   });
   res.send(html);
+  console.log("USER", user)
 }
 
 //Save an inlet
@@ -288,8 +290,8 @@ function after_fork(oldgist, newgist, token, callback) {
   var user = newgist.user;
   var name = "anon";
   if(newgist.user) name = newgist.user.login;
-  var markdown = "[ <a href=\"http://tributary.io/inlet/" + newgist.id +"\">Launch: " + newgist.description + "</a> ] " 
-    + newgist.id 
+  var markdown = "[ <a href=\"http://tributary.io/inlet/" + newgist.id +"\">Launch: " + newgist.description + "</a> ] "
+    + newgist.id
     + " by " + name
     + "<br>"
 
@@ -297,7 +299,7 @@ function after_fork(oldgist, newgist, token, callback) {
   newgist.files['_.md'] = {
     "content": markdown
   }
-  
+
   //update/set raw url for thumbnail in config
 
   var inlet_data = {
@@ -305,7 +307,7 @@ function after_fork(oldgist, newgist, token, callback) {
   , time: new Date()
   //, thumbnail: thumbnail_url
   }
- 
+
   if(newgist.user) {
     inlet_data.user = {
       id: newgist.user.id
@@ -316,7 +318,7 @@ function after_fork(oldgist, newgist, token, callback) {
   //update mongo
   if(oldgist) {
     //this is a fork, update the old gist
-    inlet_data.parent = oldgist.id;    
+    inlet_data.parent = oldgist.id;
   }
   $inlets.save(inlet_data, function(err, result) { if(err) console.error(err); });
 
@@ -335,7 +337,7 @@ function after_save(gist, callback) {
     , login: gist.user.login
     }
   , lastSave: new Date()
-  //,  thumbnail: thumbnail_url 
+  //,  thumbnail: thumbnail_url
   }, { upsert: true }, function(err, result) { if(err) console.error(err); });
 
   callback(null, gist);
@@ -366,8 +368,8 @@ function github_authenticated(req,res,next) {
             //store info about the user in the session
             req.session.user = JSON.parse(b);
             var user = req.session.user;
-            
-            $users.update({ id: user.id} 
+
+            $users.update({ id: user.id}
             , user
             , { upsert: true }, function(err, result) { if(err) console.error(err); });
             //redirect to where the user was

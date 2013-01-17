@@ -6,11 +6,11 @@ templates['inlet'] = template(function (Handlebars,depth0,helpers,partials,data)
 
 function program1(depth0,data) {
   
-  var buffer = "", stack1;
+  var buffer = "", stack1, foundHelper;
   buffer += "\n      <span id=\"current-user\"><span class=\"user-avatar\"><img id=\"avatar\" src=\"";
-  stack1 = depth0.user;
-  stack1 = stack1 == null || stack1 === false ? stack1 : stack1.avatar;
-  stack1 = typeof stack1 === functionType ? stack1() : stack1;
+  foundHelper = helpers.avatar_url;
+  if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{}}); }
+  else { stack1 = depth0.avatar_url; stack1 = typeof stack1 === functionType ? stack1() : stack1; }
   buffer += escapeExpression(stack1) + "\"/></span>";
   stack1 = depth0.user;
   stack1 = stack1 == null || stack1 === false ? stack1 : stack1.login;
@@ -31,7 +31,7 @@ function program3(depth0,data) {
   foundHelper = helpers.author;
   if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{}}); }
   else { stack1 = depth0.author; stack1 = typeof stack1 === functionType ? stack1() : stack1; }
-  buffer += escapeExpression(stack1) + "</span>\n\n      <button id=\"save\" title=\"Save current state\">Save</button>\n      <button id=\"fork\" title=\"Save a copy\" style=\"display:none;\">Fork</button>\n      \n			<i class=\"icon-load animate-spin\" style=\"opacity: 0;\"></i>\n		</section>\n\n\n\n		<section id=\"login\">\n			";
+  buffer += escapeExpression(stack1) + "</span>\n\n      <button id=\"save\" title=\"Save current state\">Save</button>\n      <button id=\"fork\" title=\"Save a copy\" style=\"display:none;\">Fork</button>\n\n			<i class=\"icon-load animate-spin\" style=\"opacity: 0;\"></i>\n		</section>\n\n\n\n		<section id=\"login\">\n			";
   stack1 = depth0.loggedin;
   stack1 = helpers['if'].call(depth0, stack1, {hash:{},inverse:self.program(3, program3, data),fn:self.program(1, program1, data)});
   if(stack1 || stack1 === 0) { buffer += stack1; }
