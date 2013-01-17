@@ -97,20 +97,33 @@ db.open(function(err, db) {
 
       //iterate over the inlets, get the created_at time and set it on the mongo inlet
       $mr_inlets.find().toArray(function(err, mr_inlets) {
+        var count = 0;
+        var num = mr_inlets.length;
+        console.log("NUM", num)
+        function finish() {
+          count++;
+          console.log("count", count)
+          if(count === num) {
+            console.log("sup?")
+            db.close(); 
+            process.exit();
+          }
+        }
         mr_inlets.forEach(function(mr_inlet) {
           console.log("inlet id", mr_inlet._id);
           $inlets.findOne({gistid: mr_inlet._id}, function(error, inlet) {
-            if(error || !inlet ) return;
+            if(error || !inlet ) return finish();
             inlet.visits = mr_inlet.value.count || 1;
             inlet.nforks = mr_inlet.value.nforks || 0;
             inlet.forks = mr_inlet.value.forks || [];
             $inlets.update({gistid: inlet.gistid}, inlet, {safe: true}, function(error) { 
               if(error) console.log(error)
-              db.close();
+              finish();
+              //db.close();
             });
           })
         })
-        db.close();
+        //db.close();
       })
 
     })

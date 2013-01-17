@@ -54,14 +54,23 @@ db.open(function(err, db) {
 
     //iterate over the inlets, get the created_at time and set it on the mongo inlet
     $mr_users.find().toArray(function(err, mr_users) {
+      var count = 0;
+      var num = mr_users.length;
+      function finish() {
+        count++;
+        if(count === num) {
+          db.close(); 
+          process.exit();
+        }
+      }
       mr_users.forEach(function(mr_user) {
         console.log("user id", mr_user._id);
         $users.findOne({id: mr_user._id}, function(error, user) {
-          if(error || !user ) return;
+          if(error || !user ) return finish();
           user.inlets = mr_user.value.count || 1;
-          $users.update({gistid: user.gistid}, user, {safe: true}, function(error) { 
+          $users.update({_id: user._id}, user, {safe: true}, function(error) { 
             if(error) console.log(error)
-            db.close();
+            finish()
           });
         })
       })
