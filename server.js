@@ -88,7 +88,7 @@ function inlet(req,res,next) {
     //record this visit
     var visit = {
       gistid: gistid
-    , time: new Date()
+    , createdAt: new Date()
     }
     if(user) {
       visit.user = {
@@ -301,7 +301,7 @@ function after_fork(oldgist, newgist, token, callback) {
 
   var inlet_data = {
     gistid: newgist.id
-  , time: new Date()
+  , createdAt: new Date()
   //, thumbnail: thumbnail_url
   }
  
@@ -332,7 +332,7 @@ function after_save(gist, callback) {
     if(!mgist) {
       mgist = { 
         gistid: gist.id,
-        time: new Date()
+        createdAt: new Date()
       }
     }
     mgist.user = {
@@ -439,7 +439,7 @@ function latest_created(req, res, next) {
   var query = {};
   //TODO: pagination
   var limit = 200;
-  $inlets.find(query, {limit: limit}).sort({ time: -1 }).toArray(function(err, inlets) {
+  $inlets.find(query, {limit: limit}).sort({ createdAt: -1 }).toArray(function(err, inlets) {
     if(err) res.send(err);
     res.send(inlets);
   })
@@ -451,7 +451,21 @@ function latest_forks(req, res, next) {
   };
   //TODO: pagination
   var limit = 200;
-  $inlets.find(query, {limit: limit}).sort({ time: -1 }).toArray(function(err, inlets) {
+  $inlets.find(query, {limit: limit}).sort({ createdAt: -1 }).toArray(function(err, inlets) {
+    if(err) res.send(err);
+    res.send(inlets);
+  })
+}
+
+app.get('/api/latest/visits', latest_created)
+app.get('/api/latest/visits/:start/:end', latest_created)
+function latest_created(req, res, next) {
+  var start = req.params.start || new Date(new Date() - (24 * 60 * 60 * 1000));
+  var end = req.params.end || new Date();
+  var query = dateQuery(start, end);
+  //TODO: pagination
+  var limit = 2000;
+  $visits.find(query, {limit: limit}).sort({ createdAt: -1 }).toArray(function(err, inlets) {
     if(err) res.send(err);
     res.send(inlets);
   })
@@ -472,7 +486,7 @@ function api_users(req,res,next) {
     limit: limit
   }
   //TODO: make sure this is secure in the future
-  $users.find(query, fields, opts).sort({ time: 1 }).toArray(function(err, users) {
+  $users.find(query, fields, opts).sort({ createdAt: 1 }).toArray(function(err, users) {
     if(err) res.send(err);
     res.send(users);
   })
@@ -485,7 +499,7 @@ function user_latest(req,res,next) {
   var query = { "user.login": req.params.login };
   //TODO: pagination
   var limit = 200;
-  $inlets.find(query, {limit: limit}).sort({ time: -1 }).toArray(function(err, inlets) {
+  $inlets.find(query, {limit: limit}).sort({ createdAt: -1 }).toArray(function(err, inlets) {
     if(err) res.send(err);
     res.send(inlets);
   })
@@ -532,7 +546,7 @@ function counts_visits(req,res,next) {
 
 function dateQuery(start, end) {
   var query = {
-    $and: [ { time: { $gt: new Date(start)}}, { time:{ $lte: new Date(end)}}],
+    $and: [ { createdAt: { $gt: new Date(start)}}, { createdAt:{ $lte: new Date(end)}}],
   }
   return query;
 }
