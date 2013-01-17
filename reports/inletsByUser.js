@@ -74,11 +74,7 @@ db.open(function(err, db) {
           });
         })
       })
-      db.close();
     })
-
-  db.close();
-
   })
 
 
