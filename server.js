@@ -457,9 +457,9 @@ function latest_forks(req, res, next) {
   })
 }
 
-app.get('/api/latest/visits', latest_created)
-app.get('/api/latest/visits/:start/:end', latest_created)
-function latest_created(req, res, next) {
+app.get('/api/latest/visits', latest_visits)
+app.get('/api/latest/visits/:start/:end', latest_visits)
+function latest_visits(req, res, next) {
   var start = req.params.start || new Date(new Date() - (24 * 60 * 60 * 1000));
   var end = req.params.end || new Date();
   var query = dateQuery(start, end);
