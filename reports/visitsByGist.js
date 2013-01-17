@@ -99,12 +99,9 @@ db.open(function(err, db) {
       $mr_inlets.find().toArray(function(err, mr_inlets) {
         var count = 0;
         var num = mr_inlets.length;
-        console.log("NUM", num)
         function finish() {
           count++;
-          console.log("count", count)
           if(count === num) {
-            console.log("sup?")
             db.close(); 
             process.exit();
           }
