@@ -68,7 +68,7 @@ db.open(function(err, db) {
         $users.findOne({id: mr_user._id}, function(error, user) {
           if(error || !user ) return finish();
           user.inlets = mr_user.value.count || 1;
-          $users.update({_id: user._id}, user, {safe: true}, function(error) { 
+          $users.update({id: user.id}, user, {safe: true}, function(error) { 
             if(error) console.log(error)
             finish()
           });
