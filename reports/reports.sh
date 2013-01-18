@@ -4,6 +4,6 @@
 DIR=/home/ubuntu/tributary
 (
 cd $DIR
-node reports/aggregators/visitsByGist.js
-node reports/aggregators/inletsByUser.js
+/usr/local/bin/node reports/aggregators/visitsByGist.js
+/usr/local/bin/node reports/aggregators/inletsByUser.js
 ) 2>&1 | tee -a "$DIR/reports.log"
