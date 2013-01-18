@@ -23,19 +23,29 @@ db.open(function(err, db) {
     if(this.user) {
       emit(this.user.id, {
         type: "user",
-        count: 1
+        count: 1,
+        visits: this.visits || 0,
+        nforks: this.nforks || 0
       })
     }
   }
   function reduceUsers(key, values) {
     var result = {
-      count: 0
+      count: 0,
+      visits: 0,
+      nforks: 0
     };
     values.forEach(function(value) {
       if(value.count) {
         result.count += value.count;
       } else {
         result.count += 1;
+      }
+      if(value.nforks) {
+        result.nforks += value.nforks;
+      }
+      if(value.visits) {
+        result.visits += value.visits;
       }
     });
     return result;
@@ -68,6 +78,8 @@ db.open(function(err, db) {
         $users.findOne({id: mr_user._id}, function(error, user) {
           if(error || !user ) return finish();
           user.inlets = mr_user.value.count || 1;
+          user.visits = mr_user.value.visits || 1;
+          user.nforks = mr_user.value.nforks || 0;
           $users.update({id: user.id}, user, {safe: true}, function(error) { 
             if(error) console.log(error)
             finish()
