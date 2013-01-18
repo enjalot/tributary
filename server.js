@@ -302,6 +302,7 @@ function after_fork(oldgist, newgist, token, callback) {
   var inlet_data = {
     gistid: newgist.id
   , createdAt: new Date()
+  , description: newgist.description
   //, thumbnail: thumbnail_url
   }
  
@@ -332,7 +333,8 @@ function after_save(gist, callback) {
     if(!mgist) {
       mgist = { 
         gistid: gist.id,
-        createdAt: new Date()
+        createdAt: new Date(),
+        description: gist.description
       }
     }
     mgist.user = {
