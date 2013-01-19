@@ -1448,7 +1448,7 @@ var Tributary = function() {
     if (ret.user) {
       var gist_uid = ret.user.id;
       $("#inlet-author").text(ret.user.login);
-      $("#inlet-title").text(ret.gist.description);
+      $("#gist-title").val(ret.gist.description);
       $("#author-avatar img").attr("src", function(d) {
         return "http://2.gravatar.com/avatar/" + ret.user.gravatar_id;
       });
