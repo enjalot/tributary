@@ -72,18 +72,20 @@
 			<span id="author-avatar"> by <img class="avatar"/></span>
 			<span id="inlet-author">{{author}}</span>
 
-			<i class="icon-export"></i>
 
-	<button id="save" title="Save current state" onclick='$(".icon-load").css("opacity", 1);'>Save</button>
-	<button id="fork" title="Save a copy" style="display:none;">Fork</button>
-	<i class="icon-load animate-spin" style="opacity: 0;"></i>
+			<button id="save" title="Save current state" onclick='$(".icon-load").css("opacity", 1);'>Save</button>
+			<button id="fork" title="Save a copy" style="display:none;">Fork</button>
+
+			<button id="export"><i class="icon-export"></i></button>
+
+			<i class="icon-load animate-spin" style="opacity: 0;"></i>
 		</section>
 
 
 
 		<section id="login">
 			{{#if loggedin}}
-      <span id="current-user"><span class="user-avatar"><img id="user-avatar" class="avatar" src="{{avatar_url}}"/></span><span id="current-username">{{ user.login }}</span></span>
+      <span id="current-user"><span class="user-avatar"><img id="user-avatar" class="avatar" src="{{avatar_url}}"/></span><span id="current-username">{{ user.name }}</span></span>
 			<button id="loginPanel">Log out</button>
       {{else}}
       <button id="loginPanel">Log in <i class="icon-github"></i></button>

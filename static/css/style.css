@@ -360,6 +360,15 @@ section:last-child {
   background-color: #CCC;
   border-radius: 16px;
   margin: 0 5px;
+  -webkit-box-shadow: 0 2px 2px 0 rgba(250, 250, 250, 0.15);
+  /* Saf3.0+, Chrome */
+
+  -moz-box-shadow: 0 2px 2px 0 rgba(250, 250, 250, 0.15);
+  /* FF3.5+ */
+
+  box-shadow: 0 2px 2px 0 rgba(250, 250, 250, 0.15);
+  /* Opera 10.5, IE 9.0 */
+
 }
 #title #login {
   position: absolute;
@@ -746,8 +755,8 @@ th {
   text-align: right;
 }
 button {
-  opacity: 0.82;
-  border: 1px solid rgba(0, 0, 0, 0.6);
+  opacity: 0.8;
+  border: 1px solid rgba(0, 0, 0, 0.3);
   padding: 0.5em;
   margin: 4px 8px;
   font-size: 15px;
@@ -766,16 +775,16 @@ button {
   background-image: -ms-linear-gradient(top, #ffffff, #d6d6d6);
   background-image: linear-gradient(top, #ffffff, #d6d6d6);
   filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0, StartColorStr='#ffffff', EndColorStr='#d6d6d6');
-  -webkit-transition: all 0.1s ease-out;
-  -moz-transition: all 0.1s ease-out;
-  transition: all 0.1s ease-out;
+  -webkit-transition: all 0.14s ease-out;
+  -moz-transition: all 0.14s ease-out;
+  transition: all 0.14s ease-out;
 }
 button:hover {
   -webkit-transition: all 0.2s ease-out;
   -moz-transition: all 0.2s ease-out;
   transition: all 0.2s ease-out;
   opacity: 1;
-  text-shadow: 0 2px 2px #FFF;
+  text-shadow: 0 2px 1px #FFF;
 }
 button:active {
   opacity: 0.9;

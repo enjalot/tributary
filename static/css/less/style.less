@@ -290,6 +290,11 @@ section {
     border-radius: 16px;
     margin: 0 5px;
 
+    -webkit-box-shadow:0 2px 2px 0 rgba(250,250,250,0.15); /* Saf3.0+, Chrome */
+       -moz-box-shadow:0 2px 2px 0 rgba(250,250,250,0.15); /* FF3.5+ */
+            box-shadow:0 2px 2px 0 rgba(250,250,250,0.15); /* Opera 10.5, IE 9.0 */
+
+
     //opacity: 0.4;
     &:hover {
       //opacity: 1;
@@ -786,8 +791,8 @@ th {
     text-align: right;
 }
 button {
-    opacity: 0.82;
-    border: 1px solid rgba(0,0,0,0.6);
+    opacity: 0.8;
+    border: 1px solid rgba(0,0,0,0.3);
     padding: 0.5em;
     margin: 4px 8px;
     font-size: 15px;
@@ -811,13 +816,13 @@ button {
     background-image: linear-gradient(top, rgb(255, 255, 255), rgb(214, 214, 214));
     filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,StartColorStr='#ffffff', EndColorStr='#d6d6d6');
 
-    .transition(0.1s);
+    .transition(0.14s);
 
     &:hover {
         .transition(0.2s);
         opacity: 1;
         //border: 1px solid rgba(0,0,0,0.7);
-        text-shadow: 0 2px 2px #FFF;
+        text-shadow: 0 2px 1px #FFF;
     }
     &:active {
         opacity: 0.9;

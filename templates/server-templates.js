@@ -13,7 +13,7 @@ function program1(depth0,data) {
   else { stack1 = depth0.avatar_url; stack1 = typeof stack1 === functionType ? stack1() : stack1; }
   buffer += escapeExpression(stack1) + "\"/></span><span id=\"current-username\">";
   stack1 = depth0.user;
-  stack1 = stack1 == null || stack1 === false ? stack1 : stack1.login;
+  stack1 = stack1 == null || stack1 === false ? stack1 : stack1.name;
   stack1 = typeof stack1 === functionType ? stack1() : stack1;
   buffer += escapeExpression(stack1) + "</span></span>\n			<button id=\"loginPanel\">Log out</button>\n      ";
   return buffer;}
@@ -31,7 +31,7 @@ function program3(depth0,data) {
   foundHelper = helpers.author;
   if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{}}); }
   else { stack1 = depth0.author; stack1 = typeof stack1 === functionType ? stack1() : stack1; }
-  buffer += escapeExpression(stack1) + "</span>\n\n			<i class=\"icon-export\"></i>\n\n	<button id=\"save\" title=\"Save current state\" onclick='$(\".icon-load\").css(\"opacity\", 1);'>Save</button>\n	<button id=\"fork\" title=\"Save a copy\" style=\"display:none;\">Fork</button>\n	<i class=\"icon-load animate-spin\" style=\"opacity: 0;\"></i>\n		</section>\n\n\n\n		<section id=\"login\">\n			";
+  buffer += escapeExpression(stack1) + "</span>\n\n\n			<button id=\"save\" title=\"Save current state\" onclick='$(\".icon-load\").css(\"opacity\", 1);'>Save</button>\n			<button id=\"fork\" title=\"Save a copy\" style=\"display:none;\">Fork</button>\n\n			<button id=\"export\"><i class=\"icon-export\"></i></button>\n\n			<i class=\"icon-load animate-spin\" style=\"opacity: 0;\"></i>\n		</section>\n\n\n\n		<section id=\"login\">\n			";
   stack1 = depth0.loggedin;
   stack1 = helpers['if'].call(depth0, stack1, {hash:{},inverse:self.program(3, program3, data),fn:self.program(1, program1, data)});
   if(stack1 || stack1 === 0) { buffer += stack1; }
