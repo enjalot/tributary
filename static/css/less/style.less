@@ -241,10 +241,13 @@ section {
   #inlet-info {
 
   }
-  #avatar {
+
+
+
+  .avatar {
     width: @titleheight / 2;
     height: @titleheight / 2;
-    display: inline-block;
+    //display: inline-block;
     vertical-align: middle;
     background-color: #CCC;
     border-radius: 16px;
@@ -256,8 +259,8 @@ section {
     }
   }
   #login {
-    position: fixed;
-    right: 6px;
+    position: absolute;
+    right: 14px;
   }
 }
 #display {
@@ -266,7 +269,7 @@ section {
   width: 100%;
   height: 100%;
   position: fixed;
-  top: 2em;
+  //top: 2em;
   left: 0;
 }
 
@@ -552,7 +555,6 @@ px      68    160    252    344    436    528    620    712    */
   }
 
 
-
 }
 
 
@@ -579,7 +581,7 @@ px      68    160    252    */
     //width: 252px;
     //padding: 24px 34px 60px;
     width: 100%;
-    padding: none;
+    padding: 0;
     height: auto;
     font-size: 1em;
     line-height: 1.5em;
@@ -588,13 +590,10 @@ px      68    160    252    */
 
   #title {
     position: relative;
+    font-size: 0.75em;
     h1 {
       display: none;
       top: .2em;
-    }
-
-    #inlet-author {
-      display: none;
     }
   }
 
@@ -639,6 +638,17 @@ px      68    160    252    */
       opacity: 1;
     }
   }
+
+  #inlet-author {
+    display: none;
+  }
+  #user-avatar { display: none;}
+  #current-username {
+    display: none;
+  }
+  #author-avatar {
+    display: none;
+  }
 }
 
 
@@ -660,11 +670,15 @@ px      68    160    252    */
 cols    1     2      3      4      5
 px      68    160    252    344    436    */
 
-@media only screen and (min-width: 480px) and (max-width: 767px) {
+@media only screen and (min-width: 479px) and (max-width: 767px) {
 
   body {
     //width: 436px;
     padding: none;
+  }
+
+  #title #author-avatar{
+    display: static !important;
   }
 
 }

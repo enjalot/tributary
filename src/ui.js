@@ -319,7 +319,7 @@ function setup_header(ret){
     //console.log("RET", ret)
     $("#inlet-author").text(ret.user.login)
     $("#inlet-title").text(ret.gist.description)
-    $("#avatar").attr("src", function(d){
+    $("#author-avatar img").attr("src", function(d){
       return "http://2.gravatar.com/avatar/"+ret.user.gravatar_id
     })
 
@@ -364,7 +364,7 @@ function setup_header(ret){
     }
 
    */
-  
+
   setup_save(ret.config);
 
   $("#gist-title").on("keyup", function(){

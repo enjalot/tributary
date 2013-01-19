@@ -69,21 +69,19 @@
 
 		<section id="inlet-info">
 			<span id="inlet-title">{{ title}}</span>
-			by
-			<span class="user-avatar"><img  id="avatar"/></span>
+			<span id="author-avatar"> by <img class="avatar"/></span>
 			<span id="inlet-author">{{author}}</span>
 
-      <button id="save" title="Save current state">Save</button>
-      <button id="fork" title="Save a copy" style="display:none;">Fork</button>
-
-			<i class="icon-load animate-spin" style="opacity: 0;"></i>
+	<button id="save" title="Save current state" onclick='$(".icon-load").css("opacity", 1);'>Save</button>
+	<button id="fork" title="Save a copy" style="display:none;">Fork</button>
+	<i class="icon-load animate-spin" style="opacity: 0;"></i>
 		</section>
 
 
 
 		<section id="login">
 			{{#if loggedin}}
-      <span id="current-user"><span class="user-avatar"><img id="avatar" src="{{avatar_url}}"/></span>{{ user.login }}</span>
+      <span id="current-user"><span class="user-avatar"><img id="user-avatar" class="avatar" src="{{avatar_url}}"/></span><span id="current-username">{{ user.login }}</span></span>
 			<button id="loginPanel">Log out</button>
       {{else}}
       <button id="loginPanel">Log in <i class="icon-github"></i></button>
@@ -107,6 +105,10 @@
 
 		<section id="config" >
 			<button id="config-toggle">Config</button>
+			<button id="library-toggle">Add libraries</button>
+			<button id="fullscreen">Fullscreen</button>
+
+
 			<div id="config-content" class="config-content" style="display: none;">
 				<h4>Display <small><i class="explain-this-shit icon-help-circled"></i></small></h4>
 				<select>
@@ -122,7 +124,6 @@
 				<button id="restart">Restart</button>
 			</div>
 
-			<button id="library-toggle">Add libraries</button>
 				<div id="library-content" class="config-content" style="display: none;">
 					<ul id="library-checklist">
 					<li> <input type="checkbox" checked="checked"/> Underscore </li>
@@ -133,7 +134,6 @@
 					<li> <input type="checkbox" /> TopoJSON </li>
 				</div>
 
-			<button id="fullscreen">Fullscreen</button>
 		</section>
 
 		<script>

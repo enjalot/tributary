@@ -1449,7 +1449,7 @@ var Tributary = function() {
       var gist_uid = ret.user.id;
       $("#inlet-author").text(ret.user.login);
       $("#inlet-title").text(ret.gist.description);
-      $("#avatar").attr("src", function(d) {
+      $("#author-avatar img").attr("src", function(d) {
         return "http://2.gravatar.com/avatar/" + ret.user.gravatar_id;
       });
       d3.select("title").text("Tributary | " + ret.gist.description || "Tributary");
