@@ -3,6 +3,8 @@
 
 .icon-cancel:before { content: '\2715'; } /* '✕' */
 .icon-cancel-circle:before { content: '\2716'; } /* '✖' */
+.icon-help:before { content: '\2753'; } /* '❓' */
+.icon-right:before { content: '\27a1'; } /* '➡' */
 .icon-cancel-circle2:before { content: '\e703'; } /* '' */
 .icon-help-circled:before { content: '\e704'; } /* '' */
 .icon-info-circled:before { content: '\e705'; } /* '' */
@@ -10,8 +12,16 @@
 .icon-discuss:before { content: '\e720'; } /* '' */
 .icon-resize-full:before { content: '\e744'; } /* '' */
 .icon-resize-small:before { content: '\e746'; } /* '' */
+.icon-window:before { content: '\e74e'; } /* '' */
 .icon-push-right:before { content: '\e783'; } /* '' */
+.icon-flow-tree:before { content: '\e792'; } /* '' */
 .icon-load:before { content: '\e839'; } /* '' */
+.icon-right-circled:before { content: '\f0a9'; } /* '' */
+.icon-github-1:before { content: '\f113'; } /* '' */
 .icon-twitter:before { content: '\f302'; } /* '' */
 .icon-github:before { content: '\f308'; } /* '' */
+.icon-videocam:before { content: '🎥'; } /* '\1f3a5' */
 .icon-user:before { content: '👤'; } /* '\1f464' */
+.icon-users-1:before { content: '\e800'; } /* '' */
+.icon-users:before { content: '👥'; } /* '\1f465' */
+.icon-chart-bar:before { content: '📊'; } /* '\1f4ca' */

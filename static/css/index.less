@@ -1,0 +1,884 @@
+/*  Less Framework 4
+  http://lessframework.com
+  by Joni Korpi
+  License: http://opensource.org/licenses/mit-license.php */
+
+/*	Resets   */
+/* apply a natural box layout model to all elements */
+/* from http://paulirish.com/2012/box-sizing-border-box-ftw/ */
+* { -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box; }
+
+/* maxvoltar.com/archive/-webkit-font-smoothing */
+html { -webkit-font-smoothing: antialiased; }
+
+
+pre {
+	padding: 15px;
+	white-space: pre; /* CSS2 */
+	white-space: pre-wrap; /* CSS 2.1 */
+	white-space: pre-line; /* CSS 3 (and 2.1 as well, actually) */
+	word-wrap: break-word; /* IE */
+}
+
+/* hand cursor on clickable input elements */
+label, input[type=button], input[type=submit], button { cursor: pointer; }
+
+html, body, div, span, object, iframe, h1, h2, h3, h4, h5, h6,
+p, blockquote, pre, a, abbr, address, cite, code, del, dfn, em,
+img, ins, kbd, q, samp, small, strong, sub, sup, var, b, i, hr,
+dl, dt, dd, ol, ul, li, fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, figure, figcaption, hgroup,
+menu, footer, header, nav, section, summary, time, mark, audio, video {
+	margin: 0;
+	padding: 0;
+	border: 0;
+}
+
+article, aside, canvas, figure, figure img, figcaption, hgroup,
+footer, header, nav, section, audio, video { display: block; }
+
+a img {border: 0;}
+
+/*	Color variables
+	------------------	*/
+
+@fontcolor: #333333;
+@bgcolor: #e6e6e6;
+/* Highlight color, when user selects text */
+@highlight: #FFF9A2;
+
+/* Link color, hover/visited will be generated from this */
+@linkcolor: #364b11;
+
+/* Selection colours (easy to forget) */
+
+::selection 	 	{background: @highlight;}
+::-moz-selection 	{background: @highlight;}
+img::selection 		{background: transparent;}
+img::-moz-selection	{background: transparent;}
+body {-webkit-tap-highlight-color: @highlight;}
+
+em { background: fade(@highlight, 50%); }
+
+/*	Typography presets
+	------------------	*/
+.huge, h1 {
+	color: darken(@fontcolor, 35%);
+	font-size: 3.75em;
+	line-height: 1.1em;
+	letter-spacing: -1px;
+	font-weight: 800;
+	margin-bottom: 18px;
+}
+.large, h2 {
+	color: darken(@fontcolor, 12%);
+	font-size: 2.75em;
+	line-height: 2em;
+	font-weight: 800;
+	line-height: 1.5em;
+	margin-bottom: 8px;
+}
+.bigger, h3 {
+	color: darken(@fontcolor, 10%);
+	font-size: 1.75em;
+	line-height: 1.5em;
+	font-weight: 800;
+    margin: 8px 0;
+}
+.big, h4 {
+	color: darken(@fontcolor, 7%);
+	font-size: 1.5em;
+	line-height: 1.5em;
+	font-weight: 700;
+    margin: 8px 0;
+}
+.small, small {
+  opacity: 0.8;
+  font-size: 0.7em;
+  line-height: 1.2em;
+}
+
+// Font sizes for mobile
+@media only screen and (max-width: 767px) {
+	.huge, h1 {
+    	font-size: 2.5em;
+    	line-height: 1.1em;
+    	margin-bottom: 12px;
+    }
+
+    .large, h2 {
+    	color: darken(@fontcolor, 12%);
+    	font-size: 2em;
+    	line-height: 1.3em;
+    	font-weight: 800;
+    	line-height: 1.4em;
+    	margin-bottom: 6px;
+    }
+
+    .bigger, h3 {
+    	color: darken(@fontcolor, 10%);
+    	font-size: 1.75em;
+    	line-height: 1.2em;
+    	font-weight: 800;
+        margin: 6px 0;
+    }
+
+    .big, h4 {
+    	color: darken(@fontcolor, 7%);
+    	font-size: 1.4em;
+    	line-height: 1.5em;
+    	font-weight: 700;
+        margin: 8px 0;
+    }
+}
+
+p {
+    margin: 0.6em 0;
+}
+
+
+
+
+
+
+/*		Default Layout: 992px.
+		Gutters: 24px.
+		Outer margins: 48px.
+		Leftover space for scrollbars @1024px: 32px.
+-------------------------------------------------------------------------------
+cols    1     2      3      4      5      6      7      8      9      10
+px      68    160    252    344    436    528    620    712    804    896    */
+
+body {
+  font: normal 100% 'Helvetica Neue', Helvetica, Arial, sans-serif;
+
+  background-image: url("img/light_wool@2x.png");
+  background-size: 190px;
+
+  line-height: 1.32em;
+  font-size: 1.45em;
+  max-width: 896px;
+  width: 50%;
+  padding: 32px 48px 84px;
+  //background: @bgcolor;
+  color: @fontcolor;
+  -webkit-text-size-adjust: 100%; /* Stops Mobile Safari from auto-adjusting font-sizes */
+  margin-left: auto;
+  margin-right: auto;
+}
+.icon-help-circled {
+  font-size: 0.6em;
+  padding: 0;
+  margin: 0;
+  vertical-align: middle;
+  display: inline-block;
+}
+h1 {
+  font-family:'Alegreya';
+  font-style: italic;
+  display: block;
+  width: 100%;
+  text-align: center;
+  cursor: default;
+
+  color: #4c4c4c;
+
+  -webkit-transition:color .24s ease-in;
+     -moz-transition:color .24s ease-in;
+       -o-transition:color .24s ease-in;
+          transition:color .24s ease-in;
+
+  &:hover {
+    color: #191919;
+  }
+
+  text-shadow:rgba(233, 233, 233, 0.9) 0 2px 3px;
+}
+#intro {
+  font-size: 1.1em;
+  line-height: 1.4em;
+  margin-bottom: 52px;
+}
+a {
+	&:link{
+		color: @linkcolor;
+	 	.transition(0.24s, ease-in-out);
+	}
+	&:hover { color: darken(@linkcolor, 10%); }
+	&:visited { color: darken(@linkcolor, 15%); }
+}
+
+section {
+    margin: 12px 0;
+    &:last-child {
+      margin-bottom: 0;
+    }
+}
+
+nav {
+  font-weight: bold;
+  font-size: 0.9em;
+  width: 20%;
+  position: fixed;
+  left: 1%;
+  top: 4%;
+
+  a:link {
+    color: #4c4c4c;
+    text-decoration: none;
+    border-bottom: 1px solid #808080;
+  }
+  a:visited {
+    border-bottom: 1px solid black;
+  }
+
+  padding: 1% 2%;
+
+  li {
+    list-style: none;
+  }
+}
+#popular-inlets {
+  list-style: none;
+}
+#mostactive-users {
+  font-size: 0.9em;
+  line-height: 1.4em;
+  padding: 1px 8px;
+  display: inline-block;
+  width: 38%;
+  text-align: right;
+
+  //border: 1px solid #CCC;
+
+  list-style: none;
+  vertical-align: top;
+  border-right: 1px solid #CCC;
+  padding-right: 3%;
+}
+
+#mostactive-inlets {
+  font-size: 0.9em;
+  line-height: 1.4em;
+  padding: 1px 8px;
+  display: inline-block;
+  width: 59%;
+  margin-left: 1%;
+
+  //border: 1px solid #CCC;
+
+  list-style: none;
+  vertical-align: top;
+}
+
+#popular-inlets {
+  margin-bottom: 52px;
+  li {
+    border-radius: 4px;
+    border: 1px solid rgba(15,15,15,0.2);
+
+    -webkit-box-shadow:0 2px 7px 0 rgba(0,0,0,0.15); /* Saf3.0+, Chrome */
+       -moz-box-shadow:0 2px 7px 0 rgba(0,0,0,0.15); /* FF3.5+ */
+            box-shadow:0 2px 7px 0 rgba(0,0,0,0.15); /* Opera 10.5, IE 9.0 */
+
+
+    height: 80px;
+    overflow: hidden;
+    margin-top: 8px;
+  }
+  img {
+    width: 100%;
+    height: auto;
+    margin-top: -12%;
+
+    -webkit-transition:all .4s ease-in;
+       -moz-transition:all .4s ease-in;
+         -o-transition:all .4s ease-in;
+            transition:all .4s ease-in;
+
+    &:hover {
+
+      -webkit-transition:all 1.3s ease-out .07s;
+         -moz-transition:all 1.3s ease-out .07s;
+           -o-transition:all 1.3s ease-out .07s;
+              transition:all 1.3s ease-out .07s;
+
+      margin-top: 0;
+
+    }
+  }
+}
+
+#more-details {
+  margin-top: 10%;
+}
+#get-started {
+  height: auto;
+  padding: 8px;
+  text-align: center;
+  width: 85%;
+  margin-left: auto;
+  margin-right: auto;
+
+  small {
+    opacity: 0.4;
+    display: block;
+    font-size: 0.4em;
+    margin-top: 0.75em;
+    -webkit-transition:all .3s ease-out;
+       -moz-transition:all .3s ease-out;
+         -o-transition:all .3s ease-out;
+            transition:all .3s ease-out;
+
+    a:link {
+      border-bottom: 1px solid #CCC;
+    }
+
+    &:hover {
+      opacity: 0.8;
+    }
+  }
+
+  opacity: 0.9;
+  &:hover {
+    opacity: 1;
+  }
+
+  a:link {
+    color: #333333;
+    text-decoration: none;
+    padding-bottom: 2px;
+    border-bottom: 2px solid black;
+    line-height: 1.4em;
+  }
+  a:hover {
+    border-bottom: 2px solid #999;
+  }
+
+  font-weight: bold;
+  font-size: 2em;
+  line-height: 1em;
+  margin-bottom: 1em;
+}
+
+#example-gallery {
+  text-align: center;
+  a:link {
+    text-decoration: none;
+  }
+
+  img {
+    border-radius: 4px;
+    margin: 1%;
+    width: 220px;
+    height: 220px;
+
+      opacity: 0.5;
+      -webkit-transition:opacity .65s ease-out;
+      -moz-transition:opacity .65s ease-out;
+      -o-transition:opacity .65s ease-out;
+      transition:opacity .65s ease-out;
+
+
+      &:hover {
+        opacity: 1;
+
+        -webkit-transition:opacity .35s ease-in .15s;
+        -moz-transition:opacity .35s ease-in .15s;
+        -o-transition:opacity .35s ease-in .15s;
+        transition:opacity .35s ease-in .15s;
+      }
+
+    border: 1px solid rgba(215,215,215,0.4);
+    -webkit-box-shadow:0 2px 8px 0 rgba(0,0,0,0.3); /* Saf3.0+, Chrome */
+    -moz-box-shadow:0 2px 8px 0 rgba(0,0,0,0.3); /* FF3.5+ */
+    box-shadow:0 2px 8px 0 rgba(0,0,0,0.3); /* Opera 10.5, IE 9.0 */
+  }
+}
+
+
+
+
+/*		Tablet Layout: 768px.
+		Gutters: 24px.
+		Outer margins: 28px.
+		Inherits styles from: Default Layout.
+-----------------------------------------------------------------
+cols    1     2      3      4      5      6      7      8
+px      68    160    252    344    436    528    620    712    */
+
+@media only screen and (min-width: 768px) and (max-width: 991px) {
+
+	body {
+		max-width: 712px;
+		width: 80%;
+		padding: 32px 28px 60px;
+		font-size: 1.3em;
+    margin-right: 0;
+    margin-left: auto;
+	}
+
+}
+
+
+
+
+
+
+
+
+
+
+
+/*		Mobile Layout: 320px.
+		Gutters: 24px.
+		Outer margins: 34px.
+		Inherits styles from: Default Layout.
+---------------------------------------------
+cols    1     2      3
+px      68    160    252    */
+
+@media only screen and (max-width: 767px) {
+
+	body {
+		width: 252px;
+		//padding: 24px 34px 60px;
+
+
+		font-size: 1em;
+		line-height: 1.5em;
+
+    margin-right: 3%;
+    margin-left: auto;
+	}
+
+  #mostactive-users {
+    width: 100%;
+    text-align: left;
+    border-right: 0;
+    margin: 1.4em 0;
+  }
+
+  #mostactive-inlets {
+    width: 100%;
+    text-align: left;
+  }
+
+  #get-started {
+    width: 100%;
+
+
+  }
+
+  nav {
+    line-height: 1.3em;
+
+    li {
+      margin-top: .5em;
+    }
+  }
+
+  #example-gallery {
+    img {
+      width: 110px;
+      height: 110px;
+      margin: 0;
+
+    }
+  }
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*		Wide Mobile Layout: 480px.
+		Gutters: 24px.
+		Outer margins: 22px.
+		Inherits styles from: Default Layout, Mobile Layout.
+------------------------------------------------------------
+cols    1     2      3      4      5
+px      68    160    252    344    436    */
+
+@media only screen and (min-width: 480px) and (max-width: 767px) {
+
+	body {
+		max-width: 436px;
+    width: 65%;
+		padding: 8px 10px;
+	}
+
+}
+
+
+
+
+
+
+
+
+
+
+
+/*
+        Styling those forms / inputs
+
+------------------------------------------------------------ */
+label {
+    color: black;
+}
+input, textarea, select {
+   -webkit-appearance: none;
+}
+th {
+    text-align: right;
+}
+button {
+    opacity: 0.82;
+    border: 1px solid rgba(0,0,0,0.6);
+    padding: 0.5em;
+    margin: 4px 8px;
+    font-size: 15px;
+    font-weight: bold;
+    line-height: 1.2em;
+    -webkit-appearance: none;
+    -webkit-box-shadow: 1px 1px 1px #fff;
+    -webkit-border-radius: 0.5em;
+    outline: none;
+
+
+
+    text-shadow: 0 2px 1px #FFF;
+
+    background-color: #ffffff;
+    background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(255, 255, 255)), to(rgb(214, 214, 214)));
+    background-image: -webkit-linear-gradient(top, rgb(255, 255, 255), rgb(214, 214, 214));
+    background-image: -moz-linear-gradient(top, rgb(255, 255, 255), rgb(214, 214, 214));
+    background-image: -o-linear-gradient(top, rgb(255, 255, 255), rgb(214, 214, 214));
+    background-image: -ms-linear-gradient(top, rgb(255, 255, 255), rgb(214, 214, 214));
+    background-image: linear-gradient(top, rgb(255, 255, 255), rgb(214, 214, 214));
+    filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,StartColorStr='#ffffff', EndColorStr='#d6d6d6');
+
+    .transition(0.001s);
+
+    &:hover {
+        .transition(0.3s);
+        opacity: 1;
+        border: 1px solid rgba(0,0,0,0.7);
+        text-shadow: 0 2px 2px #FFF;
+    }
+    &:active {
+        opacity: 0.9;
+        border: 1px solid black;
+
+        background-color: #ffffff;
+        background-image: -webkit-gradient(radial, 50% 50%,0,50% 50%,200, from(rgb(146, 146, 146)), to(rgb(255, 255, 255)));
+        background-image: -webkit-radial-gradient(50% 50%, rgb(255, 255, 255), rgb(146, 146, 146));
+        background-image: -moz-radial-gradient(50% 50%, rgb(255, 255, 255), rgb(146, 146, 146));
+        background-image: -o-radial-gradient(50% 50%, rgb(255, 255, 255), rgb(146, 146, 146));
+        background-image: -ms-radial-gradient(50% 50%, rgb(255, 255, 255), rgb(146, 146, 146));
+        background-image: radial-gradient(50% 50%, rgb(255, 255, 255), rgb(146, 146, 146));
+
+    }
+
+}
+.small-button {
+    padding: 2px 4px;
+    font-size: 10px;
+    text-shadow: 0 1px 1px #FFF;
+}
+
+input, textarea, select {
+    border: 2px solid rgba(0,0,0,0.2);
+    padding: 0.5em;
+    margin: 4px 8px;
+    font-size: 15px;
+    line-height: 1.2em;
+    width: 13em;
+    -webkit-appearance: none;
+    -webkit-box-shadow: 1px 1px 1px #fff;
+    -webkit-border-radius: 0.5em;
+    outline: none;
+
+    background-color: #ebebeb;
+    background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(235, 235, 235)), to(rgb(255, 255, 255)));
+    background-image: -webkit-linear-gradient(top, rgb(235, 235, 235), rgb(255, 255, 255));
+    background-image: -moz-linear-gradient(top, rgb(235, 235, 235), rgb(255, 255, 255));
+    background-image: -o-linear-gradient(top, rgb(235, 235, 235), rgb(255, 255, 255));
+    background-image: -ms-linear-gradient(top, rgb(235, 235, 235), rgb(255, 255, 255));
+    background-image: linear-gradient(top, rgb(235, 235, 235), rgb(255, 255, 255));
+    filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,StartColorStr='#ebebeb', EndColorStr='#ffffff');
+
+    .transition(0.8s);
+
+    &:hover {
+        border: 2px solid rgba(0,0,0,0.4);
+    }
+    &:active, &:focus {
+        border: 2px solid rgba(0,0,0,0.5);
+        background-color: #ffffff;
+        background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(255, 255, 255)), to(rgb(214, 214, 214)));
+        background-image: -webkit-linear-gradient(top, rgb(255, 255, 255), rgb(214, 214, 214));
+        background-image: -moz-linear-gradient(top, rgb(255, 255, 255), rgb(214, 214, 214));
+        background-image: -o-linear-gradient(top, rgb(255, 255, 255), rgb(214, 214, 214));
+        background-image: -ms-linear-gradient(top, rgb(255, 255, 255), rgb(214, 214, 214));
+        background-image: linear-gradient(top, rgb(255, 255, 255), rgb(214, 214, 214));
+        filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,StartColorStr='#ffffff', EndColorStr='#d6d6d6');
+
+        text-shadow: 0 2px 1px #FFF;
+    }
+}
+@media only screen and (max-width: 767px) {
+    input, textarea, select {
+        width: 8em;
+    }
+}
+input[type=text] {
+
+    color: #5A5A5A;
+
+    &:active, &:focus {
+        color: black;
+        background-image: none !important;
+        background-color: white;
+    }
+}
+input[type=checkbox],
+ input[type=radio] {
+   display: inline-block;
+   font-size: 15px;
+   line-height: 1em;
+   margin: 0 0.25em 0 0;
+   padding: 0;
+   width: 1.25em;
+   height: 1.25em;
+   -webkit-border-radius: 0.25em;
+   vertical-align: text-top;
+ }
+input[type=radio] {
+    -webkit-border-radius: 2em; /* Make radios round */
+}
+input[type=submit] {
+    opacity: 0.95;
+    border: 3px solid rgba(0,0,0,0.55);
+    padding: 0.5em;
+    margin: 4px 8px;
+    font-size: 15px;
+    font-weight: bold;
+    line-height: 1.2em;
+    -webkit-appearance: none;
+    -webkit-box-shadow: 1px 1px 1px #fff;
+    -webkit-border-radius: 0.5em;
+    outline: none;
+
+
+
+    text-shadow: 0 2px 1px #FFF;
+
+    background-color: #ffffff;
+    background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(255, 255, 255)), to(rgb(214, 214, 214)));
+    background-image: -webkit-linear-gradient(top, rgb(255, 255, 255), rgb(214, 214, 214));
+    background-image: -moz-linear-gradient(top, rgb(255, 255, 255), rgb(214, 214, 214));
+    background-image: -o-linear-gradient(top, rgb(255, 255, 255), rgb(214, 214, 214));
+    background-image: -ms-linear-gradient(top, rgb(255, 255, 255), rgb(214, 214, 214));
+    background-image: linear-gradient(top, rgb(255, 255, 255), rgb(214, 214, 214));
+    filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,StartColorStr='#ffffff', EndColorStr='#d6d6d6');
+
+    .transition(0.1s);
+
+    &:hover {
+        .transition(0.3s);
+        opacity: 1;
+        border: 3px solid rgba(0,0,0,0.8);
+        text-shadow: 0 2px 2px #FFF;
+    }
+    &:active {
+        opacity: 0.9;
+        border: 3px solid black;
+
+        background-color: #ffffff;
+        background-image: -webkit-gradient(radial, 50% 50%,0,50% 50%,200, from(rgb(146, 146, 146)), to(rgb(255, 255, 255)));
+        background-image: -webkit-radial-gradient(50% 50%, rgb(255, 255, 255), rgb(146, 146, 146));
+        background-image: -moz-radial-gradient(50% 50%, rgb(255, 255, 255), rgb(146, 146, 146));
+        background-image: -o-radial-gradient(50% 50%, rgb(255, 255, 255), rgb(146, 146, 146));
+        background-image: -ms-radial-gradient(50% 50%, rgb(255, 255, 255), rgb(146, 146, 146));
+        background-image: radial-gradient(50% 50%, rgb(255, 255, 255), rgb(146, 146, 146));
+
+    }
+}
+
+
+
+
+
+/*  Column class / mixins
+  --------------------- */
+
+.1-column { width:  68px;   }
+.2-column { width: 160px;  }
+.3-column { width: 252px;  }
+.4-column { width: 344px;  }
+.5-column { width: 436px;  }
+.6-column { width: 528px;  }
+.7-column { width: 620px;  }
+.8-column { width: 712px;  }
+.9-column { width: 804px;  }
+.10-column {width: 896px; }
+
+
+
+/*---------------------------------------------------
+    LESS Elements 0.6
+  ---------------------------------------------------
+    A set of useful LESS mixins by Dmitry Fadeyev
+    Special thanks for mixin suggestions to:
+      Kris Van Herzeele,
+      Benoit Adam,
+      Portenart Emile-Victor,
+      Ryan Faerman
+
+    More info at: http://lesselements.com
+-----------------------------------------------------*/
+
+.gradient(@color: #F5F5F5, @start: #EEE, @stop: #FFF) {
+  background: @color;
+  background: -webkit-gradient(linear,
+                               left bottom,
+                               left top,
+                               color-stop(0, @start),
+                               color-stop(1, @stop));
+  background: -ms-linear-gradient(bottom,
+                                  @start,
+                                  @stop);
+  background: -moz-linear-gradient(center bottom,
+                                   @start 0%,
+                                   @stop 100%);
+}
+.bw-gradient(@color: #F5F5F5, @start: 0, @stop: 255) {
+  background: @color;
+  background: -webkit-gradient(linear,
+                               left bottom,
+                               left top,
+                               color-stop(0, rgb(@start,@start,@start)),
+                               color-stop(1, rgb(@stop,@stop,@stop)));
+  background: -ms-linear-gradient(bottom,
+                                  rgb(@start,@start,@start) 0%,
+                                  rgb(@start,@start,@start) 100%);
+  background: -moz-linear-gradient(center bottom,
+                                   rgb(@start,@start,@start) 0%,
+                                   rgb(@stop,@stop,@stop) 100%);
+}
+.bordered(@top-color: #EEE, @right-color: #EEE, @bottom-color: #EEE, @left-color: #EEE) {
+  border-top: solid 1px @top-color;
+  border-left: solid 1px @left-color;
+  border-right: solid 1px @right-color;
+  border-bottom: solid 1px @bottom-color;
+}
+.drop-shadow(@x-axis: 0, @y-axis: 1px, @blur: 2px, @alpha: 0.1) {
+  -webkit-box-shadow: @x-axis @y-axis @blur rgba(0, 0, 0, @alpha);
+  -moz-box-shadow: @x-axis @y-axis @blur rgba(0, 0, 0, @alpha);
+  box-shadow: @x-axis @y-axis @blur rgba(0, 0, 0, @alpha);
+}
+.rounded(@radius: 2px) {
+  -webkit-border-radius: @radius;
+  -moz-border-radius: @radius;
+  border-radius: @radius;
+  -moz-background-clip: padding; -webkit-background-clip: padding-box; background-clip: padding-box;
+}
+.border-radius (@radius) {
+  border-radius: @radius;
+  -moz-border-radius: @radius;
+  -webkit-border-radius: @radius;
+}
+.opacity(@opacity: 0.5) {
+  -moz-opacity: @opacity;
+  -khtml-opacity: @opacity;
+  -webkit-opacity: @opacity;
+  opacity: @opacity;
+}
+.transition-duration(@duration: 0.2s) {
+  -moz-transition-duration: @duration;
+  -webkit-transition-duration: @duration;
+  transition-duration: @duration;
+}
+.rotation(@deg:5deg){
+  -webkit-transform: rotate(@deg);
+  -moz-transform: rotate(@deg);
+  transform: rotate(@deg);
+}
+.scale(@ratio:1.5){
+  -webkit-transform:scale(@ratio);
+  -moz-transform:scale(@ratio);
+  transform:scale(@ratio);
+}
+.transition(@duration:0.2s, @ease:ease-out) {
+  -webkit-transition: all @duration @ease;
+  -moz-transition: all @duration @ease;
+  transition: all @duration @ease;
+}
+.inner-shadow(@horizontal:0, @vertical:1px, @blur:2px, @alpha: 0.4) {
+  -webkit-box-shadow: inset @horizontal @vertical @blur rgba(0, 0, 0, @alpha);
+  -moz-box-shadow: inset @horizontal @vertical @blur rgba(0, 0, 0, @alpha);
+  box-shadow: inset @horizontal @vertical @blur rgba(0, 0, 0, @alpha);
+}
+.box-shadow(@arguments) {
+  -webkit-box-shadow: @arguments;
+  -moz-box-shadow: @arguments;
+  box-shadow: @arguments;
+}
+.columns(@colwidth: 250px, @colcount: 0, @colgap: 50px, @columnRuleColor: #EEE, @columnRuleStyle: solid, @columnRuleWidth: 1px) {
+  -moz-column-width: @colwidth;
+  -moz-column-count: @colcount;
+  -moz-column-gap: @colgap;
+  -moz-column-rule-color: @columnRuleColor;
+  -moz-column-rule-style: @columnRuleStyle;
+  -moz-column-rule-width: @columnRuleWidth;
+  -webkit-column-width: @colwidth;
+  -webkit-column-count: @colcount;
+  -webkit-column-gap: @colgap;
+  -webkit-column-rule-color: @columnRuleColor;
+  -webkit-column-rule-style: @columnRuleStyle;
+  -webkit-column-rule-width: @columnRuleWidth;
+  column-width: @colwidth;
+  column-count: @colcount;
+  column-gap: @colgap;
+  column-rule-color: @columnRuleColor;
+  column-rule-style: @columnRuleStyle;
+  column-rule-width: @columnRuleWidth;
+}
+.translate(@x:0, @y:0) {
+  -moz-transform: translate(@x, @y);
+  -webkit-transform: translate(@x, @y);
+  -o-transform: translate(@x, @y);
+  -ms-transform: translate(@x, @y);
+  transform: translate(@x, @y);
+}
+
+
+
+// retina.less
+// A helper mixin for applying high-resolution background images (http://www.retinajs.com)
+
+.at2x(@path, @w: auto, @h: auto) {
+  background-image: url(@path);
+  @at2x_path: ~`"@{path}".split('.').slice(0, "@{path}".split('.').length - 1).join(".") + "@2x" + "." + "@{path}".split('.')["@{path}".split('.').length - 1]`;
+
+  @media all and (-webkit-min-device-pixel-ratio : 1.5) {
+    background-image: url(@at2x_path);
+    background-size: @w @h;
+  }
+}
+
+
