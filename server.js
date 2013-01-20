@@ -81,6 +81,10 @@ app.get('/inlet', inlet)
 app.get('/inlet/:gistid', inlet)
 app.get('/tributary', inlet)
 app.get('/tributary/:gistid', inlet)
+//backwards compatible endpoints...
+app.get('/tributary/:gistid/:filename', inlet)
+app.get('/delta/:gistid', inlet)
+app.get('/delta/:gistid/:filename', inlet)
 function inlet(req,res,next) {
   var gistid = req.params['gistid'];
   var user = req.session.user;
@@ -88,7 +92,7 @@ function inlet(req,res,next) {
     //record this visit
     var visit = {
       gistid: gistid
-    , time: new Date()
+    , createdAt: new Date()
     }
     if(user) {
       visit.user = {
@@ -304,7 +308,8 @@ function after_fork(oldgist, newgist, token, callback) {
 
   var inlet_data = {
     gistid: newgist.id
-  , time: new Date()
+  , createdAt: new Date()
+  , description: newgist.description
   //, thumbnail: thumbnail_url
   }
 
@@ -329,17 +334,24 @@ function after_fork(oldgist, newgist, token, callback) {
 function after_save(gist, callback) {
   //update the raw url for the thumbnail
 
-  //save info in mongo
-  $inlets.update({ gistid: gist.id} , {
-    gistid: gist.id
-    , user: {
+  //save info in mongo.
+  //if gist doesn't exist in mongo, we create it, otherwise we update it.
+  $inlets.findOne({gistid: gist.id}, function(err, mgist) {
+    if(!mgist) {
+      mgist = { 
+        gistid: gist.id,
+        createdAt: new Date(),
+        description: gist.description
+      }
+    }
+    mgist.user = {
       id: gist.user.id
     , login: gist.user.login
+    //,  thumbnail: thumbnail_url 
     }
-  , lastSave: new Date()
-  //,  thumbnail: thumbnail_url
-  }, { upsert: true }, function(err, result) { if(err) console.error(err); });
-
+    mgist.lastSave = new Date();
+    $inlets.update({ gistid: gist.id}, mgist, {upsert:true}, function(err, result) { if(err) console.error(err); });
+  })
   callback(null, gist);
 }
 
@@ -429,14 +441,128 @@ function github_logout(req,res,next) {
   res.redirect(product + id);
 }
 
+//API
 
-//app.get('/latest/created')
-//app.get('/latest/edits')
-//app.get('/latest/forks')
+app.get('/api/latest/created', latest_created)
+function latest_created(req, res, next) {
+  var query = {};
+  //TODO: pagination
+  var limit = 200;
+  $inlets.find(query, {limit: limit}).sort({ createdAt: -1 }).toArray(function(err, inlets) {
+    if(err) res.send(err);
+    res.send(inlets);
+  })
+}
+app.get('/api/latest/forks', latest_forks)
+function latest_forks(req, res, next) {
+  var query = {
+    parent: {$exists: true}
+  };
+  //TODO: pagination
+  var limit = 200;
+  $inlets.find(query, {limit: limit}).sort({ createdAt: -1 }).toArray(function(err, inlets) {
+    if(err) res.send(err);
+    res.send(inlets);
+  })
+}
+
+app.get('/api/latest/visits', latest_visits)
+app.get('/api/latest/visits/:start/:end', latest_visits)
+function latest_visits(req, res, next) {
+  var start = req.params.start || new Date(new Date() - (24 * 60 * 60 * 1000));
+  var end = req.params.end || new Date();
+  var query = dateQuery(start, end);
+  //TODO: pagination
+  var limit = 2000;
+  $visits.find(query, {limit: limit}).sort({ createdAt: -1 }).toArray(function(err, inlets) {
+    if(err) res.send(err);
+    res.send(inlets);
+  })
+}
+
+app.get('/api/users', api_users) 
+function api_users(req,res,next) {
+  var query = {};
+  //TODO: pagination
+  var limit = 200;
+  var fields = {
+    name: 1,
+    login: 1,
+    id: 1,
+    avatar_url: 1,
+    html_url: 1,
+    inlets: 1,
+    visits: 1,
+    nforks: 1
+  }
+  var opts = {
+    limit: limit
+  }
+  //TODO: make sure this is secure in the future
+  $users.find(query, fields, opts).sort({ createdAt: 1 }).toArray(function(err, users) {
+    if(err) res.send(err);
+    res.send(users);
+  })
+
+}
+
+
+app.get('/api/user/:login/latest', user_latest)
+function user_latest(req,res,next) {
+  var query = { "user.login": req.params.login };
+  //TODO: pagination
+  var limit = 200;
+  $inlets.find(query, {limit: limit}).sort({ createdAt: -1 }).toArray(function(err, inlets) {
+    if(err) res.send(err);
+    res.send(inlets);
+  })
+}
+
+//Reporting API
+app.get('/api/counts/inlets', counts_inlets) 
+app.get('/api/counts/inlets/:start/:end', counts_inlets) 
+function counts_inlets(req,res,next) {
+  var start = req.params.start || new Date(new Date() - (24 * 60 * 60 * 1000));
+  var end = req.params.end || new Date();
+  var query = dateQuery(start, end);
+  //TODO: pagination
+  var limit = 200;
+  $inlets.count(query, {limit: limit}, function(err, ninlets) {
+    if(err) res.send(err);
+    res.send({
+      start: start,
+      end: end,
+      count:ninlets
+    });
+  });
+}
+app.get('/api/counts/visits', counts_visits) 
+app.get('/api/counts/visits/:start/:end', counts_visits) 
+function counts_visits(req,res,next) {
+  var start = req.params.start || new Date(new Date() - (24 * 60 * 60 * 1000));
+  var end = req.params.end || new Date();
+  var query = dateQuery(start, end);
+  //TODO: pagination
+  var limit = 200;
+  $visits.count(query, {limit: limit}, function(err, nvisits) {
+    if(err) res.send(err);
+    res.send({
+      start: start,
+      end: end,
+      count:nvisits
+    });
+  });
+}
 
 //app.get('/most/viewed')
 //app.get('/most/forked')
 
+function dateQuery(start, end) {
+  var query = {
+    $and: [ { createdAt: { $gt: new Date(start)}}, { createdAt:{ $lte: new Date(end)}}],
+  }
+  return query;
+}
 
 app.listen(settings.port, function() {
   console.log("tributary running on port", settings.port);
