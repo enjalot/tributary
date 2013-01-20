@@ -205,8 +205,6 @@ var Tributary = function() {
       "public": true,
       require: [],
       fileconfigs: {},
-      tab: "edit",
-      display_percent: .7,
       play: false,
       loop: false,
       restart: false,
@@ -1289,24 +1287,6 @@ var Tributary = function() {
   tributary.ui = {};
   var display, panel_gui, panel, panel_handle, page, header;
   tributary.ui.setup = function() {
-    display = d3.select("#display");
-    panel = d3.select("#panel");
-    panel_gui = d3.selectAll("div.tb_panel_gui");
-    panelfile_gui = d3.select("#file-list");
-    panel_handle = d3.select(".tb_panel_handle");
-    page = d3.select("#container");
-    header = d3.select("#title");
-    tributary.dims = {
-      display_percent: .7,
-      page_width: 0,
-      page_height: 0,
-      display_width: 0,
-      display_height: 0,
-      panel_width: 0,
-      panel_height: 0,
-      panel_gui_width: 0,
-      panel_gui_height: 31
-    };
     tributary.events.on("resize", function() {
       if ($("#display").width() > 767) {
         tributary.sw = $("#display").width() - $("#panel").width();
@@ -1321,14 +1301,6 @@ var Tributary = function() {
       tributary.events.trigger("execute");
     });
     tributary.events.trigger("resize");
-    var ph_drag = d3.behavior.drag().on("drag", function() {
-      var dx = d3.event.dx / tributary.dims.page_width;
-      if (tributary.dims.display_percent + dx >= 0 && tributary.dims.display_percent + dx <= 1) {
-        tributary.dims.display_percent += dx;
-      }
-      tributary.events.trigger("resize");
-    });
-    panel_handle.call(ph_drag);
   };
   tributary.ui.assemble = function(gistid) {
     tributary.trace = false;
@@ -1423,26 +1395,8 @@ var Tributary = function() {
       model: config
     });
     files_view.render();
-    var controls_view = new tributary.ControlsView({
-      el: ".tb_controls",
-      model: config
-    });
-    controls_view.render();
     setup_header(ret);
-    tributary.events.trigger("show", config.get("tab"));
-    tributary.events.on("show", function(name) {
-      config.set("tab", name);
-    });
-    tributary.dims.display_percent = config.get("display_percent");
-    tributary.events.trigger("resize");
-    tributary.events.on("resize", function() {
-      config.set("display_percent", tributary.dims.display_percent);
-    });
-    if (config.get("hidepanel")) {
-      tributary.events.trigger("hidepanel");
-    } else {
-      tributary.events.trigger("showpanel");
-    }
+    setup_save(ret.config);
   }
   function setup_header(ret) {
     if (ret.user) {
@@ -1465,7 +1419,6 @@ var Tributary = function() {
         ret.config.saveType = "fork";
       }
     }
-    setup_save(ret.config);
     $("#gist-title").on("keyup", function() {
       ret.config.set("description", $("#gist-title").val());
       d3.select("title").text($("#gist-title").val());

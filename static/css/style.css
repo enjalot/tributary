@@ -373,6 +373,7 @@ section:last-child {
 #title #login {
   position: absolute;
   right: 14px;
+  display: inline-block;
 }
 #display {
   border-radius: 6px;

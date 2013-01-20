@@ -3,86 +3,7 @@ tributary.ui = {};
 
 var display, panel_gui, panel, panel_handle, page, header;
 tributary.ui.setup = function() {
-  //UI calculations, we control the dimensions of our various ui components with JS
-
-  //keep track of the screen width and height
-  //display is the element where things get rendered into
-
-  //tributary.panel = new tributary.PanelView({el: ".tb_panel"});
-  //tributary.panel.render();
-
-
-  display = d3.select("#display");
-  //panel holds the editors, and other controls
-  panel = d3.select("#panel");
-  //ui container for panel tabs (config/edit)
-  panel_gui = d3.selectAll("div.tb_panel_gui");
-  //ui container for file tabs
-  panelfile_gui = d3.select("#file-list");
-  //the ui element for resizing the panel
-  panel_handle = d3.select(".tb_panel_handle");
-
-
-  page = d3.select("#container");
-  header = d3.select("#title");
-
-  tributary.dims = {
-    display_percent: 0.70,
-    page_width: 0,
-    page_height: 0,
-    display_width: 0,
-    display_height: 0,
-    panel_width: 0,
-    panel_height: 0,
-    panel_gui_width: 0,
-    panel_gui_height: 31,
-    //panelfiles_gui_height: 31
-  };
-
-
-  //We control the layout of our UI completely with code, otherwise we are forcing CSS
-  //to do something it wasn't meant to do, make an application...
   tributary.events.on("resize", function() {
-    /*
-    var min_width = parseInt(panel.style("min-width"), 10);
-    tributary.dims.page_width = parseInt(page.style("width"), 10);
-    //if the panel width goes below the minimum width, don't resize
-    if( tributary.dims.page_width - tributary.dims.page_width * tributary.dims.display_percent < min_width ) {
-      //return;
-      tributary.dims.display_width = tributary.dims.page_width - min_width
-      tributary.dims.panel_width = min_width;
-    } else {
-      //calculate how big we want our display to be
-      tributary.dims.display_width = tributary.dims.page_width * tributary.dims.display_percent;
-      tributary.dims.panel_width = tributary.dims.page_width - tributary.dims.display_width;
-    }
-    tributary.dims.panel_gui_width = tributary.dims.panel_width;
-
-    tributary.dims.page_height = parseInt(page.style("height"), 10);
-    tributary.dims.display_height = tributary.dims.page_height - parseInt(header.style("height"),10);
-    tributary.dims.panel_height = tributary.dims.display_height - (tributary.dims.panel_gui_height);
-
-    //we adjust the size of the ui with javascript because css sucks
-    display.style("width", tributary.dims.display_width + "px");
-    panel.style("width", tributary.dims.panel_width + "px");
-    panel_gui.style("width", tributary.dims.panel_gui_width + "px");
-    panelfile_gui.style("width", tributary.dims.panel_gui_width + "px");
-
-
-    panel.style("height", tributary.dims.panel_height + "px");
-    //update all the inner panels
-    panel.selectAll(".panel").style("height", tributary.dims.panel_height + "px");
-    panel.selectAll(".CodeMirror").style("height", (tributary.dims.panel_height - tributary.dims.panel_gui_height) + "px");
-
-    display.style("height", tributary.dims.display_height + "px");
-    panel_gui.style("height", tributary.dims.panel_gui_height + "px");
-    panel_gui.style("margin-top", tributary.dims.panel_gui_height + "px");
-
-    panel_handle.style("right", tributary.dims.panel_width + "px");
-
-    tributary.sw = tributary.dims.display_width;
-    tributary.sh = tributary.dims.display_height;
-    */
     if($("#display").width() > 767) {
       tributary.sw = $("#display").width() - $("#panel").width();
     }
@@ -94,25 +15,11 @@ tributary.ui.setup = function() {
       console.log("Fullscreen")
       tributary.sw = $("#display").width();
     }
-
     tributary.sh = $("#display").height();
 
     tributary.events.trigger("execute");
   });
   tributary.events.trigger("resize");
-
-  var ph_drag = d3.behavior.drag()
-    .on("drag", function() {
-      //modify the display % when dragging
-      var dx = d3.event.dx/tributary.dims.page_width;
-      if(tributary.dims.display_percent + dx >= 0.0 && tributary.dims.display_percent + dx <= 1) {
-        tributary.dims.display_percent += dx;
-      }
-     tributary.events.trigger("resize");
-    })
-  panel_handle.call(ph_drag);
-
-
 
 };
 
@@ -248,7 +155,6 @@ function _assemble(ret) {
     }
   });
 
-
   //fill in the file view
   var files_view = new tributary.FilesView({
     el: "#file-list",
@@ -266,57 +172,22 @@ function _assemble(ret) {
   */
 
   //fill in the control view (Config pane)
+  /*
   var controls_view = new tributary.ControlsView({
     el: ".tb_controls",
     model: config,
   });
   controls_view.render();
+  */
 
   setup_header(ret);
-
-
-  //save tab state
-  tributary.events.trigger("show", config.get("tab"));
-  tributary.events.on("show", function(name) {
-    config.set("tab", name);
-  });
-
-  tributary.dims.display_percent = config.get("display_percent");
-  tributary.events.trigger("resize");
-  tributary.events.on("resize", function() {
-    config.set("display_percent", tributary.dims.display_percent);
-  });
-
-  if(config.get("hidepanel")) {
-    tributary.events.trigger("hidepanel")
-  } else {
-    tributary.events.trigger("showpanel");
-  }
+  setup_save(ret.config);
 }
 
 function setup_header(ret){
-
-
   if(ret.user) {
     var gist_uid = ret.user.id;
 
-    /* TODO: setup editing of description as well as a save button
-    if(gist_uid === tributary.userid) {
-      //make editable description
-      var info_string = '<input id="gist-title" value="' + ret.gist.description + '" > by <!-- ya boy -->';
-    }
-    else {
-      //make the description and attribution
-      var info_string = '"<span id="gist-title-static"><a href="' + ret.gist.html_url + '">' + ret.gist.description + '</a></span>" by ';
-    }
-
-    if(ret.user.url === "") {
-      info_string += ret.user.login;
-    } else {
-      info_string += '<a href="' + ret.user.url + '">' + ret.user.login + '</a>';
-    }
-    */
-    //console.log("RET", ret)
     $("#inlet-author").text(ret.user.login)
     $("#gist-title").val(ret.gist.description)
     $("#author-avatar img").attr("src", function(d){
@@ -338,43 +209,13 @@ function setup_header(ret){
       ret.config.saveType = "fork";
     }
   }
-    //$('title').html(info_string);
-    //$('#gist_info').html(info_string);
-
-    /*
-    if(ret.user.id !== tributary.userid) {
-      //$("#savePanel").attr("disabled", "true");
-      //$("#savePanel").attr("class", "off");
-      $('#forkPanel').css("display", "none");
-      $('#savePanel').attr("id", "forkPanel");
-      setup_save(ret.config);
-    }
-  } else {
-    //if the user is not logged in, or no gist disable save
-    if(isNaN(tributary.userid) || !ret.gist) {
-      //$("#savePanel").attr("disabled", "true");
-      //$("#savePanel").attr("class", "off");
-      //$("#forkPanel").attr("disabled", "true");
-      //$("#forkPanel").attr("class", "minimal_off");
-
-      //$('#forkPanel').hide();
-      $('#forkPanel').css("display", "none");
-      $('#savePanel').attr("id", "forkPanel");
-      setup_save(ret.config);
-    }
-
-   */
-
-  setup_save(ret.config);
 
   $("#gist-title").on("keyup", function(){
       //console.log($("#gist-title").val());
       ret.config.set("description", $("#gist-title").val())
       d3.select("title").text($("#gist-title").val())
   })
-
 }
-
 
 function setup_save(config) {
   //Setup the save panel

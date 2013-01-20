@@ -9,8 +9,6 @@ tributary.Config = Backbone.Model.extend({
       public: true,
       require: [], //require modules will be like : {name:"crossfilter", url:"/static/lib/crossfilter.min.js"}
       fileconfigs: {}, //per-file configurations (editor specific)
-      tab: "edit",
-      display_percent: 0.7,
 
       //things related to time control
       play: false,
@@ -146,8 +144,8 @@ tributary.ConfigView = Backbone.View.extend({
         }
         })
 
-    // Require / External files config section
 
+    // Require / External files config section
     var require = d3.select(this.el)
       .select(".requirecontrols");
 
