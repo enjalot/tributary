@@ -81,8 +81,10 @@ app.get('/inlet', inlet)
 app.get('/inlet/:gistid', inlet)
 app.get('/tributary', inlet)
 app.get('/tributary/:gistid', inlet)
-//backwards compatible endpoint...
+//backwards compatible endpoints...
 app.get('/tributary/:gistid/:filename', inlet)
+app.get('/delta/:gistid', inlet)
+app.get('/delta/:gistid/:filename', inlet)
 function inlet(req,res,next) {
   var gistid = req.params['gistid'];
   var user = req.session.user;
