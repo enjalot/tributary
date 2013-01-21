@@ -805,7 +805,7 @@ button:active {
   font-size: 10px;
   text-shadow: 0 1px 1px #FFF;
 }
-input,
+#container input,
 textarea,
 select {
   border: 2px solid rgba(0, 0, 0, 0.2);
@@ -830,15 +830,15 @@ select {
   -moz-transition: all 0.8s ease-out;
   transition: all 0.8s ease-out;
 }
-input:hover,
+#container input:hover,
 textarea:hover,
 select:hover {
   border: 2px solid rgba(0, 0, 0, 0.4);
 }
-input:active,
+#container input:active,
 textarea:active,
 select:active,
-input:focus,
+#container input:focus,
 textarea:focus,
 select:focus {
   border: 2px solid rgba(0, 0, 0, 0.5);
