@@ -526,7 +526,6 @@ tributary.CoffeeContext = tributary.Context.extend({
 });
 
 
-
 //The CSV context evaluates js in the global namespace
 tributary.CSVContext = tributary.Context.extend({
   initialize: function() {

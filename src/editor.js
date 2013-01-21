@@ -81,7 +81,6 @@ tributary.Editor = Backbone.View.extend({
     this.$el.html(html);
 
 
-
     filetype = that.model.get("filename").split(".")[1];
 
     if(filetype == "js") {

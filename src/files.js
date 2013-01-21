@@ -32,12 +32,10 @@ tributary.FilesView = Backbone.View.extend({
       var filename = this.dataset.filename;
       if(that.model) {
         var ctx = _.find(tributary.__config__.contexts, function(d) { return d.model.get("filename") === filename; });
-        console.log("FOUND", ctx, ctx.model.get("filename"))
         that.model.trigger("hide");
         ctx.model.trigger("show");
       }
     });
-
 
     //delete
     filelist.select(".delete-file")
