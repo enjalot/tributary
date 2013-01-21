@@ -119,13 +119,21 @@
 					<option value="svg">SVG</option>
 					<option value="canvas">Canvas</option>
 					<option value="webgl">WebGL</option>
-					<option value="html">HTML</option>
+					<option value="div">HTML</option>
 				</select>
 
-				<h4>Time Controls <small><i class="explain-this-shit icon-help-circled"></i></small></h4>
-				<button id="play">Play</button>
-				<button id="loop">Loop</button>
-				<button id="restart">Restart</button>
+        <div id="timecontrols">
+          <h4>Time Controls <small><i class="explain-this-shit icon-help-circled"></i></small></h4>
+          <button id="play" data-name="play">Play</button>
+          <button id="loop" data-name="loop">Loop</button>
+          <button id="restart" data-name="restart">Restart</button>
+        </div>
+
+        <div id="editorcontrols">
+          <h4>Editor Controls <small><i class="explain-this-shit icon-help-circled"></i></small></h4>
+          <button id="logerrors" data-name="log-errors">Log Errors</button>
+        </div>
+
 			</div>
 
 				<div id="library-content" class="config-content" style="display: none;">
@@ -148,40 +156,6 @@
 				</div>
 
 		</section>
-
-		<script>
-		$("#config-toggle").on("click", function(){
-			$("#config-content").toggle();
-
-			if($("#config-toggle").text() == "Config"){
-				$("#config-toggle").text("Close Config")
-			}
-			else {
-				$("#config-toggle").text("Config")
-			}
-		})
-
-		$("#library-toggle").on("click", function(){
-			$("#library-content").toggle();
-
-			if($("#library-toggle").text() == "Add libraries"){
-				$("#library-toggle").text("Close libraries")
-			}
-			else {
-				$("#library-toggle").text("Add libraries")
-			}
-		})
-
-		$("#fullscreen").on("click", function(){
-			$("#container").addClass("fullscreen")
-			$("#exit-fullscreen").show();
-		})
-		$("#exit-fullscreen").on("click", function(){
-			$("#exit-fullscreen").hide();
-			$("#container").removeClass("fullscreen")
-		})
-		</script>
-
 		<section id="code">
 
 		</section>

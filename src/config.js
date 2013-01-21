@@ -64,85 +64,62 @@ tributary.ConfigView = Backbone.View.extend({
     //at least the require stuff probably
     var that = this;
 
-    var template = Handlebars.templates.config;
-    //inlet.js comes first
+    var displaySelect = d3.select(this.el).select("#config-content select")
+      .on("change", function() {
+        var display = this.selectedOptions[0].value;
+        that.model.set("display", display);
+        tributary.events.trigger("execute");
+      })
 
-    var context ={
-      displays: tributary.displays,
-      time_controls: tributary.time_controls,
-      requires: this.model.get("require")
-    };
-
-    $(this.el).html(template(context));
-
-
-
-    var displays = d3.select(this.el)
-      .select(".displaycontrols")
-      .selectAll("div.config");
-
-    var initdisplay = this.model.get("display");
-    displays.datum(function() { return this.dataset; })
-    displays.filter(function(d) {
-      return d.name === initdisplay;
-    })
-    .classed("config_active", true);
-
-    displays.on("click", function(d) {
-      d3.select(this.parentNode).selectAll("div.config")
-        .classed("config_active", false);
-      d3.select(this).classed("config_active", true);
-      that.model.set("display", d.name);
-      tributary.events.trigger("execute");
-    });
-
-    var timecontrols = d3.select(this.el)
-      .select(".timecontrols")
-      .selectAll("div.config");
+    var currentDisplay = this.model.get("display");
+    displaySelect.selectAll("option")
+      .each(function(d,i) {
+        console.log(this.value, currentDisplay);
+        if(this.value === currentDisplay) {
+          d3.select(this).attr("selected", "selected")
+        }
+      })
+    
+    var timecontrols = d3.select("#timecontrols")
+      .selectAll("button");
 
     timecontrols.datum(function() { return this.dataset; })
     timecontrols.filter(function(d) {
       return that.model.get(d.name);
     })
-    .classed("config_active", true);
+    .classed("active", true);
 
     timecontrols.on("click", function(d) {
-      //TODO: make this data driven
       var tf = !that.model.get(d.name);
-      d3.select(this).classed("config_active", tf);
-      //TODO: set time controls in config
-      //that.model.set("display", d.name);
+      d3.select(this).classed("active", tf);
       that.model.set(d.name, tf);
     });
 
 
     // Editor controls config section
 
-
     var editorcontrols = d3.select(this.el)
-    .select(".editorcontrols");
-
-    editorcontrols.selectAll("div.config")
+      .select("#logerrors")
       .on("click", function(d) {
-        if($(this).attr("data-name") == "log-errors") {
-
-          if (tributary.hint == true && tributary.trace == true) {
-            $(this).removeClass("config_active")
+        var dis = d3.select(this);
+        if($(this).attr("data-name") === "log-errors") {
+          //if (tributary.hint === true && tributary.trace === true) {
+          if( dis.classed("active") ) {
+            console.log("Error logging disabled");
             tributary.hint = false;
             tributary.trace = false;
             tributary.events.trigger("execute");
+            dis.classed("active", false)
           }
           else {
-            //alert("Error logging initiated");
+            console.log("Error logging initiated");
             tributary.hint = true;
             tributary.trace = true;
             tributary.events.trigger("execute");
-
-            $(this).addClass("config_active");
+            dis.classed("active", true)
           }
-
         }
-        })
+      })
 
 
     // Require / External files config section

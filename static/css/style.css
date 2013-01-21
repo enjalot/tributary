@@ -566,6 +566,9 @@ section:last-child {
   margin-bottom: 1.4em;
   padding-bottom: 0.5em;
 }
+#panel #config button.active {
+  border: 1px solid red;
+}
 #panel #config #library-links input {
   font-size: 12px;
 }

@@ -136,7 +136,6 @@ function _assemble(ret) {
       if(mainfiles.indexOf(m.get("filename")) < 0) {
         context.execute();
       }
-
       context.editor = tributary.make_editor({model: m, parent:edit});
       m.trigger("hide");
     }
@@ -155,21 +154,19 @@ function _assemble(ret) {
     }
   });
 
-  //fill in the file view
+  //fill in the file tabs
   var files_view = new tributary.FilesView({
     el: "#file-list",
     model: config,
   });
   files_view.render();
 
-  /*
-  //fill in the config view
+  //wire up the config view
   var config_view = new tributary.ConfigView({
-    el: ".tb_config",
+    el: "#config",
     model: config,
   });
   config_view.render();
-  */
 
   //fill in the control view (Config pane)
   /*
@@ -179,6 +176,39 @@ function _assemble(ret) {
   });
   controls_view.render();
   */
+
+  //hook up the control buttons at the bottom
+  $("#config-toggle").on("click", function(){
+    $("#config-content").toggle();
+
+    if($("#config-toggle").text() == "Config"){
+      $("#config-toggle").text("Close Config")
+    }
+    else {
+      $("#config-toggle").text("Config")
+    }
+  })
+
+  $("#library-toggle").on("click", function(){
+    $("#library-content").toggle();
+
+    if($("#library-toggle").text() == "Add libraries"){
+      $("#library-toggle").text("Close libraries")
+    }
+    else {
+      $("#library-toggle").text("Add libraries")
+    }
+  })
+
+  $("#fullscreen").on("click", function(){
+    $("#container").addClass("fullscreen")
+    $("#exit-fullscreen").show();
+  })
+  $("#exit-fullscreen").on("click", function(){
+    $("#exit-fullscreen").hide();
+    $("#container").removeClass("fullscreen")
+  })
+
 
   setup_header(ret);
   setup_save(ret.config);

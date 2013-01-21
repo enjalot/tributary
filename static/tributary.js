@@ -238,52 +238,45 @@ var Tributary = function() {
     initialize: function() {},
     render: function() {
       var that = this;
-      var template = Handlebars.templates.config;
-      var context = {
-        displays: tributary.displays,
-        time_controls: tributary.time_controls,
-        requires: this.model.get("require")
-      };
-      $(this.el).html(template(context));
-      var displays = d3.select(this.el).select(".displaycontrols").selectAll("div.config");
-      var initdisplay = this.model.get("display");
-      displays.datum(function() {
-        return this.dataset;
-      });
-      displays.filter(function(d) {
-        return d.name === initdisplay;
-      }).classed("config_active", true);
-      displays.on("click", function(d) {
-        d3.select(this.parentNode).selectAll("div.config").classed("config_active", false);
-        d3.select(this).classed("config_active", true);
-        that.model.set("display", d.name);
+      var displaySelect = d3.select(this.el).select("#config-content select").on("change", function() {
+        var display = this.selectedOptions[0].value;
+        that.model.set("display", display);
         tributary.events.trigger("execute");
       });
-      var timecontrols = d3.select(this.el).select(".timecontrols").selectAll("div.config");
+      var currentDisplay = this.model.get("display");
+      displaySelect.selectAll("option").each(function(d, i) {
+        console.log(this.value, currentDisplay);
+        if (this.value === currentDisplay) {
+          d3.select(this).attr("selected", "selected");
+        }
+      });
+      var timecontrols = d3.select("#timecontrols").selectAll("button");
       timecontrols.datum(function() {
         return this.dataset;
       });
       timecontrols.filter(function(d) {
         return that.model.get(d.name);
-      }).classed("config_active", true);
+      }).classed("active", true);
       timecontrols.on("click", function(d) {
         var tf = !that.model.get(d.name);
-        d3.select(this).classed("config_active", tf);
+        d3.select(this).classed("active", tf);
         that.model.set(d.name, tf);
       });
-      var editorcontrols = d3.select(this.el).select(".editorcontrols");
-      editorcontrols.selectAll("div.config").on("click", function(d) {
-        if ($(this).attr("data-name") == "log-errors") {
-          if (tributary.hint == true && tributary.trace == true) {
-            $(this).removeClass("config_active");
+      var editorcontrols = d3.select(this.el).select("#logerrors").on("click", function(d) {
+        var dis = d3.select(this);
+        if ($(this).attr("data-name") === "log-errors") {
+          if (dis.classed("active")) {
+            console.log("Error logging disabled");
             tributary.hint = false;
             tributary.trace = false;
             tributary.events.trigger("execute");
+            dis.classed("active", false);
           } else {
+            console.log("Error logging initiated");
             tributary.hint = true;
             tributary.trace = true;
             tributary.events.trigger("execute");
-            $(this).addClass("config_active");
+            dis.classed("active", true);
           }
         }
       });
@@ -800,22 +793,6 @@ var Tributary = function() {
       return true;
     },
     render: function() {}
-  });
-  tributary.PanelView = Backbone.View.extend({
-    initialize: function() {},
-    render: function() {
-      var that = this;
-      var panel_data = [ "edit", "config" ];
-      var template = Handlebars.templates.panel;
-      var html = template(panel_data);
-      this.$el.html(html);
-      var panel = d3.select("#panel");
-      tributary.events.on("show", function(name) {
-        $(".tb_panel").children(".panel").css("display", "none");
-        panel.select(".tb_" + name).style("display", "");
-      });
-      tributary.events.trigger("show", "edit");
-    }
   });
   tributary.make_editor = function(options) {
     var editorParent = options.parent || tributary.edit;
@@ -1395,6 +1372,35 @@ var Tributary = function() {
       model: config
     });
     files_view.render();
+    var config_view = new tributary.ConfigView({
+      el: "#config",
+      model: config
+    });
+    config_view.render();
+    $("#config-toggle").on("click", function() {
+      $("#config-content").toggle();
+      if ($("#config-toggle").text() == "Config") {
+        $("#config-toggle").text("Close Config");
+      } else {
+        $("#config-toggle").text("Config");
+      }
+    });
+    $("#library-toggle").on("click", function() {
+      $("#library-content").toggle();
+      if ($("#library-toggle").text() == "Add libraries") {
+        $("#library-toggle").text("Close libraries");
+      } else {
+        $("#library-toggle").text("Add libraries");
+      }
+    });
+    $("#fullscreen").on("click", function() {
+      $("#container").addClass("fullscreen");
+      $("#exit-fullscreen").show();
+    });
+    $("#exit-fullscreen").on("click", function() {
+      $("#exit-fullscreen").hide();
+      $("#container").removeClass("fullscreen");
+    });
     setup_header(ret);
     setup_save(ret.config);
   }
