@@ -74,9 +74,9 @@ tributary.ConfigView = Backbone.View.extend({
     var currentDisplay = this.model.get("display");
     displaySelect.selectAll("option")
       .each(function(d,i) {
-        console.log(this.value, currentDisplay);
         if(this.value === currentDisplay) {
-          d3.select(this).attr("selected", "selected")
+          //d3.select(this).attr("selected", "selected")
+         displaySelect.node().value= this.value;
         }
       })
     

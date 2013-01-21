@@ -169,13 +169,11 @@ function _assemble(ret) {
   config_view.render();
 
   //fill in the control view (Config pane)
-  /*
   var controls_view = new tributary.ControlsView({
-    el: ".tb_controls",
+    el: "#controls",
     model: config,
   });
   controls_view.render();
-  */
 
   //hook up the control buttons at the bottom
   $("#config-toggle").on("click", function(){

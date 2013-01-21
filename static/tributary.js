@@ -245,9 +245,8 @@ var Tributary = function() {
       });
       var currentDisplay = this.model.get("display");
       displaySelect.selectAll("option").each(function(d, i) {
-        console.log(this.value, currentDisplay);
         if (this.value === currentDisplay) {
-          d3.select(this).attr("selected", "selected");
+          displaySelect.node().value = this.value;
         }
       });
       var timecontrols = d3.select("#timecontrols").selectAll("button");
@@ -1377,6 +1376,11 @@ var Tributary = function() {
       model: config
     });
     config_view.render();
+    var controls_view = new tributary.ControlsView({
+      el: "#controls",
+      model: config
+    });
+    controls_view.render();
     $("#config-toggle").on("click", function() {
       $("#config-content").toggle();
       if ($("#config-toggle").text() == "Config") {
