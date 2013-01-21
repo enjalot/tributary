@@ -487,11 +487,6 @@ section {
     .filetype-coffeescript { background-color: #CDE338; }
   }
 
-
-
-
-
-
   #config {
     font-size: 11px;
     //display: none;
@@ -531,6 +526,12 @@ section {
         width: 40%;
       }
     }
+
+    #trib-thumbnail {
+      width: 42px;
+      height: 42px;
+    }
+
   }
 }
 #code {
@@ -685,36 +686,29 @@ px      68    160    252    */
     width: 100%;
   }
   #panel {
-  //height: 400px;
-  width: 100%;
-  padding-top: 0;
-  position:relative;
-
-  -webkit-box-shadow:0 0 8px 1px rgba(0,0,0,0.2); /* Saf3.0+, Chrome */
-     -moz-box-shadow:0 0 8px 1px rgba(0,0,0,0.2); /* FF3.5+ */
-          box-shadow:0 0 8px 1px rgba(0,0,0,0.2); /* Opera 10.5, IE 9.0 */
-
-  border-radius: 10px;
-  #files {
-    top: 0;
-    position: relative;
+    //height: 400px;
     width: 100%;
-  }
-  #config {
-    border-top: none;
-    position: relative;
-    width: 100%;
-  }
-  #code {
-    margin-top: 2px;
+    padding-top: 0;
+    position:relative;
 
-    .CodeMirror {
-      margin-bottom: 0;
+    -webkit-box-shadow:0 0 8px 1px rgba(0,0,0,0.2); /* Saf3.0+, Chrome */
+       -moz-box-shadow:0 0 8px 1px rgba(0,0,0,0.2); /* FF3.5+ */
+            box-shadow:0 0 8px 1px rgba(0,0,0,0.2); /* Opera 10.5, IE 9.0 */
+
+    border-radius: 10px;
+    #files {
+      top: 0;
+      position: relative;
+      width: 100%;
+    }
+    #code {
+      margin-top: 2px;
+
+      .CodeMirror {
+        margin-bottom: 0;
+      }
     }
   }
-  }
-
-
 
   .fullscreen {
     #title {

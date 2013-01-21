@@ -27,6 +27,11 @@ var $inlets = db.collection("inlets");
 //collection where we store visits (specifically to particular inlets)
 var $visits = db.collection("visits");
 
+//collection where we store images uploaded for thumbnails
+var $images = db.collection("images");
+
+
+
 var app = express()
   .use(express.cookieParser())
   .use(express.bodyParser())
@@ -111,7 +116,6 @@ function inlet(req,res,next) {
     gistid: gistid
   });
   res.send(html);
-  console.log("USER", user)
 }
 
 //Save an inlet
@@ -325,6 +329,15 @@ function after_fork(oldgist, newgist, token, callback) {
     //this is a fork, update the old gist
     inlet_data.parent = oldgist.id;
   }
+
+  try {
+      var config = JSON.parse(gist.files['config.json'].content);
+      var thumbnail = config.thumbnail;
+      if(thumbnail) {
+        inlet_data.thumbnail = thumbnail;
+      }
+    } catch (e) {}
+
   $inlets.save(inlet_data, function(err, result) { if(err) console.error(err); });
 
   save(newgist.id, JSON.stringify(newgist), token, callback);
@@ -350,6 +363,11 @@ function after_save(gist, callback) {
     //,  thumbnail: thumbnail_url 
     }
     mgist.lastSave = new Date();
+    try {
+      var config = JSON.parse(gist.files['config.json'].content);
+      var thumbnail = config.thumbnail;
+      mgist.thumbnail = thumbnail;
+    } catch (e) {}
     $inlets.update({ gistid: gist.id}, mgist, {upsert:true}, function(err, result) { if(err) console.error(err); });
   })
   callback(null, gist);
@@ -440,6 +458,55 @@ function github_logout(req,res,next) {
   }
   res.redirect(product + id);
 }
+
+
+//IMGUR
+app.get("/imgur-authenticated", imgur_authenticated)
+function imgur_authenticated(req,res,next) {
+  //TODO: set this up
+  console.log("imgur authenticated");
+  next();
+}
+
+app.post("/imgur/upload/thumbnail", imgur_upload) 
+function imgur_upload(req,res,next) {
+  var data = req.body.image;
+  var user = req.session.user;
+  if(!user) { return res.send({status: 401}); }
+
+  var url = 'https://api.imgur.com/3/image'
+  var method = "POST";
+  var headers = {
+    'Authorization': 'Client-ID ' + settings.IMGUR_CLIENT_ID
+  };
+
+  request({
+    url: url,
+    json: {"image": data},
+    method: method,
+    headers: headers
+  }, onResponse)
+
+  function onResponse(error, response, body) {
+    if (!error && response.statusCode == 200) {
+      //save in mongo
+      var image_data = {
+        link: body.data.link
+      , deletehash: body.data.deletehash
+      , user: { 
+          id: user.id
+        , login: user.login
+        }
+      }
+      $images.save(image_data, function(err, result) { if(err) console.error(err); });
+    } else {
+    }
+    res.send(body)
+  }
+
+}
+ 
+
 
 //API
 

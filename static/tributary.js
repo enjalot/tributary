@@ -238,6 +238,39 @@ var Tributary = function() {
     initialize: function() {},
     render: function() {
       var that = this;
+      var reader = new FileReader;
+      function handleFileSelect() {
+        var files = d3.event.target.files;
+        for (var i = 0, f; f = files[i]; i++) {
+          if (!f.type.match("image.*")) {
+            console.log("not an image");
+            continue;
+          }
+          reader.onload = function(f) {
+            return function(e) {
+              var len = "data:image/png;base64,".length;
+              var img = e.target.result.substring(len);
+              console.log("upload!");
+              $.post("/imgur/upload/thumbnail", {
+                image: img
+              }, function(image) {
+                console.log("response", image);
+                if (image.status === 200) {
+                  d3.select("#trib-thumbnail").attr("src", image.data.link);
+                  d3.select("#trib-thumbnail").style("display", "");
+                  that.model.set("thumbnail", image.data.link);
+                } else {}
+              });
+            };
+          }(f);
+          reader.readAsDataURL(f);
+        }
+      }
+      d3.select("#thumbnail-content").select("input").on("change", handleFileSelect);
+      var link = this.model.get("thumbnail");
+      if (link) {
+        d3.select("#thumbnail-content").select("img").attr("src", link).style("display", "");
+      }
       var displaySelect = d3.select(this.el).select("#config-content select").on("change", function() {
         var display = this.selectedOptions[0].value;
         that.model.set("display", display);

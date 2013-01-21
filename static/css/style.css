@@ -578,6 +578,10 @@ section:last-child {
 #panel #config #library-links .library-url {
   width: 40%;
 }
+#panel #config #trib-thumbnail {
+  width: 42px;
+  height: 42px;
+}
 #code {
   margin-top: 1.6em;
   height: 100%;
@@ -695,11 +699,6 @@ px      68    160    252    */
   }
   #panel #files {
     top: 0;
-    position: relative;
-    width: 100%;
-  }
-  #panel #config {
-    border-top: none;
     position: relative;
     width: 100%;
   }

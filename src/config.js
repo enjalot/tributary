@@ -63,6 +63,58 @@ tributary.ConfigView = Backbone.View.extend({
     //at least the require stuff probably
     var that = this;
 
+    var reader = new FileReader();
+
+    //thumbnail code
+    function handleFileSelect() {
+      var files = d3.event.target.files; // FileList object
+      // files is a FileList of File objects. 
+      for (var i = 0, f; f = files[i]; i++) {
+        //console.log("file", f);
+        //get file data and send it to imgur
+
+        // Only process image files.
+        if (!f.type.match('image.*')) {
+          console.log("not an image")
+          continue;
+        }
+
+        // Closure to capture the file information.
+        reader.onload = (function(f) {
+          return function(e) {
+            // Render thumbnail.
+            //e.target.result
+            var len = "data:image/png;base64,".length;
+            var img = e.target.result.substring(len);
+
+            console.log("upload!")
+            $.post("/imgur/upload/thumbnail", {"image":img}, function(image) {
+              console.log("response", image);
+              if(image.status === 200) {
+                //we have successful upload!
+                d3.select("#trib-thumbnail").attr("src", image.data.link);
+                d3.select("#trib-thumbnail").style("display", "");
+
+                that.model.set("thumbnail", image.data.link);
+
+              } else {
+                //oops
+              }
+            })
+          };
+        })(f);
+
+        // Read in the image file as a data URL.
+        reader.readAsDataURL(f);
+      }
+    }
+    d3.select("#thumbnail-content").select("input").on("change", handleFileSelect);
+    var link = this.model.get("thumbnail");
+    if(link) {
+      d3.select("#thumbnail-content").select("img")
+        .attr("src", link)
+        .style("display", "");
+    }
     var displaySelect = d3.select(this.el).select("#config-content select")
       .on("change", function() {
         var display = this.selectedOptions[0].value;
