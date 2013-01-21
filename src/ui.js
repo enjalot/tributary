@@ -43,7 +43,7 @@ tributary.ui.assemble = function(gistid) {
     var ret = {};
     ret.config = new tributary.Config();
     ret.models = new tributary.CodeModels(new tributary.CodeModel());
-    _assemble(ret);
+    _assemble(null, ret);
   }
 
 };
@@ -205,10 +205,12 @@ function _assemble(error, ret) {
   $("#fullscreen").on("click", function(){
     $("#container").addClass("fullscreen")
     $("#exit-fullscreen").show();
+    tributary.events.trigger("resize");
   })
   $("#exit-fullscreen").on("click", function(){
     $("#exit-fullscreen").hide();
     $("#container").removeClass("fullscreen")
+    tributary.events.trigger("resize");
   })
 
 
