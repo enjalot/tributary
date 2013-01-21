@@ -49,7 +49,11 @@ tributary.ui.assemble = function(gistid) {
 };
 
 //callback function to handle response from gist unpacking
-function _assemble(ret) {
+function _assemble(error, ret) {
+  if(error) {
+    console.log("error!", error);
+    return;
+  }
   var config = ret.config;
   tributary.__config__ = config;
 
@@ -229,12 +233,15 @@ function setup_header(ret){
       ret.config.saveType = "fork";
     } else {
       $('#fork').css("display", "");
+      ret.config.saveType = "save";
     }
   } else {
      //if the user is not logged in, or no gist we use fork
     if(isNaN(tributary.userid) || !ret.gist) {
       $('#fork').css("display", "none");
       ret.config.saveType = "fork";
+    } else {
+      ret.config.saveType = "save";
     }
   }
 
@@ -263,6 +270,7 @@ function setup_save(config) {
   $('#fork').off("click");
   $('#fork').on('click', function(e) {
     console.log("forking!")
+    config.saveType = "fork";
     d3.select("#syncing").style("display", "block");
     tributary.save_gist(config, config.saveType, function(newurl, newgist) {
       window.onunload = false;

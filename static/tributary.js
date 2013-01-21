@@ -218,11 +218,11 @@ var Tributary = function() {
       ease: "linear",
       dt: .01
     },
-    require: function(callback, ret) {
+    require: function(callback) {
       var modules = this.get("require");
       var scripts = _.pluck(modules, "url");
       var rcb = function() {
-        return callback(ret, arguments);
+        return callback(null, arguments);
       };
       require(scripts, rcb);
     },
@@ -279,77 +279,51 @@ var Tributary = function() {
           }
         }
       });
-      var require = d3.select(this.el).select(".requirecontrols");
-      var plus = require.selectAll(".plus");
-      var add = require.selectAll(".tb_add");
-      var name_input = require.select(".tb_add").select("input.name");
-      var url_input = require.select(".tb_add").select("input.url");
-      require.selectAll("div.config").datum(function() {
-        return this.dataset;
-      }).select("span.delete").datum(function() {
-        return this.dataset;
-      }).on("click", function(d) {
+      var checkList = d3.select(this.el).select("#library-checklist");
+      var libLinks = d3.select(this.el).select("#library-links");
+      var name_input = libLinks.select("input.library-title");
+      var url_input = libLinks.select("input.library-url");
+      function addReq() {
+        var req = {
+          name: name_input.node().value,
+          url: url_input.node().value
+        };
         var reqs = that.model.get("require");
-        var ind = reqs.indexOf(d);
-        reqs.splice(ind, 1);
+        reqs.push(req);
+        that.model.require(function(err, res) {});
         that.model.set("require", reqs);
-        that.$el.empty();
-        that.render();
-        add.style("display", "none");
+        createLibCheckbox(checkList.selectAll("li.lib").data(reqs).enter());
+      }
+      var add = libLinks.select(".add-library").on("click", addReq);
+      name_input.on("keypress", function() {
+        if (d3.event.charCode === 13) {
+          addReq();
+        }
       });
-      require.selectAll("div.config").on("click", function(d) {
-        add.style("display", "");
-        name_input.node().value = d.name;
-        url_input.node().value = d.url;
-        var done = function() {
+      url_input.on("keypress", function() {
+        if (d3.event.charCode === 13) {
+          addReq();
+        }
+      });
+      function createLibCheckbox(selection) {
+        var li = selection.append("li").classed("lib", true);
+        li.append("input").attr("type", "checkbox").attr("checked", true).on("change", function(d) {
           var reqs = that.model.get("require");
-          var req = _.find(reqs, function(r) {
-            return r.name === d.name;
-          });
-          req.name = name_input.node().value;
-          req.url = url_input.node().value;
-          that.model.set("require", reqs);
-          that.model.require(function() {}, reqs);
-          that.$el.empty();
-          that.render();
-        };
-        name_input.on("keypress", function() {
-          if (d3.event.charCode === 13) {
-            done();
+          var ind = reqs.indexOf(d);
+          if (ind >= 0) {
+            reqs.splice(ind, 1);
+            that.model.set("require", reqs);
+          } else {
+            reqs.push(d);
+            that.model.set("require", reqs);
           }
         });
-        url_input.on("keypress", function() {
-          if (d3.event.charCode === 13) {
-            done();
-          }
+        li.append("span").text(function(d) {
+          return d.name;
         });
-      });
-      plus.on("click", function() {
-        add.style("display", "");
-        name_input.node().focus();
-        var done = function() {
-          var req = {
-            name: name_input.node().value,
-            url: url_input.node().value
-          };
-          var reqs = that.model.get("require");
-          reqs.push(req);
-          that.model.set("require", reqs);
-          that.model.require(function() {}, reqs);
-          that.$el.empty();
-          that.render();
-        };
-        name_input.on("keypress", function() {
-          if (d3.event.charCode === 13) {
-            done();
-          }
-        });
-        url_input.on("keypress", function() {
-          if (d3.event.charCode === 13) {
-            done();
-          }
-        });
-      });
+      }
+      var newCheckboxes = checkList.selectAll("li.lib").data(this.model.get("require")).enter();
+      createLibCheckbox(newCheckboxes);
     }
   });
   tributary.Context = Backbone.View.extend({
@@ -1007,7 +981,9 @@ var Tributary = function() {
         }
       });
       ret.config.set("fileconfigs", fileconfigs);
-      ret.config.require(callback, ret);
+      ret.config.require(function(err, res) {
+        callback(null, ret);
+      });
     }
   };
   tributary.save_gist = function(config, saveorfork, callback) {
@@ -1031,10 +1007,10 @@ var Tributary = function() {
       content: JSON.stringify(config.toJSON())
     };
     var url;
-    if (saveorfork === "save") {
-      url = "/tributary/save";
-    } else if (saveorfork === "fork") {
+    if (saveorfork === "fork") {
       url = "/tributary/fork";
+    } else {
+      url = "/tributary/save";
     }
     if (oldgist.length > 4) {
       url += "/" + oldgist;
@@ -1052,7 +1028,6 @@ var Tributary = function() {
     });
   };
   tributary.login_gist = function(loginorout, callback) {
-    var url;
     if (loginorout) {
       url = "/github-logout";
     } else {
@@ -1290,7 +1265,11 @@ var Tributary = function() {
       _assemble(ret);
     }
   };
-  function _assemble(ret) {
+  function _assemble(error, ret) {
+    if (error) {
+      console.log("error!", error);
+      return;
+    }
     var config = ret.config;
     tributary.__config__ = config;
     config.contexts = [];
@@ -1422,11 +1401,14 @@ var Tributary = function() {
         ret.config.saveType = "fork";
       } else {
         $("#fork").css("display", "");
+        ret.config.saveType = "save";
       }
     } else {
       if (isNaN(tributary.userid) || !ret.gist) {
         $("#fork").css("display", "none");
         ret.config.saveType = "fork";
+      } else {
+        ret.config.saveType = "save";
       }
     }
     $("#gist-title").on("keyup", function() {
@@ -1451,6 +1433,7 @@ var Tributary = function() {
     $("#fork").off("click");
     $("#fork").on("click", function(e) {
       console.log("forking!");
+      config.saveType = "fork";
       d3.select("#syncing").style("display", "block");
       tributary.save_gist(config, config.saveType, function(newurl, newgist) {
         window.onunload = false;

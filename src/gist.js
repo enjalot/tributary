@@ -97,7 +97,10 @@ tributary.gist = function(id, callback) {
     });
     ret.config.set("fileconfigs", fileconfigs);
 
-    ret.config.require(callback, ret);
+    //ret.config.require(callback, ret);
+    ret.config.require(function(err, res) {
+      callback(null, ret);
+    });
     //callback(ret);
   }
 };
@@ -147,10 +150,10 @@ tributary.save_gist = function(config, saveorfork, callback) {
   }*/
 
   var url;
-  if(saveorfork === "save") {
-    url = '/tributary/save';
-  } else if(saveorfork === "fork") {
+  if(saveorfork === "fork") {
     url = '/tributary/fork';
+  } else {
+    url = '/tributary/save';
   }
 
   //check if we have an existing gist number
@@ -170,7 +173,6 @@ tributary.save_gist = function(config, saveorfork, callback) {
   });
 };
 tributary.login_gist = function(loginorout, callback) {
-  var url;
   if(loginorout) {
     url = '/github-logout';
   } else {

@@ -27,13 +27,15 @@ tributary.Config = Backbone.Model.extend({
 
   },
 
-  require: function(callback, ret) {
+  require: function(callback) {
     //load scripts from the require array with require.js
     var modules = this.get("require");
     var scripts = _.pluck(modules, "url");
 
+    //NOTE: require.js  does not give us a real callback, in the sense that if things fail
+    //it doesn't callback with an error. not sure how to detect script failure... 
     var rcb = function() {
-      return callback(ret, arguments);
+      return callback(null, arguments);
     };
     require(scripts, rcb);
   },
@@ -45,10 +47,7 @@ tributary.Config = Backbone.Model.extend({
         context.model.trigger("hide");
       });
     }, this);
-
   }
-
-
 });
 
 ////////////////////////////////////////////////////////////////////////
@@ -121,214 +120,74 @@ tributary.ConfigView = Backbone.View.extend({
         }
       })
 
-
     // Require / External files config section
-    var require = d3.select(this.el)
-      .select(".requirecontrols");
+    var checkList = d3.select(this.el)
+      .select("#library-checklist");
+    var libLinks= d3.select(this.el)
+      .select("#library-links");
 
-    var plus = require.selectAll(".plus");
-    var add= require.selectAll(".tb_add");
+    var name_input = libLinks
+      .select("input.library-title");
+    var url_input = libLinks
+      .select("input.library-url");
 
+    function addReq() {
+      //create a new checkbox with the data for the require
+      var req = {
+        name: name_input.node().value,
+        url: url_input.node().value
+      };
+      var reqs = that.model.get("require");
+      reqs.push(req);
+      that.model.require(function(err, res) {});
+      that.model.set("require", reqs);
+      createLibCheckbox(checkList.selectAll("li.lib").data(reqs).enter());
+    }
 
-    var name_input = require.select(".tb_add")
-      .select("input.name");
-    var url_input = require.select(".tb_add")
-      .select("input.url");
+    var add = libLinks.select(".add-library")
+      .on("click", addReq)
 
-    require.selectAll("div.config")
-      .datum(function() { return this.dataset; })
-      .select("span.delete")
-        .datum(function() { return this.dataset; })
-        .on("click", function(d) {
+    name_input.on("keypress", function() {
+      //they hit enter
+      if(d3.event.charCode === 13) {
+        addReq();
+      }
+    });
+    url_input.on("keypress", function() {
+      //they hit enter
+      if(d3.event.charCode === 13) {
+        addReq();
+      }
+    });
+
+    function createLibCheckbox(selection) {
+      var li = selection.append("li")
+        .classed("lib", true)
+      li.append("input")
+        .attr("type", "checkbox")
+        .attr("checked", true) 
+        .on("change", function(d) {
           var reqs = that.model.get("require");
           var ind = reqs.indexOf(d);
-          reqs.splice(ind, 1);
-          that.model.set("require", reqs);
-
-          //rerender
-          that.$el.empty();
-          that.render();
-
-          add.style("display", "none");
-        });
-
-
-    require.selectAll("div.config")
-      .on("click", function(d) {
-        add.style("display", "");
-        name_input.node().value = d.name;
-        url_input.node().value = d.url;
-
-        //update the appropraite req
-        var done = function() {
-          //create a new require
-
-
-          var reqs = that.model.get("require");
-          var req = _.find(reqs, function(r) { return r.name === d.name; });
-          req.name = name_input.node().value;
-          req.url = url_input.node().value;
-
-          that.model.set("require", reqs);
-          that.model.require(function() {}, reqs);
-
-          //rerender the files view to show new file
-          that.$el.empty();
-          //console.log(that);
-          that.render();
-        };
-
-        name_input.on("keypress", function() {
-          //they hit enter
-          if(d3.event.charCode === 13) {
-            done();
+          if(ind >= 0) {
+            reqs.splice(ind, 1);
+            that.model.set("require", reqs);
+          } else {
+            reqs.push(d);
+            that.model.set("require", reqs);
           }
-        });
-        url_input.on("keypress", function() {
-          //they hit enter
-          if(d3.event.charCode === 13) {
-            done();
-          }
-        });
+        })
+      li.append("span").text(function(d) {
+        return d.name;
       })
 
-    plus.on("click", function() {
-      add.style("display", "");
-      name_input.node().focus();
-      var done = function() {
-        //create a new require
-        var req = {
-          name: name_input.node().value,
-          url: url_input.node().value
-        };
-        var reqs = that.model.get("require");
-        reqs.push(req);
-        that.model.set("require", reqs);
-        that.model.require(function() {}, reqs);
+    }
 
-        //rerender the files view to show new file
-        that.$el.empty();
-        that.render();
-      };
-
-      name_input.on("keypress", function() {
-        //they hit enter
-        if(d3.event.charCode === 13) {
-          done();
-        }
-      });
-      url_input.on("keypress", function() {
-        //they hit enter
-        if(d3.event.charCode === 13) {
-          done();
-        }
-      });
-    });
-
-
-    /*
-
-
-
-    //Add require.js UI
-
-    var requireUI = d3.select(this.el).append("div").attr("id", "require-ui")
-    requireUI.append("span")
-      .classed("config_title", true)
-      .text("Require:");
-
-    var rc = requireUI.append("div")
-      .classed("requirecontrols", true);
-    var rcs = rc
-      .selectAll("div.config")
+    var newCheckboxes = checkList.selectAll("li.lib")
       .data(this.model.get("require"))
       .enter()
-      .append("div")
-      .classed("config", true);
 
-    rcs.append("span")
-      .text(function(d) { return d.name; });
-    rcs.append("span")
-      .text(function(d) { return " " + d.url; })
-      .classed("description", true);
-    rcs.append("span")
-      .text("x")
-      .classed("delete", true)
-      .on("click", function(d) {
-        var reqs = that.model.get("require");
-        var ind = reqs.indexOf(d);
-        reqs.splice(ind, 1);
-        that.model.set("require", reqs);
-
-        //rerender
-        that.$el.empty();
-        that.render();
-      });
-
-    //add the + button
-    var plus = rc.append("div")
-      .classed("config", true);
-
-    plus.append("span")
-      .text("+ ");
-
-    //add and hide the inputs for a new require
-    var name_input = plus.append("div").text("name: ")
-      .style({
-        display: "none"
-      });
-    name_input
-      .append("input")
-      .attr({
-        type: "text"
-      });
-
-    var url_input = plus.append("div").text("url: ")
-      .style({
-        display: "none"
-      });
-    url_input
-      .append("input")
-      .text("url:")
-      .attr({
-        type: "text"
-      });
-
-    plus.on("click", function() {
-      name_input
-        .style("display","");
-      url_input
-        .style("display","");
-      name_input.select("input").node().focus();
-      var done = function() {
-        //create a new require
-        var req = { name: name_input.select("input").node().value,
-          url: url_input.select("input").node().value
-        };
-        var reqs = that.model.get("require");
-        reqs.push(req);
-        that.model.set("require", reqs);
-
-        //rerender the files view to show new file
-        that.$el.empty();
-        console.log(that);
-        that.render();
-      };
-
-      name_input.on("keypress", function() {
-        //they hit enter
-        if(d3.event.charCode === 13) {
-          done();
-        }
-      });
-      url_input.on("keypress", function() {
-        //they hit enter
-        if(d3.event.charCode === 13) {
-          done();
-        }
-      });
-    });
-    */
+    createLibCheckbox(newCheckboxes);
   }
 });
 
