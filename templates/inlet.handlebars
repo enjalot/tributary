@@ -18,12 +18,13 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1"/>
 	<!-- Adding "maximum-scale=1" fixes the Mobile Safari auto-zoom bug: http://filamentgroup.com/examples/iosScaleBug/ -->
 
-<link rel="stylesheet" href="/static/css/trib.css">
-<link rel="stylesheet" href="/static/css/animation.css">
-<link href='http://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+  <link rel="stylesheet" href="/static/css/trib.css">
+  <link rel="stylesheet" href="/static/css/animation.css">
+  <link href='http://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+  <link rel="stylesheet" href="/static/css/tipsy.css">
 
-<!-- Add jQuery -->
-<script src="/static/lib/jquery-1.7.min.js"></script>
+  <!-- Add jQuery -->
+  <script src="/static/lib/jquery-1.7.min.js"></script>
 
 
   <script type="text/javascript">
@@ -65,7 +66,10 @@
 <body>
 <div id="container">
 	<header id="title">
-		<h1>Tributary</h1>
+  <h1>
+    <a href="/inlet/" target="_blank">Tributary</a>
+    <small><a href="/" target="_blank"><i title="Tributary home page" class="explain-this-shit icon-help-circled"></i></a></small>
+  </h1>
 
 		<section id="inlet-info">
 			<input id="gist-title" val="{{ title }}">
@@ -208,6 +212,8 @@
 <!-- UI components TODO: replace with pure d3 -->
 <script src="/static/lib/jquery-ui.1.8.16.custom.min.js"></script>
 <script src='/static/lib/slider/js/jquery.ui.slider.js'></script>
+<script src="/static/lib/jquery.tipsy.js" type="text/javascript" charset="utf-8"></script>
+
 <!-- https://github.com/mudcube/Color-Picker -->
 <script src="/static/lib/colorpicker/Color.Picker.Classic.js" type="text/javascript"></script>
 <script src="/static/lib/colorpicker/Color.Space.js" type="text/javascript"></script>
@@ -239,6 +245,8 @@ else if(typeof document.body.onselectstart!="undefined")
 else
     document.body.onmousedown=function(){return false};
 document.body.style.cursor = "default";
+
+$('i').tipsy({fade: true, gravity: 'n', opacity: 0.86});
 
 //TODO: for old endpoints do:
 //tb.endpoint = "delta";
