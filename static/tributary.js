@@ -1097,19 +1097,16 @@ var Tributary = function() {
       var filelist = d3.select("#file-list").selectAll("li.file");
       filelist.on("click", function(d) {
         var filename = this.dataset.filename;
-        if (that.model) {
-          var ctx = _.find(tributary.__config__.contexts, function(d) {
-            return d.model.get("filename") === filename;
-          });
-          that.model.trigger("hide");
-          ctx.model.trigger("show");
-        }
+        var ctx = _.find(tributary.__config__.contexts, function(d) {
+          return d.model.get("filename") === filename;
+        });
+        that.model.trigger("hide");
+        ctx.model.trigger("show");
       });
       filelist.select(".delete-file").style("z-index", 1e3).on("click", function() {
         var dataset = this.parentNode.dataset;
         var filename = dataset.filename;
         var name = dataset.filename.split(".")[0];
-        delete that.model;
         tributary.__config__.unset(filename);
         var context = _.find(tributary.__config__.contexts, function(d) {
           return d.model.get("filename") === filename;

@@ -270,7 +270,7 @@ a:visited {
   color: #08123e;
 }
 .inlet_slider {
-  z-index: 9;
+  z-index: 1010;
 }
 .inlet_slider a {
   -webkit-transition: all 0.01s linear;

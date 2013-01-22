@@ -30,11 +30,9 @@ tributary.FilesView = Backbone.View.extend({
     //setup the event handlers for the file tabs
     filelist.on("click", function(d) {
       var filename = this.dataset.filename;
-      if(that.model) {
-        var ctx = _.find(tributary.__config__.contexts, function(d) { return d.model.get("filename") === filename; });
-        that.model.trigger("hide");
-        ctx.model.trigger("show");
-      }
+      var ctx = _.find(tributary.__config__.contexts, function(d) { return d.model.get("filename") === filename; });
+      that.model.trigger("hide");
+      ctx.model.trigger("show");
     });
 
     //delete
@@ -46,7 +44,7 @@ tributary.FilesView = Backbone.View.extend({
         var name = dataset.filename.split(".")[0];
 
         //delete the model
-        delete that.model;
+        //delete that.model;
         //delete the file from the config
         tributary.__config__.unset(filename);
         //delete the context
