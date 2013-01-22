@@ -245,7 +245,10 @@ $(document).ready(function(){
       .enter()
     .append("li")
         .text(function(d){ return d.tributaryname})
-    inlets.append("img")
+    inlets.append("a")
+    .attr("href", function(d) { return d.tributaryurl })
+    .attr("target", "_blank")
+    .append("img")
     .attr({
       src: function(d) { return d.tributarythumbnail }
     })

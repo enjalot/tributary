@@ -384,6 +384,7 @@ section:last-child {
 #title #login {
   position: absolute;
   right: 14px;
+  top: 0px;
   display: inline-block;
 }
 #display {
