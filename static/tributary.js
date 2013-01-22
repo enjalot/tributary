@@ -1456,7 +1456,7 @@ var Tributary = function() {
       console.log("saving!");
       d3.select("#syncing").style("display", "block");
       tributary.save_gist(config, config.saveType, function(newurl, newgist) {
-        d3.select(".icon-load").css("opacity", 0);
+        d3.select(".icon-load").transition().duration(1e3).style("opacity", 0);
         if (config.saveType === "fork") {
           window.onunload = false;
           window.onbeforeunload = false;
