@@ -363,6 +363,7 @@ function after_save(gist, callback) {
     mgist.user = {
       id: gist.user.id
     , login: gist.user.login
+    , description: gist.description
     //,  thumbnail: thumbnail_url 
     }
     mgist.lastSave = new Date();
