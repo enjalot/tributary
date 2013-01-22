@@ -524,7 +524,21 @@ section {
     }
 
     button.active {
-      border: 1px solid red;
+      background-image: none;
+      text-shadow: none;
+      background-color: #999;
+      border: 1px solid black;
+      color: white;
+
+      /*background-color: #8f8f90;*/
+      background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(143, 143, 144, 0.02)), to(rgba(33, 33, 33, 1.00)));
+      background-image: -webkit-linear-gradient(top, rgba(143, 143, 144, 0.02), rgba(33, 33, 33, 1.00));
+      background-image: -moz-linear-gradient(top, rgba(143, 143, 144, 0.02), rgba(33, 33, 33, 1.00));
+      background-image: -o-linear-gradient(top, rgba(143, 143, 144, 0.02), rgba(33, 33, 33, 1.00));
+      background-image: -ms-linear-gradient(top, rgba(143, 143, 144, 0.02), rgba(33, 33, 33, 1.00));
+      background-image: linear-gradient(top, rgba(143, 143, 144, 0.02), rgba(33, 33, 33, 1.00));
+      filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,StartColorStr='#8f8f90', EndColorStr='#212121');
+
     }
 
     #library-links {
