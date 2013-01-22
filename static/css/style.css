@@ -639,6 +639,22 @@ section:last-child {
 .fullscreen #title:hover {
   opacity: 1;
 }
+#controls {
+  position: fixed;
+  bottom: 12px;
+  left: 12px;
+}
+#controls input[type=range] {
+  background-image: none;
+  border: 0;
+  background-color: #999;
+  margin: 0;
+  padding: 1px;
+}
+#controls input[type=range]:hover {
+  background-image: none;
+  border: 0;
+}
 /*    Tablet Layout: 768px.
     Gutters: 24px.
     Outer margins: 28px.
@@ -725,6 +741,15 @@ px      68    160    252    */
   }
   #panel #files {
     height: auto;
+  }
+  #controls {
+    position: static;
+    text-align: center;
+    margin-bottom: 18px;
+  }
+  #panel #config {
+    position: static !important;
+    width: 100%;
   }
 }
 /*    Wide Mobile Layout: 480px.
