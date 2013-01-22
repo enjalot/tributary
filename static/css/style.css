@@ -578,7 +578,20 @@ section:last-child {
   padding-bottom: 0.5em;
 }
 #panel #config button.active {
-  border: 1px solid red;
+  background-image: none;
+  text-shadow: none;
+  background-color: #999;
+  border: 1px solid black;
+  color: white;
+  /*background-color: #8f8f90;*/
+
+  background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(143, 143, 144, 0.02)), to(#212121));
+  background-image: -webkit-linear-gradient(top, rgba(143, 143, 144, 0.02), #212121);
+  background-image: -moz-linear-gradient(top, rgba(143, 143, 144, 0.02), #212121);
+  background-image: -o-linear-gradient(top, rgba(143, 143, 144, 0.02), #212121);
+  background-image: -ms-linear-gradient(top, rgba(143, 143, 144, 0.02), #212121);
+  background-image: linear-gradient(top, rgba(143, 143, 144, 0.02), #212121);
+  filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0, StartColorStr='#8f8f90', EndColorStr='#212121');
 }
 #panel #config #library-links input {
   font-size: 12px;
