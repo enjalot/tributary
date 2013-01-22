@@ -3,14 +3,12 @@
 //of tributary components
 tributary.Config = Backbone.Model.extend({
   defaults: {
-      description: "An inlet to Tributary",
+      description: "Tributary inlet",
       endpoint: "tributary",
       display: "svg",
       public: true,
       require: [], //require modules will be like : {name:"crossfilter", url:"/static/lib/crossfilter.min.js"}
       fileconfigs: {}, //per-file configurations (editor specific)
-      tab: "edit",
-      display_percent: 0.7,
 
       //things related to time control
       play: false,
@@ -25,17 +23,19 @@ tributary.Config = Backbone.Model.extend({
       clone_opacity: 0.4,
       duration: 3000,
       ease: "linear",
-      dt: 0.01,
+      dt: 0.01
 
   },
 
-  require: function(callback, ret) {
+  require: function(callback) {
     //load scripts from the require array with require.js
     var modules = this.get("require");
     var scripts = _.pluck(modules, "url");
 
+    //NOTE: require.js  does not give us a real callback, in the sense that if things fail
+    //it doesn't callback with an error. not sure how to detect script failure... 
     var rcb = function() {
-      return callback(ret, arguments);
+      return callback(null, arguments);
     };
     require(scripts, rcb);
   },
@@ -47,10 +47,7 @@ tributary.Config = Backbone.Model.extend({
         context.model.trigger("hide");
       });
     }, this);
-
   }
-
-
 });
 
 ////////////////////////////////////////////////////////////////////////
@@ -66,294 +63,183 @@ tributary.ConfigView = Backbone.View.extend({
     //at least the require stuff probably
     var that = this;
 
-    var template = Handlebars.templates.config;
-    //inlet.js comes first
+    var reader = new FileReader();
 
-    var context ={
-      displays: tributary.displays,
-      time_controls: tributary.time_controls,
-      requires: this.model.get("require")
-    };
+    //thumbnail code
+    function handleFileSelect() {
+      var files = d3.event.target.files; // FileList object
+      // files is a FileList of File objects. 
+      for (var i = 0, f; f = files[i]; i++) {
+        //console.log("file", f);
+        //get file data and send it to imgur
 
-    $(this.el).html(template(context));
+        // Only process image files.
+        if (!f.type.match('image.*')) {
+          console.log("not an image")
+          continue;
+        }
 
+        // Closure to capture the file information.
+        reader.onload = (function(f) {
+          return function(e) {
+            // Render thumbnail.
+            //e.target.result
+            var len = "data:image/png;base64,".length;
+            var img = e.target.result.substring(len);
 
+            console.log("upload!")
+            $.post("/imgur/upload/thumbnail", {"image":img}, function(image) {
+              console.log("response", image);
+              if(image.status === 200) {
+                //we have successful upload!
+                d3.select("#trib-thumbnail").attr("src", image.data.link);
+                d3.select("#trib-thumbnail").style("display", "");
 
-    var displays = d3.select(this.el)
-      .select(".displaycontrols")
-      .selectAll("div.config");
+                that.model.set("thumbnail", image.data.link);
 
-    var initdisplay = this.model.get("display");
-    displays.datum(function() { return this.dataset; })
-    displays.filter(function(d) {
-      return d.name === initdisplay;
-    })
-    .classed("config_active", true);
+              } else {
+                //oops
+              }
+            })
+          };
+        })(f);
 
-    displays.on("click", function(d) {
-      d3.select(this.parentNode).selectAll("div.config")
-        .classed("config_active", false);
-      d3.select(this).classed("config_active", true);
-      that.model.set("display", d.name);
-      tributary.events.trigger("execute");
-    });
+        // Read in the image file as a data URL.
+        reader.readAsDataURL(f);
+      }
+    }
+    d3.select("#thumbnail-content").select("input").on("change", handleFileSelect);
+    var link = this.model.get("thumbnail");
+    if(link) {
+      d3.select("#thumbnail-content").select("img")
+        .attr("src", link)
+        .style("display", "");
+    }
+    var displaySelect = d3.select(this.el).select("#config-content select")
+      .on("change", function() {
+        var display = this.selectedOptions[0].value;
+        that.model.set("display", display);
+        tributary.events.trigger("execute");
+      })
 
-    var timecontrols = d3.select(this.el)
-      .select(".timecontrols")
-      .selectAll("div.config");
+    var currentDisplay = this.model.get("display");
+    displaySelect.selectAll("option")
+      .each(function(d,i) {
+        if(this.value === currentDisplay) {
+          //d3.select(this).attr("selected", "selected")
+         displaySelect.node().value= this.value;
+        }
+      })
+    
+    var timecontrols = d3.select("#timecontrols")
+      .selectAll("button");
 
     timecontrols.datum(function() { return this.dataset; })
     timecontrols.filter(function(d) {
       return that.model.get(d.name);
     })
-    .classed("config_active", true);
+    .classed("active", true);
 
     timecontrols.on("click", function(d) {
-      //TODO: make this data driven
       var tf = !that.model.get(d.name);
-      d3.select(this).classed("config_active", tf);
-      //TODO: set time controls in config
-      //that.model.set("display", d.name);
+      d3.select(this).classed("active", tf);
       that.model.set(d.name, tf);
     });
 
 
     // Editor controls config section
 
-
     var editorcontrols = d3.select(this.el)
-    .select(".editorcontrols");
-
-    editorcontrols.selectAll("div.config")
+      .select("#logerrors")
       .on("click", function(d) {
-        if($(this).attr("data-name") == "log-errors") {
-
-          if (tributary.hint == true && tributary.trace == true) {
-            $(this).removeClass("config_active")
+        var dis = d3.select(this);
+        if($(this).attr("data-name") === "log-errors") {
+          //if (tributary.hint === true && tributary.trace === true) {
+          if( dis.classed("active") ) {
+            console.log("Error logging disabled");
             tributary.hint = false;
             tributary.trace = false;
             tributary.events.trigger("execute");
+            dis.classed("active", false)
           }
           else {
-            //alert("Error logging initiated");
+            console.log("Error logging initiated");
             tributary.hint = true;
             tributary.trace = true;
             tributary.events.trigger("execute");
-
-            $(this).addClass("config_active");
+            dis.classed("active", true)
           }
-
         }
-        })
-
-    // Require / External files config section
-
-    var require = d3.select(this.el)
-      .select(".requirecontrols");
-
-    var plus = require.selectAll(".plus");
-    var add= require.selectAll(".tb_add");
-
-
-    var name_input = require.select(".tb_add")
-      .select("input.name");
-    var url_input = require.select(".tb_add")
-      .select("input.url");
-
-    require.selectAll("div.config")
-      .datum(function() { return this.dataset; })
-      .select("span.delete")
-        .datum(function() { return this.dataset; })
-        .on("click", function(d) {
-          var reqs = that.model.get("require");
-          var ind = reqs.indexOf(d);
-          reqs.splice(ind, 1);
-          that.model.set("require", reqs);
-
-          //rerender
-          that.$el.empty();
-          that.render();
-
-          add.style("display", "none");
-        });
-
-
-    require.selectAll("div.config")
-      .on("click", function(d) {
-        add.style("display", "");
-        name_input.node().value = d.name;
-        url_input.node().value = d.url;
-
-        //update the appropraite req
-        var done = function() {
-          //create a new require
-
-
-          var reqs = that.model.get("require");
-          var req = _.find(reqs, function(r) { return r.name === d.name; });
-          req.name = name_input.node().value;
-          req.url = url_input.node().value;
-
-          that.model.set("require", reqs);
-          that.model.require(function() {}, reqs);
-
-          //rerender the files view to show new file
-          that.$el.empty();
-          //console.log(that);
-          that.render();
-        };
-
-        name_input.on("keypress", function() {
-          //they hit enter
-          if(d3.event.charCode === 13) {
-            done();
-          }
-        });
-        url_input.on("keypress", function() {
-          //they hit enter
-          if(d3.event.charCode === 13) {
-            done();
-          }
-        });
       })
 
-    plus.on("click", function() {
-      add.style("display", "");
-      name_input.node().focus();
-      var done = function() {
-        //create a new require
-        var req = {
-          name: name_input.node().value,
-          url: url_input.node().value
-        };
-        var reqs = that.model.get("require");
-        reqs.push(req);
-        that.model.set("require", reqs);
-        that.model.require(function() {}, reqs);
+    // Require / External files config section
+    var checkList = d3.select(this.el)
+      .select("#library-checklist");
+    var libLinks= d3.select(this.el)
+      .select("#library-links");
 
-        //rerender the files view to show new file
-        that.$el.empty();
-        that.render();
+    var name_input = libLinks
+      .select("input.library-title");
+    var url_input = libLinks
+      .select("input.library-url");
+
+    function addReq() {
+      //create a new checkbox with the data for the require
+      var req = {
+        name: name_input.node().value,
+        url: url_input.node().value
       };
+      var reqs = that.model.get("require");
+      reqs.push(req);
+      that.model.require(function(err, res) {});
+      that.model.set("require", reqs);
+      createLibCheckbox(checkList.selectAll("li.lib").data(reqs).enter());
+    }
 
-      name_input.on("keypress", function() {
-        //they hit enter
-        if(d3.event.charCode === 13) {
-          done();
-        }
-      });
-      url_input.on("keypress", function() {
-        //they hit enter
-        if(d3.event.charCode === 13) {
-          done();
-        }
-      });
+    var add = libLinks.select(".add-library")
+      .on("click", addReq)
+
+    name_input.on("keypress", function() {
+      //they hit enter
+      if(d3.event.charCode === 13) {
+        addReq();
+      }
+    });
+    url_input.on("keypress", function() {
+      //they hit enter
+      if(d3.event.charCode === 13) {
+        addReq();
+      }
     });
 
+    function createLibCheckbox(selection) {
+      var li = selection.append("li")
+        .classed("lib", true)
+      li.append("input")
+        .attr("type", "checkbox")
+        .attr("checked", true) 
+        .on("change", function(d) {
+          var reqs = that.model.get("require");
+          var ind = reqs.indexOf(d);
+          if(ind >= 0) {
+            reqs.splice(ind, 1);
+            that.model.set("require", reqs);
+          } else {
+            reqs.push(d);
+            that.model.set("require", reqs);
+          }
+        })
+      li.append("span").text(function(d) {
+        return d.name;
+      })
 
-    /*
+    }
 
-
-
-    //Add require.js UI
-
-    var requireUI = d3.select(this.el).append("div").attr("id", "require-ui")
-    requireUI.append("span")
-      .classed("config_title", true)
-      .text("Require:");
-
-    var rc = requireUI.append("div")
-      .classed("requirecontrols", true);
-    var rcs = rc
-      .selectAll("div.config")
+    var newCheckboxes = checkList.selectAll("li.lib")
       .data(this.model.get("require"))
       .enter()
-      .append("div")
-      .classed("config", true);
 
-    rcs.append("span")
-      .text(function(d) { return d.name; });
-    rcs.append("span")
-      .text(function(d) { return " " + d.url; })
-      .classed("description", true);
-    rcs.append("span")
-      .text("x")
-      .classed("delete", true)
-      .on("click", function(d) {
-        var reqs = that.model.get("require");
-        var ind = reqs.indexOf(d);
-        reqs.splice(ind, 1);
-        that.model.set("require", reqs);
-
-        //rerender
-        that.$el.empty();
-        that.render();
-      });
-
-    //add the + button
-    var plus = rc.append("div")
-      .classed("config", true);
-
-    plus.append("span")
-      .text("+ ");
-
-    //add and hide the inputs for a new require
-    var name_input = plus.append("div").text("name: ")
-      .style({
-        display: "none"
-      });
-    name_input
-      .append("input")
-      .attr({
-        type: "text"
-      });
-
-    var url_input = plus.append("div").text("url: ")
-      .style({
-        display: "none"
-      });
-    url_input
-      .append("input")
-      .text("url:")
-      .attr({
-        type: "text"
-      });
-
-    plus.on("click", function() {
-      name_input
-        .style("display","");
-      url_input
-        .style("display","");
-      name_input.select("input").node().focus();
-      var done = function() {
-        //create a new require
-        var req = { name: name_input.select("input").node().value,
-          url: url_input.select("input").node().value
-        };
-        var reqs = that.model.get("require");
-        reqs.push(req);
-        that.model.set("require", reqs);
-
-        //rerender the files view to show new file
-        that.$el.empty();
-        console.log(that);
-        that.render();
-      };
-
-      name_input.on("keypress", function() {
-        //they hit enter
-        if(d3.event.charCode === 13) {
-          done();
-        }
-      });
-      url_input.on("keypress", function() {
-        //they hit enter
-        if(d3.event.charCode === 13) {
-          done();
-        }
-      });
-    });
-    */
+    createLibCheckbox(newCheckboxes);
   }
 });
 

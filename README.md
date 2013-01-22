@@ -64,9 +64,9 @@ tributary.ctx
 tributary.t  
 tributary.dt  
 tributary.loop  
+tributary.loop_type  
 tributary.autoinit  
 tributary.pause  
-tributary.loop_type  
 tributary.bv  
 tributary.nclones  
 tributary.clone_opacity  
@@ -91,5 +91,8 @@ tributary.render
 
 + Make BV button work for any of the renders (not just svg)  
 
+#### Contexts
+
++ enable number scrubbing for text mode (csv and tsv files)
 
 

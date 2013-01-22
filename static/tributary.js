@@ -199,14 +199,12 @@ var Tributary = function() {
   });
   tributary.Config = Backbone.Model.extend({
     defaults: {
-      description: "An inlet to Tributary",
+      description: "Tributary inlet",
       endpoint: "tributary",
       display: "svg",
       "public": true,
       require: [],
       fileconfigs: {},
-      tab: "edit",
-      display_percent: .7,
       play: false,
       loop: false,
       restart: false,
@@ -220,11 +218,11 @@ var Tributary = function() {
       ease: "linear",
       dt: .01
     },
-    require: function(callback, ret) {
+    require: function(callback) {
       var modules = this.get("require");
       var scripts = _.pluck(modules, "url");
       var rcb = function() {
-        return callback(ret, arguments);
+        return callback(null, arguments);
       };
       require(scripts, rcb);
     },
@@ -240,126 +238,125 @@ var Tributary = function() {
     initialize: function() {},
     render: function() {
       var that = this;
-      var template = Handlebars.templates.config;
-      var context = {
-        displays: tributary.displays,
-        time_controls: tributary.time_controls,
-        requires: this.model.get("require")
-      };
-      $(this.el).html(template(context));
-      var displays = d3.select(this.el).select(".displaycontrols").selectAll("div.config");
-      var initdisplay = this.model.get("display");
-      displays.datum(function() {
-        return this.dataset;
-      });
-      displays.filter(function(d) {
-        return d.name === initdisplay;
-      }).classed("config_active", true);
-      displays.on("click", function(d) {
-        d3.select(this.parentNode).selectAll("div.config").classed("config_active", false);
-        d3.select(this).classed("config_active", true);
-        that.model.set("display", d.name);
+      var reader = new FileReader;
+      function handleFileSelect() {
+        var files = d3.event.target.files;
+        for (var i = 0, f; f = files[i]; i++) {
+          if (!f.type.match("image.*")) {
+            console.log("not an image");
+            continue;
+          }
+          reader.onload = function(f) {
+            return function(e) {
+              var len = "data:image/png;base64,".length;
+              var img = e.target.result.substring(len);
+              console.log("upload!");
+              $.post("/imgur/upload/thumbnail", {
+                image: img
+              }, function(image) {
+                console.log("response", image);
+                if (image.status === 200) {
+                  d3.select("#trib-thumbnail").attr("src", image.data.link);
+                  d3.select("#trib-thumbnail").style("display", "");
+                  that.model.set("thumbnail", image.data.link);
+                } else {}
+              });
+            };
+          }(f);
+          reader.readAsDataURL(f);
+        }
+      }
+      d3.select("#thumbnail-content").select("input").on("change", handleFileSelect);
+      var link = this.model.get("thumbnail");
+      if (link) {
+        d3.select("#thumbnail-content").select("img").attr("src", link).style("display", "");
+      }
+      var displaySelect = d3.select(this.el).select("#config-content select").on("change", function() {
+        var display = this.selectedOptions[0].value;
+        that.model.set("display", display);
         tributary.events.trigger("execute");
       });
-      var timecontrols = d3.select(this.el).select(".timecontrols").selectAll("div.config");
+      var currentDisplay = this.model.get("display");
+      displaySelect.selectAll("option").each(function(d, i) {
+        if (this.value === currentDisplay) {
+          displaySelect.node().value = this.value;
+        }
+      });
+      var timecontrols = d3.select("#timecontrols").selectAll("button");
       timecontrols.datum(function() {
         return this.dataset;
       });
       timecontrols.filter(function(d) {
         return that.model.get(d.name);
-      }).classed("config_active", true);
+      }).classed("active", true);
       timecontrols.on("click", function(d) {
         var tf = !that.model.get(d.name);
-        d3.select(this).classed("config_active", tf);
+        d3.select(this).classed("active", tf);
         that.model.set(d.name, tf);
       });
-      var editorcontrols = d3.select(this.el).select(".editorcontrols");
-      editorcontrols.selectAll("div.config").on("click", function(d) {
-        if ($(this).attr("data-name") == "log-errors") {
-          if (tributary.hint == true && tributary.trace == true) {
-            $(this).removeClass("config_active");
+      var editorcontrols = d3.select(this.el).select("#logerrors").on("click", function(d) {
+        var dis = d3.select(this);
+        if ($(this).attr("data-name") === "log-errors") {
+          if (dis.classed("active")) {
+            console.log("Error logging disabled");
             tributary.hint = false;
             tributary.trace = false;
             tributary.events.trigger("execute");
+            dis.classed("active", false);
           } else {
+            console.log("Error logging initiated");
             tributary.hint = true;
             tributary.trace = true;
             tributary.events.trigger("execute");
-            $(this).addClass("config_active");
+            dis.classed("active", true);
           }
         }
       });
-      var require = d3.select(this.el).select(".requirecontrols");
-      var plus = require.selectAll(".plus");
-      var add = require.selectAll(".tb_add");
-      var name_input = require.select(".tb_add").select("input.name");
-      var url_input = require.select(".tb_add").select("input.url");
-      require.selectAll("div.config").datum(function() {
-        return this.dataset;
-      }).select("span.delete").datum(function() {
-        return this.dataset;
-      }).on("click", function(d) {
+      var checkList = d3.select(this.el).select("#library-checklist");
+      var libLinks = d3.select(this.el).select("#library-links");
+      var name_input = libLinks.select("input.library-title");
+      var url_input = libLinks.select("input.library-url");
+      function addReq() {
+        var req = {
+          name: name_input.node().value,
+          url: url_input.node().value
+        };
         var reqs = that.model.get("require");
-        var ind = reqs.indexOf(d);
-        reqs.splice(ind, 1);
+        reqs.push(req);
+        that.model.require(function(err, res) {});
         that.model.set("require", reqs);
-        that.$el.empty();
-        that.render();
-        add.style("display", "none");
+        createLibCheckbox(checkList.selectAll("li.lib").data(reqs).enter());
+      }
+      var add = libLinks.select(".add-library").on("click", addReq);
+      name_input.on("keypress", function() {
+        if (d3.event.charCode === 13) {
+          addReq();
+        }
       });
-      require.selectAll("div.config").on("click", function(d) {
-        add.style("display", "");
-        name_input.node().value = d.name;
-        url_input.node().value = d.url;
-        var done = function() {
+      url_input.on("keypress", function() {
+        if (d3.event.charCode === 13) {
+          addReq();
+        }
+      });
+      function createLibCheckbox(selection) {
+        var li = selection.append("li").classed("lib", true);
+        li.append("input").attr("type", "checkbox").attr("checked", true).on("change", function(d) {
           var reqs = that.model.get("require");
-          var req = _.find(reqs, function(r) {
-            return r.name === d.name;
-          });
-          req.name = name_input.node().value;
-          req.url = url_input.node().value;
-          that.model.set("require", reqs);
-          that.model.require(function() {}, reqs);
-          that.$el.empty();
-          that.render();
-        };
-        name_input.on("keypress", function() {
-          if (d3.event.charCode === 13) {
-            done();
+          var ind = reqs.indexOf(d);
+          if (ind >= 0) {
+            reqs.splice(ind, 1);
+            that.model.set("require", reqs);
+          } else {
+            reqs.push(d);
+            that.model.set("require", reqs);
           }
         });
-        url_input.on("keypress", function() {
-          if (d3.event.charCode === 13) {
-            done();
-          }
+        li.append("span").text(function(d) {
+          return d.name;
         });
-      });
-      plus.on("click", function() {
-        add.style("display", "");
-        name_input.node().focus();
-        var done = function() {
-          var req = {
-            name: name_input.node().value,
-            url: url_input.node().value
-          };
-          var reqs = that.model.get("require");
-          reqs.push(req);
-          that.model.set("require", reqs);
-          that.model.require(function() {}, reqs);
-          that.$el.empty();
-          that.render();
-        };
-        name_input.on("keypress", function() {
-          if (d3.event.charCode === 13) {
-            done();
-          }
-        });
-        url_input.on("keypress", function() {
-          if (d3.event.charCode === 13) {
-            done();
-          }
-        });
-      });
+      }
+      var newCheckboxes = checkList.selectAll("li.lib").data(this.model.get("require")).enter();
+      createLibCheckbox(newCheckboxes);
     }
   });
   tributary.Context = Backbone.View.extend({
@@ -742,6 +739,9 @@ var Tributary = function() {
       this.model.on("change:code", function() {
         tributary.events.trigger("execute");
       });
+      this.model.on("delete", function() {
+        d3.select(this.el).remove();
+      }, this);
     },
     execute: function() {
       try {
@@ -799,61 +799,6 @@ var Tributary = function() {
       return true;
     },
     render: function() {}
-  });
-  tributary.PanelView = Backbone.View.extend({
-    initialize: function() {},
-    render: function() {
-      var that = this;
-      var panel_data = [ "edit", "config" ];
-      var template = Handlebars.templates.panel;
-      var html = template(panel_data);
-      this.$el.html(html);
-      panel = d3.select(".tb_panel");
-      panel_gui = d3.selectAll("div.tb_panel_gui");
-      var pb_w = 60;
-      var panel_buttons = panel_gui.selectAll("div.pb").on("click", function(d) {
-        tributary.events.trigger("show", this.dataset.name);
-      });
-      tributary.events.on("show", function(name) {
-        $(".tb_panel").children(".panel").css("display", "none");
-        panel.select(".tb_" + name).style("display", "");
-        panel_gui.selectAll("div.pb").classed("gui_active", false);
-        panel_gui.select(".tb_" + name + "_tab").classed("gui_active", true);
-      });
-      tributary.events.trigger("show", "edit");
-      $(".tb_hide-panel-button").on("click", function() {
-        tributary.events.trigger("hidepanel");
-        $("#display").addClass("fullscreen");
-        $("svg").addClass("fullscreen");
-        $("#header").addClass("dimheader");
-      });
-      $("#show-codepanel-button").on("click", function() {
-        tributary.events.trigger("showpanel");
-        $("#display").removeClass("fullscreen");
-        $("svg").removeClass("fullscreen");
-        $("#header").removeClass("dimheader");
-      });
-      tributary.events.on("hidepanel", function() {
-        $(".tb_panel").hide();
-        $(".tb_panel_gui").hide();
-        $(".tb_panel_handle").hide();
-        $(".tb_panelfiles_gui").hide();
-        $("#show-codepanel").show();
-        if (tributary.__config__) {
-          tributary.__config__.set("hidepanel", true);
-        }
-      });
-      tributary.events.on("showpanel", function() {
-        $(".tb_panel").show();
-        $(".tb_panel_gui").show();
-        $(".tb_panel_handle").show();
-        $(".tb_panelfiles_gui").show();
-        $("#show-codepanel").hide();
-        if (tributary.__config__) {
-          tributary.__config__.set("hidepanel", false);
-        }
-      });
-    }
   });
   tributary.make_editor = function(options) {
     var editorParent = options.parent || tributary.edit;
@@ -1069,7 +1014,9 @@ var Tributary = function() {
         }
       });
       ret.config.set("fileconfigs", fileconfigs);
-      ret.config.require(callback, ret);
+      ret.config.require(function(err, res) {
+        callback(null, ret);
+      });
     }
   };
   tributary.save_gist = function(config, saveorfork, callback) {
@@ -1093,10 +1040,10 @@ var Tributary = function() {
       content: JSON.stringify(config.toJSON())
     };
     var url;
-    if (saveorfork === "save") {
-      url = "/tributary/save";
-    } else if (saveorfork === "fork") {
+    if (saveorfork === "fork") {
       url = "/tributary/fork";
+    } else {
+      url = "/tributary/save";
     }
     if (oldgist.length > 4) {
       url += "/" + oldgist;
@@ -1114,7 +1061,6 @@ var Tributary = function() {
     });
   };
   tributary.login_gist = function(loginorout, callback) {
-    var url;
     if (loginorout) {
       url = "/github-logout";
     } else {
@@ -1145,31 +1091,22 @@ var Tributary = function() {
         contexts.splice(contexts.indexOf(inlet), 1);
         contexts.unshift(inlet);
       }
-      var context = {
+      $(this.el).html(template({
         contexts: contexts
-      };
-      $(this.el).html(template(context));
-      var fvs = d3.select(this.el).selectAll("div.fv");
-      fvs.on("click", function(d) {
+      }));
+      var filelist = d3.select("#file-list").selectAll("li.file");
+      filelist.on("click", function(d) {
         var filename = this.dataset.filename;
-        if (that.model) {
-          var ctx = _.find(tributary.__config__.contexts, function(d) {
-            return d.model.get("filename") === filename;
-          });
-          that.model.trigger("hide");
-          ctx.model.trigger("show");
-        }
-        tributary.events.trigger("show", "edit");
+        var ctx = _.find(tributary.__config__.contexts, function(d) {
+          return d.model.get("filename") === filename;
+        });
+        that.model.trigger("hide");
+        ctx.model.trigger("show");
       });
-      fvs.attr("class", function(d, i) {
-        var filetype = this.dataset.filename.split(".")[1];
-        return "fv type-" + filetype;
-      });
-      fvs.select(".delete-file").style("z-index", 1e3).on("click", function() {
+      filelist.select(".delete-file").style("z-index", 1e3).on("click", function() {
         var dataset = this.parentNode.dataset;
         var filename = dataset.filename;
         var name = dataset.filename.split(".")[0];
-        delete that.model;
         tributary.__config__.unset(filename);
         var context = _.find(tributary.__config__.contexts, function(d) {
           return d.model.get("filename") === filename;
@@ -1182,7 +1119,7 @@ var Tributary = function() {
           tributary.__config__.todelete = [];
         }
         tributary.__config__.todelete.push(filename);
-        d3.select(".tb_files").selectAll("div.fv").each(function() {
+        d3.select(that.el).selectAll("li.file").each(function() {
           if (this.dataset.filename === filename) {
             $(this).remove();
           }
@@ -1191,7 +1128,8 @@ var Tributary = function() {
         othertab.trigger("show");
         d3.event.stopPropagation();
       });
-      var plus = d3.select(this.el).selectAll("div.plus").on("click", function() {
+      var plus = d3.select(this.el).select(".add-file").on("click", function() {
+        console.log("SUP");
         var input = d3.select(this).select("input").style("display", "inline-block");
         input.node().focus();
         input.on("keypress", function() {
@@ -1214,12 +1152,8 @@ var Tributary = function() {
               });
               context.model.trigger("show");
               editor.cm.focus();
-              fvs.attr("class", function(d, i) {
-                var filetype = this.dataset.filename.split(".")[1];
-                return "fv type-" + filetype;
-              });
             } else {
-              input.classed("input_error", true);
+              input.classed("error", true);
             }
           }
         });
@@ -1333,66 +1267,20 @@ var Tributary = function() {
   tributary.ui = {};
   var display, panel_gui, panel, panel_handle, page, header;
   tributary.ui.setup = function() {
-    tributary.panel = new tributary.PanelView({
-      el: ".tb_panel"
-    });
-    tributary.panel.render();
-    display = d3.select("#display");
-    panel = d3.select(".tb_panel");
-    panel_gui = d3.selectAll("div.tb_panel_gui");
-    panelfile_gui = d3.select(".tb_panelfiles_gui");
-    panel_handle = d3.select(".tb_panel_handle");
-    page = d3.select("#page");
-    header = d3.select("#header");
-    tributary.dims = {
-      display_percent: .7,
-      page_width: 0,
-      page_height: 0,
-      display_width: 0,
-      display_height: 0,
-      panel_width: 0,
-      panel_height: 0,
-      panel_gui_width: 0,
-      panel_gui_height: 31
-    };
     tributary.events.on("resize", function() {
-      var min_width = parseInt(panel.style("min-width"), 10);
-      tributary.dims.page_width = parseInt(page.style("width"), 10);
-      if (tributary.dims.page_width - tributary.dims.page_width * tributary.dims.display_percent < min_width) {
-        tributary.dims.display_width = tributary.dims.page_width - min_width;
-        tributary.dims.panel_width = min_width;
+      if ($("#display").width() > 767) {
+        tributary.sw = $("#display").width() - $("#panel").width();
       } else {
-        tributary.dims.display_width = tributary.dims.page_width * tributary.dims.display_percent;
-        tributary.dims.panel_width = tributary.dims.page_width - tributary.dims.display_width;
+        tributary.sw = $("#display").width();
       }
-      tributary.dims.panel_gui_width = tributary.dims.panel_width;
-      tributary.dims.page_height = parseInt(page.style("height"), 10);
-      tributary.dims.display_height = tributary.dims.page_height - parseInt(header.style("height"), 10);
-      tributary.dims.panel_height = tributary.dims.display_height - tributary.dims.panel_gui_height;
-      display.style("width", tributary.dims.display_width + "px");
-      panel.style("width", tributary.dims.panel_width + "px");
-      panel_gui.style("width", tributary.dims.panel_gui_width + "px");
-      panelfile_gui.style("width", tributary.dims.panel_gui_width + "px");
-      panel.style("height", tributary.dims.panel_height + "px");
-      panel.selectAll(".panel").style("height", tributary.dims.panel_height + "px");
-      panel.selectAll(".CodeMirror").style("height", tributary.dims.panel_height - tributary.dims.panel_gui_height + "px");
-      display.style("height", tributary.dims.display_height + "px");
-      panel_gui.style("height", tributary.dims.panel_gui_height + "px");
-      panel_gui.style("margin-top", tributary.dims.panel_gui_height + "px");
-      panel_handle.style("right", tributary.dims.panel_width + "px");
-      tributary.sw = tributary.dims.display_width;
-      tributary.sh = tributary.dims.display_height;
+      if ($("#container").hasClass("fullscreen")) {
+        console.log("Fullscreen");
+        tributary.sw = $("#display").width();
+      }
+      tributary.sh = $("#display").height();
       tributary.events.trigger("execute");
     });
     tributary.events.trigger("resize");
-    var ph_drag = d3.behavior.drag().on("drag", function() {
-      var dx = d3.event.dx / tributary.dims.page_width;
-      if (tributary.dims.display_percent + dx >= 0 && tributary.dims.display_percent + dx <= 1) {
-        tributary.dims.display_percent += dx;
-      }
-      tributary.events.trigger("resize");
-    });
-    panel_handle.call(ph_drag);
   };
   tributary.ui.assemble = function(gistid) {
     tributary.trace = false;
@@ -1403,10 +1291,14 @@ var Tributary = function() {
       var ret = {};
       ret.config = new tributary.Config;
       ret.models = new tributary.CodeModels(new tributary.CodeModel);
-      _assemble(ret);
+      _assemble(null, ret);
     }
   };
-  function _assemble(ret) {
+  function _assemble(error, ret) {
+    if (error) {
+      console.log("error!", error);
+      return;
+    }
     var config = ret.config;
     tributary.__config__ = config;
     config.contexts = [];
@@ -1452,7 +1344,7 @@ var Tributary = function() {
       config.set("display", "svg");
     }
     config.set("endpoint", "");
-    var edit = panel.select(".tb_edit");
+    var edit = d3.select("#code");
     tributary.edit = edit;
     ret.models.each(function(m) {
       type = m.get("type");
@@ -1482,63 +1374,72 @@ var Tributary = function() {
         tributary.autoinit = config.get("autoinit");
       }
     });
-    var config_view = new tributary.ConfigView({
-      el: ".tb_config",
-      model: config
-    });
-    config_view.render();
     var files_view = new tributary.FilesView({
-      el: ".tb_files",
+      el: "#file-list",
       model: config
     });
     files_view.render();
+    var config_view = new tributary.ConfigView({
+      el: "#config",
+      model: config
+    });
+    config_view.render();
     var controls_view = new tributary.ControlsView({
-      el: ".tb_controls",
+      el: "#controls",
       model: config
     });
     controls_view.render();
+    $("#config-toggle").on("click", function() {
+      $("#config-content").toggle();
+      if ($("#config-toggle").text() == "Config") {
+        $("#config-toggle").text("Close Config");
+      } else {
+        $("#config-toggle").text("Config");
+      }
+    });
+    $("#library-toggle").on("click", function() {
+      $("#library-content").toggle();
+      if ($("#library-toggle").text() == "Add libraries") {
+        $("#library-toggle").text("Close libraries");
+      } else {
+        $("#library-toggle").text("Add libraries");
+      }
+    });
+    $("#fullscreen").on("click", function() {
+      $("#container").addClass("fullscreen");
+      $("#exit-fullscreen").show();
+      tributary.events.trigger("resize");
+    });
+    $("#exit-fullscreen").on("click", function() {
+      $("#exit-fullscreen").hide();
+      $("#container").removeClass("fullscreen");
+      tributary.events.trigger("resize");
+    });
     setup_header(ret);
-    tributary.events.trigger("show", config.get("tab"));
-    tributary.events.on("show", function(name) {
-      config.set("tab", name);
-    });
-    tributary.dims.display_percent = config.get("display_percent");
-    tributary.events.trigger("resize");
-    tributary.events.on("resize", function() {
-      config.set("display_percent", tributary.dims.display_percent);
-    });
-    if (config.get("hidepanel")) {
-      tributary.events.trigger("hidepanel");
-    } else {
-      tributary.events.trigger("showpanel");
-    }
+    setup_save(ret.config);
   }
   function setup_header(ret) {
-    setup_save(ret.config);
     if (ret.user) {
       var gist_uid = ret.user.id;
-      if (gist_uid === tributary.userid) {
-        var info_string = '<input id="gist-title" value="' + ret.gist.description + '" > by <!-- ya boy -->';
-      } else {
-        var info_string = '"<span id="gist-title-static"><a href="' + ret.gist.html_url + '">' + ret.gist.description + '</a></span>" by ';
-      }
-      if (ret.user.url === "") {
-        info_string += ret.user.login;
-      } else {
-        info_string += '<a href="' + ret.user.url + '">' + ret.user.login + "</a>";
-      }
-      d3.select("title").text(ret.gist.description || "Tributary");
-      $("#gist_info").html(info_string);
+      $("#inlet-author").html('<a href="https://github.com/' + ret.user.login + '">' + ret.user.login + "</a>");
+      $("#gist-title").val(ret.gist.description);
+      $("#author-avatar img").attr("src", function(d) {
+        return "http://2.gravatar.com/avatar/" + ret.user.gravatar_id;
+      });
+      d3.select("title").text("Tributary | " + ret.gist.description || "Tributary");
       if (ret.user.id !== tributary.userid) {
-        $("#forkPanel").css("display", "none");
-        $("#savePanel").attr("id", "forkPanel");
-        setup_save(ret.config);
+        $("#fork").css("display", "none");
+        ret.config.saveType = "fork";
+      } else {
+        $("#fork").css("display", "");
+        ret.config.saveType = "save";
       }
     } else {
       if (isNaN(tributary.userid) || !ret.gist) {
-        $("#forkPanel").css("display", "none");
-        $("#savePanel").attr("id", "forkPanel");
-        setup_save(ret.config);
+        $("#fork").css("display", "none");
+        ret.config.saveType = "fork";
+      } else {
+        ret.config.saveType = "save";
       }
     }
     $("#gist-title").on("keyup", function() {
@@ -1547,19 +1448,25 @@ var Tributary = function() {
     });
   }
   function setup_save(config) {
-    $("#savePanel").off("click");
-    $("#savePanel").on("click", function(e) {
+    $("#save").off("click");
+    $("#save").on("click", function(e) {
       console.log("saving!");
       d3.select("#syncing").style("display", "block");
-      tributary.save_gist(config, "save", function(newurl, newgist) {
-        d3.select("#syncing").style("display", "none");
+      tributary.save_gist(config, config.saveType, function(newurl, newgist) {
+        d3.select(".icon-load").transition().duration(1e3).style("opacity", 0);
+        if (config.saveType === "fork") {
+          window.onunload = false;
+          window.onbeforeunload = false;
+          window.location = newurl;
+        }
       });
     });
-    $("#forkPanel").off("click");
-    $("#forkPanel").on("click", function(e) {
+    $("#fork").off("click");
+    $("#fork").on("click", function(e) {
       console.log("forking!");
-      d3.select("#syncing").style("display", "block");
-      tributary.save_gist(config, "fork", function(newurl, newgist) {
+      config.saveType = "fork";
+      d3.select(".icon-load").style("opacity", 1);
+      tributary.save_gist(config, config.saveType, function(newurl, newgist) {
         window.onunload = false;
         window.onbeforeunload = false;
         window.location = newurl;

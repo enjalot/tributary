@@ -1,5 +1,3 @@
-
-
 //GUI for loading files
 tributary.FilesView = Backbone.View.extend({
   initialize: function() {
@@ -17,37 +15,28 @@ tributary.FilesView = Backbone.View.extend({
     contexts = contexts.sort(function(a,b) { if(a.filename < b.filename) return -1; return 1; });
     //inlet.js comes first TODO: mainfile comes first (TributaryContext)
     var inlet = _.find(contexts, function(d) { return d.filename === "inlet.js" || d.filename === "inlet.coffee" });
-    if(inlet) { 
+    if(inlet) {
       contexts.splice(contexts.indexOf(inlet), 1);
       contexts.unshift(inlet);
     }
 
-    var context ={
+    $(this.el).html(template({
       contexts: contexts
-    };
-    $(this.el).html(template(context));
+    }));
 
+    var filelist = d3.select("#file-list")
+      .selectAll("li.file")
 
     //setup the event handlers for the file tabs
-    var fvs = d3.select(this.el).selectAll("div.fv")
-    fvs.on("click", function(d) {
+    filelist.on("click", function(d) {
       var filename = this.dataset.filename;
-      if(that.model) {
-        var ctx = _.find(tributary.__config__.contexts, function(d) { return d.model.get("filename") === filename; });
-        that.model.trigger("hide");
-        ctx.model.trigger("show");
-      }
-      tributary.events.trigger("show", "edit");
+      var ctx = _.find(tributary.__config__.contexts, function(d) { return d.model.get("filename") === filename; });
+      that.model.trigger("hide");
+      ctx.model.trigger("show");
     });
 
-    fvs.attr("class", function(d,i){
-      var filetype = this.dataset.filename.split(".")[1]
-
-      return "fv type-"+filetype;
-    })
-
     //delete
-    fvs.select(".delete-file")
+    filelist.select(".delete-file")
       .style("z-index", 1000)
       .on("click", function() {
         var dataset = this.parentNode.dataset
@@ -55,7 +44,7 @@ tributary.FilesView = Backbone.View.extend({
         var name = dataset.filename.split(".")[0];
 
         //delete the model
-        delete that.model;
+        //delete that.model;
         //delete the file from the config
         tributary.__config__.unset(filename);
         //delete the context
@@ -74,9 +63,9 @@ tributary.FilesView = Backbone.View.extend({
         }
         tributary.__config__.todelete.push(filename);
 
-        
+
         //remove the tab
-        d3.select(".tb_files").selectAll("div.fv")
+        d3.select(that.el).selectAll("li.file")
           .each(function() {
             if(this.dataset.filename === filename) {
               $(this).remove();
@@ -91,10 +80,12 @@ tributary.FilesView = Backbone.View.extend({
 
 
     //the new file button
-    var plus = d3.select(this.el).selectAll("div.plus")
+    var plus = d3.select(this.el).select(".add-file")
       .on("click", function() {
+        console.log("SUP")
         var input = d3.select(this).select("input")
           .style("display","inline-block");
+
         input.node().focus();
         input.on("keypress", function() {
           //they hit enter
@@ -115,14 +106,16 @@ tributary.FilesView = Backbone.View.extend({
               context.model.trigger("show");
               editor.cm.focus();
 
+              /*
               fvs.attr("class", function(d,i){
                 var filetype = this.dataset.filename.split(".")[1]
                 return "fv type-"+filetype;
               })
+              */
 
 
             } else {
-              input.classed("input_error", true);
+              input.classed("error", true);
             }
           }
         });

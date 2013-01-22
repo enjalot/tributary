@@ -1,97 +1,170 @@
-<!DOCTYPE HTML>
+<!DOCTYPE html>
 <html lang="en">
-  
-  <head>
-    <meta charset="utf-8" />
-    <title>Tributary</title>
-    <link href='static/css/index.css' rel='stylesheet' type='text/css'>
-    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,300,600,700' rel='stylesheet' type='text/css'>  
-    <link href='http://fonts.googleapis.com/css?family=Alegreya:900italic' rel='stylesheet' type='text/css'>
+<head>
+	<meta charset="utf-8"/>
+	<title>Tributary</title>
+	<!-- Place favicon.ico and apple-touch-icon.png in the root of your domain and delete these references -->
+	<link rel="shortcut icon" href="/favicon.ico">
+	<link rel="apple-touch-icon" href="/apple-touch-icon.png">
 
-    <script type="text/javascript">
-        var _gaq = _gaq || [];
-        _gaq.push(['_setAccount', 'UA-30237258-1']);
-        _gaq.push(['_trackPageview']);
-
-        (function() {
-            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-        })();
-    </script>
+	<!--
+		Font icons:
+		Font license info
 
 
+## Entypo
+
+   Copyright (C) 2012 by Daniel Bruce
+
+   Author:    Daniel Buce
+   License:   SIL (http://scripts.sil.org/OFL)
+   Homepage:  http://www.entypo.com
+
+
+## Font Awesome
+
+   Copyright (C) 2012 by Dave Gandy
+
+   Author:    Dave Gandy
+   License:   CC BY 3.0 (http://creativecommons.org/licenses/by/3.0/)
+   Homepage:  http://fortawesome.github.com/Font-Awesome/
+
+
+## Typicons
+
+   (c) Stephen Hutchings 2012
+
+   Author:    Stephen Hutchings
+   License:   CC BY-SA 3.0 (http://creativecommons.org/licenses/by-sa/3.0/)
+   Homepage:  http://typicons.com/
+
+
+## Fontelico
+
+   Copyright (C) 2012 by Fontello project
+
+   Author:    Crowdsourced, for Fontello project
+   License:   SIL (http://scripts.sil.org/OFL)
+   Homepage:  http://fontello.com
+
+
+## Brandico
+
+   (C) 2012 by Vitaly Puzrin
+
+   Author:    Crowdsourced, for Fontello project
+   License:   SIL (http://scripts.sil.org/OFL)
+   Homepage:
+
+
+
+	-->
+
+	<!--[if lt IE 9]>
+		<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+	<link rel="stylesheet" media="all" href=""/>
+	<meta name="viewport" content="width=device-width, initial-scale=1"/>
+	<!-- Adding "maximum-scale=1" fixes the Mobile Safari auto-zoom bug: http://filamentgroup.com/examples/iosScaleBug/ -->
+
+	<!-- LESS framework stylesheet
+	Should be compiled from style.less
+	I use http://wearekiss.com/simpless for auto-compiling on save
+	-->
+	<link rel="stylesheet" href="/static/css/index.css" type="text/css" media="screen" title="Primary Stylesheet" charset="utf-8">
+
+	<!-- Bring in jQuery first, lots of other stuff depends on it -->
+	<script src="/static/lib/jquery-1.7.1.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="/static/lib/jquery.fittext.js" type="text/javascript" charset="utf-8"></script>
+	<script src="/static/lib/jquery.tipsy.js" type="text/javascript" charset="utf-8"></script>
+
+
+
+    <!-- Add Retina.js for retina support
+    <script src="/static/lib/retina.js" type="text/javascript" charset="utf-8"></script> -->
+
+	<!-- And underscore | http://documentcloud.github.com/underscore/
+	<script src="lib/underscore-min.js" type="text/javascript" charset="utf-8"></script>	-->
+
+	<!-- And D3 | https://github.com/mbostock/d3/wiki/API-Reference-->
+	<script src="/static/lib/d3.min.js?v3" type="text/javascript" charset="utf-8"></script> 
+
+	<!-- And Lettering.js | https://github.com/davatron5000/Lettering.js
+	<script src="lib/jquery.lettering.js" type="text/javascript" charset="utf-8"></script> -->
+
+	<!-- And Scrollorama | http://johnpolacek.github.com/scrollorama/
+	<script src="lib/jquery.scrollorama.js" type="text/javascript" charset="utf-8"></script> -->
+
+	<!-- And Tabletop | https://github.com/jsoma/tabletop -->
+	<script src="static/lib/tabletop.js" type="text/javascript" charset="utf-8"></script>
+	<link rel="stylesheet" href="/static/css/tipsy.css">
+
+	 <link rel="stylesheet" href="/static/css/trib.css">
+    <link rel="stylesheet" href="/static/css/animation.css"><!--[if IE 7]>
+    <link rel="stylesheet" href="css/trib-ie7.css"><![endif]-->
+
+	<link href='http://fonts.googleapis.com/css?family=Alegreya:900italic' rel='stylesheet' type='text/css'>
 </head>
-  <body>
-    <div id="page-wrapper">
+<body>
+<div id="container">
+	<header id="title">
+		<h1>Tributary</h1>
+	</header>
+	<script>
 
-      <!-- intro -->
-      <h1>Tributary</h1>
-      <br>
-      <br>
-        
-      <div id="try" class="intro">
-        <a href="/tributary/3200444/">
-        <h3>Try!</h3>
-        <img class="intro1" src="/static/img/index/intro1.png" />
-        <p>Just start writing some d3 code and watch elements come to life with every keystroke!</p>
-        </a>
-      </div>
+	$("#title h1").fitText(0.4)
 
-      <div id="play" class="intro">
-        <a href="/tributary/2958196/">
-        <h3>Play!</h3>
-        <img class="intro2" src="/static/img/index/intro2.png" />
-        <p>No need to code, open any existing tributary and just click on any number or color
-          you see to start playing!</p>
-        </a>
-      </div>
+	</script>
 
-      <div id="fork" class="intro">
-        <a href="/tributary/2958568/">
-        <h3>Share!</h3>
-        <img class="intro3" src="/static/img/index/intro3.png" />
-        <p>Like what you see?
-          <br/>Click "Fork" and your code gets saved to a github gist.
-          <br/>Your URL will change, just copy, paste and share!</p>
-        </a>
-      </div>
+	<nav>
+		<ul id="info-links">
+			<li><a href="https://github.com/enjalot/tributary">GitHub</a></li>
+			<li><a href="https://github.com/enjalot/tributary/wiki">Wiki</a></li>
+			<li><a href="https://groups.google.com/forum/?fromgroups#!forum/tributary">Google Group</a></li>
+      <li><a href="http://tributary.io/inlet/4569668">Latest inlets</a></li>
+			<li>How to contribute</li>
+		</ul>
+	</nav>
 
-      <!-- about -->
-	<div id="what">
-		<h3>What is this?</h3>
-        <p class="about_what_txt">Tributary is an experimental environment for rapidly prototyping visualization code. The environment provides several libraries useful for this kind of coding, as well as a simple interface for live code editing.
-        </p>	
-	</div>
-    
-<!-- documentation -->
-      <div id="wiki">
-		<h3>Wiki</h3>
-        <br/>
-        <a href="https://github.com/enjalot/tributary/wiki">Overview</a>
-        <br/><a href="https://github.com/enjalot/tributary/wiki/Tributary">Tributary</a>
-        <br/><a href="https://github.com/enjalot/tributary/wiki/Delta">Delta</a>
-          <br/>
-          <br/>
-         
-      </div>
+	<section id="content">
+		<p id="intro">Tributary is an experimental environment for <strong>rapidly prototyping visualization code</strong>. The environment provides several useful libraries<i class="icon-help-circled" title="D3, Underscore, Tabletop, and more."></i>, as well as a simple interface for live code editing. We call these shareable code examples <strong>inlets</strong>.</p>
 
-      <div id="videos">
-         <h3>Videos</h3>
-         <a href="http://enjalot.github.com/dot-enter/">dot enter</a>: mixtape of tutorial videos<br>
-         <a href="http://enjalot.github.com/dot-append/">dot append</a>: tutorial mixtape part 2
-      </div>
+		<section id="get-started">
+			<a href="/inlet/2958568/">Try a basic example <i class="icon-right-circled"></i></a>
+
+			<small>
+				<a href="/inlet/">Or start with a clean slate <i class="icon-right-circled"></i></a>
+			</small>
+		</section>
+
+		<h5>Collaboration</h5>
+		<p>
+			Share what you make and allow others to play with and modify your creations. Each one gets it's own URL you can send to anyone. Sign in to or <a href="https://github.com/signup/free">create</a> a GitHub account and save your inlets as gists.
+		</p>
+
+		<h5>Learn Tributary</h5>
+		<p>
+			<strong><a href="https://twitter.com/enjalot">@enjalot</a></strong> has released two video tutorial mixtapes explaining the basics of D3 through Tributary; <a href="http://enjalot.github.com/dot-enter/">dot enter</a> &amp; <a href="http://enjalot.github.com/dot-append/">dot append</a>.
+		</p>
+
+		<h4><i class="icon-window"></i> Popular Inlets</h4>
+		<ul id="popular-inlets">
+		</ul>
 
 
+		<ul id="mostactive-users">
+			<h5>Most active users <i class="icon-users-1"></i></h5>
+
+ 		</ul>
+
+		<ul id="mostactive-inlets">
+			<h5>Most active inlets <i class="icon-window"></i></h5>
+		</ul>
 
 
-
-      <!-- gallery -->
-		<div id="gallery">
-
-         <h2>Gallery</h2>
-
-        <a href="http://newhive.com/enjalot/moreillusions">
+		<h3>Examples</h3>
+		<section id="example-gallery">
+		<a href="http://newhive.com/enjalot/moreillusions">
             <img class="illusions" src="/static/img/index/gallery/illusions.png" />
         </a>
         <a href="http://newhive.com/enjalot/squarecircle">
@@ -115,35 +188,151 @@
         <a href="/tributary/2958568/">
             <img class="sinwaves" src="/static/img/index/gallery/sinwaves.png" />
         </a>
+		</section>
 
 
-        <small class="gallerytext">Some of these images take you to galleries of Tributary examples, don't be afraid
-          to click on images which take you to the actual live tributaries!</small>
-		</div>
+	</section>
 
-    <br />
-	
-	<div id="who">
-		<h3>Who is involved?</h3>
-        <p class="about_who_txt">Tributary is <a href="https://twitter.com/enjalot">@enjalot</a>'s digital laboratory.
-        Much of the design is <a href="https://twitter.com/mrejfox">@mrejfox</a>'s vision.
-        <a href="https://github.com/enjalot/tributary/graphs/contributors">Contributors</a> include <a href="https://github.com/bollig">bollig</a> and <a href="https://github.com/ejfox">ejfox</a>.
-        Power users that shape the projects direction include <a href="https://twitter.com/syntagmatic">@syntagmatic</a>, <a href="https://twitter.com/bausofthenauf">@bausofthenauf</a>,
-        <a href="https://twitter.com/ptvan">@ptvan</a> and <a href="https://twitter.com/poezn">@poezn</a>
-        </p>
-	</div>
+	<section id="more-details">
+		<h4><i class="icon-users"></i> Who is involved?</h4>
+		<p>
+			Tributary is <a href="https://twitter.com/enjalot">@enjalot</a>'s digital laboratory.
+			Much of the design is <a href="https://twitter.com/mrejfox">@mrejfox</a>'s vision.
+      <a href="https://github.com/enjalot/tributary/graphs/contributors">Contributors</a> include <a href="https://github.com/bollig">bollig</a>,<a href="https://github.com/ejfox">ejfox</a> and <a href="https://github.com/roundrobin">roundrobin</a>.
+			Power users that shape the projects direction include <a href="https://twitter.com/syntagmatic">@syntagmatic</a>, <a href="https://twitter.com/bausofthenauf">@bausofthenauf</a>,
+      <a href="https://twitter.com/ptvan">@ptvan</a>, <a href="https://twitter.com/poezn">@poezn</a> and <a href="https://twitter.com/zeffii">@zeffii</a>
+		</p>
+
+		<h4><i class="icon-flow-tree"></i> Where did it come from?</h4>
+		<p>
+			Tributary is possible because of a lot of other people's hard work. We started
+			with <a href="http://gabrielflor.it/water">Gabriel Florit's implementation</a>  of concepts introduced in Bret Victor's <a href="http://www.youtube.com/watch?v=PUv66718DII">Inventing
+			on Principle talk</a>. Mike Bostock makes much of Tributary possible with his excellent
+			<a href="http://d3js.org/">d3.js library</a>. The use of gists to drive the code comes from his <a href="http://bl.ocks.org">bl.ocks.org project</a>.
+		</p>
 
 
-    <div id="where">
-      <h3>Where did it come from?</h3>
-      <p class="attribution_txt">Tributary is possible thanks to much harder work done by other people. We started
-        with <a href="http://gabrielflor.it/water">Gabriel Florit's implementation</a>  of concepts introduced in Bret Victor's <a href="http://www.youtube.com/watch?v=PUv66718DII">Inventing
-            on Principle talk</a>. Mike Bostock makes much of Tributary possible with his excellent
-        <a href="http://d3js.org/">d3.js library</a>. The use of gists to drive the code comes from his <a href="http://bl.ocks.org">bl.ocks.org project</a>.</p>
-    </div>
+		<h4><i class="icon-load"></i> What we dream it will do</h4>
+		<p>
+      We hope to make programming feel more like playing, so that anyone can
+      explore visual spaces with code. Graphical web APIs are getting more
+      powerful and more numerous, and the tools to manipulate them are as well.
+    </p>
+    <p>
+      By creating an environment that gives you what you want to start with, we
+      hope that learning these new tools and capabilities will go faster. We
+      also enjoy sharing our knowledge and techniques, so we have created a
+      system that makes it easy and effortless to save ideas and exchange them
+      . We hope that people will continue to "fork" good ideas and take them in
+      their own directions. <i class=icon-chart-bar></i>
+		</p>
+	</section>
 
-<a href="https://github.com/enjalot/tributary"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"></a>
+</div>
+<script type="text/javascript" charset="utf-8">
+$(document).ready(function(){
+	$('i').tipsy({fade: true, gravity: 's', opacity: 0.86});
 
-  </body>
+  Tabletop.init( { 
+    key: '0ApAkxBfw1JT4dHRpWHU4aU9YVnVvS19wdllsVFFkclE'
+    , callback: tableTopInit
+    , simpleSheet: true
+  })
+  function tableTopInit(data, tabletop) {
+    var popInlets = d3.select("#popular-inlets")
+    var inlets = popInlets.selectAll("li")
+      .data(data)
+      .enter()
+    .append("li")
+        .text(function(d){ return d.tributaryname})
+    inlets.append("img")
+    .attr({
+      src: function(d) { return d.tributarythumbnail }
+    })
+  }
+  //MOST POPULAR USERS + Inlets
 
+  var mostactiveUsers = d3.select("#mostactive-users");
+
+  //grab the users
+  function getUsers() {
+    var users_url = '/api/users/visits/4/-1';
+    d3.json(users_url, function(err, res) {
+      renderUsers(res);
+    })
+  }
+  getUsers();
+
+  function renderUsers(userList) {
+    var usersSel = mostactiveUsers.selectAll("li.user")
+      .data(userList)//, function(d) { return d.id });
+    
+    var users = usersSel
+      .enter()
+      .append("li")
+      .classed("user", true)
+    
+    usersSel
+      .text(function(d) { 
+        return d.login + " ";
+      });
+    
+    users.append("img")
+    usersSel.select("img")
+      .attr({
+        src: function(d) { 
+          return d.avatar_url;
+        },
+        width: function(d, i) {
+          return 16;
+        },
+        height: function(d, i) {
+          return 16;
+        }
+      }); 
+  };
+
+  var mostactiveinlets = d3.select("#mostactive-inlets")
+  //grab the inlets
+  function getInlets() {
+    var inlets_url = '/api/most/viewed';
+    d3.json(inlets_url, function(err, res) {
+      renderInlets(res);
+    })
+  }
+  getInlets();
+
+
+  function renderInlets(inletList) {
+    inletList = inletList.slice(0,8)
+    var inletsSel = mostactiveinlets.selectAll("li.inlet")
+      .data(inletList)//, function(d) { return d.id });
+    
+    var inlets = inletsSel
+      .enter()
+      .append("li")
+      .classed("inlet", true)
+    .append("a")
+    .attr("href", function(d) { return "/inlet/" + d.gistid})
+    .attr("target", "_blank")
+    
+    inletsSel.select("a")
+      .text(function(d) { 
+        return d.description;
+      });
+   
+  };
+
+
+
+
+});
+
+</script>
+
+<!--
+<script>document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1"></' + 'script>')</script>
+-->
+
+</body>
 </html>

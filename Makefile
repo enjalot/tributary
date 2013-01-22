@@ -23,7 +23,6 @@ all: \
 	src/code.js \
 	src/config.js \
 	src/context.js \
-	src/panel.js \
 	src/editor.js \
 	src/gist.js \
 	src/files.js \

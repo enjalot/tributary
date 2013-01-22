@@ -24,10 +24,13 @@ var db = mongo.db(mongoConf.host + ':' + mongoConf.port + '/' + mongoConf.db + '
 var $users = db.collection("users");
 //collection where we store info on inlets that are created and saved
 var $inlets = db.collection("inlets");
-//result of map reduce includes inlets not saved in inlets collection
-var $mr_inlets = db.collection("mr_inlets");
 //collection where we store visits (specifically to particular inlets)
 var $visits = db.collection("visits");
+
+//collection where we store images uploaded for thumbnails
+var $images = db.collection("images");
+
+
 
 var app = express()
   .use(express.cookieParser())
@@ -61,13 +64,13 @@ function svgopen(req, res, next) {
 app.get("/gist/:gistid", getgist_endpoint);
 function getgist_endpoint(req, res, next) {
   getgist(req.params.gistid, function(error, response, body) {
-    if (!error && response.statusCode == 200) { 
+    if (!error && response.statusCode == 200) {
       res.header("Content-Type", 'application/json');
       res.send(body);
     } else {
       res.send(response.statusCode);
     }
-  }) 
+  })
 }
 
 function getgist(gistid, callback) {
@@ -98,15 +101,17 @@ function inlet(req,res,next) {
     }
     if(user) {
       visit.user = {
-        id: user.id 
+        id: user.id
       , login: user.login
       }
     }
     $visits.save(visit, function(err, res) { if(err) console.log(err) });
   }
+  //var template = Handlebars.templates.inlet;
   var template = Handlebars.templates.inlet;
   var html = template({
     user: user,
+    avatar_url: user? user.avatar_url : "",
     loggedin: user ? true : false,
     gistid: gistid
   });
@@ -293,8 +298,8 @@ function after_fork(oldgist, newgist, token, callback) {
   var user = newgist.user;
   var name = "anon";
   if(newgist.user) name = newgist.user.login;
-  var markdown = "[ <a href=\"http://tributary.io/inlet/" + newgist.id +"\">Launch: " + newgist.description + "</a> ] " 
-    + newgist.id 
+  var markdown = "[ <a href=\"http://tributary.io/inlet/" + newgist.id +"\">Launch: " + newgist.description + "</a> ] "
+    + newgist.id
     + " by " + name
     + "<br>"
 
@@ -302,7 +307,7 @@ function after_fork(oldgist, newgist, token, callback) {
   newgist.files['_.md'] = {
     "content": markdown
   }
-  
+
   //update/set raw url for thumbnail in config
 
   var inlet_data = {
@@ -311,7 +316,7 @@ function after_fork(oldgist, newgist, token, callback) {
   , description: newgist.description
   //, thumbnail: thumbnail_url
   }
- 
+
   if(newgist.user) {
     inlet_data.user = {
       id: newgist.user.id
@@ -322,8 +327,17 @@ function after_fork(oldgist, newgist, token, callback) {
   //update mongo
   if(oldgist) {
     //this is a fork, update the old gist
-    inlet_data.parent = oldgist.id;    
+    inlet_data.parent = oldgist.id;
   }
+
+  try {
+      var config = JSON.parse(gist.files['config.json'].content);
+      var thumbnail = config.thumbnail;
+      if(thumbnail) {
+        inlet_data.thumbnail = thumbnail;
+      }
+    } catch (e) {}
+
   $inlets.save(inlet_data, function(err, result) { if(err) console.error(err); });
 
   save(newgist.id, JSON.stringify(newgist), token, callback);
@@ -349,6 +363,11 @@ function after_save(gist, callback) {
     //,  thumbnail: thumbnail_url 
     }
     mgist.lastSave = new Date();
+    try {
+      var config = JSON.parse(gist.files['config.json'].content);
+      var thumbnail = config.thumbnail;
+      mgist.thumbnail = thumbnail;
+    } catch (e) {}
     $inlets.update({ gistid: gist.id}, mgist, {upsert:true}, function(err, result) { if(err) console.error(err); });
   })
   callback(null, gist);
@@ -379,8 +398,8 @@ function github_authenticated(req,res,next) {
             //store info about the user in the session
             req.session.user = JSON.parse(b);
             var user = req.session.user;
-            
-            $users.update({ id: user.id} 
+
+            $users.update({ id: user.id}
             , user
             , { upsert: true }, function(err, result) { if(err) console.error(err); });
             //redirect to where the user was
@@ -440,6 +459,55 @@ function github_logout(req,res,next) {
   res.redirect(product + id);
 }
 
+
+//IMGUR
+app.get("/imgur-authenticated", imgur_authenticated)
+function imgur_authenticated(req,res,next) {
+  //TODO: set this up
+  console.log("imgur authenticated");
+  next();
+}
+
+app.post("/imgur/upload/thumbnail", imgur_upload) 
+function imgur_upload(req,res,next) {
+  var data = req.body.image;
+  var user = req.session.user;
+  if(!user) { return res.send({status: 401}); }
+
+  var url = 'https://api.imgur.com/3/image'
+  var method = "POST";
+  var headers = {
+    'Authorization': 'Client-ID ' + settings.IMGUR_CLIENT_ID
+  };
+
+  request({
+    url: url,
+    json: {"image": data},
+    method: method,
+    headers: headers
+  }, onResponse)
+
+  function onResponse(error, response, body) {
+    if (!error && response.statusCode == 200) {
+      //save in mongo
+      var image_data = {
+        link: body.data.link
+      , deletehash: body.data.deletehash
+      , user: { 
+          id: user.id
+        , login: user.login
+        }
+      }
+      $images.save(image_data, function(err, result) { if(err) console.error(err); });
+    } else {
+    }
+    res.send(body)
+  }
+
+}
+ 
+
+
 //API
 
 app.get('/api/latest/created', latest_created)
@@ -480,10 +548,13 @@ function latest_visits(req, res, next) {
 }
 
 app.get('/api/users', api_users) 
+app.get('/api/users/:sortby/:limit/:ascdsc', api_users) 
 function api_users(req,res,next) {
+  var sortBy = req.params.sortby || "createdAt";
+  var ascdsc = parseInt(req.params.ascdsc) || 1;
+  var limit = req.params.limit || 200;
   var query = {};
   //TODO: pagination
-  var limit = 200;
   var fields = {
     name: 1,
     login: 1,
@@ -497,8 +568,11 @@ function api_users(req,res,next) {
   var opts = {
     limit: limit
   }
+  var sort = {}
+  sort[sortBy] = ascdsc
+    console.log("SORT", sort)
   //TODO: make sure this is secure in the future
-  $users.find(query, fields, opts).sort({ createdAt: 1 }).toArray(function(err, users) {
+  $users.find(query, fields, opts).sort(sort).toArray(function(err, users) {
     if(err) res.send(err);
     res.send(users);
   })
@@ -558,8 +632,7 @@ function most_viewed(req, res, next) {
   var query = {};
   //TODO: pagination
   var limit = 200;
-  //TODO: switch this to regular inlets collection once we have most inlets viewed in db
-  $mr_inlets.find(query, {limit: limit}).sort({ "value.count": -1 }).toArray(function(err, inlets) {
+  $inlets.find(query, {limit: limit}).sort({ "visits": -1 }).toArray(function(err, inlets) {
     if(err) res.send(err);
     res.send(inlets);
   })
@@ -586,3 +659,4 @@ function dateQuery(start, end) {
 app.listen(settings.port, function() {
   console.log("tributary running on port", settings.port);
 });
+

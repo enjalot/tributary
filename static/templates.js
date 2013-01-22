@@ -106,19 +106,22 @@ templates['files'] = template(function (Handlebars,depth0,helpers,partials,data)
 function program1(depth0,data) {
   
   var buffer = "", stack1;
-  buffer += "\n  <div class=fv data-filename=";
+  buffer += "\n  <li class=\"file filetype-";
+  stack1 = depth0.type;
+  stack1 = typeof stack1 === functionType ? stack1() : stack1;
+  buffer += escapeExpression(stack1) + "\" data-filename=";
   stack1 = depth0.filename;
   stack1 = typeof stack1 === functionType ? stack1() : stack1;
   buffer += escapeExpression(stack1) + ">\n      ";
   stack1 = depth0.filename;
   stack1 = typeof stack1 === functionType ? stack1() : stack1;
-  buffer += escapeExpression(stack1) + "\n    <button value=\"delete\" class=\"delete-file\"><img src=\"/static/img/remove@2x.png\" style=\"width: 14px; height: 14px;\" /></button>\n  </div>\n";
+  buffer += escapeExpression(stack1) + "\n\n    <i class=\"icon-cancel delete-file\"></i>\n  </li>\n";
   return buffer;}
 
   stack1 = depth0.contexts;
   stack1 = helpers.each.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(1, program1, data)});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n\n<div class=\"plus\">\n    + <input type=text style=display:none></input>\n</div>\n\n\n";
+  buffer += "\n\n<li class=\"add-file\"> \n  + \n  <input type=text style=\"display:none;\"></input>\n</li>\n\n\n";
   return buffer;});
 templates['panel'] = template(function (Handlebars,depth0,helpers,partials,data) {
   helpers = helpers || Handlebars.helpers;

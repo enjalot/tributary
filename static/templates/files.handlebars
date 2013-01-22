@@ -1,12 +1,14 @@
 {{#each contexts}}
-  <div class=fv data-filename={{this.filename}}>
+  <li class="file filetype-{{this.type}}" data-filename={{this.filename}}>
       {{this.filename}}
-    <button value="delete" class="delete-file"><img src="/static/img/remove@2x.png" style="width: 14px; height: 14px;" /></button>
-  </div>
+
+    <i class="icon-cancel delete-file"></i>
+  </li>
 {{/each}}
 
-<div class="plus">
-    + <input type=text style=display:none></input>
-</div>
+<li class="add-file"> 
+  + 
+  <input type=text style="display:none;"></input>
+</li>
 
 

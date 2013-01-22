@@ -1,4 +1,3 @@
-
 tributary.make_editor = function(options) {
   //Creates a editor from a model and optional editor container
   //{
@@ -80,7 +79,6 @@ tributary.Editor = Backbone.View.extend({
     var template = Handlebars.templates.editor;
     var html = template(this.getConfig());
     this.$el.html(html);
-
 
 
     filetype = that.model.get("filename").split(".")[1];
