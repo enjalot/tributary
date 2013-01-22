@@ -306,6 +306,17 @@ section:last-child {
   /* Opera 10.5, IE 9.0 */
 
 }
+#title a:link {
+  color: white;
+}
+#title a:hover {
+  color: white;
+  opacity: 0.8;
+}
+#title a:visited {
+  color: white;
+  opacity: 0.8;
+}
 #title h1 {
   display: inline-block;
   font-size: 32px;
