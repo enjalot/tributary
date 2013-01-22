@@ -24,6 +24,8 @@ var db = mongo.db(mongoConf.host + ':' + mongoConf.port + '/' + mongoConf.db + '
 var $users = db.collection("users");
 //collection where we store info on inlets that are created and saved
 var $inlets = db.collection("inlets");
+//result of map reduce includes inlets not saved in inlets collection
+var $mr_inlets = db.collection("mr_inlets");
 //collection where we store visits (specifically to particular inlets)
 var $visits = db.collection("visits");
 
