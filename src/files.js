@@ -82,7 +82,6 @@ tributary.FilesView = Backbone.View.extend({
     //the new file button
     var plus = d3.select(this.el).select(".add-file")
       .on("click", function() {
-        console.log("SUP")
         var input = d3.select(this).select("input")
           .style("display","inline-block");
 

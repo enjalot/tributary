@@ -66,6 +66,7 @@ var Tributary = function() {
     }
     model.set("type", type);
     if (mainfiles.indexOf(filename) >= 0) {
+      if (type === "coffee") model.set("mode", "coffeescript");
       context = new tributary.TributaryContext({
         config: config,
         model: model,
@@ -682,6 +683,7 @@ var Tributary = function() {
     },
     execute: function() {
       var js = this.model.handle_coffee();
+      console.log("JS", js);
       try {
         eval(js);
       } catch (e) {
@@ -1129,7 +1131,6 @@ var Tributary = function() {
         d3.event.stopPropagation();
       });
       var plus = d3.select(this.el).select(".add-file").on("click", function() {
-        console.log("SUP");
         var input = d3.select(this).select("input").style("display", "inline-block");
         input.node().focus();
         input.on("keypress", function() {

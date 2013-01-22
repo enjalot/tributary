@@ -486,6 +486,7 @@ tributary.CoffeeContext = tributary.Context.extend({
   execute: function() {
 
     var js = this.model.handle_coffee();
+    console.log("JS", js)
     //TODO: use coffee compilation to give errors/warnings
     /*
     if(js.length > 0) {

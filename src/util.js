@@ -64,6 +64,7 @@ tributary.make_context = function(options) {
   
   model.set("type", type);
   if(mainfiles.indexOf(filename) >= 0 ) {//  === "inlet.js") {
+    if(type === "coffee") model.set("mode", "coffeescript");
     context = new tributary.TributaryContext({
       config: config,
       model: model,
