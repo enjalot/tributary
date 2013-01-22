@@ -551,8 +551,28 @@ function counts_visits(req,res,next) {
   });
 }
 
-//app.get('/most/viewed')
-//app.get('/most/forked')
+app.get('/api/most/viewed', most_viewed)
+function most_viewed(req, res, next) {
+  var query = {};
+  //TODO: pagination
+  var limit = 200;
+  //TODO: switch this to regular inlets collection once we have most inlets viewed in db
+  $mr_inlets.find(query, {limit: limit}).sort({ "value.count": -1 }).toArray(function(err, inlets) {
+    if(err) res.send(err);
+    res.send(inlets);
+  })
+}
+
+app.get('/api/most/forked', most_forked)
+function most_forked(req, res, next) {
+  var query = {};
+  //TODO: pagination
+  var limit = 200;
+  $inlets.find(query, {limit: limit}).sort({ "nforks": -1 }).toArray(function(err, inlets) {
+    if(err) res.send(err);
+    res.send(inlets);
+  })
+}
 
 function dateQuery(start, end) {
   var query = {
