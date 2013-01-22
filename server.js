@@ -24,6 +24,9 @@ var db = mongo.db(mongoConf.host + ':' + mongoConf.port + '/' + mongoConf.db + '
 var $users = db.collection("users");
 //collection where we store info on inlets that are created and saved
 var $inlets = db.collection("inlets");
+
+//result of map reduce query on inlets
+var $mr_inlets = db.collection("mr_inlets");
 //collection where we store visits (specifically to particular inlets)
 var $visits = db.collection("visits");
 
@@ -621,7 +624,28 @@ function counts_visits(req,res,next) {
   });
 }
 
-//app.get('/most/viewed')
+app.get('/api/most/viewed', most_viewed)
+function most_viewed(req, res, next) {
+  var query = {};
+  //TODO: pagination
+  var limit = 200;
+  //TODO: switch this to regular inlets collection once we have most inlets viewed in db
+  $mr_inlets.find(query, {limit: limit}).sort({ "value.count": -1 }).toArray(function(err, inlets) {
+    if(err) res.send(err);
+    res.send(inlets);
+  })
+}
+
+app.get('/api/most/forked', most_forked)
+function most_forked(req, res, next) {
+  var query = {};
+  //TODO: pagination
+  var limit = 200;
+  $inlets.find(query, {limit: limit}).sort({ "nforks": -1 }).toArray(function(err, inlets) {
+    if(err) res.send(err);
+    res.send(inlets);
+  })
+}
 //app.get('/most/forked')
 
 function dateQuery(start, end) {
