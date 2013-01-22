@@ -114,7 +114,7 @@ function inlet(req,res,next) {
   var template = Handlebars.templates.inlet;
   var html = template({
     user: user,
-    avatar_url: user.avatar_url,
+    avatar_url: user? user.avatar_url : "",
     loggedin: user ? true : false,
     gistid: gistid
   });

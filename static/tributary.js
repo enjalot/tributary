@@ -1424,7 +1424,7 @@ var Tributary = function() {
   function setup_header(ret) {
     if (ret.user) {
       var gist_uid = ret.user.id;
-      $("#inlet-author").text(ret.user.login);
+      $("#inlet-author").html('<a href="https://github.com/' + ret.user.login + '">' + ret.user.login + ">");
       $("#gist-title").val(ret.gist.description);
       $("#author-avatar img").attr("src", function(d) {
         return "http://2.gravatar.com/avatar/" + ret.user.gravatar_id;

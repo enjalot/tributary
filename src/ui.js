@@ -121,14 +121,6 @@ function _assemble(error, ret) {
   ret.models.each(function(m) {
     type = m.get("type");
 
-    //console.log(m, type)
-    //if(["md", "svg"].indexOf(type) < 0) {
-    //}
-
-    //select appropriate html ui containers
-    // and create contexts
-    // TODO: if name === "inlet.js" otherwise we do a JSContext for .js
-
     context = tributary.make_context({
       config: config,
       model: m,
@@ -222,7 +214,7 @@ function setup_header(ret){
   if(ret.user) {
     var gist_uid = ret.user.id;
 
-    $("#inlet-author").text(ret.user.login)
+    $("#inlet-author").html('<a href="https://github.com/' + ret.user.login + '">' + ret.user.login + ">")
     $("#gist-title").val(ret.gist.description)
     $("#author-avatar img").attr("src", function(d){
       return "http://2.gravatar.com/avatar/"+ret.user.gravatar_id
