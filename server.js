@@ -551,10 +551,13 @@ function latest_visits(req, res, next) {
 }
 
 app.get('/api/users', api_users) 
+app.get('/api/users/:sortby/:limit/:ascdsc', api_users) 
 function api_users(req,res,next) {
+  var sortBy = req.params.sortby || "createdAt";
+  var ascdsc = parseInt(req.params.ascdsc) || 1;
+  var limit = req.params.limit || 200;
   var query = {};
   //TODO: pagination
-  var limit = 200;
   var fields = {
     name: 1,
     login: 1,
@@ -568,8 +571,11 @@ function api_users(req,res,next) {
   var opts = {
     limit: limit
   }
+  var sort = {}
+  sort[sortBy] = ascdsc
+    console.log("SORT", sort)
   //TODO: make sure this is secure in the future
-  $users.find(query, fields, opts).sort({ createdAt: 1 }).toArray(function(err, users) {
+  $users.find(query, fields, opts).sort(sort).toArray(function(err, users) {
     if(err) res.send(err);
     res.send(users);
   })
@@ -630,7 +636,8 @@ function most_viewed(req, res, next) {
   //TODO: pagination
   var limit = 200;
   //TODO: switch this to regular inlets collection once we have most inlets viewed in db
-  $mr_inlets.find(query, {limit: limit}).sort({ "value.count": -1 }).toArray(function(err, inlets) {
+  //$mr_inlets.find(query, {limit: limit}).sort({ "value.count": -1 }).toArray(function(err, inlets) {
+  $inlets.find(query, {limit: limit}).sort({ "visits": -1 }).toArray(function(err, inlets) {
     if(err) res.send(err);
     res.send(inlets);
   })

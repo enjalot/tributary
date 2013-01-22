@@ -86,8 +86,8 @@
 	<!-- And underscore | http://documentcloud.github.com/underscore/
 	<script src="lib/underscore-min.js" type="text/javascript" charset="utf-8"></script>	-->
 
-	<!-- And D3 | https://github.com/mbostock/d3/wiki/API-Reference
-	<script src="lib/d3.min.js?v3" type="text/javascript" charset="utf-8"></script> -->
+	<!-- And D3 | https://github.com/mbostock/d3/wiki/API-Reference-->
+	<script src="/static/lib/d3.min.js?v3" type="text/javascript" charset="utf-8"></script> 
 
 	<!-- And Lettering.js | https://github.com/davatron5000/Lettering.js
 	<script src="lib/jquery.lettering.js" type="text/javascript" charset="utf-8"></script> -->
@@ -147,6 +147,21 @@
 			<strong><a href="https://twitter.com/enjalot">@enjalot</a></strong> has released two video tutorial mixtapes explaining the basics of D3 through Tributary; <a href="http://enjalot.github.com/dot-enter/">dot enter</a> &amp; <a href="http://enjalot.github.com/dot-append/">dot append</a>.
 		</p>
 
+		<h4><i class="icon-window"></i> Popular Inlets</h4>
+		<ul id="popular-inlets">
+		</ul>
+
+
+		<ul id="mostactive-users">
+			<h5>Most active users <i class="icon-users-1"></i></h5>
+
+ 		</ul>
+
+		<ul id="mostactive-inlets">
+			<h5>Most active inlets <i class="icon-window"></i></h5>
+		</ul>
+
+
 		<h3>Examples</h3>
 		<section id="example-gallery">
 		<a href="http://newhive.com/enjalot/moreillusions">
@@ -175,32 +190,6 @@
         </a>
 		</section>
 
-		<h4><i class="icon-window"></i> Popular Inlets This Week</h4>
-		<ul id="popular-inlets">
-			<li><img src="http://f.cl.ly/items/412Z0r0v2U0X0X3A4620/Screen%20Shot%202013-01-19%20at%2010.28.32%20PM.png"/><span class="inlet-description">Lorem ipsum dolor sit amet <span class="popular-inlet-author">@enjalot</span></span></li>
-			<li><img src="http://f.cl.ly/items/412Z0r0v2U0X0X3A4620/Screen%20Shot%202013-01-19%20at%2010.28.32%20PM.png"/></li>
-			<li><img src="http://f.cl.ly/items/412Z0r0v2U0X0X3A4620/Screen%20Shot%202013-01-19%20at%2010.28.32%20PM.png"/></li>
-			<li><img src="http://f.cl.ly/items/412Z0r0v2U0X0X3A4620/Screen%20Shot%202013-01-19%20at%2010.28.32%20PM.png"/></li>
-		</ul>
-
-
-		<ul id="mostactive-users">
-			<h5>Most active users <i class="icon-users-1"></i></h5>
-
-			<li>Hoop-de-doop <img width="16" height="16" src="https://secure.gravatar.com/avatar/4a953b25f0b546cc39b80725930f3ffa?d=https://a248.e.akamai.net/assets.github.com%2Fimages%2Fgravatars%2Fgravatar-user-420.png"/></li>
-			<li>Hoop-de-dap <img width="16" height="16" src="https://secure.gravatar.com/avatar/3890eee6f7661a1a11b415c28af73f5f?d=https://a248.e.akamai.net/assets.github.com%2Fimages%2Fgravatars%2Fgravatar-user-420.png"/></li>
-			<li>Boop-de-boop <img width="16" height="16" src="https://secure.gravatar.com/avatar/89db4f3e0cfa7752306bede98888b898?d=https://a248.e.akamai.net/assets.github.com%2Fimages%2Fgravatars%2Fgravatar-user-420.png"/></li>
-			<li>Roop-be-doop <img width="16" height="16" src="https://secure.gravatar.com/avatar/87c4cc25734dad0929929929db4317e0?d=https://a248.e.akamai.net/assets.github.com%2Fimages%2Fgravatars%2Fgravatar-user-420.png"/></li>
-		</ul>
-
-		<ul id="mostactive-inlets">
-			<h5>Most active inlets <i class="icon-window"></i></h5>
-
-			<li>Hoop-de-doop lorem ipsum title</li>
-			<li>Hoop-de-dap lorem ipsum title</li>
-			<li>Boop-de-boop lorem ipsum title</li>
-			<li>Roop-be-doop lorem ipsum title</li>
-		</ul>
 
 	</section>
 
@@ -234,35 +223,106 @@
 $(document).ready(function(){
 	$('i').tipsy({fade: true, gravity: 's', opacity: 0.86});
 
-/*
-function init() {
-  Tabletop.init( { key: '0ApAkxBfw1JT4dHRpWHU4aU9YVnVvS19wdllsVFFkclE',
-                   callback: function(data, tabletop) {
-						console.log(data)
-						//$("#popular-inlets").html(JSON.stringify(data))
+  Tabletop.init( { 
+    key: '0ApAkxBfw1JT4dHRpWHU4aU9YVnVvS19wdllsVFFkclE'
+    , callback: tableTopInit
+    , simpleSheet: true
+  })
+  function tableTopInit(data, tabletop) {
+    var popInlets = d3.select("#popular-inlets")
+    var inlets = popInlets.selectAll("li")
+      .data(data)
+      .enter()
+    .append("li")
+        .text(function(d){ return d.tributaryname})
+    inlets.append("img")
+    .attr({
+      src: function(d) { return d.tributarythumbnail }
+    })
+  }
+  //MOST POPULAR USERS + Inlets
 
-						var popInlets = d3.select("#popular-inlets")
+  var mostactiveUsers = d3.select("#mostactive-users");
 
-						popInlets = popInlets.selectAll("li")
-							.data(data)
+  //grab the users
+  function getUsers() {
+    var users_url = '/api/users/visits/4/-1';
+    d3.json(users_url, function(err, res) {
+      renderUsers(res);
+    })
+  }
+  getUsers();
 
-							.enter()
-							.append("li")
-								.text(function(d){ console.log("?"); return d.tributaryname})
-					},
-                   simpleSheet: true
-				} )
-}
+  function renderUsers(userList) {
+    var usersSel = mostactiveUsers.selectAll("li.user")
+      .data(userList)//, function(d) { return d.id });
+    
+    var users = usersSel
+      .enter()
+      .append("li")
+      .classed("user", true)
+    
+    usersSel
+      .text(function(d) { 
+        return d.login + " ";
+      });
+    
+    users.append("img")
+    usersSel.select("img")
+      .attr({
+        src: function(d) { 
+          return d.avatar_url;
+        },
+        width: function(d, i) {
+          return 16;
+        },
+        height: function(d, i) {
+          return 16;
+        }
+      }); 
+  };
 
-init();
-*/
+  var mostactiveinlets = d3.select("#mostactive-inlets")
+  //grab the inlets
+  function getInlets() {
+    var inlets_url = '/api/most/viewed';
+    d3.json(inlets_url, function(err, res) {
+      renderInlets(res);
+    })
+  }
+  getInlets();
+
+
+  function renderInlets(inletList) {
+    inletList = inletList.slice(0,8)
+    var inletsSel = mostactiveinlets.selectAll("li.inlet")
+      .data(inletList)//, function(d) { return d.id });
+    
+    var inlets = inletsSel
+      .enter()
+      .append("li")
+      .classed("inlet", true)
+    .append("a")
+    .attr("href", function(d) { return "/inlet/" + d.gistid})
+    .attr("target", "_blank")
+    
+    inletsSel.select("a")
+      .text(function(d) { 
+        return d.description;
+      });
+   
+  };
+
+
+
 
 });
 
 </script>
 
+<!--
 <script>document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1"></' + 'script>')</script>
-
+-->
 
 </body>
 </html>
