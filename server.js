@@ -317,7 +317,6 @@ function after_fork(oldgist, newgist, token, callback) {
     gistid: newgist.id
   , createdAt: new Date()
   , description: newgist.description
-  //, thumbnail: thumbnail_url
   }
 
   if(newgist.user) {
@@ -363,9 +362,8 @@ function after_save(gist, callback) {
     mgist.user = {
       id: gist.user.id
     , login: gist.user.login
-    , description: gist.description
-    //,  thumbnail: thumbnail_url 
     }
+    mgist.description = gist.description
     mgist.lastSave = new Date();
     try {
       var config = JSON.parse(gist.files['config.json'].content);
