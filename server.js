@@ -176,7 +176,10 @@ function fork_endpoint(req,res,next) {
 
         if( !oldgist.user || oldgist.user.id !== user.id) {
           console.log("forking gist");
-          fork(gistid, data, token, onResponse);
+          //we don't use github's fork because it doesn't accept changes made
+          //by another user
+          //fork(gistid, data, token, onResponse);
+          newgist(data, token, onResponse);
         } else {
           //logged in user can't fork themselves
           //so create a new gist
