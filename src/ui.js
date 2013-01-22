@@ -253,7 +253,8 @@ function setup_save(config) {
     console.log("saving!")
     d3.select("#syncing").style("display", "block");
     tributary.save_gist(config, config.saveType, function(newurl, newgist) {
-      d3.select("#syncing").style("display", "none");
+      d3.select(".icon-load").css("opacity", 0)
+
       if(config.saveType === "fork") {
         window.onunload = false;
         window.onbeforeunload = false;
@@ -265,7 +266,7 @@ function setup_save(config) {
   $('#fork').on('click', function(e) {
     console.log("forking!")
     config.saveType = "fork";
-    d3.select("#syncing").style("display", "block");
+    d3.select(".icon-load").style("opacity", 1);
     tributary.save_gist(config, config.saveType, function(newurl, newgist) {
       window.onunload = false;
       window.onbeforeunload = false;
