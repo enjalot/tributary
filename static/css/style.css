@@ -593,6 +593,13 @@ section:last-child {
   width: 42px;
   height: 42px;
 }
+#panel #config input[type=file] {
+  font-size: 10px !important;
+  width: 220px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 2px;
+}
 #code {
   margin-top: 1.6em;
   height: 100%;
