@@ -80,8 +80,8 @@
 
 
 
-    <!-- Add Retina.js for retina support -->
-    <script src="/static/lib/retina.js" type="text/javascript" charset="utf-8"></script>
+    <!-- Add Retina.js for retina support
+    <script src="/static/lib/retina.js" type="text/javascript" charset="utf-8"></script> -->
 
 	<!-- And underscore | http://documentcloud.github.com/underscore/
 	<script src="lib/underscore-min.js" type="text/javascript" charset="utf-8"></script>	-->
@@ -95,8 +95,8 @@
 	<!-- And Scrollorama | http://johnpolacek.github.com/scrollorama/
 	<script src="lib/jquery.scrollorama.js" type="text/javascript" charset="utf-8"></script> -->
 
-	<!-- And Tabletop | https://github.com/jsoma/tabletop
-	<script src="lib/tabletop.js" type="text/javascript" charset="utf-8"></script> -->
+	<!-- And Tabletop | https://github.com/jsoma/tabletop -->
+	<script src="static/lib/tabletop.js" type="text/javascript" charset="utf-8"></script>
 	<link rel="stylesheet" href="/static/css/tipsy.css">
 
 	 <link rel="stylesheet" href="/static/css/trib.css">
@@ -221,27 +221,44 @@
 			on Principle talk</a>. Mike Bostock makes much of Tributary possible with his excellent
 			<a href="http://d3js.org/">d3.js library</a>. The use of gists to drive the code comes from his <a href="http://bl.ocks.org">bl.ocks.org project</a>.
 		</p>
+
+
+		<h4><i class="icon-load"></i> What we dream it will do</h4>
+		<p>
+			We think making programming easier
+		</p>
 	</section>
 
 </div>
 <script type="text/javascript" charset="utf-8">
 $(document).ready(function(){
 	$('i').tipsy({fade: true, gravity: 's', opacity: 0.86});
-/*
 
+/*
 function init() {
-  Tabletop.init( { key: '0AmYzu_s7QHsmdDNZUzRlYldnWTZCLXdrMXlYQzVxSFE',
+  Tabletop.init( { key: '0ApAkxBfw1JT4dHRpWHU4aU9YVnVvS19wdllsVFFkclE',
                    callback: function(data, tabletop) {
 						console.log(data)
+						//$("#popular-inlets").html(JSON.stringify(data))
+
+						var popInlets = d3.select("#popular-inlets")
+
+						popInlets = popInlets.selectAll("li")
+							.data(data)
+
+							.enter()
+							.append("li")
+								.text(function(d){ console.log("?"); return d.tributaryname})
 					},
                    simpleSheet: true
 				} )
 }
 
 init();
-
 */
+
 });
+
 </script>
 
 <script>document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1"></' + 'script>')</script>

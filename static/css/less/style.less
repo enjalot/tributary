@@ -237,7 +237,7 @@ section {
   section {
     display: inline-block;
   }
-  
+
   button {
     display: inline-block;
     font-size: 0.7em;
@@ -611,6 +611,24 @@ section {
   }
 }
 
+#controls {
+  position: fixed;
+  bottom: 12px;
+  left: 12px;
+
+  input[type=range] {
+    background-image: none;
+    border: 0;
+    background-color: #999;
+    margin: 0;
+    padding: 1px;
+
+    &:hover {
+      background-image: none;
+      border: 0;
+    }
+  }
+}
 
 
 
@@ -637,7 +655,6 @@ px      68    160    252    344    436    528    620    712    */
   #panel #files {
     height: auto;
   }
-
 
 }
 
@@ -729,6 +746,19 @@ px      68    160    252    */
 
   #panel #files {
     height: auto;
+  }
+
+  #controls {
+    position: static;
+    //bottom: 12px;
+    //left: 12px;
+    text-align: center;
+    margin-bottom: 18px;
+  }
+  #panel #config {
+    position: static !important;
+    width: 100%;
+
   }
 }
 
