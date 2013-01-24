@@ -298,6 +298,7 @@ function after_fork(oldgist, newgist, token, callback) {
   } finally {
   }
 
+  if(!newgist) return callback({status:500}, null)
   var user = newgist.user;
   var name = "anon";
   if(newgist.user) name = newgist.user.login;

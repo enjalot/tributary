@@ -96,6 +96,7 @@ tributary.FilesView = Backbone.View.extend({
               context.render();
               context.execute();
               var editor = tributary.make_editor({model: context.model});
+              context.editor = editor;
 
               //rerender the files view to show new file
               that.$el.empty();

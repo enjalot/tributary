@@ -116,9 +116,12 @@ tributary.save_gist = function(config, saveorfork, callback) {
   };
 
   //save each model back into the gist
+  var code = "";
   config.contexts.forEach(function(context) {
+    code = context.model.get("code");
+    if(code === "") code = "{}";
     gist.files[context.model.get("filename")] = {
-      content: context.model.get("code"),
+      content: code
     };
   });
 
@@ -163,6 +166,7 @@ tributary.save_gist = function(config, saveorfork, callback) {
 
   var that = this;
   $.post(url, {"gist":JSON.stringify(gist)}, function(data) {
+    console.log("data", data)
       if(typeof(data) === "string") {
         data = JSON.parse(data);
       }

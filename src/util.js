@@ -148,8 +148,25 @@ tributary.appendSVGFragment = function(element, fragment) {
   for(var i = 0, l = svgchildren.length; i < l; i++) {
     element.appendChild(svgchildren[0]);
   }
-  
 };
+
+
+tributary.getContext = function(filename) {
+ var context = _.find(tributary.__config__.contexts, function(d) {
+    return d.model.get("filename") === filename;
+  })
+ return context;
+}
+tributary.getCodeEditor = function(filename) {
+  var context = tributary.getContext(filename);
+  if(!context || !context.editor) return;
+  return context.editor.cm;
+}
+tributary.getModel = function(filename) {
+  var context = tributary.getContext(filename);
+  if(!context || !context.model) return;
+  return context.model;
+}
 
 //Handlebars getTemplate from:
 //http://berzniz.com/post/24743062344/handling-handlebars-js-like-a-pro

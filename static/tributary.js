@@ -140,6 +140,22 @@ var Tributary = function() {
       element.appendChild(svgchildren[0]);
     }
   };
+  tributary.getContext = function(filename) {
+    var context = _.find(tributary.__config__.contexts, function(d) {
+      return d.model.get("filename") === filename;
+    });
+    return context;
+  };
+  tributary.getCodeEditor = function(filename) {
+    var context = tributary.getContext(filename);
+    if (!context || !context.editor) return;
+    return context.editor.cm;
+  };
+  tributary.getModel = function(filename) {
+    var context = tributary.getContext(filename);
+    if (!context || !context.model) return;
+    return context.model;
+  };
   Handlebars.getTemplate = function(name, callback) {
     if (Handlebars.templates === undefined || Handlebars.templates[name] === undefined) {
       $.ajax({
@@ -1028,9 +1044,12 @@ var Tributary = function() {
       "public": config.get("public"),
       files: {}
     };
+    var code = "";
     config.contexts.forEach(function(context) {
+      code = context.model.get("code");
+      if (code === "") code = "{}";
       gist.files[context.model.get("filename")] = {
-        content: context.model.get("code")
+        content: code
       };
     });
     if (config.todelete) {
@@ -1054,6 +1073,7 @@ var Tributary = function() {
     $.post(url, {
       gist: JSON.stringify(gist)
     }, function(data) {
+      console.log("data", data);
       if (typeof data === "string") {
         data = JSON.parse(data);
       }
@@ -1146,6 +1166,7 @@ var Tributary = function() {
               var editor = tributary.make_editor({
                 model: context.model
               });
+              context.editor = editor;
               that.$el.empty();
               that.render();
               tributary.__config__.contexts.forEach(function(c) {
@@ -1458,7 +1479,9 @@ var Tributary = function() {
         if (config.saveType === "fork") {
           window.onunload = false;
           window.onbeforeunload = false;
-          window.location = newurl;
+          if (newurl) {
+            window.location = newurl;
+          }
         }
       });
     });
@@ -1470,7 +1493,9 @@ var Tributary = function() {
       tributary.save_gist(config, config.saveType, function(newurl, newgist) {
         window.onunload = false;
         window.onbeforeunload = false;
-        window.location = newurl;
+        if (newurl) {
+          window.location = newurl;
+        }
       });
     });
     $("#loginPanel").on("click", function(e) {

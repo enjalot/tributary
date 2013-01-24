@@ -258,7 +258,10 @@ function setup_save(config) {
       if(config.saveType === "fork") {
         window.onunload = false;
         window.onbeforeunload = false;
-        window.location = newurl;
+        if(newurl) {
+          //TODO: better error notifying
+          window.location = newurl;
+        }
       }
     });
   });
@@ -270,7 +273,10 @@ function setup_save(config) {
     tributary.save_gist(config, config.saveType, function(newurl, newgist) {
       window.onunload = false;
       window.onbeforeunload = false;
-      window.location = newurl;
+      if(newurl) {
+        //TODO: better error notifying
+        window.location = newurl;
+      }
     });
   });
   //Setup the login button
