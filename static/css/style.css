@@ -388,6 +388,7 @@ section:last-child {
   display: inline-block;
 }
 #display {
+  margin-top: 22px;
   border-radius: 6px;
   z-index: 0;
   width: 100%;
