@@ -629,6 +629,9 @@ section:last-child {
   height: 100%;
   margin-bottom: 40px;
 }
+#code .CodeMirror-scroll {
+  width: 100%;
+}
 #code .toolbar {
   font-size: 11px;
 }
