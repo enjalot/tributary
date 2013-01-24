@@ -1073,7 +1073,6 @@ var Tributary = function() {
     $.post(url, {
       gist: JSON.stringify(gist)
     }, function(data) {
-      console.log("data", data);
       if (typeof data === "string") {
         data = JSON.parse(data);
       }
