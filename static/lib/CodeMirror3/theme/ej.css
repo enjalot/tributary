@@ -13,7 +13,7 @@ EJ modified lesser dark theme
 
 .cm-s-lesser-dark.CodeMirror { background: #e3e3e3; color: #121211; text-shadow: none; }
 .cm-s-lesser-dark div.CodeMirror-selected {background: #fff890 !important; color: black !important;} /* 33322B*/
-.cm-s-lesser-dark .CodeMirror-cursor { border-left: 1px solid white !important; }
+.cm-s-lesser-dark .CodeMirror-cursor { border-left: 1px solid black !important; }
 .cm-s-lesser-dark pre { padding: 0 12px; }/*editable code holder*/
 
 div.CodeMirror span.CodeMirror-matchingbracket { color: #7EFC7E; }/*65FC65*/
