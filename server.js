@@ -661,6 +661,24 @@ function most_forked(req, res, next) {
   })
 }
 
+app.get('/api',api_endpoints)
+var api_routes;
+function api_endpoints(req, res, next)	{
+  res.header("Access-Control-Allow-Origin","*");
+  if (!api_routes) {
+	api_routes = {};
+    for (rtype in app.routes) { // get, post, put, delete
+        api_routes[rtype] = [];
+        for (r in app.routes[rtype]) {
+          if (app.routes[rtype][r].path.substring(0,4) === "/api") {
+            api_routes[rtype].push(app.routes[rtype][r])
+          }
+        }
+    }
+  }
+  res.send(api_routes);
+}
+
 function dateQuery(start, end) {
   var query = {
     $and: [ { createdAt: { $gt: new Date(start)}}, { createdAt:{ $lte: new Date(end)}}],
