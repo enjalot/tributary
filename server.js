@@ -515,6 +515,7 @@ function imgur_upload(req,res,next) {
 
 app.get('/api/latest/created', latest_created)
 function latest_created(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
   var query = {};
   //TODO: pagination
   var limit = 200;
@@ -525,6 +526,7 @@ function latest_created(req, res, next) {
 }
 app.get('/api/latest/forks', latest_forks)
 function latest_forks(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
   var query = {
     parent: {$exists: true}
   };
@@ -539,6 +541,7 @@ function latest_forks(req, res, next) {
 app.get('/api/latest/visits', latest_visits)
 app.get('/api/latest/visits/:start/:end', latest_visits)
 function latest_visits(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
   var start = req.params.start || new Date(new Date() - (24 * 60 * 60 * 1000));
   var end = req.params.end || new Date();
   var query = dateQuery(start, end);
@@ -553,6 +556,7 @@ function latest_visits(req, res, next) {
 app.get('/api/users', api_users) 
 app.get('/api/users/:sortby/:limit/:ascdsc', api_users) 
 function api_users(req,res,next) {
+  res.header("Access-Control-Allow-Origin", "*");
   var sortBy = req.params.sortby || "createdAt";
   var ascdsc = parseInt(req.params.ascdsc) || 1;
   var limit = req.params.limit || 200;
@@ -585,6 +589,7 @@ function api_users(req,res,next) {
 
 app.get('/api/user/:login/latest', user_latest)
 function user_latest(req,res,next) {
+  res.header("Access-Control-Allow-Origin", "*");
   var query = { "user.login": req.params.login };
   //TODO: pagination
   var limit = 200;
@@ -598,6 +603,7 @@ function user_latest(req,res,next) {
 app.get('/api/counts/inlets', counts_inlets) 
 app.get('/api/counts/inlets/:start/:end', counts_inlets) 
 function counts_inlets(req,res,next) {
+  res.header("Access-Control-Allow-Origin", "*");
   var start = req.params.start || new Date(new Date() - (24 * 60 * 60 * 1000));
   var end = req.params.end || new Date();
   var query = dateQuery(start, end);
@@ -615,6 +621,7 @@ function counts_inlets(req,res,next) {
 app.get('/api/counts/visits', counts_visits) 
 app.get('/api/counts/visits/:start/:end', counts_visits) 
 function counts_visits(req,res,next) {
+  res.header("Access-Control-Allow-Origin", "*");
   var start = req.params.start || new Date(new Date() - (24 * 60 * 60 * 1000));
   var end = req.params.end || new Date();
   var query = dateQuery(start, end);
@@ -632,6 +639,7 @@ function counts_visits(req,res,next) {
 
 app.get('/api/most/viewed', most_viewed)
 function most_viewed(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
   var query = {};
   //TODO: pagination
   var limit = 200;
@@ -643,6 +651,7 @@ function most_viewed(req, res, next) {
 
 app.get('/api/most/forked', most_forked)
 function most_forked(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
   var query = {};
   //TODO: pagination
   var limit = 200;
