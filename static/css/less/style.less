@@ -329,7 +329,7 @@ section {
   left: 0;
 }
 
-@panelwidth: 35%;
+@panelwidth: 45%;
 @fileheight: 2.4em;
 
 #panel {
@@ -575,6 +575,7 @@ section {
   margin-top: 1.6em;
 
   //padding-top: @titleheight + 1.5em;
+  //padding-bottom: @titleheight + 1.6em;
 
   //height: 80%;
   height: 100%;
@@ -586,15 +587,18 @@ section {
   .editor {
     width: 100%;
     height: 100%;
+    padding-bottom: 19%;
     position: absolute;
   }
 
   .CodeMirror {
     height: 100%;
-    margin-bottom: 40px;
+    //margin-bottom: 40px;
   }
   .CodeMirror-scroll {
     width: 100%;
+    overflow-y: hidden;
+    overflow-x: auto;
   }
   .toolbar {
     &.hidden { display: none;}
@@ -694,7 +698,13 @@ px      68    160    252    344    436    528    620    712    */
   }
 
   #panel #files {
-    height: auto;
+    //height: auto;
+  }
+
+  #code {
+    .editor {
+      padding-bottom: 15%;
+    }
   }
 
 }
@@ -761,6 +771,10 @@ px      68    160    252    */
     }
     #code {
       margin-top: 2px;
+
+      .editor {
+        padding: 0;
+      }
 
       .CodeMirror {
         margin-bottom: 0;

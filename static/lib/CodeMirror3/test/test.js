@@ -25,7 +25,10 @@ function byClassName(elt, cls) {
 var ie_lt8 = /MSIE [1-7]\b/.test(navigator.userAgent);
 var mac = /Mac/.test(navigator.platform);
 var phantom = /PhantomJS/.test(navigator.userAgent);
-var opera_lt10 = /Opera\/[1-9]\./.test(navigator.userAgent);
+var opera = /Opera\/\./.test(navigator.userAgent);
+var opera_version = opera && navigator.userAgent.match(/Version\/(\d+\.\d+)/);
+if (opera_version) opera_version = Number(opera_version);
+var opera_lt10 = opera && (!opera_version || opera_version < 10);
 
 test("core_fromTextArea", function() {
   var te = document.getElementById("code");
@@ -484,6 +487,7 @@ testCM("doubleScrollbar", function(cm) {
   dummy.style.cssText = "height: 50px; overflow: scroll; width: 50px";
   var scrollbarWidth = dummy.offsetWidth + 1 - dummy.clientWidth;
   document.body.removeChild(dummy);
+  if (scrollbarWidth < 2) return;
   cm.setSize(null, 100);
   addDoc(cm, 1, 300);
   var wrap = cm.getWrapperElement();
@@ -538,6 +542,21 @@ testCM("collapsedLines", function(cm) {
   range.clear(); range.clear();
   eq(cleared, 1);
 });
+
+testCM("collapsedRangeCoordsChar", function(cm) {
+  var pos_1_3 = cm.charCoords({line: 1, ch: 3});
+  pos_1_3.left += 2; pos_1_3.top += 2;
+  var opts = {collapsed: true, inclusiveLeft: true, inclusiveRight: true};
+  var m1 = cm.markText({line: 0, ch: 0}, {line: 2, ch: 0}, opts);
+  eqPos(cm.coordsChar(pos_1_3), {line: 3, ch: 3});
+  m1.clear();
+  var m1 = cm.markText({line: 0, ch: 0}, {line: 1, ch: 1}, opts);
+  var m2 = cm.markText({line: 1, ch: 1}, {line: 2, ch: 0}, opts);
+  eqPos(cm.coordsChar(pos_1_3), {line: 3, ch: 3});
+  m1.clear(); m2.clear();
+  var m1 = cm.markText({line: 0, ch: 0}, {line: 1, ch: 6}, opts);
+  eqPos(cm.coordsChar(pos_1_3), {line: 3, ch: 3});
+}, {value: "123456\nabcdef\nghijkl\nmnopqr\n"});
 
 testCM("hiddenLinesAutoUnfold", function(cm) {
   var range = foldLines(cm, 1, 3, true), cleared = 0;
@@ -882,7 +901,8 @@ testCM("verticalMovementCommandsWrapping", function(cm) {
     lineWrapping: true});
 
 testCM("rtlMovement", function(cm) {
-  forEach(["خحج", "خحabcخحج", "abخحخحجcd", "abخde", "abخح2342خ1حج", "خ1ح2خح3حxج", "خحcd", "1خحcd", "abcdeح1ج"], function(line) {
+  forEach(["خحج", "خحabcخحج", "abخحخحجcd", "abخde", "abخح2342خ1حج", "خ1ح2خح3حxج",
+           "خحcd", "1خحcd", "abcdeح1ج", "خمرحبها مها!"], function(line) {
     var inv = line.charAt(0) == "خ";
     cm.setValue(line + "\n"); cm.execCommand(inv ? "goLineEnd" : "goLineStart");
     var cursor = byClassName(cm.getWrapperElement(), "CodeMirror-cursor")[0];
@@ -901,7 +921,7 @@ testCM("rtlMovement", function(cm) {
       prevX = cursor.offsetLeft;
     }
   });
-});
+}, {rtlMoveVisually: true});
 
 // Verify that updating a line clears its bidi ordering
 testCM("bidiUpdate", function(cm) {
@@ -965,6 +985,22 @@ testCM("lineWidgets", function(cm) {
   eqPos(cm.getCursor(), {line: 2, ch: 1});
   cm.execCommand("goLineUp");
   eqPos(cm.getCursor(), {line: 1, ch: 1});
+});
+
+testCM("lineWidgetFocus", function(cm) {
+  var place = document.getElementById("testground");
+  place.className = "offscreen";
+  try {
+    addDoc(cm, 500, 10);
+    var node = document.createElement("input");
+    var widget = cm.addLineWidget(1, node);
+    node.focus();
+    eq(document.activeElement, node);
+    cm.replaceRange("new stuff", {line: 1, ch: 0});
+    eq(document.activeElement, node);
+  } finally {
+    place.className = "";
+  }
 });
 
 testCM("getLineNumber", function(cm) {

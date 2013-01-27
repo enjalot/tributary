@@ -398,7 +398,7 @@ section:last-child {
 }
 #panel {
   padding-top: 3.5em;
-  width: 35%;
+  width: 45%;
   position: fixed;
   right: 0;
   bottom: 0;
@@ -568,7 +568,7 @@ section:last-child {
   margin-bottom: 0;
   border-top: 1px solid rgba(10, 10, 10, 0.2);
   background-color: rgba(255, 255, 255, 0.95);
-  width: 35%;
+  width: 45%;
   text-align: center;
 }
 #panel #config button {
@@ -625,14 +625,16 @@ section:last-child {
 #code .editor {
   width: 100%;
   height: 100%;
+  padding-bottom: 19%;
   position: absolute;
 }
 #code .CodeMirror {
   height: 100%;
-  margin-bottom: 40px;
 }
 #code .CodeMirror-scroll {
   width: 100%;
+  overflow-y: hidden;
+  overflow-x: auto;
 }
 #code .toolbar {
   font-size: 11px;
@@ -705,8 +707,8 @@ px      68    160    252    344    436    528    620    712    */
     padding: 0;
     font-size: 1.1em;
   }
-  #panel #files {
-    height: auto;
+  #code .editor {
+    padding-bottom: 15%;
   }
 }
 /*    Mobile Layout: 320px.
@@ -758,6 +760,9 @@ px      68    160    252    */
   }
   #panel #code {
     margin-top: 2px;
+  }
+  #panel #code .editor {
+    padding: 0;
   }
   #panel #code .CodeMirror {
     margin-bottom: 0;
