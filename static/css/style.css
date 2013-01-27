@@ -633,7 +633,6 @@ section:last-child {
 }
 #code .CodeMirror-scroll {
   width: 100%;
-  overflow-y: hidden;
   overflow-x: auto;
 }
 #code .toolbar {
