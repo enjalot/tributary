@@ -12,10 +12,10 @@ Tributary is a labor of love by Ian '@enjalot' Johnson and EJ '@mrejfox' Fox.
 Start typing into the code editor and watch your code come to life!
 If you want to save your work you can click the fork button and it will save into a gist.
 The url in your browser will update to something like:
-http://tributary.io/inlet/2165875
+http://tributary.io/inlet/2958568
 
-where the number: 2165875 is the gist id 
-(you can see it here: https://gist.github.com/2165875 ) 
+where the number: 2958568 is the gist id 
+(you can see it here: https://gist.github.com/2958568 ) 
 
 
 # Development:
