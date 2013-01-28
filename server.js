@@ -45,7 +45,7 @@ var app = express()
   }))
   .use('/static', express.static(__dirname + '/static'))
   
-app.use(express.vhost('sandbox.localhost', require(__dirname + '/sandbox').app))
+app.use(express.vhost('sandbox.' + settings.hostname || "localhost", require(__dirname + '/sandbox').app))
 
 
 app.get("/", index);
