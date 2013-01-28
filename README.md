@@ -26,7 +26,7 @@ find you want to make your own view.
 It's not too hard, just adding one endpoint to the backend, making a new template html and a new view javascript file.
 
 If you want to have github authentication working you will need to setup a
-github app and fill out the settings.js (see settings-example.js)
+github app and fill out the settings.js (see example-settings.js)
 
 On the backend tributary only depends on node and mongodb:
 To deploy locally run

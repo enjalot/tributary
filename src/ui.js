@@ -3,7 +3,6 @@ tributary.ui = {};
 tributary.trace = false;
 tributary.hint = false;
 
-tributary._origin = "http://localhost:8888";
 var parentWindow;
 
 //listen on window postMessage to load gist and handle save/forks

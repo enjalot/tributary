@@ -35,7 +35,11 @@ function program3(depth0,data) {
   stack1 = depth0.loggedin;
   stack1 = helpers['if'].call(depth0, stack1, {hash:{},inverse:self.program(3, program3, data),fn:self.program(1, program1, data)});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n      \n      <button id=\"exit-fullscreen\" style=\"display: none;\">Exit fullscreen</button>\n\n		</section>\n\n	</header>\n\n  <iframe id=\"sandbox\" src=\"http://sandbox.localhost:8888\" frameBorder=0></iframe>\n\n  <!-- Essential 3rd party libraries -->\n  <script src=\"/static/lib/d3.min.js\"></script>\n  <script src=\"/static/lib/underscore-min.js\"></script>\n  <script src=\"/static/lib/handlebars-1.0.rc.1.js\"></script>\n  \n  <script src=\"/static/lib/jquery.tipsy.js\" type=\"text/javascript\" charset=\"utf-8\"></script>\n  <script src=\"/static/templates.js\"></script>\n\n  <script>\n    //TODO: lets not make these globals;\n    var header = {};\n    header.gistid = \"";
+  buffer += "\n      \n      <button id=\"exit-fullscreen\" style=\"display: none;\">Exit fullscreen</button>\n\n		</section>\n\n	</header>\n\n  <iframe id=\"sandbox\" src=\"";
+  foundHelper = helpers.sandboxOrigin;
+  if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{}}); }
+  else { stack1 = depth0.sandboxOrigin; stack1 = typeof stack1 === functionType ? stack1() : stack1; }
+  buffer += escapeExpression(stack1) + "\" frameBorder=0></iframe>\n\n  <!-- Essential 3rd party libraries -->\n  <script src=\"/static/lib/d3.min.js\"></script>\n  <script src=\"/static/lib/underscore-min.js\"></script>\n  <script src=\"/static/lib/handlebars-1.0.rc.1.js\"></script>\n  \n  <script src=\"/static/lib/jquery.tipsy.js\" type=\"text/javascript\" charset=\"utf-8\"></script>\n  <script src=\"/static/templates.js\"></script>\n\n  <script>\n    //TODO: lets not make these globals;\n    var header = {};\n    header.gistid = \"";
   foundHelper = helpers.gistid;
   if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{}}); }
   else { stack1 = depth0.gistid; stack1 = typeof stack1 === functionType ? stack1() : stack1; }
@@ -59,7 +63,11 @@ function program3(depth0,data) {
   stack1 = depth0.user;
   stack1 = stack1 == null || stack1 === false ? stack1 : stack1.html_url;
   stack1 = typeof stack1 === functionType ? stack1() : stack1;
-  buffer += escapeExpression(stack1) + "\";\n\n\n  </script>\n\n\n  <!-- header.js sets up the header and does communication with child iframe -->\n  <script src='/static/header.js?v=0.8'></script>\n\n</body>\n</html>\n\n\n";
+  buffer += escapeExpression(stack1) + "\";\n    header.origin = \"";
+  foundHelper = helpers.sandboxOrigin;
+  if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{}}); }
+  else { stack1 = depth0.sandboxOrigin; stack1 = typeof stack1 === functionType ? stack1() : stack1; }
+  buffer += escapeExpression(stack1) + "\";\n\n  </script>\n\n\n  <!-- header.js sets up the header and does communication with child iframe -->\n  <script src='/static/header.js?v=0.8'></script>\n\n</body>\n</html>\n\n\n";
   return buffer;});
 templates['inlet'] = template(function (Handlebars,depth0,helpers,partials,data) {
   helpers = helpers || Handlebars.helpers;

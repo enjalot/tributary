@@ -3,6 +3,9 @@ var MongoStore = require('connect-mongo')(express)
 var settings = require('./settings');
 var request = require('request');
 
+var port = settings.port || 8888;
+var sandboxOrigin = settings.sandboxOrigin || "http://sandbox.localhost:8888";
+
 //SERVER SIDE TEMPLATES
 GLOBAL.Handlebars = require('handlebars');
 require('./templates/server-templates');
@@ -108,7 +111,8 @@ function inlet(req,res,next) {
     user: user,
     avatar_url: user? user.avatar_url : "",
     loggedin: user ? true : false,
-    gistid: gistid
+    gistid: gistid,
+    sandboxOrigin: sandboxOrigin
   });
   res.send(html);
 }
@@ -681,7 +685,7 @@ function dateQuery(start, end) {
   return query;
 }
 
-app.listen(settings.port, function() {
-  console.log("tributary running on port", settings.port);
+app.listen(port, function() {
+  console.log("tributary running on port", port);
 });
 

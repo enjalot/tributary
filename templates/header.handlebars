@@ -86,7 +86,7 @@
 
 	</header>
 
-  <iframe id="sandbox" src="http://sandbox.localhost:8888" frameBorder=0></iframe>
+  <iframe id="sandbox" src="{{ sandboxOrigin }}" frameBorder=0></iframe>
 
   <!-- Essential 3rd party libraries -->
   <script src="/static/lib/d3.min.js"></script>
@@ -105,7 +105,7 @@
     header.avatar = "{{ user.avatar_url }}";
     header.userid = parseInt("{{user.id}}");
     header.userurl = "{{ user.html_url }}";
-
+    header.origin = "{{ sandboxOrigin }}";
 
   </script>
 

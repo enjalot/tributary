@@ -1199,7 +1199,6 @@ var Tributary = function() {
   tributary.ui = {};
   tributary.trace = false;
   tributary.hint = false;
-  tributary._origin = "http://localhost:8888";
   var parentWindow;
   window.addEventListener("message", recieveMessage, false);
   function recieveMessage(event) {
