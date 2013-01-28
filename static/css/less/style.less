@@ -1,146 +1,4 @@
-/*  Less Framework 4
-  http://lessframework.com
-  by Joni Korpi
-  License: http://opensource.org/licenses/mit-license.php */
-
-/*  Resets   */
-/* apply a natural box layout model to all elements */
-/* from http://paulirish.com/2012/box-sizing-border-box-ftw/ */
-* { -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box; }
-
-/* maxvoltar.com/archive/-webkit-font-smoothing */
-html { -webkit-font-smoothing: antialiased; }
-
-
-pre {
-  padding: 15px;
-  white-space: pre; /* CSS2 */
-  white-space: pre-wrap; /* CSS 2.1 */
-  white-space: pre-line; /* CSS 3 (and 2.1 as well, actually) */
-  word-wrap: break-word; /* IE */
-}
-
-/* hand cursor on clickable input elements */
-label, input[type=button], input[type=submit], button { cursor: pointer; }
-
-html, body, div, span, object, iframe, h1, h2, h3, h4, h5, h6,
-p, blockquote, pre, a, abbr, address, cite, code, del, dfn, em,
-img, ins, kbd, q, samp, small, strong, sub, sup, var, b, i, hr,
-dl, dt, dd, ol, ul, li, fieldset, form, label, legend,
-table, caption, tbody, tfoot, thead, tr, th, td,
-article, aside, canvas, details, figure, figcaption, hgroup,
-menu, footer, header, nav, section, summary, time, mark, audio, video {
-  margin: 0;
-  padding: 0;
-  border: 0;
-}
-
-article, aside, canvas, figure, figure img, figcaption, hgroup,
-footer, header, nav, section, audio, video { display: block; }
-
-a img {border: 0;}
-
-/*  Color variables
-  ------------------  */
-
-@fontcolor: #333333;
-@bgcolor: #e6e6e6;
-/* Highlight color, when user selects text */
-@highlight: #FFF9A2;
-
-/* Link color, hover/visited will be generated from this */
-@linkcolor: #112582;
-
-/* Selection colours (easy to forget) */
-
-::selection     {background: @highlight;}
-::-moz-selection  {background: @highlight;}
-img::selection    {background: transparent;}
-img::-moz-selection {background: transparent;}
-body {-webkit-tap-highlight-color: @highlight;}
-
-em { background: fade(@highlight, 50%); }
-
-/*  Typography presets
-  ------------------  */
-.huge, h1 {
-  color: darken(@fontcolor, 35%);
-  font-size: 3.75em;
-  line-height: 1.1em;
-  letter-spacing: -1px;
-  font-weight: 800;
-  margin-bottom: 18px;
-}
-.large, h2 {
-  color: darken(@fontcolor, 12%);
-  font-size: 2.75em;
-  line-height: 2em;
-  font-weight: 800;
-  line-height: 1.5em;
-  margin-bottom: 8px;
-}
-.bigger, h3 {
-  color: darken(@fontcolor, 10%);
-  font-size: 1.75em;
-  line-height: 1.5em;
-  font-weight: 800;
-    margin: 8px 0;
-}
-.big, h4 {
-  color: darken(@fontcolor, 7%);
-  font-size: 1.5em;
-  line-height: 1.5em;
-  font-weight: 700;
-    margin: 8px 0;
-}
-.small, small {
-  opacity: 0.8;
-  font-size: 0.7em;
-  line-height: 1.2em;
-}
-
-// Font sizes for mobile
-@media only screen and (max-width: 767px) {
-  .huge, h1 {
-      font-size: 2.5em;
-      line-height: 1.1em;
-      margin-bottom: 12px;
-    }
-
-    .large, h2 {
-      color: darken(@fontcolor, 12%);
-      font-size: 2em;
-      line-height: 1.3em;
-      font-weight: 800;
-      line-height: 1.4em;
-      margin-bottom: 6px;
-    }
-
-    .bigger, h3 {
-      color: darken(@fontcolor, 10%);
-      font-size: 1.75em;
-      line-height: 1.2em;
-      font-weight: 800;
-        margin: 6px 0;
-    }
-
-    .big, h4 {
-      color: darken(@fontcolor, 7%);
-      font-size: 1.4em;
-      line-height: 1.5em;
-      font-weight: 700;
-        margin: 8px 0;
-    }
-}
-
-p {
-    margin: 0.6em 0;
-}
-
-
-
-
-
+@import "shared";
 
 /*    Default Layout: 992px.
     Gutters: 24px.
@@ -149,37 +7,7 @@ p {
 -------------------------------------------------------------------------------
 cols    1     2      3      4      5      6      7      8      9      10
 px      68    160    252    344    436    528    620    712    804    896    */
-html, #container { height: 100%; width: 100%; }
 
-@titleheight: 3.5em;
-//@titleheight: 8%;
-
-body {
-  font: normal 100% 'Helvetica Neue', Helvetica, Arial, sans-serif;
-
-  height: 100%;
-  line-height: 1.45em;
-  font-size: 1.2em;
-  //max-width: 896px;
-  width: 100%;
-  padding: 32px 12px;
-  background: @bgcolor;
-  color: @fontcolor;
-  -webkit-text-size-adjust: 100%; /* Stops Mobile Safari from auto-adjusting font-sizes */
-  margin-left: auto;
-  margin-right: auto;
-  //margin-top: 62px;
-  //margin-top: @titleheight;
-}
-
-a {
-  &:link{
-    color: @linkcolor;
-    .transition(0.24s, ease-in-out);
-  }
-  &:hover { color: darken(@linkcolor, 10%); }
-  &:visited { color: darken(@linkcolor, 15%); }
-}
 
 .inlet_slider {
   z-index: 1010;
@@ -189,143 +17,15 @@ a {
   }
 }
 
-section {
-    margin: 12px 0;
-    &:last-child {
-      margin-bottom: 0;
-    }
-}
-
-
-
-#title {
-  z-index: 5;
-  position: fixed;
-  top: 0;
-  left: 0;
-  //height: 62px;
-  height: @titleheight;
-  width: 100%;
-
-
-  //background-color: black;
-
-  background-image: url("/static/img/cartographer@2x.png");
-  background-size: 500px 499px;
-
-
-  color: white;
-
-  a:link {
-    color: white;
-  }
-  a:hover {
-    color: white;
-    opacity: 0.8;
-  }
-  a:visited {
-    color: white;
-    opacity: 0.8;
-  }
-
-  font-size: 0.8em;
-  text-align: center;
-
-  -webkit-box-shadow:0 2px 3px 0 rgba(0,0,0,0.2); /* Saf3.0+, Chrome */
-     -moz-box-shadow:0 2px 3px 0 rgba(0,0,0,0.2); /* FF3.5+ */
-          box-shadow:0 2px 3px 0 rgba(0,0,0,0.2); /* Opera 10.5, IE 9.0 */
-
-
-  h1 {
-    display: inline-block;
-    font-size: 32px;
-    color: white;
-    margin: 0 1ex;
-    vertical-align: middle;
-    position: fixed;
-    left: 6px;
-    top: .3em;
-  }
-  section {
-    display: inline-block;
-  }
-
-  button {
-    display: inline-block;
-    font-size: 0.7em;
-    box-shadow: none;
-    margin: 2px 1px;
-  }
-  #inlet-info {
-
-  }
-  input#gist-title {
-    background-color: transparent;
-    background-image: none;
-    color: white;
-    border: none;
-    border-radius: 2px;
-    text-shadow: none;
-    box-shadow: none;
-    padding: 0.2em;
-    margin: 0;
-    width: 14.5em;
-    border-bottom: 1px solid rgba(250,250,250,0.15);
-    text-align: center;
-    display: inline-block;
-    vertical-align: middle;
-
-    &:active {
-      border-bottom: 1px solid rgba(255,255,255,0.3);
-    }
-  }
-
-
-
-  .avatar {
-    width: @titleheight / 2;
-    height: @titleheight / 2;
-
-    /*
-    .transition(.4s,ease-out);
-    &:hover {
-    width: @titleheight / 1.8;
-    height: @titleheight / 1.8;
-    margin: 0 3px;
-    }
-    */
-
-    //display: inline-block;
-    vertical-align: middle;
-    background-color: #CCC;
-    border-radius: 16px;
-    margin: 0 5px;
-
-    -webkit-box-shadow:0 2px 2px 0 rgba(250,250,250,0.15); /* Saf3.0+, Chrome */
-       -moz-box-shadow:0 2px 2px 0 rgba(250,250,250,0.15); /* FF3.5+ */
-            box-shadow:0 2px 2px 0 rgba(250,250,250,0.15); /* Opera 10.5, IE 9.0 */
-
-
-    //opacity: 0.4;
-    &:hover {
-      //opacity: 1;
-    }
-  }
-  #login {
-    position: absolute;
-    right: 14px;
-    top: 0px;
-    display: inline-block;
-  }
-}
 #display {
-  margin-top: 22px;
+  //margin-top: 22px;
+  margin-top: -8px;
+  padding-top: @titleheight;
   border-radius: 6px;
   z-index: 0;
   width: 100%;
   height: 100%;
   position: fixed;
-  //top: 2em;
   left: 0;
 }
 
@@ -620,7 +320,6 @@ section {
 }
 
 
-
 .fullscreen {
   #panel {
     display: none;
@@ -628,31 +327,6 @@ section {
   #display {
     width: 100%;
     height: 100%;
-  }
-  #title {
-    background-color: transparent;
-    box-shadow: none;
-
-    text-shadow:rgba(5, 5, 5, 0.8) 0px 1px 1px;
-
-    /*background-color: #212121;*/
-    background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(33, 33, 33, 1.00)), to(rgba(255, 255, 255, 0.00)));
-    background-image: -webkit-linear-gradient(top, rgba(33, 33, 33, 1.00), rgba(255, 255, 255, 0.00));
-    background-image: -moz-linear-gradient(top, rgba(33, 33, 33, 1.00), rgba(255, 255, 255, 0.00));
-    background-image: -o-linear-gradient(top, rgba(33, 33, 33, 1.00), rgba(255, 255, 255, 0.00));
-    background-image: -ms-linear-gradient(top, rgba(33, 33, 33, 1.00), rgba(255, 255, 255, 0.00));
-    background-image: linear-gradient(top, rgba(33, 33, 33, 1.00), rgba(255, 255, 255, 0.00));
-    filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,StartColorStr='#212121', EndColorStr='#ffffff');
-
-    opacity: 0.5;
-
-    .transition(.8s, ease-out);
-
-    &:hover {
-      opacity: 1;
-    }
-
-
   }
 }
 
@@ -740,15 +414,6 @@ px      68    160    252    */
 
   }
 
-  #title {
-    position: relative;
-    font-size: 0.75em;
-    h1 {
-      display: none;
-      top: .2em;
-    }
-  }
-
   #display {
     position:relative;
     width: 100%;
@@ -779,12 +444,6 @@ px      68    160    252    */
       .CodeMirror {
         margin-bottom: 0;
       }
-    }
-  }
-
-  .fullscreen {
-    #title {
-      opacity: 1;
     }
   }
 
@@ -837,94 +496,9 @@ cols    1     2      3      4      5
 px      68    160    252    344    436    */
 
 @media only screen and (min-width: 479px) and (max-width: 767px) {
-
   body {
-    //width: 436px;
-    padding: none;
+    padding: 0;
   }
-
-  #title #author-avatar{
-    display: static !important;
-  }
-
-}
-
-
-
-
-
-
-
-
-
-
-
-/*
-        Styling those forms / inputs
-
------------------------------------------------------------- */
-label {
-    color: black;
-}
-input, textarea, select {
-   -webkit-appearance: none;
-}
-th {
-    text-align: right;
-}
-button {
-    opacity: 0.8;
-    border: 1px solid rgba(0,0,0,0.3);
-    padding: 0.5em;
-    margin: 4px 8px;
-    font-size: 15px;
-    font-weight: bold;
-    line-height: 1.2em;
-    -webkit-appearance: none;
-    -webkit-box-shadow: 0px 1px 1px rgba(255,255,255,0.55);
-    -webkit-border-radius: 6px;
-    outline: none;
-
-
-
-    text-shadow: 0 2px 1px #FFF;
-
-    background-color: #ffffff;
-    background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(255, 255, 255)), to(rgb(214, 214, 214)));
-    background-image: -webkit-linear-gradient(top, rgb(255, 255, 255), rgb(214, 214, 214));
-    background-image: -moz-linear-gradient(top, rgb(255, 255, 255), rgb(214, 214, 214));
-    background-image: -o-linear-gradient(top, rgb(255, 255, 255), rgb(214, 214, 214));
-    background-image: -ms-linear-gradient(top, rgb(255, 255, 255), rgb(214, 214, 214));
-    background-image: linear-gradient(top, rgb(255, 255, 255), rgb(214, 214, 214));
-    filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,StartColorStr='#ffffff', EndColorStr='#d6d6d6');
-
-    .transition(0.14s);
-
-    &:hover {
-        .transition(0.2s);
-        opacity: 1;
-        //border: 1px solid rgba(0,0,0,0.7);
-        text-shadow: 0 2px 1px #FFF;
-    }
-    &:active {
-        opacity: 0.9;
-        //border: 1px solid black;
-
-        background-color: #ffffff;
-        background-image: -webkit-gradient(radial, 50% 50%,0,50% 50%,200, from(rgb(146, 146, 146)), to(rgb(255, 255, 255)));
-        background-image: -webkit-radial-gradient(50% 50%, rgb(255, 255, 255), rgb(146, 146, 146));
-        background-image: -moz-radial-gradient(50% 50%, rgb(255, 255, 255), rgb(146, 146, 146));
-        background-image: -o-radial-gradient(50% 50%, rgb(255, 255, 255), rgb(146, 146, 146));
-        background-image: -ms-radial-gradient(50% 50%, rgb(255, 255, 255), rgb(146, 146, 146));
-        background-image: radial-gradient(50% 50%, rgb(255, 255, 255), rgb(146, 146, 146));
-
-    }
-
-}
-.small-button {
-    padding: 2px 4px;
-    font-size: 10px;
-    text-shadow: 0 1px 1px #FFF;
 }
 
 #container input, textarea, select {
@@ -972,246 +546,8 @@ button {
         width: 8em;
     }
 }
-input[type=text] {
-
-    color: #5A5A5A;
-
-    &:active, &:focus {
-        color: black;
-        background-image: none !important;
-        background-color: white;
-    }
-}
-input[type=checkbox],
- input[type=radio] {
-   display: inline-block;
-   font-size: 15px;
-   line-height: 1em;
-   margin: 0 0.25em 0 0;
-   padding: 0;
-   width: 1.25em !important;
-   height: 1.25em !important;
-   -webkit-border-radius: 0.25em;
-   vertical-align: text-top;
- }
-
- input[type=checkbox]:checked {
-  background-color: #333333 !important;
-  background-image: none !important;
-  border: 2px solid black !important;
- }
-input[type=radio] {
-    -webkit-border-radius: 2em; /* Make radios round */
-}
-input[type=submit] {
-    opacity: 0.95;
-    border: 3px solid rgba(0,0,0,0.55);
-    padding: 0.5em;
-    margin: 4px 8px;
-    font-size: 15px;
-    font-weight: bold;
-    line-height: 1.2em;
-    -webkit-appearance: none;
-    -webkit-box-shadow: 1px 1px 1px #fff;
-    -webkit-border-radius: 0.5em;
-    outline: none;
 
 
 
-    text-shadow: 0 2px 1px #FFF;
-
-    background-color: #ffffff;
-    background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(255, 255, 255)), to(rgb(214, 214, 214)));
-    background-image: -webkit-linear-gradient(top, rgb(255, 255, 255), rgb(214, 214, 214));
-    background-image: -moz-linear-gradient(top, rgb(255, 255, 255), rgb(214, 214, 214));
-    background-image: -o-linear-gradient(top, rgb(255, 255, 255), rgb(214, 214, 214));
-    background-image: -ms-linear-gradient(top, rgb(255, 255, 255), rgb(214, 214, 214));
-    background-image: linear-gradient(top, rgb(255, 255, 255), rgb(214, 214, 214));
-    filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,StartColorStr='#ffffff', EndColorStr='#d6d6d6');
-
-    .transition(0.1s);
-
-    &:hover {
-        .transition(0.3s);
-        opacity: 1;
-        border: 3px solid rgba(0,0,0,0.8);
-        text-shadow: 0 2px 2px #FFF;
-    }
-    &:active {
-        opacity: 0.9;
-        border: 3px solid black;
-
-        background-color: #ffffff;
-        background-image: -webkit-gradient(radial, 50% 50%,0,50% 50%,200, from(rgb(146, 146, 146)), to(rgb(255, 255, 255)));
-        background-image: -webkit-radial-gradient(50% 50%, rgb(255, 255, 255), rgb(146, 146, 146));
-        background-image: -moz-radial-gradient(50% 50%, rgb(255, 255, 255), rgb(146, 146, 146));
-        background-image: -o-radial-gradient(50% 50%, rgb(255, 255, 255), rgb(146, 146, 146));
-        background-image: -ms-radial-gradient(50% 50%, rgb(255, 255, 255), rgb(146, 146, 146));
-        background-image: radial-gradient(50% 50%, rgb(255, 255, 255), rgb(146, 146, 146));
-
-    }
-}
-
-
-
-
-
-/*  Column class / mixins
-  --------------------- */
-
-.1-column { width:  68px;   }
-.2-column { width: 160px;  }
-.3-column { width: 252px;  }
-.4-column { width: 344px;  }
-.5-column { width: 436px;  }
-.6-column { width: 528px;  }
-.7-column { width: 620px;  }
-.8-column { width: 712px;  }
-.9-column { width: 804px;  }
-.10-column {width: 896px; }
-
-
-
-/*---------------------------------------------------
-    LESS Elements 0.6
-  ---------------------------------------------------
-    A set of useful LESS mixins by Dmitry Fadeyev
-    Special thanks for mixin suggestions to:
-      Kris Van Herzeele,
-      Benoit Adam,
-      Portenart Emile-Victor,
-      Ryan Faerman
-
-    More info at: http://lesselements.com
------------------------------------------------------*/
-
-.gradient(@color: #F5F5F5, @start: #EEE, @stop: #FFF) {
-  background: @color;
-  background: -webkit-gradient(linear,
-                               left bottom,
-                               left top,
-                               color-stop(0, @start),
-                               color-stop(1, @stop));
-  background: -ms-linear-gradient(bottom,
-                                  @start,
-                                  @stop);
-  background: -moz-linear-gradient(center bottom,
-                                   @start 0%,
-                                   @stop 100%);
-}
-.bw-gradient(@color: #F5F5F5, @start: 0, @stop: 255) {
-  background: @color;
-  background: -webkit-gradient(linear,
-                               left bottom,
-                               left top,
-                               color-stop(0, rgb(@start,@start,@start)),
-                               color-stop(1, rgb(@stop,@stop,@stop)));
-  background: -ms-linear-gradient(bottom,
-                                  rgb(@start,@start,@start) 0%,
-                                  rgb(@start,@start,@start) 100%);
-  background: -moz-linear-gradient(center bottom,
-                                   rgb(@start,@start,@start) 0%,
-                                   rgb(@stop,@stop,@stop) 100%);
-}
-.bordered(@top-color: #EEE, @right-color: #EEE, @bottom-color: #EEE, @left-color: #EEE) {
-  border-top: solid 1px @top-color;
-  border-left: solid 1px @left-color;
-  border-right: solid 1px @right-color;
-  border-bottom: solid 1px @bottom-color;
-}
-.drop-shadow(@x-axis: 0, @y-axis: 1px, @blur: 2px, @alpha: 0.1) {
-  -webkit-box-shadow: @x-axis @y-axis @blur rgba(0, 0, 0, @alpha);
-  -moz-box-shadow: @x-axis @y-axis @blur rgba(0, 0, 0, @alpha);
-  box-shadow: @x-axis @y-axis @blur rgba(0, 0, 0, @alpha);
-}
-.rounded(@radius: 2px) {
-  -webkit-border-radius: @radius;
-  -moz-border-radius: @radius;
-  border-radius: @radius;
-  -moz-background-clip: padding; -webkit-background-clip: padding-box; background-clip: padding-box;
-}
-.border-radius (@radius) {
-  border-radius: @radius;
-  -moz-border-radius: @radius;
-  -webkit-border-radius: @radius;
-}
-.opacity(@opacity: 0.5) {
-  -moz-opacity: @opacity;
-  -khtml-opacity: @opacity;
-  -webkit-opacity: @opacity;
-  opacity: @opacity;
-}
-.transition-duration(@duration: 0.2s) {
-  -moz-transition-duration: @duration;
-  -webkit-transition-duration: @duration;
-  transition-duration: @duration;
-}
-.rotation(@deg:5deg){
-  -webkit-transform: rotate(@deg);
-  -moz-transform: rotate(@deg);
-  transform: rotate(@deg);
-}
-.scale(@ratio:1.5){
-  -webkit-transform:scale(@ratio);
-  -moz-transform:scale(@ratio);
-  transform:scale(@ratio);
-}
-.transition(@duration:0.2s, @ease:ease-out) {
-  -webkit-transition: all @duration @ease;
-  -moz-transition: all @duration @ease;
-  transition: all @duration @ease;
-}
-.inner-shadow(@horizontal:0, @vertical:1px, @blur:2px, @alpha: 0.4) {
-  -webkit-box-shadow: inset @horizontal @vertical @blur rgba(0, 0, 0, @alpha);
-  -moz-box-shadow: inset @horizontal @vertical @blur rgba(0, 0, 0, @alpha);
-  box-shadow: inset @horizontal @vertical @blur rgba(0, 0, 0, @alpha);
-}
-.box-shadow(@arguments) {
-  -webkit-box-shadow: @arguments;
-  -moz-box-shadow: @arguments;
-  box-shadow: @arguments;
-}
-.columns(@colwidth: 250px, @colcount: 0, @colgap: 50px, @columnRuleColor: #EEE, @columnRuleStyle: solid, @columnRuleWidth: 1px) {
-  -moz-column-width: @colwidth;
-  -moz-column-count: @colcount;
-  -moz-column-gap: @colgap;
-  -moz-column-rule-color: @columnRuleColor;
-  -moz-column-rule-style: @columnRuleStyle;
-  -moz-column-rule-width: @columnRuleWidth;
-  -webkit-column-width: @colwidth;
-  -webkit-column-count: @colcount;
-  -webkit-column-gap: @colgap;
-  -webkit-column-rule-color: @columnRuleColor;
-  -webkit-column-rule-style: @columnRuleStyle;
-  -webkit-column-rule-width: @columnRuleWidth;
-  column-width: @colwidth;
-  column-count: @colcount;
-  column-gap: @colgap;
-  column-rule-color: @columnRuleColor;
-  column-rule-style: @columnRuleStyle;
-  column-rule-width: @columnRuleWidth;
-}
-.translate(@x:0, @y:0) {
-  -moz-transform: translate(@x, @y);
-  -webkit-transform: translate(@x, @y);
-  -o-transform: translate(@x, @y);
-  -ms-transform: translate(@x, @y);
-  transform: translate(@x, @y);
-}
-
-
-
-// retina.less
-// A helper mixin for applying high-resolution background images (http://www.retinajs.com)
-
-.at2x(@path, @w: auto, @h: auto) {
-  background-image: url(@path);
-  @at2x_path: ~`"@{path}".split('.').slice(0, "@{path}".split('.').length - 1).join(".") + "@2x" + "." + "@{path}".split('.')["@{path}".split('.').length - 1]`;
-
-  @media all and (-webkit-min-device-pixel-ratio : 1.5) {
-    background-image: url(@at2x_path);
-    background-size: @w @h;
-  }
-}
 
 

@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8"/>
+	<title>Tributary Sandbox</title>
+	<link rel="stylesheet" media="all" href=""/>
+	<meta name="viewport" content="width=device-width, initial-scale=1"/>
+	<!-- Adding "maximum-scale=1" fixes the Mobile Safari auto-zoom bug: http://filamentgroup.com/examples/iosScaleBug/ -->
+
+  <link rel="stylesheet" href="/static/css/trib.css">
+  <link rel="stylesheet" href="/static/css/animation.css">
+  <link href='http://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+  <link rel="stylesheet" href="/static/css/tipsy.css">
+
+  <!-- Add jQuery -->
+  <script src="/static/lib/jquery-1.7.min.js"></script>
+
+  
+  <!-- CodeMirror Things -->
+<link rel="stylesheet" href="/static/lib/CodeMirror3/lib/codemirror.css">
+<link rel="stylesheet" href="/static/lib/CodeMirror3/lib/util/dialog.css">
+<link rel="stylesheet" href="/static/lib/CodeMirror3/theme/night.css">
+<link rel="stylesheet" href="/static/lib/CodeMirror3/theme/vibrant-ink.css">
+<link rel="stylesheet" href="/static/lib/CodeMirror3/theme/ambiance.css">
+<link rel="stylesheet" href="/static/lib/CodeMirror3/theme/elegant.css">
+
+<!-- Add EJ modified lesser dark -->
+<link rel="stylesheet" href="/static/lib/CodeMirror3/theme/ej.css">
+
+<link rel='stylesheet' type='text/css' href='http://yui.yahooapis.com/2.9.0/build/reset/reset-min.css' />
+<link rel='stylesheet' type='text/css' href='/static/lib/slider/css/humanity/jquery-ui-slider.css' />
+<link href="/static/lib/colorpicker/Color.Picker.Classic.css" rel="stylesheet" type="text/css" />
+
+
+<!-- And the main styles -->
+<link rel="stylesheet" href="/static/css/style.css" type="text/css" media="screen" title="Primary Stylesheet" charset="utf-8">
+
+
+</head>
+<body>
+<div id="container">
+
+	<section id="display">
+	</section>
+  
+	<aside id="panel">
+		<section id="files">
+			<ul id="file-list">
+			</ul>
+		</section>
+
+		<section id="config" >
+			<button id="config-toggle">Config</button>
+			<button id="library-toggle">Add libraries</button>
+			<button id="fullscreen">Fullscreen</button>
+
+
+			<div id="config-content" class="config-content" style="display: none;">
+				<h4>Display <small><i class="explain-this-shit icon-help-circled"></i></small></h4>
+				<select>
+					<option value="svg">SVG</option>
+					<option value="canvas">Canvas</option>
+					<option value="webgl">WebGL</option>
+					<option value="div">HTML</option>
+				</select>
+
+        <div id="timecontrols">
+          <h4>Time Controls <small><i class="explain-this-shit icon-help-circled"></i></small></h4>
+          <button id="play" data-name="play">Play</button>
+          <button id="loop" data-name="loop">Loop</button>
+          <button id="restart" data-name="restart">Restart</button>
+        </div>
+
+        <div id="editorcontrols">
+          <h4>Editor Controls <small><i class="explain-this-shit icon-help-circled"></i></small></h4>
+          <button id="logerrors" data-name="log-errors">Log Errors</button>
+        </div>
+
+        <div id="thumbnail-content">
+          <h4>Add thumbnail <small><i class="explain-this-shit icon-help-circled"></i></small></h4>
+          <img id="trib-thumbnail" style="display:none;"></img>
+          <input type="file" name="files[]" />
+        </div>
+
+			</div>
+
+				<div id="library-content" class="config-content" style="display: none;">
+					<ul id="library-checklist">
+          <!--
+					<li class="lib"> <input type="checkbox" /> Tabletop </li>
+					<li class="lib"> <input type="checkbox" /> Paper.js </li>
+					<li class="lib"> <input type="checkbox" /> Kartogram </li>
+					<li class="lib"> <input type="checkbox" /> TopoJSON </li>
+          -->
+					</ul>
+					<h4>Import URL</h4>
+					<ul id="library-links">
+						<li class="add-link">Title: <input type="text" class="library-title"> URL: <input type="text" class="library-url">
+						<button class="add-library">Add</button>
+						</li>
+					</ul>
+				</div>
+
+		</section>
+		<section id="code">
+
+		</section>
+
+    <section id="controls">
+    </section>
+
+	</aside>
+
+</div>
+
+
+
+
+
+
+<!-- Essential 3rd party libraries -->
+<script src="/static/lib/d3.min.js"></script>
+<script src="/static/lib/underscore-min.js"></script>
+<script src="/static/lib/underscore.math.js"></script>
+<script src="/static/lib/backbone-min.js"></script>
+<script src="/static/lib/coffee-script.js"></script>
+<script src="/static/lib/require.js"></script>
+<script src='/static/lib/three.min.js'></script>
+<script src="/static/lib/Stats.js"></script>
+<script src="/static/lib/jshint.js"></script>
+<script src="/static/lib/handlebars-1.0.rc.1.js"></script>
+
+
+
+<!-- CodeMirror -->
+<script src="/static/lib/CodeMirror3/lib/codemirror.js"></script>
+<script src="/static/lib/CodeMirror3/lib/util/searchcursor.js"></script>
+<script src="/static/lib/CodeMirror3/lib/util/search.js"></script>
+<script src="/static/lib/CodeMirror3/lib/util/dialog.js"></script>
+<script src="/static/lib/CodeMirror3/lib/util/runmode.js"></script>
+
+<script src="/static/lib/CodeMirror3/mode/javascript/javascript.js"></script>
+<script src="/static/lib/CodeMirror3/mode/css/css.js"></script>
+<script src="/static/lib/CodeMirror3/mode/xml/xml.js"></script>
+<script src="/static/lib/CodeMirror3/mode/htmlmixed/htmlmixed.js"></script>
+<script src="/static/lib/CodeMirror3/mode/coffeescript/coffeescript.js"></script>
+<script src="/static/lib/CodeMirror3/keymap/vim.js"></script>
+<script src="/static/lib/CodeMirror3/keymap/emacs.js"></script>
+
+<!-- UI components TODO: replace with pure d3 -->
+<script src="/static/lib/jquery-ui.1.8.16.custom.min.js"></script>
+<script src='/static/lib/slider/js/jquery.ui.slider.js'></script>
+<script src="/static/lib/jquery.tipsy.js" type="text/javascript" charset="utf-8"></script>
+
+<!-- https://github.com/mudcube/Color-Picker -->
+<script src="/static/lib/colorpicker/Color.Picker.Classic.js" type="text/javascript"></script>
+<script src="/static/lib/colorpicker/Color.Space.js" type="text/javascript"></script>
+<script src="/static/lib/dat.gui.min.js"></script>
+
+<!-- Tributary -->
+<script src="/static/templates.js"></script>
+<script src="/static/lib/inlet.js"></script>
+<script src='/static/tributary.js?v=0.8'></script>
+
+<script type="text/javascript">
+  var tb = Tributary();
+</script>
+
+
+<script type="text/javascript">
+
+//get rid of selection when dragging things
+if(typeof document.body.style.MozUserSelect!="undefined")
+    document.body.style.MozUserSelect="none";
+else if(typeof document.body.onselectstart!="undefined")
+    document.body.onselectstart=function(){return false};
+else
+    document.body.onmousedown=function(){return false};
+document.body.style.cursor = "default";
+
+$('i').tipsy({fade: true, gravity: 'n', opacity: 0.86});
+
+//TODO: for old endpoints do:
+//tb.endpoint = "delta";
+
+tb.ui.setup();
+//assemble the UI
+//postMessage with gist data will call assemble
+//tb.ui.assemble(" gistid ");
+
+</script>
+
+
+
+
+
+</body>
+</html>

@@ -25,12 +25,8 @@ tributary.TributaryContext = tributary.Context.extend({
 
     //if the user has modified the code, we want to protect them from losing their work
     this.model.on("change:code", function() {
-      //TODO: use CodeMirror .isClean / .markClean when switch to v3
-      if(!window.onbeforeunload) {
-        $(window).on('beforeunload', function() {
-              return 'Are you sure you want to leave?';
-        });
-      }
+      //TODO: use CodeMirror .isClean / .markClean when switch to v3 
+      tributary.events.trigger("warnchanged");
     }, this);
     //allow other context's to make this code execute
     //tributary.events.on("execute", this.execute, this);

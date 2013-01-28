@@ -230,13 +230,6 @@ small {
 p {
   margin: 0.6em 0;
 }
-/*    Default Layout: 992px.
-    Gutters: 24px.
-    Outer margins: 48px.
-    Leftover space for scrollbars @1024px: 32px.
--------------------------------------------------------------------------------
-cols    1     2      3      4      5      6      7      8      9      10
-px      68    160    252    344    436    528    620    712    804    896    */
 html,
 #container {
   height: 100%;
@@ -248,7 +241,6 @@ body {
   line-height: 1.45em;
   font-size: 1.2em;
   width: 100%;
-  padding: 32px 12px;
   background: #e6e6e6;
   color: #333333;
   -webkit-text-size-adjust: 100%;
@@ -269,6 +261,200 @@ a:hover {
 a:visited {
   color: #08123e;
 }
+section {
+  margin: 12px 0;
+}
+section:last-child {
+  margin-bottom: 0;
+}
+/*
+        Styling those forms / inputs
+
+------------------------------------------------------------ */
+label {
+  color: black;
+}
+input,
+textarea,
+select {
+  -webkit-appearance: none;
+}
+th {
+  text-align: right;
+}
+button {
+  opacity: 0.8;
+  border: 1px solid rgba(0, 0, 0, 0.3);
+  padding: 0.5em;
+  margin: 4px 8px;
+  font-size: 15px;
+  font-weight: bold;
+  line-height: 1.2em;
+  -webkit-appearance: none;
+  -webkit-box-shadow: 0px 1px 1px rgba(255, 255, 255, 0.55);
+  -webkit-border-radius: 6px;
+  outline: none;
+  text-shadow: 0 2px 1px #FFF;
+  background-color: #ffffff;
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#ffffff), to(#d6d6d6));
+  background-image: -webkit-linear-gradient(top, #ffffff, #d6d6d6);
+  background-image: -moz-linear-gradient(top, #ffffff, #d6d6d6);
+  background-image: -o-linear-gradient(top, #ffffff, #d6d6d6);
+  background-image: -ms-linear-gradient(top, #ffffff, #d6d6d6);
+  background-image: linear-gradient(top, #ffffff, #d6d6d6);
+  filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0, StartColorStr='#ffffff', EndColorStr='#d6d6d6');
+  -webkit-transition: all 0.14s ease-out;
+  -moz-transition: all 0.14s ease-out;
+  transition: all 0.14s ease-out;
+}
+button:hover {
+  -webkit-transition: all 0.2s ease-out;
+  -moz-transition: all 0.2s ease-out;
+  transition: all 0.2s ease-out;
+  opacity: 1;
+  text-shadow: 0 2px 1px #FFF;
+}
+button:active {
+  opacity: 0.9;
+  background-color: #ffffff;
+  background-image: -webkit-gradient(radial, 50% 50%, 0, 50% 50%, 200, from(#929292), to(#ffffff));
+  background-image: -webkit-radial-gradient(50% 50%, #ffffff, #929292);
+  background-image: -moz-radial-gradient(50% 50%, #ffffff, #929292);
+  background-image: -o-radial-gradient(50% 50%, #ffffff, #929292);
+  background-image: -ms-radial-gradient(50% 50%, #ffffff, #929292);
+  background-image: radial-gradient(50% 50%, #ffffff, #929292);
+}
+.small-button {
+  padding: 2px 4px;
+  font-size: 10px;
+  text-shadow: 0 1px 1px #FFF;
+}
+input[type=text] {
+  color: #5A5A5A;
+}
+input[type=text]:active,
+input[type=text]:focus {
+  color: black;
+  background-image: none !important;
+  background-color: white;
+}
+input[type=checkbox],
+input[type=radio] {
+  display: inline-block;
+  font-size: 15px;
+  line-height: 1em;
+  margin: 0 0.25em 0 0;
+  padding: 0;
+  width: 1.25em !important;
+  height: 1.25em !important;
+  -webkit-border-radius: 0.25em;
+  vertical-align: text-top;
+}
+input[type=checkbox]:checked {
+  background-color: #333333 !important;
+  background-image: none !important;
+  border: 2px solid black !important;
+}
+input[type=radio] {
+  -webkit-border-radius: 2em;
+  /* Make radios round */
+
+}
+input[type=submit] {
+  opacity: 0.95;
+  border: 3px solid rgba(0, 0, 0, 0.55);
+  padding: 0.5em;
+  margin: 4px 8px;
+  font-size: 15px;
+  font-weight: bold;
+  line-height: 1.2em;
+  -webkit-appearance: none;
+  -webkit-box-shadow: 1px 1px 1px #fff;
+  -webkit-border-radius: 0.5em;
+  outline: none;
+  text-shadow: 0 2px 1px #FFF;
+  background-color: #ffffff;
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#ffffff), to(#d6d6d6));
+  background-image: -webkit-linear-gradient(top, #ffffff, #d6d6d6);
+  background-image: -moz-linear-gradient(top, #ffffff, #d6d6d6);
+  background-image: -o-linear-gradient(top, #ffffff, #d6d6d6);
+  background-image: -ms-linear-gradient(top, #ffffff, #d6d6d6);
+  background-image: linear-gradient(top, #ffffff, #d6d6d6);
+  filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0, StartColorStr='#ffffff', EndColorStr='#d6d6d6');
+  -webkit-transition: all 0.1s ease-out;
+  -moz-transition: all 0.1s ease-out;
+  transition: all 0.1s ease-out;
+}
+input[type=submit]:hover {
+  -webkit-transition: all 0.3s ease-out;
+  -moz-transition: all 0.3s ease-out;
+  transition: all 0.3s ease-out;
+  opacity: 1;
+  border: 3px solid rgba(0, 0, 0, 0.8);
+  text-shadow: 0 2px 2px #FFF;
+}
+input[type=submit]:active {
+  opacity: 0.9;
+  border: 3px solid black;
+  background-color: #ffffff;
+  background-image: -webkit-gradient(radial, 50% 50%, 0, 50% 50%, 200, from(#929292), to(#ffffff));
+  background-image: -webkit-radial-gradient(50% 50%, #ffffff, #929292);
+  background-image: -moz-radial-gradient(50% 50%, #ffffff, #929292);
+  background-image: -o-radial-gradient(50% 50%, #ffffff, #929292);
+  background-image: -ms-radial-gradient(50% 50%, #ffffff, #929292);
+  background-image: radial-gradient(50% 50%, #ffffff, #929292);
+}
+/*  Column class / mixins
+  --------------------- */
+.1-column {
+  width: 68px;
+}
+.2-column {
+  width: 160px;
+}
+.3-column {
+  width: 252px;
+}
+.4-column {
+  width: 344px;
+}
+.5-column {
+  width: 436px;
+}
+.6-column {
+  width: 528px;
+}
+.7-column {
+  width: 620px;
+}
+.8-column {
+  width: 712px;
+}
+.9-column {
+  width: 804px;
+}
+.10-column {
+  width: 896px;
+}
+/*---------------------------------------------------
+    LESS Elements 0.6
+  ---------------------------------------------------
+    A set of useful LESS mixins by Dmitry Fadeyev
+    Special thanks for mixin suggestions to:
+      Kris Van Herzeele,
+      Benoit Adam,
+      Portenart Emile-Victor,
+      Ryan Faerman
+
+    More info at: http://lesselements.com
+-----------------------------------------------------*/
+/*    Default Layout: 992px.
+    Gutters: 24px.
+    Outer margins: 48px.
+    Leftover space for scrollbars @1024px: 32px.
+-------------------------------------------------------------------------------
+cols    1     2      3      4      5      6      7      8      9      10
+px      68    160    252    344    436    528    620    712    804    896    */
 .inlet_slider {
   z-index: 1010;
 }
@@ -278,117 +464,9 @@ a:visited {
   transition: all 0.01s linear;
   outline: none;
 }
-section {
-  margin: 12px 0;
-}
-section:last-child {
-  margin-bottom: 0;
-}
-#title {
-  z-index: 5;
-  position: fixed;
-  top: 0;
-  left: 0;
-  height: 3.5em;
-  width: 100%;
-  background-image: url("/static/img/cartographer@2x.png");
-  background-size: 500px 499px;
-  color: white;
-  font-size: 0.8em;
-  text-align: center;
-  -webkit-box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2);
-  /* Saf3.0+, Chrome */
-
-  -moz-box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2);
-  /* FF3.5+ */
-
-  box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2);
-  /* Opera 10.5, IE 9.0 */
-
-}
-#title a:link {
-  color: white;
-}
-#title a:hover {
-  color: white;
-  opacity: 0.8;
-}
-#title a:visited {
-  color: white;
-  opacity: 0.8;
-}
-#title h1 {
-  display: inline-block;
-  font-size: 32px;
-  color: white;
-  margin: 0 1ex;
-  vertical-align: middle;
-  position: fixed;
-  left: 6px;
-  top: .3em;
-}
-#title section {
-  display: inline-block;
-}
-#title button {
-  display: inline-block;
-  font-size: 0.7em;
-  box-shadow: none;
-  margin: 2px 1px;
-}
-#title input#gist-title {
-  background-color: transparent;
-  background-image: none;
-  color: white;
-  border: none;
-  border-radius: 2px;
-  text-shadow: none;
-  box-shadow: none;
-  padding: 0.2em;
-  margin: 0;
-  width: 14.5em;
-  border-bottom: 1px solid rgba(250, 250, 250, 0.15);
-  text-align: center;
-  display: inline-block;
-  vertical-align: middle;
-}
-#title input#gist-title:active {
-  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
-}
-#title .avatar {
-  width: 1.75em;
-  height: 1.75em;
-  /*
-    .transition(.4s,ease-out);
-    &:hover {
-    width: @titleheight / 1.8;
-    height: @titleheight / 1.8;
-    margin: 0 3px;
-    }
-    */
-
-  vertical-align: middle;
-  background-color: #CCC;
-  border-radius: 16px;
-  margin: 0 5px;
-  -webkit-box-shadow: 0 2px 2px 0 rgba(250, 250, 250, 0.15);
-  /* Saf3.0+, Chrome */
-
-  -moz-box-shadow: 0 2px 2px 0 rgba(250, 250, 250, 0.15);
-  /* FF3.5+ */
-
-  box-shadow: 0 2px 2px 0 rgba(250, 250, 250, 0.15);
-  /* Opera 10.5, IE 9.0 */
-
-}
-#title #login {
-  position: absolute;
-  right: 14px;
-  top: 0px;
-  display: inline-block;
-}
 #display {
-  margin-top: 22px;
+  margin-top: -8px;
+  padding-top: 3.5em;
   border-radius: 6px;
   z-index: 0;
   width: 100%;
@@ -657,27 +735,6 @@ section:last-child {
   width: 100%;
   height: 100%;
 }
-.fullscreen #title {
-  background-color: transparent;
-  box-shadow: none;
-  text-shadow: rgba(5, 5, 5, 0.8) 0px 1px 1px;
-  /*background-color: #212121;*/
-
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#212121), to(rgba(255, 255, 255, 0)));
-  background-image: -webkit-linear-gradient(top, #212121, rgba(255, 255, 255, 0));
-  background-image: -moz-linear-gradient(top, #212121, rgba(255, 255, 255, 0));
-  background-image: -o-linear-gradient(top, #212121, rgba(255, 255, 255, 0));
-  background-image: -ms-linear-gradient(top, #212121, rgba(255, 255, 255, 0));
-  background-image: linear-gradient(top, #212121, rgba(255, 255, 255, 0));
-  filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0, StartColorStr='#212121', EndColorStr='#ffffff');
-  opacity: 0.5;
-  -webkit-transition: all 0.8s ease-out;
-  -moz-transition: all 0.8s ease-out;
-  transition: all 0.8s ease-out;
-}
-.fullscreen #title:hover {
-  opacity: 1;
-}
 #controls {
   position: fixed;
   bottom: 12px;
@@ -725,14 +782,6 @@ px      68    160    252    */
     font-size: 1em;
     line-height: 1.5em;
   }
-  #title {
-    position: relative;
-    font-size: 0.75em;
-  }
-  #title h1 {
-    display: none;
-    top: .2em;
-  }
   #display {
     position: relative;
     width: 100%;
@@ -765,9 +814,6 @@ px      68    160    252    */
   }
   #panel #code .CodeMirror {
     margin-bottom: 0;
-  }
-  .fullscreen #title {
-    opacity: 1;
   }
   #inlet-author {
     display: none;
@@ -803,73 +849,8 @@ cols    1     2      3      4      5
 px      68    160    252    344    436    */
 @media only screen and (min-width: 479px) and (max-width: 767px) {
   body {
-    padding: none;
+    padding: 0;
   }
-  #title #author-avatar {
-    display: static !important;
-  }
-}
-/*
-        Styling those forms / inputs
-
------------------------------------------------------------- */
-label {
-  color: black;
-}
-input,
-textarea,
-select {
-  -webkit-appearance: none;
-}
-th {
-  text-align: right;
-}
-button {
-  opacity: 0.8;
-  border: 1px solid rgba(0, 0, 0, 0.3);
-  padding: 0.5em;
-  margin: 4px 8px;
-  font-size: 15px;
-  font-weight: bold;
-  line-height: 1.2em;
-  -webkit-appearance: none;
-  -webkit-box-shadow: 0px 1px 1px rgba(255, 255, 255, 0.55);
-  -webkit-border-radius: 6px;
-  outline: none;
-  text-shadow: 0 2px 1px #FFF;
-  background-color: #ffffff;
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#ffffff), to(#d6d6d6));
-  background-image: -webkit-linear-gradient(top, #ffffff, #d6d6d6);
-  background-image: -moz-linear-gradient(top, #ffffff, #d6d6d6);
-  background-image: -o-linear-gradient(top, #ffffff, #d6d6d6);
-  background-image: -ms-linear-gradient(top, #ffffff, #d6d6d6);
-  background-image: linear-gradient(top, #ffffff, #d6d6d6);
-  filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0, StartColorStr='#ffffff', EndColorStr='#d6d6d6');
-  -webkit-transition: all 0.14s ease-out;
-  -moz-transition: all 0.14s ease-out;
-  transition: all 0.14s ease-out;
-}
-button:hover {
-  -webkit-transition: all 0.2s ease-out;
-  -moz-transition: all 0.2s ease-out;
-  transition: all 0.2s ease-out;
-  opacity: 1;
-  text-shadow: 0 2px 1px #FFF;
-}
-button:active {
-  opacity: 0.9;
-  background-color: #ffffff;
-  background-image: -webkit-gradient(radial, 50% 50%, 0, 50% 50%, 200, from(#929292), to(#ffffff));
-  background-image: -webkit-radial-gradient(50% 50%, #ffffff, #929292);
-  background-image: -moz-radial-gradient(50% 50%, #ffffff, #929292);
-  background-image: -o-radial-gradient(50% 50%, #ffffff, #929292);
-  background-image: -ms-radial-gradient(50% 50%, #ffffff, #929292);
-  background-image: radial-gradient(50% 50%, #ffffff, #929292);
-}
-.small-button {
-  padding: 2px 4px;
-  font-size: 10px;
-  text-shadow: 0 1px 1px #FFF;
 }
 #container input,
 textarea,
@@ -925,122 +906,3 @@ select:focus {
     width: 8em;
   }
 }
-input[type=text] {
-  color: #5A5A5A;
-}
-input[type=text]:active,
-input[type=text]:focus {
-  color: black;
-  background-image: none !important;
-  background-color: white;
-}
-input[type=checkbox],
-input[type=radio] {
-  display: inline-block;
-  font-size: 15px;
-  line-height: 1em;
-  margin: 0 0.25em 0 0;
-  padding: 0;
-  width: 1.25em !important;
-  height: 1.25em !important;
-  -webkit-border-radius: 0.25em;
-  vertical-align: text-top;
-}
-input[type=checkbox]:checked {
-  background-color: #333333 !important;
-  background-image: none !important;
-  border: 2px solid black !important;
-}
-input[type=radio] {
-  -webkit-border-radius: 2em;
-  /* Make radios round */
-
-}
-input[type=submit] {
-  opacity: 0.95;
-  border: 3px solid rgba(0, 0, 0, 0.55);
-  padding: 0.5em;
-  margin: 4px 8px;
-  font-size: 15px;
-  font-weight: bold;
-  line-height: 1.2em;
-  -webkit-appearance: none;
-  -webkit-box-shadow: 1px 1px 1px #fff;
-  -webkit-border-radius: 0.5em;
-  outline: none;
-  text-shadow: 0 2px 1px #FFF;
-  background-color: #ffffff;
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#ffffff), to(#d6d6d6));
-  background-image: -webkit-linear-gradient(top, #ffffff, #d6d6d6);
-  background-image: -moz-linear-gradient(top, #ffffff, #d6d6d6);
-  background-image: -o-linear-gradient(top, #ffffff, #d6d6d6);
-  background-image: -ms-linear-gradient(top, #ffffff, #d6d6d6);
-  background-image: linear-gradient(top, #ffffff, #d6d6d6);
-  filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0, StartColorStr='#ffffff', EndColorStr='#d6d6d6');
-  -webkit-transition: all 0.1s ease-out;
-  -moz-transition: all 0.1s ease-out;
-  transition: all 0.1s ease-out;
-}
-input[type=submit]:hover {
-  -webkit-transition: all 0.3s ease-out;
-  -moz-transition: all 0.3s ease-out;
-  transition: all 0.3s ease-out;
-  opacity: 1;
-  border: 3px solid rgba(0, 0, 0, 0.8);
-  text-shadow: 0 2px 2px #FFF;
-}
-input[type=submit]:active {
-  opacity: 0.9;
-  border: 3px solid black;
-  background-color: #ffffff;
-  background-image: -webkit-gradient(radial, 50% 50%, 0, 50% 50%, 200, from(#929292), to(#ffffff));
-  background-image: -webkit-radial-gradient(50% 50%, #ffffff, #929292);
-  background-image: -moz-radial-gradient(50% 50%, #ffffff, #929292);
-  background-image: -o-radial-gradient(50% 50%, #ffffff, #929292);
-  background-image: -ms-radial-gradient(50% 50%, #ffffff, #929292);
-  background-image: radial-gradient(50% 50%, #ffffff, #929292);
-}
-/*  Column class / mixins
-  --------------------- */
-.1-column {
-  width: 68px;
-}
-.2-column {
-  width: 160px;
-}
-.3-column {
-  width: 252px;
-}
-.4-column {
-  width: 344px;
-}
-.5-column {
-  width: 436px;
-}
-.6-column {
-  width: 528px;
-}
-.7-column {
-  width: 620px;
-}
-.8-column {
-  width: 712px;
-}
-.9-column {
-  width: 804px;
-}
-.10-column {
-  width: 896px;
-}
-/*---------------------------------------------------
-    LESS Elements 0.6
-  ---------------------------------------------------
-    A set of useful LESS mixins by Dmitry Fadeyev
-    Special thanks for mixin suggestions to:
-      Kris Van Herzeele,
-      Benoit Adam,
-      Portenart Emile-Victor,
-      Ryan Faerman
-
-    More info at: http://lesselements.com
------------------------------------------------------*/

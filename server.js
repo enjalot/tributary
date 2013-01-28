@@ -41,13 +41,9 @@ var app = express()
     store: new MongoStore(mongoConf)
   }))
   .use('/static', express.static(__dirname + '/static'))
-  /*
-   * allow CORS?
-  .use(function(req,res,next) {
-    res.header("Access-Control-Allow-Origin", "*");
-    next();
-  })
-  */
+  
+app.use(express.vhost('sandbox.localhost', require(__dirname + '/sandbox').app))
+
 
 app.get("/", index);
 function index(req, res, next) {
@@ -107,8 +103,7 @@ function inlet(req,res,next) {
     }
     $visits.save(visit, function(err, res) { if(err) console.log(err) });
   }
-  //var template = Handlebars.templates.inlet;
-  var template = Handlebars.templates.inlet;
+  var template = Handlebars.templates.header;
   var html = template({
     user: user,
     avatar_url: user? user.avatar_url : "",

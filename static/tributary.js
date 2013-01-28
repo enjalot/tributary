@@ -389,11 +389,7 @@ var Tributary = function() {
       tributary.events.on("execute", this.execute, this);
       if (!tributary.__config__) tributary.__config__ = this.options.config;
       this.model.on("change:code", function() {
-        if (!window.onbeforeunload) {
-          $(window).on("beforeunload", function() {
-            return "Are you sure you want to leave?";
-          });
-        }
+        tributary.events.trigger("warnchanged");
       }, this);
       this.config = this.options.config;
       this.config.on("change:display", this.set_display, this);
@@ -956,142 +952,57 @@ var Tributary = function() {
       that.cm.refresh();
     }
   });
-  tributary.gist = function(id, callback) {
-    tributary.gistid = id;
+  tributary.loadGist = function(data, callback) {
     var ret = {};
-    var cachebust = "?cachebust=" + Math.random() * 0xf12765df4c9b2;
-    var url = "https://api.github.com/gists/" + id + cachebust;
-    $.ajax({
-      url: url,
-      contentType: "application/json",
-      dataType: "json",
-      success: handle_gist,
-      error: function(e) {
-        console.log(e);
-        url = "/gist/" + id + cachebust;
-        $.ajax({
-          url: url,
-          contentType: "application/json",
-          dataType: "json",
-          success: handle_gist,
-          error: function(er) {
-            console.log(er);
-          }
-        });
-      }
-    });
-    function handle_gist(data) {
-      ret.gist = data;
-      if (data.user === null || data.user === undefined) {
-        ret.user = {
-          login: "anon",
-          url: "",
-          userid: -1
-        };
-      } else {
-        ret.user = data.user;
-      }
-      var config;
+    if (!data) {
+      ret.config = new tributary.Config;
+      ret.models = new tributary.CodeModels(new tributary.CodeModel);
+      return callback(null, ret);
+    }
+    var config;
+    try {
+      config = data.files["config.json"];
+    } catch (er) {
+      config = false;
+    }
+    if (config) {
       try {
-        config = data.files["config.json"];
-      } catch (er) {
-        config = false;
-      }
-      if (config) {
-        try {
-          ret.config = new tributary.Config(JSON.parse(config.content));
-        } catch (e) {
-          ret.config = new tributary.Config;
-        }
-      } else {
+        ret.config = new tributary.Config(JSON.parse(config.content));
+      } catch (e) {
         ret.config = new tributary.Config;
       }
-      var files = _.keys(data.files);
-      fileconfigs = ret.config.get("fileconfigs") || {};
-      ret.models = new tributary.CodeModels;
-      var fsplit, model, context, i = 0, ext;
-      files.forEach(function(f) {
-        fsplit = f.split(".");
-        ext = fsplit[fsplit.length - 1];
-        if (f !== "config.json") {
-          model = new tributary.CodeModel({
-            filename: f,
-            name: fsplit[0],
-            code: data.files[f].content,
-            type: ext
-          });
-          ret.models.add(model);
-        }
-        if (!fileconfigs[f]) {
-          fileconfigs[f] = {
-            "default": true,
-            vim: false,
-            emacs: false,
-            fontSize: 12
-          };
-        }
-      });
-      ret.config.set("fileconfigs", fileconfigs);
-      ret.config.require(function(err, res) {
-        callback(null, ret);
-      });
-    }
-  };
-  tributary.save_gist = function(config, saveorfork, callback) {
-    var oldgist = tributary.gistid || "";
-    var gist = {
-      description: config.get("description"),
-      "public": config.get("public"),
-      files: {}
-    };
-    var code = "";
-    config.contexts.forEach(function(context) {
-      code = context.model.get("code");
-      if (code === "") code = "{}";
-      gist.files[context.model.get("filename")] = {
-        content: code
-      };
-    });
-    if (config.todelete) {
-      config.todelete.forEach(function(filename) {
-        gist.files[filename] = null;
-      });
-    }
-    gist.files["config.json"] = {
-      content: JSON.stringify(config.toJSON())
-    };
-    var url;
-    if (saveorfork === "fork") {
-      url = "/tributary/fork";
     } else {
-      url = "/tributary/save";
+      ret.config = new tributary.Config;
     }
-    if (oldgist.length > 4) {
-      url += "/" + oldgist;
-    }
-    var that = this;
-    $.post(url, {
-      gist: JSON.stringify(gist)
-    }, function(data) {
-      if (typeof data === "string") {
-        data = JSON.parse(data);
+    var files = _.keys(data.files);
+    fileconfigs = ret.config.get("fileconfigs") || {};
+    ret.models = new tributary.CodeModels;
+    var fsplit, model, context, i = 0, ext;
+    files.forEach(function(f) {
+      fsplit = f.split(".");
+      ext = fsplit[fsplit.length - 1];
+      if (f !== "config.json") {
+        model = new tributary.CodeModel({
+          filename: f,
+          name: fsplit[0],
+          code: data.files[f].content,
+          type: ext
+        });
+        ret.models.add(model);
       }
-      var newgist = data.id;
-      var newurl = "/inlet/" + newgist;
-      callback(newurl, newgist);
+      if (!fileconfigs[f]) {
+        fileconfigs[f] = {
+          "default": true,
+          vim: false,
+          emacs: false,
+          fontSize: 12
+        };
+      }
     });
-  };
-  tributary.login_gist = function(loginorout, callback) {
-    if (loginorout) {
-      url = "/github-logout";
-    } else {
-      url = "/github-login";
-    }
-    url += "/inlet";
-    if (tributary.gistid) {
-      url += "/" + tributary.gistid;
-    }
-    callback(url);
+    ret.config.set("fileconfigs", fileconfigs);
+    ret.config.require(function(err, res) {
+      callback(null, ret);
+    });
   };
   tributary.FilesView = Backbone.View.extend({
     initialize: function() {},
@@ -1286,7 +1197,41 @@ var Tributary = function() {
     });
   };
   tributary.ui = {};
-  var display, panel_gui, panel, panel_handle, page, header;
+  tributary.trace = false;
+  tributary.hint = false;
+  tributary._origin = "http://localhost:8888";
+  var parentWindow;
+  window.addEventListener("message", recieveMessage, false);
+  function recieveMessage(event) {
+    if (event.origin !== tributary._origin || !event.data) return;
+    var data = event.data;
+    if (data.request === "load") {
+      parentWindow = event.source;
+      tributary.loadGist(data.gist, _assemble);
+    } else if (data.request === "save") {
+      var json = serializeGist();
+      event.source.postMessage({
+        request: "save",
+        config: json,
+        salt: data.salt
+      }, event.origin);
+    } else if (data.request === "description") {
+      tributary.__config__.set("description", data.description);
+    } else if (data.request === "exitfullscreen") {
+      $("#container").removeClass("fullscreen");
+      tributary.events.trigger("resize");
+    }
+  }
+  tributary.events.on("warnchanged", function() {
+    parentWindow.postMessage({
+      request: "warnchanged"
+    }, tributary._origin);
+  });
+  function goFullscreen() {
+    parentWindow.postMessage({
+      request: "fullscreen"
+    }, tributary._origin);
+  }
   tributary.ui.setup = function() {
     tributary.events.on("resize", function() {
       if ($("#display").width() > 767) {
@@ -1295,25 +1240,12 @@ var Tributary = function() {
         tributary.sw = $("#display").width();
       }
       if ($("#container").hasClass("fullscreen")) {
-        console.log("Fullscreen");
         tributary.sw = $("#display").width();
       }
       tributary.sh = $("#display").height();
       tributary.events.trigger("execute");
     });
     tributary.events.trigger("resize");
-  };
-  tributary.ui.assemble = function(gistid) {
-    tributary.trace = false;
-    tributary.hint = false;
-    if (gistid.length > 0) {
-      tributary.gist(gistid, _assemble);
-    } else {
-      var ret = {};
-      ret.config = new tributary.Config;
-      ret.models = new tributary.CodeModels(new tributary.CodeModel);
-      _assemble(null, ret);
-    }
   };
   function _assemble(error, ret) {
     if (error) {
@@ -1372,7 +1304,7 @@ var Tributary = function() {
       context = tributary.make_context({
         config: config,
         model: m,
-        display: display
+        display: d3.select("#display")
       });
       if (context) {
         config.contexts.push(context);
@@ -1428,82 +1360,34 @@ var Tributary = function() {
     });
     $("#fullscreen").on("click", function() {
       $("#container").addClass("fullscreen");
-      $("#exit-fullscreen").show();
+      goFullscreen();
       tributary.events.trigger("resize");
     });
-    $("#exit-fullscreen").on("click", function() {
-      $("#exit-fullscreen").hide();
-      $("#container").removeClass("fullscreen");
-      tributary.events.trigger("resize");
-    });
-    setup_header(ret);
-    setup_save(ret.config);
   }
-  function setup_header(ret) {
-    if (ret.user) {
-      var gist_uid = ret.user.id;
-      $("#inlet-author").html('<a href="https://github.com/' + ret.user.login + '">' + ret.user.login + "</a>");
-      $("#gist-title").val(ret.gist.description);
-      $("#author-avatar img").attr("src", function(d) {
-        return "http://2.gravatar.com/avatar/" + ret.user.gravatar_id;
+  function serializeGist() {
+    var config = tributary.__config__;
+    var gist = {
+      description: config.get("description"),
+      "public": config.get("public"),
+      files: {}
+    };
+    var code = "";
+    config.contexts.forEach(function(context) {
+      code = context.model.get("code");
+      if (code === "") code = "{}";
+      gist.files[context.model.get("filename")] = {
+        content: code
+      };
+    });
+    if (config.todelete) {
+      config.todelete.forEach(function(filename) {
+        gist.files[filename] = null;
       });
-      d3.select("title").text("Tributary | " + ret.gist.description || "Tributary");
-      if (ret.user.id !== tributary.userid) {
-        $("#fork").css("display", "none");
-        ret.config.saveType = "fork";
-      } else {
-        $("#fork").css("display", "");
-        ret.config.saveType = "save";
-      }
-    } else {
-      if (isNaN(tributary.userid) || !ret.gist) {
-        $("#fork").css("display", "none");
-        ret.config.saveType = "fork";
-      } else {
-        ret.config.saveType = "save";
-      }
     }
-    $("#gist-title").on("keyup", function() {
-      ret.config.set("description", $("#gist-title").val());
-      d3.select("title").text($("#gist-title").val());
-    });
-  }
-  function setup_save(config) {
-    $("#save").off("click");
-    $("#save").on("click", function(e) {
-      console.log("saving!");
-      d3.select("#syncing").style("display", "block");
-      tributary.save_gist(config, config.saveType, function(newurl, newgist) {
-        d3.select(".icon-load").transition().duration(1e3).style("opacity", 0);
-        if (config.saveType === "fork") {
-          window.onunload = false;
-          window.onbeforeunload = false;
-          if (newurl) {
-            window.location = newurl;
-          }
-        }
-      });
-    });
-    $("#fork").off("click");
-    $("#fork").on("click", function(e) {
-      console.log("forking!");
-      config.saveType = "fork";
-      d3.select(".icon-load").style("opacity", 1);
-      tributary.save_gist(config, config.saveType, function(newurl, newgist) {
-        window.onunload = false;
-        window.onbeforeunload = false;
-        if (newurl) {
-          window.location = newurl;
-        }
-      });
-    });
-    $("#loginPanel").on("click", function(e) {
-      tributary.login_gist(tributary.loggedin, function(newurl, newgist) {
-        window.onunload = false;
-        window.onbeforeunload = false;
-        window.location = newurl;
-      });
-    });
+    gist.files["config.json"] = {
+      content: JSON.stringify(config.toJSON())
+    };
+    return gist;
   }
   return tributary;
 };

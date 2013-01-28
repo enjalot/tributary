@@ -1,7 +1,47 @@
 tributary.ui = {};
 
+tributary.trace = false;
+tributary.hint = false;
 
-var display, panel_gui, panel, panel_handle, page, header;
+tributary._origin = "http://localhost:8888";
+var parentWindow;
+
+//listen on window postMessage to load gist and handle save/forks
+window.addEventListener("message", recieveMessage, false)
+
+function recieveMessage(event) {
+  if(event.origin !== tributary._origin || !event.data) return;
+  var data = event.data;
+
+  if(data.request === "load") {
+    //assemble the ui using gist data;
+    parentWindow = event.source;
+    tributary.loadGist(data.gist, _assemble);
+  } else if(data.request === "save") {
+    //postMessage the host frame with the tributary.context information
+    var json = serializeGist();
+    event.source.postMessage({request: "save", config: json, salt: data.salt}, event.origin)
+  } else if(data.request === "description") {
+    //update the gist's description
+    tributary.__config__.set("description", data.description);
+  } else if( data.request === "exitfullscreen") {
+    $("#container").removeClass("fullscreen")
+    tributary.events.trigger("resize");
+  }
+}
+
+//user has changed code, so let parent frame know not to let them leave too easy ;)
+tributary.events.on("warnchanged", function() {
+  parentWindow.postMessage({request: "warnchanged" }, tributary._origin);
+})
+
+//let the parent frame know we went fullsize so it can style itself accordingly
+function goFullscreen() {
+  parentWindow.postMessage({request: "fullscreen" }, tributary._origin);
+}
+
+
+
 tributary.ui.setup = function() {
   tributary.events.on("resize", function() {
     if($("#display").width() > 767) {
@@ -12,7 +52,6 @@ tributary.ui.setup = function() {
     }
 
     if ( $("#container").hasClass("fullscreen") ){
-      console.log("Fullscreen")
       tributary.sw = $("#display").width();
     }
     tributary.sh = $("#display").height();
@@ -31,22 +70,6 @@ tributary.ui.setup = function() {
 ////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////
-
-tributary.ui.assemble = function(gistid) {
-  //tributary.trace = true;
-  tributary.trace = false;
-  tributary.hint = false;
-
-  if(gistid.length > 0){
-    tributary.gist(gistid, _assemble);
-  } else {
-    var ret = {};
-    ret.config = new tributary.Config();
-    ret.models = new tributary.CodeModels(new tributary.CodeModel());
-    _assemble(null, ret);
-  }
-
-};
 
 //callback function to handle response from gist unpacking
 function _assemble(error, ret) {
@@ -124,7 +147,7 @@ function _assemble(error, ret) {
     context = tributary.make_context({
       config: config,
       model: m,
-      display: display
+      display: d3.select("#display")
     });
     if(context) {
       config.contexts.push(context);
@@ -196,96 +219,54 @@ function _assemble(error, ret) {
 
   $("#fullscreen").on("click", function(){
     $("#container").addClass("fullscreen")
-    $("#exit-fullscreen").show();
+    goFullscreen();
     tributary.events.trigger("resize");
   })
-  $("#exit-fullscreen").on("click", function(){
-    $("#exit-fullscreen").hide();
-    $("#container").removeClass("fullscreen")
-    tributary.events.trigger("resize");
-  })
-
-
-  setup_header(ret);
-  setup_save(ret.config);
 }
 
-function setup_header(ret){
-  if(ret.user) {
-    var gist_uid = ret.user.id;
+function serializeGist() {
+  var config = tributary.__config__;
+  var gist = {
+    description: config.get("description"),
+    public: config.get("public"),
+    files: {}
+  };
 
-    $("#inlet-author").html('<a href="https://github.com/' + ret.user.login + '">' + ret.user.login + "</a>")
-    $("#gist-title").val(ret.gist.description)
-    $("#author-avatar img").attr("src", function(d){
-      return "http://2.gravatar.com/avatar/"+ret.user.gravatar_id
+  //save each model back into the gist
+  var code = "";
+  config.contexts.forEach(function(context) {
+    code = context.model.get("code");
+    if(code === "") code = "{}";
+    gist.files[context.model.get("filename")] = {
+      content: code
+    };
+  });
+
+  if(config.todelete) {
+    config.todelete.forEach(function(filename) {
+      gist.files[filename] = null;
     })
-
-    d3.select("title").text("Tributary | "+ret.gist.description || "Tributary")
-
-    if(ret.user.id !== tributary.userid) {
-      $('#fork').css("display", "none");
-      ret.config.saveType = "fork";
-    } else {
-      $('#fork').css("display", "");
-      ret.config.saveType = "save";
-    }
-  } else {
-     //if the user is not logged in, or no gist we use fork
-    if(isNaN(tributary.userid) || !ret.gist) {
-      $('#fork').css("display", "none");
-      ret.config.saveType = "fork";
-    } else {
-      ret.config.saveType = "save";
-    }
   }
+  //save config
+  gist.files["config.json"] = {
+    content: JSON.stringify(config.toJSON())
+  };
 
-  $("#gist-title").on("keyup", function(){
-      //console.log($("#gist-title").val());
-      ret.config.set("description", $("#gist-title").val())
-      d3.select("title").text($("#gist-title").val())
-  })
+  /*
+   * TODO: turn this on when we have a good solution across renders
+   * or make it an optional button
+  if(config.get("display") === "svg") {
+    //serialize the current svg and save it to gist
+    var node = d3.select("svg").node();
+    var svgxml = (new XMLSerializer()).serializeToString(node);
+
+    if($.browser.webkit){ 
+        svgxml = svgxml.replace(/ xlink/g, ' xmlns:xlink');
+        svgxml = svgxml.replace(/ href/g, ' xlink:href');
+    }
+    gist.files["inlet.svg"] = {
+      content: svgxml
+    };
+  }*/
+  return gist;
 }
-
-function setup_save(config) {
-  //Setup the save panel
-  $('#save').off("click");
-  $('#save').on('click', function(e) {
-    console.log("saving!")
-    d3.select("#syncing").style("display", "block");
-    tributary.save_gist(config, config.saveType, function(newurl, newgist) {
-      d3.select(".icon-load").transition().duration(1000).style("opacity", 0)
-
-      if(config.saveType === "fork") {
-        window.onunload = false;
-        window.onbeforeunload = false;
-        if(newurl) {
-          //TODO: better error notifying
-          window.location = newurl;
-        }
-      }
-    });
-  });
-  $('#fork').off("click");
-  $('#fork').on('click', function(e) {
-    console.log("forking!")
-    config.saveType = "fork";
-    d3.select(".icon-load").style("opacity", 1);
-    tributary.save_gist(config, config.saveType, function(newurl, newgist) {
-      window.onunload = false;
-      window.onbeforeunload = false;
-      if(newurl) {
-        //TODO: better error notifying
-        window.location = newurl;
-      }
-    });
-  });
-  //Setup the login button
-  $('#loginPanel').on('click', function(e) {
-    tributary.login_gist(tributary.loggedin, function(newurl, newgist) {
-      window.onunload = false;
-      window.onbeforeunload = false;
-      window.location = newurl;
-    });
-  });
-}
-
