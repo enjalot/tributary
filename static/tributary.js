@@ -1192,6 +1192,7 @@ var Tributary = function() {
   var parentWindow;
   window.addEventListener("message", recieveMessage, false);
   function recieveMessage(event) {
+    console.log(event.origin, tributary._origin, event.data);
     if (event.origin !== tributary._origin || !event.data) return;
     var data = event.data;
     if (data.request === "load") {
