@@ -1,8 +1,8 @@
 (function(){
   //Get a reference to our iframe window so we can postMessage to it
-  var sandbox = d3.select("#sandbox").node().contentWindow
+  var sandbox = d3.select("#sandbox").node().contentWindow;
 
-  var _origin = "http://sandbox.localhost:8888";
+  var _origin = header.origin;
   
   //these "globals" are modified by the save/fork buttons and referenced
   //when we recieve a save request
@@ -26,6 +26,9 @@
   }
   function exitFullscreen() {
     sandbox.postMessage({request: "exitfullscreen" }, _origin)
+  }
+  function setThumbnail(image) {
+    sandbox.postMessage({request: "thumbnail", image: image}, _origin);
   }
 
   //on the load of the iframe, we want to get the gist (if any)
@@ -61,6 +64,8 @@
     } else if( data.request === "fullscreen" ) {
       $("#container").addClass("fullscreen")
       $("#exit-fullscreen").show();
+    } else if( data.request === "imgur" ) {
+      imgur(data.img);
     }
   }
 
@@ -253,6 +258,16 @@
     });
   };
 
+  function imgur(img) {
+    $.post("/imgur/upload/thumbnail", {"image":img}, function(image) {
+      //console.log("response", image);
+      if(image.status === 200) {
+        setThumbnail(image);
+      } else {
+        //oops
+      }
+    })
+  }
 
 
 })();

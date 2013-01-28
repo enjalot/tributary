@@ -26,12 +26,21 @@ function recieveMessage(event) {
   } else if( data.request === "exitfullscreen") {
     $("#container").removeClass("fullscreen")
     tributary.events.trigger("resize");
+  } else if( data.request === "thumbnail" ) {
+    //we have successful upload!
+    var image = data.image;
+    d3.select("#trib-thumbnail").attr("src", image.data.link);
+    d3.select("#trib-thumbnail").style("display", "");
+    tributary.__config__.set("thumbnail", image.data.link);
   }
 }
 
 //user has changed code, so let parent frame know not to let them leave too easy ;)
 tributary.events.on("warnchanged", function() {
   parentWindow.postMessage({request: "warnchanged" }, tributary._origin);
+})
+tributary.events.on("imgur", function(img) {
+  parentWindow.postMessage({request: "imgur", img: img }, tributary._origin);
 })
 
 //let the parent frame know we went fullsize so it can style itself accordingly

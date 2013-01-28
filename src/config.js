@@ -87,20 +87,8 @@ tributary.ConfigView = Backbone.View.extend({
             var len = "data:image/png;base64,".length;
             var img = e.target.result.substring(len);
 
-            console.log("upload!")
-            $.post("/imgur/upload/thumbnail", {"image":img}, function(image) {
-              console.log("response", image);
-              if(image.status === 200) {
-                //we have successful upload!
-                d3.select("#trib-thumbnail").attr("src", image.data.link);
-                d3.select("#trib-thumbnail").style("display", "");
+            tributary.events.trigger("imgur", img);
 
-                that.model.set("thumbnail", image.data.link);
-
-              } else {
-                //oops
-              }
-            })
           };
         })(f);
 

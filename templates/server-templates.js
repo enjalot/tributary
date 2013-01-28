@@ -67,7 +67,7 @@ function program3(depth0,data) {
   foundHelper = helpers.sandboxOrigin;
   if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{}}); }
   else { stack1 = depth0.sandboxOrigin; stack1 = typeof stack1 === functionType ? stack1() : stack1; }
-  buffer += escapeExpression(stack1) + "\";\n\n  </script>\n\n\n  <!-- header.js sets up the header and does communication with child iframe -->\n  <script src='/static/header.js?v=0.8'></script>\n\n</body>\n</html>\n\n\n";
+  buffer += escapeExpression(stack1) + "\";\n  </script>\n\n\n  <!-- header.js sets up the header and does communication with child iframe -->\n  <script src='/static/header.js?v=0.8'></script>\n\n</body>\n</html>\n\n\n";
   return buffer;});
 templates['inlet'] = template(function (Handlebars,depth0,helpers,partials,data) {
   helpers = helpers || Handlebars.helpers;

@@ -267,17 +267,7 @@ var Tributary = function() {
             return function(e) {
               var len = "data:image/png;base64,".length;
               var img = e.target.result.substring(len);
-              console.log("upload!");
-              $.post("/imgur/upload/thumbnail", {
-                image: img
-              }, function(image) {
-                console.log("response", image);
-                if (image.status === 200) {
-                  d3.select("#trib-thumbnail").attr("src", image.data.link);
-                  d3.select("#trib-thumbnail").style("display", "");
-                  that.model.set("thumbnail", image.data.link);
-                } else {}
-              });
+              tributary.events.trigger("imgur", img);
             };
           }(f);
           reader.readAsDataURL(f);
@@ -1219,11 +1209,22 @@ var Tributary = function() {
     } else if (data.request === "exitfullscreen") {
       $("#container").removeClass("fullscreen");
       tributary.events.trigger("resize");
+    } else if (data.request === "thumbnail") {
+      var image = data.image;
+      d3.select("#trib-thumbnail").attr("src", image.data.link);
+      d3.select("#trib-thumbnail").style("display", "");
+      tributary.__config__.set("thumbnail", image.data.link);
     }
   }
   tributary.events.on("warnchanged", function() {
     parentWindow.postMessage({
       request: "warnchanged"
+    }, tributary._origin);
+  });
+  tributary.events.on("imgur", function(img) {
+    parentWindow.postMessage({
+      request: "imgur",
+      img: img
     }, tributary._origin);
   });
   function goFullscreen() {
