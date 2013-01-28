@@ -2,6 +2,7 @@ var settings = module.exports;
 
 settings.port = 8888;
 settings.hostname = "localhost";
+//on port 80 you don't want to specify the port, so settings.origin would be "http://tributary.io" for example
 settings.origin = "http://" + settings.hostname + ":" + settings.port;
 settings.sandboxOrigin = "http://sandbox." + settings.hostname + ":" + settings.port;
 
