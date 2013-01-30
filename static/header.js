@@ -125,10 +125,9 @@
         user = data.user;
       }
 
-      setup_header(user);
+      setup_header(user, data.description);
       setup_save(user, !!data);
       
-      $("#gist-title").val(data.description)
       //send the data to the child frame
       callback(null, data);
     }
@@ -139,11 +138,12 @@
 
       $("#inlet-author").html('<a href="https://github.com/' + gistUser.login + '">' + gistUser.login + "</a>")
       $("#gist-title").val(description)
+
       $("#author-avatar img").attr("src", function(d){
         return "http://2.gravatar.com/avatar/"+gistUser.gravatar_id
       })
 
-      d3.select("title").text("Tributary | "+ description || "Tributary")
+      d3.select("title").text("Tributary | " + (description || "Inlet"))
     } 
 
     $("#gist-title").on("keyup", function(){

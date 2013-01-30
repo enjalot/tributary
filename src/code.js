@@ -22,8 +22,8 @@ tributary.CodeModel = Backbone.Model.extend({
   handle_error: function(e) {
     if(tributary.trace) {
       console.trace();
-      console.log(e);
-      //console.error(e);
+      //console.log(e);
+      console.error(e);
     }
   },
 
