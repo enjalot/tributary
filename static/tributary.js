@@ -1170,6 +1170,7 @@ var Tributary = function() {
           tributary.initialize(tributary.g, tributary);
           tributary.init(tributary.g);
           tributary.execute();
+          tributary.events.trigger("restart");
         });
       } else {
         tributary.autoinit = true;

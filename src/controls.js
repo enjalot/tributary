@@ -127,6 +127,7 @@ tributary.ControlsView = Backbone.View.extend({
         tributary.initialize(tributary.g, tributary);
         tributary.init(tributary.g);
         tributary.execute();
+        tributary.events.trigger("restart");
       });
     } else {
       tributary.autoinit = true;
