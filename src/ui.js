@@ -226,11 +226,13 @@ function _assemble(error, ret) {
     }
   })
 
-  $("#fullscreen").on("click", function(){
+  function fullscreenEvent() {
     $("#container").addClass("fullscreen")
     goFullscreen();
     tributary.events.trigger("resize");
-  })
+  }
+  $("#fullscreen").on("click", fullscreenEvent);
+  tributary.events.on("fullscreen", fullscreenEvent);
 }
 
 function serializeGist() {

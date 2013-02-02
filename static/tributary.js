@@ -1359,11 +1359,13 @@ var Tributary = function() {
         $("#library-toggle").text("Add libraries");
       }
     });
-    $("#fullscreen").on("click", function() {
+    function fullscreenEvent() {
       $("#container").addClass("fullscreen");
       goFullscreen();
       tributary.events.trigger("resize");
-    });
+    }
+    $("#fullscreen").on("click", fullscreenEvent);
+    tributary.events.on("fullscreen", fullscreenEvent);
   }
   function serializeGist() {
     var config = tributary.__config__;
