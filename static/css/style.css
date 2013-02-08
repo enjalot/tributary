@@ -713,6 +713,9 @@ px      68    160    252    344    436    528    620    712    804    896    */
   width: 100%;
   overflow-x: auto;
 }
+#code .CodeMirror-gutter.error {
+  border-right: 2px solid red;
+}
 #code .toolbar {
   font-size: 11px;
 }

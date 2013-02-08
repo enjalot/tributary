@@ -25,8 +25,7 @@ function recieveMessage(event) {
     //update the gist's description
     tributary.__config__.set("description", data.description);
   } else if( data.request === "exitfullscreen") {
-    $("#container").removeClass("fullscreen")
-    tributary.events.trigger("resize");
+    tributary.events.trigger("fullscreen", false); 
   } else if( data.request === "thumbnail" ) {
     //we have successful upload!
     var image = data.image;
@@ -226,13 +225,25 @@ function _assemble(error, ret) {
     }
   })
 
-  function fullscreenEvent() {
-    $("#container").addClass("fullscreen")
-    goFullscreen();
-    tributary.events.trigger("resize");
+  function fullscreenEvent(fullscreen) {
+    console.log("fullscreen!", fullscreen)
+    if(fullscreen) {
+      config.set("fullscreen", true);
+      $("#container").addClass("fullscreen")
+      goFullscreen();
+      tributary.events.trigger("resize");
+    } else {
+      config.set("fullscreen", false);
+      $("#container").removeClass("fullscreen")
+      tributary.events.trigger("resize");
+    }
   }
-  $("#fullscreen").on("click", fullscreenEvent);
+ 
+  $("#fullscreen").on("click", function() { fullscreenEvent(true) });
   tributary.events.on("fullscreen", fullscreenEvent);
+  
+  tributary.events.trigger("fullscreen", config.get("fullscreen"))
+
 }
 
 function serializeGist() {

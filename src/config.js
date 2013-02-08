@@ -9,6 +9,7 @@ tributary.Config = Backbone.Model.extend({
       public: true,
       require: [], //require modules will be like : {name:"crossfilter", url:"/static/lib/crossfilter.min.js"}
       fileconfigs: {}, //per-file configurations (editor specific)
+      fullscreen: false,
 
       //things related to time control
       play: false,

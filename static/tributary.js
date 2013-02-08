@@ -222,6 +222,7 @@ var Tributary = function() {
       "public": true,
       require: [],
       fileconfigs: {},
+      fullscreen: false,
       play: false,
       loop: false,
       restart: false,
@@ -1208,8 +1209,7 @@ var Tributary = function() {
     } else if (data.request === "description") {
       tributary.__config__.set("description", data.description);
     } else if (data.request === "exitfullscreen") {
-      $("#container").removeClass("fullscreen");
-      tributary.events.trigger("resize");
+      tributary.events.trigger("fullscreen", false);
     } else if (data.request === "thumbnail") {
       var image = data.image;
       d3.select("#trib-thumbnail").attr("src", image.data.link);
@@ -1359,13 +1359,24 @@ var Tributary = function() {
         $("#library-toggle").text("Add libraries");
       }
     });
-    function fullscreenEvent() {
-      $("#container").addClass("fullscreen");
-      goFullscreen();
-      tributary.events.trigger("resize");
+    function fullscreenEvent(fullscreen) {
+      console.log("fullscreen!", fullscreen);
+      if (fullscreen) {
+        config.set("fullscreen", true);
+        $("#container").addClass("fullscreen");
+        goFullscreen();
+        tributary.events.trigger("resize");
+      } else {
+        config.set("fullscreen", false);
+        $("#container").removeClass("fullscreen");
+        tributary.events.trigger("resize");
+      }
     }
-    $("#fullscreen").on("click", fullscreenEvent);
+    $("#fullscreen").on("click", function() {
+      fullscreenEvent(true);
+    });
     tributary.events.on("fullscreen", fullscreenEvent);
+    tributary.events.trigger("fullscreen", config.get("fullscreen"));
   }
   function serializeGist() {
     var config = tributary.__config__;
