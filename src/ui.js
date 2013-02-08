@@ -1,5 +1,17 @@
 tributary.ui = {};
 
+// Steal Console.log, ha ha ha!
+
+(function(){
+    var oldLog = console.log;
+    console.log = function (message) {
+
+        $("#console-log").prepend(message + "<br />");
+
+        oldLog.apply(console, arguments);
+    };
+})();
+
 
 var display, panel_gui, panel, panel_handle, page, header;
 tributary.ui.setup = function() {
