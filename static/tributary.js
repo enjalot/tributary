@@ -9,6 +9,7 @@ var Tributary = function() {
     tributary.events.trigger("resize", event);
   });
   var mainfiles = [ "inlet.js", "inlet.coffee", "sinwaves.js", "squarecircle.js" ];
+  var reservedFiles = [ "_.md", "config.json" ];
   tributary.displays = [ {
     name: "svg",
     description: "creates an <svg> element for you to use"
@@ -121,7 +122,21 @@ var Tributary = function() {
         model: model,
         el: display.node()
       });
-    } else {}
+    } else if (type === "frag" || type === "geom" || type === "c" || type === "cpp") {
+      model.set("mode", "text/x-csrc");
+      context = new tributary.TextContext({
+        config: config,
+        model: model,
+        el: display.node()
+      });
+    } else if (reservedFiles.indexOf(filename) < 0) {
+      model.set("mode", "text");
+      context = new tributary.TextContext({
+        config: config,
+        model: model,
+        el: display.node()
+      });
+    }
     return context;
   };
   d3.selection.prototype.moveToFront = function() {
@@ -800,6 +815,19 @@ var Tributary = function() {
         this.model.trigger("error", e);
         return false;
       }
+      this.model.trigger("noerror");
+      return true;
+    },
+    render: function() {}
+  });
+  tributary.TextContext = tributary.Context.extend({
+    initialize: function() {
+      this.model.on("change:code", this.execute, this);
+      this.model.on("change:code", function() {
+        tributary.events.trigger("execute");
+      });
+    },
+    execute: function() {
       this.model.trigger("noerror");
       return true;
     },

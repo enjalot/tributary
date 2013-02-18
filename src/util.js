@@ -3,6 +3,7 @@
 //TODO: decide if want to allow for arbitrary file to be the tributary context, in config somehow?
 var mainfiles = ["inlet.js", "inlet.coffee", "sinwaves.js", "squarecircle.js"];
 
+var reservedFiles = ["_.md", "config.json"];
 
 
 //Tributary display options
@@ -107,7 +108,6 @@ tributary.make_context = function(options) {
     });
   } else if(type === "html") {
     model.set("mode", "text/html")
-    //TODO: enable this when it becomes useful
     context = new tributary.HTMLContext({
       config: config,
       model: model,
@@ -115,14 +115,27 @@ tributary.make_context = function(options) {
     });
   } else if(type === "svg" && filename !== "inlet.svg") {
     model.set("mode", "text/html")
-    //TODO: enable this when it becomes useful
     context = new tributary.SVGContext({
       config: config,
       model: model,
       el: display.node()
     });
-  } 
-  else {
+  } else if (type === "frag" || type === "geom" || type === "c" || type === "cpp") {
+    model.set("mode", "text/x-csrc")
+    context = new tributary.TextContext({
+      config: config,
+      model: model,
+      el: display.node()
+    });
+  } else if(reservedFiles.indexOf(filename) < 0) {
+    //make a text context by default
+    model.set("mode", "text")
+    context = new tributary.TextContext({
+      config: config,
+      model: model,
+      el: display.node()
+    });
+
   }
 
   return context;

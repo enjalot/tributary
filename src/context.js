@@ -680,5 +680,26 @@ tributary.SVGContext = tributary.Context.extend({
 });
 
 
+//The Text context doesn't do anything
+tributary.TextContext = tributary.Context.extend({
+  initialize: function() {
+    this.model.on("change:code", this.execute, this);
+    this.model.on("change:code", function() {
+      tributary.events.trigger("execute");
+    });
+  },
+
+  execute: function() {
+    this.model.trigger("noerror");
+
+    return true;
+  },
+
+  render: function() {
+    //Text context doesn't do anything on rendering
+  },
+});
+
+
 
 
