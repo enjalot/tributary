@@ -317,6 +317,7 @@ function after_fork(oldgist, newgist, token, callback) {
     gistid: newgist.id
   , createdAt: new Date()
   , description: newgist.description
+  , public: newgist['public']
   }
 
   if(newgist.user) {
@@ -354,9 +355,10 @@ function after_save(gist, callback) {
   $inlets.findOne({gistid: gist.id}, function(err, mgist) {
     if(!mgist) {
       mgist = { 
-        gistid: gist.id,
-        createdAt: new Date(),
-        description: gist.description
+        gistid: gist.id
+      , createdAt: new Date()
+      , description: gist.description
+      , public: newgist['public']
       }
     }
     mgist.user = {
@@ -364,6 +366,7 @@ function after_save(gist, callback) {
     , login: gist.user.login
     }
     mgist.description = gist.description
+
     mgist.lastSave = new Date();
     try {
       var config = JSON.parse(gist.files['config.json'].content);
@@ -515,7 +518,9 @@ function imgur_upload(req,res,next) {
 app.get('/api/latest/created', latest_created)
 function latest_created(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
-  var query = {};
+  var query = {
+    public: { $ne: false }
+  };
   //TODO: pagination
   var limit = 200;
   $inlets.find(query, {limit: limit}).sort({ createdAt: -1 }).toArray(function(err, inlets) {
@@ -527,7 +532,8 @@ app.get('/api/latest/forks', latest_forks)
 function latest_forks(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
   var query = {
-    parent: {$exists: true}
+    public: { $ne: false }
+  , parent: {$exists: true}
   };
   //TODO: pagination
   var limit = 200;
@@ -544,6 +550,7 @@ function latest_visits(req, res, next) {
   var start = req.params.start || new Date(new Date() - (24 * 60 * 60 * 1000));
   var end = req.params.end || new Date();
   var query = dateQuery(start, end);
+  query['public'] = {$ne: false};
   //TODO: pagination
   var limit = 2000;
   $visits.find(query, {limit: limit}).sort({ createdAt: -1 }).toArray(function(err, inlets) {
@@ -559,7 +566,9 @@ function api_users(req,res,next) {
   var sortBy = req.params.sortby || "createdAt";
   var ascdsc = parseInt(req.params.ascdsc) || 1;
   var limit = req.params.limit || 200;
-  var query = {};
+  var query = {
+    public: { $ne: false }
+  };
   //TODO: pagination
   var fields = {
     name: 1,
@@ -589,7 +598,10 @@ function api_users(req,res,next) {
 app.get('/api/user/:login/latest', user_latest)
 function user_latest(req,res,next) {
   res.header("Access-Control-Allow-Origin", "*");
-  var query = { "user.login": req.params.login };
+  var query = { 
+    "user.login": req.params.login 
+  , public: { $ne: false }
+  };
   //TODO: pagination
   var limit = 200;
   $inlets.find(query, {limit: limit}).sort({ createdAt: -1 }).toArray(function(err, inlets) {
@@ -606,6 +618,7 @@ function counts_inlets(req,res,next) {
   var start = req.params.start || new Date(new Date() - (24 * 60 * 60 * 1000));
   var end = req.params.end || new Date();
   var query = dateQuery(start, end);
+  query['public'] = {$ne: false};
   //TODO: pagination
   var limit = 200;
   $inlets.count(query, {limit: limit}, function(err, ninlets) {
@@ -624,6 +637,7 @@ function counts_visits(req,res,next) {
   var start = req.params.start || new Date(new Date() - (24 * 60 * 60 * 1000));
   var end = req.params.end || new Date();
   var query = dateQuery(start, end);
+  query['public'] = {$ne: false};
   //TODO: pagination
   var limit = 200;
   $visits.count(query, {limit: limit}, function(err, nvisits) {
@@ -639,7 +653,9 @@ function counts_visits(req,res,next) {
 app.get('/api/most/viewed', most_viewed)
 function most_viewed(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
-  var query = {};
+  var query = {
+    public: {$ne: false}
+  };
   //TODO: pagination
   var limit = 200;
   $inlets.find(query, {limit: limit}).sort({ "visits": -1 }).toArray(function(err, inlets) {
@@ -651,7 +667,9 @@ function most_viewed(req, res, next) {
 app.get('/api/most/forked', most_forked)
 function most_forked(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
-  var query = {};
+  var query = {
+    public: {$ne: false}
+  };
   //TODO: pagination
   var limit = 200;
   $inlets.find(query, {limit: limit}).sort({ "nforks": -1 }).toArray(function(err, inlets) {
