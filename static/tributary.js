@@ -201,7 +201,7 @@ var Tributary = function() {
     },
     handle_error: function(e) {
       if (tributary.trace) {
-        console.trace();
+        e.stack;
         console.error(e);
       }
     },
