@@ -1084,6 +1084,9 @@ var Tributary = function() {
         input.node().focus();
         input.on("keypress", function() {
           if (d3.event.charCode === 13) {
+            if (input.node().value === "") {
+              return input.style("display", "none");
+            }
             var context = tributary.make_context({
               filename: input.node().value,
               config: tributary.__config__

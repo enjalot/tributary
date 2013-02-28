@@ -89,6 +89,9 @@ tributary.FilesView = Backbone.View.extend({
         input.on("keypress", function() {
           //they hit enter
           if(d3.event.charCode === 13) {
+            if(input.node().value === "") {
+              return input.style("display","none");
+            }
             //create a new file with the given name
             var context = tributary.make_context({ filename: input.node().value, config: tributary.__config__ });
             if(context) {
