@@ -516,19 +516,22 @@ function imgur_upload(req,res,next) {
 //API
 
 app.get('/api/latest/created', latest_created)
+app.get('/api/latest/created/:limit', latest_created)
 function latest_created(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
   var query = {
     public: { $ne: false }
   };
   //TODO: pagination
-  var limit = 200;
+  var limit = req.params.limit || 400;
+  var end = req.params.end || new Date();
   $inlets.find(query, {limit: limit}).sort({ createdAt: -1 }).toArray(function(err, inlets) {
     if(err) res.send(err);
     res.send(inlets);
   })
 }
 app.get('/api/latest/forks', latest_forks)
+app.get('/api/latest/forks/:limit', latest_forks)
 function latest_forks(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
   var query = {
@@ -536,7 +539,7 @@ function latest_forks(req, res, next) {
   , parent: {$exists: true}
   };
   //TODO: pagination
-  var limit = 200;
+  var limit = req.params.limit || 400;
   $inlets.find(query, {limit: limit}).sort({ createdAt: -1 }).toArray(function(err, inlets) {
     if(err) res.send(err);
     res.send(inlets);
