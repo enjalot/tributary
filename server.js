@@ -106,12 +106,19 @@ function inlet(req,res,next) {
     }
     $visits.save(visit, function(err, res) { if(err) console.log(err) });
   }
+  try {
+    //serialize the query params so we can pass them to the inlet
+    var query = JSON.stringify(req.query);
+  } catch(e) {
+    var query = "";
+  }
   var template = Handlebars.templates.header;
   var html = template({
     user: user,
     avatar_url: user? user.avatar_url : "",
     loggedin: user ? true : false,
     gistid: gistid,
+    query: query,
     sandboxOrigin: sandboxOrigin
   });
   res.send(html);

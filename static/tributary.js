@@ -1229,6 +1229,7 @@ var Tributary = function() {
     var data = event.data;
     if (data.request === "load") {
       parentWindow = event.source;
+      tributary.query = data.query;
       tributary.loadGist(data.gist, _assemble);
     } else if (data.request === "save") {
       var json = serializeGist();

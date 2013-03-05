@@ -12,7 +12,8 @@
 
   //pass in gist data
   function load(error, data) {
-    sandbox.postMessage({request: "load", gist: data}, _origin);
+    //query comes from the request query and is passed to the template as a JSON string
+    sandbox.postMessage({request: "load", gist: data, query: header.query}, _origin);
   }
   //Config object has everything we need to save our gist
   function getConfig() {

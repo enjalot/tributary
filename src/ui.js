@@ -16,6 +16,7 @@ function recieveMessage(event) {
   if(data.request === "load") {
     //assemble the ui using gist data;
     parentWindow = event.source;
+    tributary.query = data.query;
     tributary.loadGist(data.gist, _assemble);
   } else if(data.request === "save") {
     //postMessage the host frame with the tributary.context information
