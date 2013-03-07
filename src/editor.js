@@ -83,37 +83,37 @@ tributary.Editor = Backbone.View.extend({
 
     filetype = that.model.get("filename").split(".")[1];
 
+    var options = {
+      mode: that.model.get("mode"),
+      lineNumbers: true
+    };
     if(filetype == "js") {
-      var editor_theme = "lesser-dark";
+      options.theme = "lesser-dark";
+      options.gutters = ["CodeMirror-lint-markers"];
+      options.lintWith = CodeMirror.javascriptValidator
+    } else if(filetype == "json") {
+      options.mode = "application/json";
+      options.gutters = ["CodeMirror-lint-markers"];
+      options.lintWith = CodeMirror.jsonValidator
     }
     else if(filetype == "svg") {
-      var editor_theme = "vibrant-ink"
+      options.theme = "vibrant-ink"
     }
     else if(filetype == "html") {
-      var editor_theme = "ambiance"
+      options.theme = "ambiance"
     }
     else if(filetype == "coffee"){
-      var editor_theme = "elegant"
+      options.theme = "elegant"
     }
     else if(filetype == "css"){
-      var editor_theme = "elegant"
+      options.theme = "elegant"
     }
     else {
-      var editor_theme = "lesser-dark"
+      options.theme = "lesser-dark"
     }
-
-    var codemirror_options = {
-        //value: "function myScript(){return 100;}\n",
-        mode: that.model.get("mode"),
-        theme: editor_theme,
-        lineNumbers: true,
-    }
-    if(that.model.get("mode") === "json") {
-      codemirror_options.mode = "javascript";
-      codemirror_options.json = true;
-    }
+    console.log("options", options);
     //we render the codemirror instance into the el
-    this.cm = CodeMirror(this.el, codemirror_options);
+    this.cm = CodeMirror(this.el, options);
 
     this.cm.on("change", function() {
       var code = that.cm.getValue();

@@ -907,29 +907,31 @@ var Tributary = function() {
       var html = template(this.getConfig());
       this.$el.html(html);
       filetype = that.model.get("filename").split(".")[1];
-      if (filetype == "js") {
-        var editor_theme = "lesser-dark";
-      } else if (filetype == "svg") {
-        var editor_theme = "vibrant-ink";
-      } else if (filetype == "html") {
-        var editor_theme = "ambiance";
-      } else if (filetype == "coffee") {
-        var editor_theme = "elegant";
-      } else if (filetype == "css") {
-        var editor_theme = "elegant";
-      } else {
-        var editor_theme = "lesser-dark";
-      }
-      var codemirror_options = {
+      var options = {
         mode: that.model.get("mode"),
-        theme: editor_theme,
         lineNumbers: true
       };
-      if (that.model.get("mode") === "json") {
-        codemirror_options.mode = "javascript";
-        codemirror_options.json = true;
+      if (filetype == "js") {
+        options.theme = "lesser-dark";
+        options.gutters = [ "CodeMirror-lint-markers" ];
+        options.lintWith = CodeMirror.javascriptValidator;
+      } else if (filetype == "json") {
+        options.mode = "application/json";
+        options.gutters = [ "CodeMirror-lint-markers" ];
+        options.lintWith = CodeMirror.jsonValidator;
+      } else if (filetype == "svg") {
+        options.theme = "vibrant-ink";
+      } else if (filetype == "html") {
+        options.theme = "ambiance";
+      } else if (filetype == "coffee") {
+        options.theme = "elegant";
+      } else if (filetype == "css") {
+        options.theme = "elegant";
+      } else {
+        options.theme = "lesser-dark";
       }
-      this.cm = CodeMirror(this.el, codemirror_options);
+      console.log("options", options);
+      this.cm = CodeMirror(this.el, options);
       this.cm.on("change", function() {
         var code = that.cm.getValue();
         that.model.set("code", code);

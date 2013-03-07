@@ -76,6 +76,22 @@ tributary.reverse
 tributary.render  
 
 
+###Contexts
+
+I'm using latest CodeMirror from git (updating every-so often)  
+I have customized the JSHINT options in addons/lint/javascript-lint.js to be:
+```
+{
+  asi: true,
+  laxcomma: true,
+  laxbreak: true,
+  loopfunc: true,
+  smarttabs: true,
+  sub: true
+}
+```
+
+
 ### TODO:  
 
 #### Editor UI:  
