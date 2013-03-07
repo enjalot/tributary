@@ -111,7 +111,6 @@ tributary.Editor = Backbone.View.extend({
     else {
       options.theme = "lesser-dark"
     }
-    console.log("options", options);
     //we render the codemirror instance into the el
     this.cm = CodeMirror(this.el, options);
 

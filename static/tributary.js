@@ -930,7 +930,6 @@ var Tributary = function() {
       } else {
         options.theme = "lesser-dark";
       }
-      console.log("options", options);
       this.cm = CodeMirror(this.el, options);
       this.cm.on("change", function() {
         var code = that.cm.getValue();
