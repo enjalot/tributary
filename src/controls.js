@@ -6,6 +6,7 @@ tributary.ControlsView = Backbone.View.extend({
     this.model.on("change:play", this.play_button, this);
     this.model.on("change:loop", this.time_slider, this);
     this.model.on("change:restart", this.restart_button, this);
+    this.model.on("pause", this.onPlayPause, this);
     
   },
   render: function() {
@@ -24,10 +25,33 @@ tributary.ControlsView = Backbone.View.extend({
 
   },
 
+  onPlayPause: function() {
+    //var tc = d3.select(this.el).select("#time_controls");
+    var tc = d3.select("#time_controls");
+    var pb = tc.select("button.play");
+    if(!tributary.pause){
+      pb.classed("playing", false);
+      pb.text("Play");
+    } else if(tributary.pause){
+      pb.classed("playing", true);
+      pb.text("Pause");
+    }
+    
+    if(tributary.t < 1 || !tributary.loop) {
+      tributary.pause = !tributary.pause;
+      
+      if(!tributary.pause) {
+        //unpausing, so we setup our timer to run
+        tributary.timer.then = new Date();
+        tributary.timer.duration = (1 - tributary.t) * tributary.duration;
+        tributary.timer.ctime = tributary.t;
+      }
+    }
+  },
   play_button: function() {
-    //console.log("play!", this.model.get("play"));
     //add/remove play button
-    var tc = d3.select(this.el).select("#time_controls");
+    //var tc = d3.select(this.el).select("#time_controls");
+    var tc = d3.select("#time_controls");
     if(this.model.get("play")) {
       //create the button
       var pb = tc.append("button")
@@ -35,26 +59,7 @@ tributary.ControlsView = Backbone.View.extend({
         .classed("button_on", true) 
         .text("Play");
 
-      pb.on("click", function(event) {
-        if(!tributary.pause){
-          pb.classed("playing", false);
-          pb.text("Play");
-        } else if(tributary.pause){
-          pb.classed("playing", true);
-          pb.text("Pause");
-        }
-        
-        if(tributary.t < 1 || !tributary.loop) {
-          tributary.pause = !tributary.pause;
-          
-          if(!tributary.pause) {
-            //unpausing, so we setup our timer to run
-            tributary.timer.then = new Date();
-            tributary.timer.duration = (1 - tributary.t) * tributary.duration;
-            tributary.timer.ctime = tributary.t;
-          }
-        }
-      });
+      pb.on("click", this.onPlayPause);
     } else {
       //destroy the button
       tc.select("button.play").remove();

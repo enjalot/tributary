@@ -613,7 +613,7 @@ function user_latest(req,res,next) {
   , public: { $ne: false }
   };
   //TODO: pagination
-  var limit = 200;
+  var limit = req.params.limit || 200;
   $inlets.find(query, {limit: limit}).sort({ createdAt: -1 }).toArray(function(err, inlets) {
     if(err) res.send(err);
     res.send(inlets);

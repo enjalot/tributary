@@ -21,7 +21,6 @@ tributary.TributaryContext = tributary.Context.extend({
     tributary.events.on("execute", this.execute, this);
 
     if(!tributary.__config__) tributary.__config__ = this.options.config;
- 
 
     //if the user has modified the code, we want to protect them from losing their work
     this.model.on("change:code", function() {
@@ -77,10 +76,12 @@ tributary.TributaryContext = tributary.Context.extend({
         ctime: tributary.t
     };
 
-    d3.timer(function() {
+    d3.timer(timerFunction);
+    function timerFunction() {
       tributary.render();
       //if paused lets not execute
       if(tributary.pause) { return false; }
+      if(tributary.__error__) { return false; }
 
       var now = new Date();
       var dtime = now - tributary.timer.then;
@@ -89,9 +90,9 @@ tributary.TributaryContext = tributary.Context.extend({
       //TODO: implement play button, should reset the timer
       if(tributary.loop) {
         if (tributary.reverse) {
-            dt = tributary.timer.ctime * dtime / tributary.timer.duration * -1;
+          dt = tributary.timer.ctime * dtime / tributary.timer.duration * -1;
         } else {
-            dt = (1 - tributary.timer.ctime) * dtime / tributary.timer.duration;
+          dt = (1 - tributary.timer.ctime) * dtime / tributary.timer.duration;
         }
         tributary.t = tributary.timer.ctime + dt;
 
@@ -118,6 +119,7 @@ tributary.TributaryContext = tributary.Context.extend({
             {
                 tributary.t = 1;
                 tributary.pause = true;
+                tributary.__config__.trigger("pause");
             }
           }
         } 
@@ -132,9 +134,14 @@ tributary.TributaryContext = tributary.Context.extend({
         tributary.t += tributary.dt;
       }
       
-      tributary.execute();
-      config.trigger("tick", tributary.t);
-    });
+      try {
+        tributary.execute();
+        tributary.__config__.trigger("noerror");
+      } catch (err) {
+        tributary.__config__.trigger("error", err);
+      }
+      tributary.__config__.trigger("tick", tributary.t);
+    }
  
   },
 

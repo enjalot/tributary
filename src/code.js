@@ -17,15 +17,20 @@ tributary.CodeModel = Backbone.Model.extend({
     this.binder();
   },
   binder: function() {
-    this.on("error", this.handle_error);
+    this.on("error", this.handleError);
+    this.on("noerror", this.handleNoError);
   },
-  handle_error: function(e) {
+  handleError: function(e) {
+    tributary.__error__ = true;
     if(tributary.trace) {
       //console.trace();
       //console.log(e.stack);
       e.stack;
       console.error(e);
     }
+  },
+  handleNoError: function() {
+    tributary.__error__ = false;
   },
 
   handle_coffee: function() {

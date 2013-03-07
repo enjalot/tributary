@@ -197,13 +197,18 @@ var Tributary = function() {
       this.binder();
     },
     binder: function() {
-      this.on("error", this.handle_error);
+      this.on("error", this.handleError);
+      this.on("noerror", this.handleNoError);
     },
-    handle_error: function(e) {
+    handleError: function(e) {
+      tributary.__error__ = true;
       if (tributary.trace) {
         e.stack;
         console.error(e);
       }
+    },
+    handleNoError: function() {
+      tributary.__error__ = false;
     },
     handle_coffee: function() {
       var js = this.get("code");
@@ -430,9 +435,13 @@ var Tributary = function() {
         duration: tributary.duration,
         ctime: tributary.t
       };
-      d3.timer(function() {
+      d3.timer(timerFunction);
+      function timerFunction() {
         tributary.render();
         if (tributary.pause) {
+          return false;
+        }
+        if (tributary.__error__) {
           return false;
         }
         var now = new Date;
@@ -462,6 +471,7 @@ var Tributary = function() {
               if (tributary.t !== 0) {
                 tributary.t = 1;
                 tributary.pause = true;
+                tributary.__config__.trigger("pause");
               }
             }
           }
@@ -474,9 +484,14 @@ var Tributary = function() {
         } else {
           tributary.t += tributary.dt;
         }
-        tributary.execute();
-        config.trigger("tick", tributary.t);
-      });
+        try {
+          tributary.execute();
+          tributary.__config__.trigger("noerror");
+        } catch (err) {
+          tributary.__config__.trigger("error", err);
+        }
+        tributary.__config__.trigger("tick", tributary.t);
+      }
     },
     execute: function() {
       var js = this.model.handle_coffee();
@@ -1122,6 +1137,7 @@ var Tributary = function() {
       this.model.on("change:play", this.play_button, this);
       this.model.on("change:loop", this.time_slider, this);
       this.model.on("change:restart", this.restart_button, this);
+      this.model.on("pause", this.onPlayPause, this);
     },
     render: function() {
       var del = d3.select(this.el);
@@ -1132,27 +1148,30 @@ var Tributary = function() {
       this.time_slider();
       this.restart_button();
     },
+    onPlayPause: function() {
+      var tc = d3.select("#time_controls");
+      var pb = tc.select("button.play");
+      if (!tributary.pause) {
+        pb.classed("playing", false);
+        pb.text("Play");
+      } else if (tributary.pause) {
+        pb.classed("playing", true);
+        pb.text("Pause");
+      }
+      if (tributary.t < 1 || !tributary.loop) {
+        tributary.pause = !tributary.pause;
+        if (!tributary.pause) {
+          tributary.timer.then = new Date;
+          tributary.timer.duration = (1 - tributary.t) * tributary.duration;
+          tributary.timer.ctime = tributary.t;
+        }
+      }
+    },
     play_button: function() {
-      var tc = d3.select(this.el).select("#time_controls");
+      var tc = d3.select("#time_controls");
       if (this.model.get("play")) {
         var pb = tc.append("button").classed("play", true).classed("button_on", true).text("Play");
-        pb.on("click", function(event) {
-          if (!tributary.pause) {
-            pb.classed("playing", false);
-            pb.text("Play");
-          } else if (tributary.pause) {
-            pb.classed("playing", true);
-            pb.text("Pause");
-          }
-          if (tributary.t < 1 || !tributary.loop) {
-            tributary.pause = !tributary.pause;
-            if (!tributary.pause) {
-              tributary.timer.then = new Date;
-              tributary.timer.duration = (1 - tributary.t) * tributary.duration;
-              tributary.timer.ctime = tributary.t;
-            }
-          }
-        });
+        pb.on("click", this.onPlayPause);
       } else {
         tc.select("button.play").remove();
       }
