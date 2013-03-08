@@ -1173,6 +1173,7 @@ var Tributary = function() {
       if (this.model.get("play")) {
         var pb = tc.append("button").classed("play", true).classed("button_on", true).text("Play");
         pb.on("click", this.onPlayPause);
+        this.onPlayPause();
       } else {
         tc.select("button.play").remove();
       }

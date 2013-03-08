@@ -60,6 +60,7 @@ tributary.ControlsView = Backbone.View.extend({
         .text("Play");
 
       pb.on("click", this.onPlayPause);
+      this.onPlayPause();
     } else {
       //destroy the button
       tc.select("button.play").remove();
