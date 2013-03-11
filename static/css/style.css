@@ -457,12 +457,16 @@ cols    1     2      3      4      5      6      7      8      9      10
 px      68    160    252    344    436    528    620    712    804    896    */
 .inlet_slider {
   z-index: 1010;
+  margin: 0 !important;
+  padding: 0 !important;
 }
-.inlet_slider a {
-  -webkit-transition: all 0.01s linear;
-  -moz-transition: all 0.01s linear;
-  transition: all 0.01s linear;
-  outline: none;
+.inlet_slider input::-webkit-slider-thumb {
+  margin-top: -18px;
+}
+.ColorPicker {
+  -moz-box-sizing: content-box;
+  -webkit-box-sizing: content-box;
+  box-sizing: content-box;
 }
 #display {
   margin-top: -8px;
@@ -737,22 +741,6 @@ px      68    160    252    344    436    528    620    712    804    896    */
 .fullscreen #display {
   width: 100%;
   height: 100%;
-}
-#controls {
-  position: fixed;
-  bottom: 12px;
-  left: 12px;
-}
-#controls input[type=range] {
-  background-image: none;
-  border: 0;
-  background-color: #999;
-  margin: 0;
-  padding: 1px;
-}
-#controls input[type=range]:hover {
-  background-image: none;
-  border: 0;
 }
 /*    Tablet Layout: 768px.
     Gutters: 24px.

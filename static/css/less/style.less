@@ -11,10 +11,17 @@ px      68    160    252    344    436    528    620    712    804    896    */
 
 .inlet_slider {
   z-index: 1010;
-  a {
-    .transition(0.01s, linear);
-    outline: none;
-  }
+  margin:0 !important;
+  padding: 0 !important;
+  
+}
+.inlet_slider input::-webkit-slider-thumb{
+  margin-top: -18px;
+}
+.ColorPicker { 
+ -moz-box-sizing: content-box; 
+  -webkit-box-sizing: content-box; 
+  box-sizing: content-box; 
 }
 
 #display {
@@ -335,26 +342,6 @@ px      68    160    252    344    436    528    620    712    804    896    */
   }
 }
 
-#controls {
-  position: fixed;
-  bottom: 12px;
-  left: 12px;
-
-  input[type=range] {
-    background-image: none;
-    border: 0;
-    background-color: #999;
-    margin: 0;
-    padding: 1px;
-
-    &:hover {
-      background-image: none;
-      border: 0;
-    }
-  }
-}
-
-
 
 
 
@@ -546,6 +533,7 @@ px      68    160    252    344    436    */
         text-shadow: 0 2px 1px #FFF;
     }
 }
+
 @media only screen and (max-width: 767px) {
     input, textarea, select {
         width: 8em;
