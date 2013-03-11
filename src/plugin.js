@@ -1,6 +1,7 @@
 Tributary.plugins = {};
 
 function loadCss(plugin, callback) {
+  if(!plugin.css) { return callback() };
   d3.select("head").append("link")
   .attr({
     rel: "stylesheet",
@@ -13,6 +14,7 @@ function loadCss(plugin, callback) {
   
 //Set up HTML
 function loadHtml(plugin, callback) {
+  if(!plugin.html) { return callback() };
   d3.text(plugin.url + "/" + plugin.html, function(err, html) {
     if(err) return console.error(err);
     var pluginsDiv = document.getElementById("plugins")
@@ -26,6 +28,7 @@ function loadHtml(plugin, callback) {
 }
   
 function loadScript(plugin, callback) {
+  if(!plugin.js) { return callback() };
   // Add <script> to page
   // That script invokes tributary.plugin(id, fn), where fn = function (tributary, opts)
   d3.select("head").append("script")
@@ -53,7 +56,8 @@ tributary.loadPlugin = function (url, opts, onErr) {
     q.defer(loadHtml, plugin);
     q.defer(loadScript, plugin)
     q.awaitAll(function (err) {
-      if (err) return onErr(err);
+      if(err) console.error(err);
+      //if (err) return onErr(err);
       Tributary.activatePlugin(tributary, plugin.id);
     });
   });
@@ -68,8 +72,10 @@ Tributary.plugin = function (id, fn) {
 //Once all a plugin's files are loaded, you can instancite it
 //and then call the activate method
 Tributary.activatePlugin = function(tributary, id) {
-  this.plugins[id].fn(tributary, this.plugins[id]);
-  this.plugins[id].activate();
+  if(this.plugins[id].fn) {
+    this.plugins[id].fn(tributary, this.plugins[id]);
+    this.plugins[id].activate();
+  }
 }
 
 Tributary.newPluginId = function() {

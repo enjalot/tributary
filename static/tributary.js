@@ -1030,6 +1030,9 @@ var Tributary = function() {
   };
   Tributary.plugins = {};
   function loadCss(plugin, callback) {
+    if (!plugin.css) {
+      return callback();
+    }
     d3.select("head").append("link").attr({
       rel: "stylesheet",
       id: "css-" + plugin.id,
@@ -1038,6 +1041,9 @@ var Tributary = function() {
     callback();
   }
   function loadHtml(plugin, callback) {
+    if (!plugin.html) {
+      return callback();
+    }
     d3.text(plugin.url + "/" + plugin.html, function(err, html) {
       if (err) return console.error(err);
       var pluginsDiv = document.getElementById("plugins");
@@ -1049,6 +1055,9 @@ var Tributary = function() {
     });
   }
   function loadScript(plugin, callback) {
+    if (!plugin.js) {
+      return callback();
+    }
     d3.select("head").append("script").attr({
       id: "js-" + plugin.id,
       src: plugin.url + "/" + plugin.js
@@ -1068,7 +1077,7 @@ var Tributary = function() {
       q.defer(loadHtml, plugin);
       q.defer(loadScript, plugin);
       q.awaitAll(function(err) {
-        if (err) return onErr(err);
+        if (err) console.error(err);
         Tributary.activatePlugin(tributary, plugin.id);
       });
     });
@@ -1078,8 +1087,10 @@ var Tributary = function() {
     Tributary.__events__.trigger("pluginLoaded", id);
   };
   Tributary.activatePlugin = function(tributary, id) {
-    this.plugins[id].fn(tributary, this.plugins[id]);
-    this.plugins[id].activate();
+    if (this.plugins[id].fn) {
+      this.plugins[id].fn(tributary, this.plugins[id]);
+      this.plugins[id].activate();
+    }
   };
   Tributary.newPluginId = function() {
     var uid = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function(c) {
