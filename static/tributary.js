@@ -2,6 +2,7 @@
 var Tributary = function() {
   var tributary = {};
   tributary.events = _.clone(Backbone.Events);
+  Tributary.__events__ = _.clone(Backbone.Events);
   tributary.data = {};
   window.trib = {};
   window.trib_options = {};
@@ -1027,78 +1028,65 @@ var Tributary = function() {
       }
     });
   };
-  tributary.newPluginId = function() {
+  Tributary.plugins = {};
+  function loadCss(plugin, callback) {
+    d3.select("head").append("link").attr({
+      rel: "stylesheet",
+      id: "css-" + plugin.id,
+      href: plugin.url + "/" + plugin.css
+    });
+    callback();
+  }
+  function loadHtml(plugin, callback) {
+    d3.text(plugin.url + "/" + plugin.html, function(err, html) {
+      if (err) return console.error(err);
+      var pluginsDiv = document.getElementById("plugins");
+      var pluginDiv = document.createElement("div");
+      pluginDiv.setAttribute("id", plugin.elId);
+      pluginsDiv.appendChild(pluginDiv);
+      pluginDiv.innerHTML = html;
+      callback();
+    });
+  }
+  function loadScript(plugin, callback) {
+    d3.select("head").append("script").attr({
+      id: "js-" + plugin.id,
+      src: plugin.url + "/" + plugin.js
+    });
+    Tributary.__events__.on("pluginLoaded", function(id) {
+      if (id === plugin.id) callback();
+    });
+  }
+  tributary.loadPlugin = function(url, opts, onErr) {
+    d3.json(url, function(err, plugin) {
+      if (err) return onErr(err);
+      plugin.options = opts;
+      plugin.elId = Tributary.newPluginId();
+      Tributary.plugins[plugin.id] = plugin;
+      var q = queue();
+      q.defer(loadCss, plugin);
+      q.defer(loadHtml, plugin);
+      q.defer(loadScript, plugin);
+      q.awaitAll(function(err) {
+        if (err) return onErr(err);
+        Tributary.activatePlugin(tributary, plugin.id);
+      });
+    });
+  };
+  Tributary.plugin = function(id, fn) {
+    this.plugins[id].fn = fn;
+    Tributary.__events__.trigger("pluginLoaded", id);
+  };
+  Tributary.activatePlugin = function(tributary, id) {
+    this.plugins[id].fn(tributary, this.plugins[id]);
+    this.plugins[id].activate();
+  };
+  Tributary.newPluginId = function() {
     var uid = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function(c) {
       var r = Math.random() * 16 | 0, v = c == "x" ? r : r & 3 | 8;
       return v.toString(16);
     });
     return uid;
-  };
-  tributary.getPlugin = function(url, callback) {
-    var pluginUrls = [ "index.js", "index.html", "style.css" ];
-    var q = queue();
-    pluginUrls.forEach(function(purl) {
-      q.defer(d3.text, url + "/" + purl);
-    });
-    q.awaitAll(function(err, pluginContents) {
-      if (err) return callback(err);
-      var pObj = {
-        js: pluginContents[0],
-        html: pluginContents[1],
-        css: pluginContents[2]
-      };
-      callback(null, pObj);
-    });
-  };
-  tributary.setupPlugin = function(pluginContent, options) {
-    console.log("setup plugin!", pluginContent);
-    var cssModel = new tributary.CodeModel({
-      name: "style",
-      filename: "style.css",
-      code: pluginContent.css
-    });
-    cssContext = new tributary.CSSContext({
-      config: tributary.__config__,
-      model: cssModel
-    });
-    cssContext.render();
-    cssContext.execute();
-    if (!options) {
-      var options = {};
-    }
-    if (!options.pluginId) options.pluginId = tributary.newPluginId();
-    var pluginsDiv = document.getElementById("plugins");
-    var pluginDiv = document.createElement("div");
-    pluginDiv.setAttribute("id", options.pluginId);
-    pluginsDiv.appendChild(pluginDiv);
-    pluginDiv.innerHTML = pluginContent.html;
-    try {
-      plugin = new Function("tributary", "options", pluginContent.js);
-    } catch (e) {
-      e.stack;
-      console.log("error?", e);
-      return false;
-    }
-    try {
-      console.log("activate");
-      plugin(tributary, options).activate();
-    } catch (e) {
-      e.stack;
-      console.log("error??", e);
-      return false;
-    }
-    return plugin;
-  };
-  tributary.plugins = function(urls, callback) {
-    var q = queue();
-    urls.forEach(function(url) {
-      q.defer(tributary.getPlugin, url);
-    });
-    q.awaitAll(function(err, plugins) {
-      plugins.forEach(function(plugin) {
-        tributary.setupPlugin(plugin, {});
-      });
-    });
   };
   tributary.ui = {};
   tributary.trace = false;

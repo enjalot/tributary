@@ -192,20 +192,16 @@ document.body.style.cursor = "default";
 
 $('i').tipsy({fade: true, gravity: 'n', opacity: 0.86});
 
-
 tb.ui.setup();
 
 tb.events.on("loaded", function() {
-  console.log("loading plugins")
-  var urls = [
-    "/static/plugins/play"
-  ];
-  
-  tb.plugins(urls, function(err, plugins) {
-    console.log("plugins loaded");
+  //console.log("loading plugins")
+  tb.loadPlugin("/static/plugins/play/plugin.json", {}, function (err) {
+    console.log("plugin load err?", err)
   });
-  
+
 })
+
 
 </script>
 

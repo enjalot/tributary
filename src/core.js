@@ -5,6 +5,9 @@ var tributary = {};
 //general event handler for any part of tributary to listen on
 tributary.events = _.clone(Backbone.Events);
 
+//global events (for letting tributary instances know whats up)
+Tributary.__events__ = _.clone(Backbone.Events);
+
 //special dict to hold data loaded in
 tributary.data = {};
 
