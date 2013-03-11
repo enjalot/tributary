@@ -195,11 +195,10 @@ $('i').tipsy({fade: true, gravity: 'n', opacity: 0.86});
 tb.ui.setup();
 
 tb.events.on("loaded", function() {
-  //console.log("loading plugins")
-  tb.loadPlugin("/static/plugins/play/plugin.json", {}, function (err) {
-    console.log("plugin load err?", err)
-  });
-
+  tb.loadPlugin("/static/plugins/play/plugin.json"
+  , {}
+  , function (err) { console.log("plugin load err?", err) }
+  );
 })
 
 

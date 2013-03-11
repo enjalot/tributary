@@ -11,7 +11,7 @@ function loadCss(plugin, callback) {
   callback();
 }
   
-  //Set up HTML
+//Set up HTML
 function loadHtml(plugin, callback) {
   d3.text(plugin.url + "/" + plugin.html, function(err, html) {
     if(err) return console.error(err);
