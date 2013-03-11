@@ -8,7 +8,6 @@ Tributary.plugin("play", tributaryPlayPlugin);
 //tributary is the main object available in inlets
 //plugin has some gauranteed elements:
 //{
-//  id: the id given to this plugin
 //  elId: a UUID that will also be the element id of a div
 //}
 //You are expected to return a plugin object with the following methods exposed:
