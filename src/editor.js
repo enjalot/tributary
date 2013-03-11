@@ -85,7 +85,8 @@ tributary.Editor = Backbone.View.extend({
 
     var options = {
       mode: that.model.get("mode"),
-      lineNumbers: true
+      lineNumbers: true,
+      viewportMargin: Infinity
     };
     if(filetype == "js") {
       options.theme = "lesser-dark";

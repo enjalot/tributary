@@ -795,7 +795,8 @@ var Tributary = function() {
       filetype = that.model.get("filename").split(".")[1];
       var options = {
         mode: that.model.get("mode"),
-        lineNumbers: true
+        lineNumbers: true,
+        viewportMargin: Infinity
       };
       if (filetype == "js") {
         options.theme = "lesser-dark";
