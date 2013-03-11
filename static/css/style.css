@@ -461,7 +461,7 @@ px      68    160    252    344    436    528    620    712    804    896    */
   padding: 0 !important;
 }
 .inlet_slider input::-webkit-slider-thumb {
-  margin-top: -18px;
+  margin-top: -19px;
 }
 .ColorPicker {
   -moz-box-sizing: content-box;
