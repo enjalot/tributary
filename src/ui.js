@@ -196,13 +196,6 @@ function _assemble(error, ret) {
   });
   config_view.render();
 
-  //fill in the control view (Config pane)
-  var controls_view = new tributary.ControlsView({
-    el: "#controls",
-    model: config,
-  });
-  controls_view.render();
-
   //hook up the control buttons at the bottom
   $("#config-toggle").on("click", function(){
     $("#config-content").toggle();
@@ -244,6 +237,8 @@ function _assemble(error, ret) {
   tributary.events.on("fullscreen", fullscreenEvent);
   
   tributary.events.trigger("fullscreen", config.get("fullscreen"))
+    
+  tributary.events.trigger("loaded");
 
 }
 

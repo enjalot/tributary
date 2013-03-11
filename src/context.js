@@ -36,113 +36,13 @@ tributary.TributaryContext = tributary.Context.extend({
 
     tributary.init = undefined;
     tributary.run = undefined;
-
-    //time controls;
-    tributary.loop = config.get("loop");
+  
+    //autoinit determins whether we call tributary.init by default
     tributary.autoinit = config.get("autoinit");
 
-    //default parameters for this context
-    tributary.pause = config.get("pause"); //pause is used to pause and unpause
-    //tributary.autoplay = true;
-    //tributary.autoinit = true;
-    tributary.loop_type = config.get("loop_type"); //["off", "period", "pingpong"]
-    tributary.bv = config.get("bv");
-    tributary.nclones = config.get("nclones");
-    tributary.clone_opacity = config.get("clone_opacity");
-    tributary.duration = config.get("duration");
-    tributary.ease = d3.ease(config.get("ease"));
-    tributary.t = 0;
-    tributary.dt = config.get("dt");
-    tributary.reverse = false;
-    tributary.useThreejsControls = true;
-
     tributary.render = function() {};
-    //convenience function
-    tributary.execute = function() {
-      if(tributary.run !== undefined) {
-        var t = tributary.t;
-        if(tributary.loop) {
-          t = tributary.ease(tributary.t); 
-        }
-        tributary.run(tributary.g, t, 0);
-      }
-    }
-
-    //we need to save state of timer so when we pause/unpause or manually change slider
-    //we can finish a transition
-    tributary.timer = {
-        then: new Date(),
-        duration: tributary.duration,
-        ctime: tributary.t
-    };
-
-    d3.timer(timerFunction);
-    function timerFunction() {
-      tributary.render();
-      //if paused lets not execute
-      if(tributary.pause) { return false; }
-      if(tributary.__error__) { return false; }
-
-      var now = new Date();
-      var dtime = now - tributary.timer.then;
-      var dt;
-            
-      //TODO: implement play button, should reset the timer
-      if(tributary.loop) {
-        if (tributary.reverse) {
-          dt = tributary.timer.ctime * dtime / tributary.timer.duration * -1;
-        } else {
-          dt = (1 - tributary.timer.ctime) * dtime / tributary.timer.duration;
-        }
-        tributary.t = tributary.timer.ctime + dt;
-
-        //once we reach 1, lets pause and stay there
-        if(tributary.t >= 1 || tributary.t <= 0 || tributary.t === "NaN")
-        {
-          if(tributary.loop_type === "period") {
-            tributary.t = 0;
-            tributary.timer.then = new Date();
-            tributary.timer.duration = tributary.duration;
-            tributary.timer.ctime = tributary.t;
-            tributary.reverse = false;
-            //tributary.pause = false;
-          } else if (tributary.loop_type === "pingpong") {
-            //this sets tributary.t to 0 when we get to 0 and 1 when we get to 1 (because of the direction we were going)
-            tributary.t = !tributary.reverse;
-            tributary.timer.then = new Date();
-            tributary.timer.duration = tributary.duration;
-            tributary.timer.ctime = tributary.t;
-            tributary.reverse = !tributary.reverse;
-          }
-          else {
-            if (tributary.t !== 0)
-            {
-                tributary.t = 1;
-                tributary.pause = true;
-                tributary.__config__.trigger("pause");
-            }
-          }
-        } 
-        //TODO: fix, look up 10 lines to pingpong
-        //not sure why we get true and false for 1 and 0 when range hits the end
-        if(tributary.t === true) { tributary.t = 1; }
-        if(tributary.t === false) { tributary.t = 0; }
-   
-        //move the slider
-        //$('#slider').attr('value', tributary.t);
-      } else {
-        tributary.t += tributary.dt;
-      }
-      
-      try {
-        tributary.execute();
-        tributary.__config__.trigger("noerror");
-      } catch (err) {
-        tributary.__config__.trigger("error", err);
-      }
-      tributary.__config__.trigger("tick", tributary.t);
-    }
- 
+    tributary.execute = function() {};
+     
   },
 
   execute: function() {   
@@ -192,11 +92,7 @@ tributary.TributaryContext = tributary.Context.extend({
           tributary.events.trigger("prerender");
         }
 
-        if(this.clones) { $(this.clones.node()).empty(); }
-        if(tributary.bv) {
-          this.make_clones();
-        }
-
+      
         //execute the code
         //eval(js);
         tributary.initialize(tributary.g, tributary);
@@ -282,38 +178,6 @@ tributary.TributaryContext = tributary.Context.extend({
     tributary.ctx = tributary.canvas.getContext('2d');
     tributary.g = tributary.ctx;
 
-  },
-
-  //TODO: make canvas clones
-  make_clones: function() {
-    //create the clone and delta g elements if they don't exist
-    this.clones = this.svg.selectAll("g.clones")
-      .data([0]);
-    this.clones
-      .enter()
-      .append("g").attr("class", "clones");
-    tributary.g = this.svg.selectAll("g.delta")
-      .data([0]);
-    tributary.g
-      .enter()
-      .append("g").attr("class", "delta");
- 
-    //make n frames with lowered opacity
-    var frames = d3.range(tributary.nclones);
-    var gf = this.clones.selectAll("g.bvclone")
-        .data(frames).enter()
-        .append("g")
-            .attr("class", "bvclone")
-            .style("opacity", tributary.clone_opacity);
-
-    gf.each(function(d, i) {
-        var j = i+1;
-        var frame = d3.select(this);
-        tributary.init(frame, j);
-        //tributary.run(i/tributary.nclones, frame, i);
-        var t = tributary.ease(j/(tributary.nclones+1));
-        tributary.run(frame, t, j);
-    });
   },
 
   make_webgl: function() {

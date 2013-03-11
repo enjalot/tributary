@@ -310,18 +310,6 @@ var Tributary = function() {
           displaySelect.node().value = this.value;
         }
       });
-      var timecontrols = d3.select("#timecontrols").selectAll("button");
-      timecontrols.datum(function() {
-        return this.dataset;
-      });
-      timecontrols.filter(function(d) {
-        return that.model.get(d.name);
-      }).classed("active", true);
-      timecontrols.on("click", function(d) {
-        var tf = !that.model.get(d.name);
-        d3.select(this).classed("active", tf);
-        that.model.set(d.name, tf);
-      });
       var editorcontrols = d3.select(this.el).select("#logerrors").on("click", function(d) {
         var dis = d3.select(this);
         if ($(this).attr("data-name") === "log-errors") {
@@ -407,91 +395,9 @@ var Tributary = function() {
       var config = this.config;
       tributary.init = undefined;
       tributary.run = undefined;
-      tributary.loop = config.get("loop");
       tributary.autoinit = config.get("autoinit");
-      tributary.pause = config.get("pause");
-      tributary.loop_type = config.get("loop_type");
-      tributary.bv = config.get("bv");
-      tributary.nclones = config.get("nclones");
-      tributary.clone_opacity = config.get("clone_opacity");
-      tributary.duration = config.get("duration");
-      tributary.ease = d3.ease(config.get("ease"));
-      tributary.t = 0;
-      tributary.dt = config.get("dt");
-      tributary.reverse = false;
-      tributary.useThreejsControls = true;
       tributary.render = function() {};
-      tributary.execute = function() {
-        if (tributary.run !== undefined) {
-          var t = tributary.t;
-          if (tributary.loop) {
-            t = tributary.ease(tributary.t);
-          }
-          tributary.run(tributary.g, t, 0);
-        }
-      };
-      tributary.timer = {
-        then: new Date,
-        duration: tributary.duration,
-        ctime: tributary.t
-      };
-      d3.timer(timerFunction);
-      function timerFunction() {
-        tributary.render();
-        if (tributary.pause) {
-          return false;
-        }
-        if (tributary.__error__) {
-          return false;
-        }
-        var now = new Date;
-        var dtime = now - tributary.timer.then;
-        var dt;
-        if (tributary.loop) {
-          if (tributary.reverse) {
-            dt = tributary.timer.ctime * dtime / tributary.timer.duration * -1;
-          } else {
-            dt = (1 - tributary.timer.ctime) * dtime / tributary.timer.duration;
-          }
-          tributary.t = tributary.timer.ctime + dt;
-          if (tributary.t >= 1 || tributary.t <= 0 || tributary.t === "NaN") {
-            if (tributary.loop_type === "period") {
-              tributary.t = 0;
-              tributary.timer.then = new Date;
-              tributary.timer.duration = tributary.duration;
-              tributary.timer.ctime = tributary.t;
-              tributary.reverse = false;
-            } else if (tributary.loop_type === "pingpong") {
-              tributary.t = !tributary.reverse;
-              tributary.timer.then = new Date;
-              tributary.timer.duration = tributary.duration;
-              tributary.timer.ctime = tributary.t;
-              tributary.reverse = !tributary.reverse;
-            } else {
-              if (tributary.t !== 0) {
-                tributary.t = 1;
-                tributary.pause = true;
-                tributary.__config__.trigger("pause");
-              }
-            }
-          }
-          if (tributary.t === true) {
-            tributary.t = 1;
-          }
-          if (tributary.t === false) {
-            tributary.t = 0;
-          }
-        } else {
-          tributary.t += tributary.dt;
-        }
-        try {
-          tributary.execute();
-          tributary.__config__.trigger("noerror");
-        } catch (err) {
-          tributary.__config__.trigger("error", err);
-        }
-        tributary.__config__.trigger("tick", tributary.t);
-      }
+      tributary.execute = function() {};
     },
     execute: function() {
       var js = this.model.handle_coffee();
@@ -524,12 +430,6 @@ var Tributary = function() {
         if (tributary.autoinit) {
           tributary.clear();
           tributary.events.trigger("prerender");
-        }
-        if (this.clones) {
-          $(this.clones.node()).empty();
-        }
-        if (tributary.bv) {
-          this.make_clones();
         }
         tributary.initialize(tributary.g, tributary);
         if (tributary.autoinit && tributary.init !== undefined) {
@@ -588,21 +488,6 @@ var Tributary = function() {
       tributary.canvas = d3.select(this.el).append("canvas").classed("tributary_canvas", true).node();
       tributary.ctx = tributary.canvas.getContext("2d");
       tributary.g = tributary.ctx;
-    },
-    make_clones: function() {
-      this.clones = this.svg.selectAll("g.clones").data([ 0 ]);
-      this.clones.enter().append("g").attr("class", "clones");
-      tributary.g = this.svg.selectAll("g.delta").data([ 0 ]);
-      tributary.g.enter().append("g").attr("class", "delta");
-      var frames = d3.range(tributary.nclones);
-      var gf = this.clones.selectAll("g.bvclone").data(frames).enter().append("g").attr("class", "bvclone").style("opacity", tributary.clone_opacity);
-      gf.each(function(d, i) {
-        var j = i + 1;
-        var frame = d3.select(this);
-        tributary.init(frame, j);
-        var t = tributary.ease(j / (tributary.nclones + 1));
-        tributary.run(frame, t, j);
-      });
     },
     make_webgl: function() {
       container = this.el;
@@ -1133,104 +1018,6 @@ var Tributary = function() {
   tributary.FileView = Backbone.View.extend({
     render: function() {}
   });
-  tributary.ControlsView = Backbone.View.extend({
-    initialize: function() {
-      this.model.on("change:play", this.play_button, this);
-      this.model.on("change:loop", this.time_slider, this);
-      this.model.on("change:restart", this.restart_button, this);
-      this.model.on("pause", this.onPlayPause, this);
-    },
-    render: function() {
-      var del = d3.select(this.el);
-      del.append("div").attr("id", "time_controls");
-      del.append("div").attr("id", "user_controls");
-      del.append("div").attr("id", "time_options");
-      this.play_button();
-      this.time_slider();
-      this.restart_button();
-    },
-    onPlayPause: function() {
-      var tc = d3.select("#time_controls");
-      var pb = tc.select("button.play");
-      if (!tributary.pause) {
-        pb.classed("playing", false);
-        pb.text("Play");
-      } else if (tributary.pause) {
-        pb.classed("playing", true);
-        pb.text("Pause");
-      }
-      if (tributary.t < 1 || !tributary.loop) {
-        tributary.pause = !tributary.pause;
-        if (!tributary.pause) {
-          tributary.timer.then = new Date;
-          tributary.timer.duration = (1 - tributary.t) * tributary.duration;
-          tributary.timer.ctime = tributary.t;
-        }
-      }
-    },
-    play_button: function() {
-      var tc = d3.select("#time_controls");
-      if (this.model.get("play")) {
-        var pb = tc.append("button").classed("play", true).classed("button_on", true).text("Play");
-        pb.on("click", this.onPlayPause);
-        this.onPlayPause();
-      } else {
-        tc.select("button.play").remove();
-      }
-    },
-    time_slider: function() {
-      tributary.loop = this.model.get("loop");
-      var tc = d3.select(this.el).select("#time_controls");
-      if (tributary.loop) {
-        var ts = tc.append("input").attr({
-          type: "range",
-          min: 0,
-          max: 1,
-          step: .01,
-          value: 0,
-          name: "time"
-        }).classed("time_slider", true);
-        $(ts.node()).on("change", function() {
-          tributary.t = parseFloat(this.value);
-          if (tributary.pause) {
-            tributary.execute();
-          }
-        });
-        this.model.on("tick", function(t) {
-          $(ts.node()).attr("value", tributary.t);
-        });
-        if (this.model.get("display") === "svg") {
-          var bv = tc.append("button").classed("bv", true).classed("button_on", true).text("BV");
-          bv.on("click", function() {
-            tributary.bv = !tributary.bv;
-            tributary.events.trigger("execute");
-          });
-        }
-      } else {
-        tributary.bv = false;
-        tc.select("input.time_slider").remove();
-        tc.select("button.bv").remove();
-      }
-    },
-    restart_button: function() {
-      var that = this;
-      var tc = d3.select(this.el).select("#time_controls");
-      if (this.model.get("restart")) {
-        tributary.autoinit = false;
-        var rb = tc.append("button").classed("restart", true).classed("button_on", true).text("Restart");
-        rb.on("click", function(event) {
-          tributary.clear();
-          tributary.initialize(tributary.g, tributary);
-          tributary.init(tributary.g);
-          tributary.execute();
-          tributary.events.trigger("restart");
-        });
-      } else {
-        tributary.autoinit = true;
-        tc.select("button.restart").remove();
-      }
-    }
-  });
   tributary.batch = {};
   tributary.batch._execute = function() {
     var funcs = _.functions(this);
@@ -1238,6 +1025,79 @@ var Tributary = function() {
       if (f !== "_execute") {
         tributary.batch[f]();
       }
+    });
+  };
+  tributary.newPluginId = function() {
+    var uid = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function(c) {
+      var r = Math.random() * 16 | 0, v = c == "x" ? r : r & 3 | 8;
+      return v.toString(16);
+    });
+    return uid;
+  };
+  tributary.getPlugin = function(url, callback) {
+    var pluginUrls = [ "index.js", "index.html", "style.css" ];
+    var q = queue();
+    pluginUrls.forEach(function(purl) {
+      q.defer(d3.text, url + "/" + purl);
+    });
+    q.awaitAll(function(err, pluginContents) {
+      if (err) return callback(err);
+      var pObj = {
+        js: pluginContents[0],
+        html: pluginContents[1],
+        css: pluginContents[2]
+      };
+      callback(null, pObj);
+    });
+  };
+  tributary.setupPlugin = function(pluginContent, options) {
+    console.log("setup plugin!", pluginContent);
+    var cssModel = new tributary.CodeModel({
+      name: "style",
+      filename: "style.css",
+      code: pluginContent.css
+    });
+    cssContext = new tributary.CSSContext({
+      config: tributary.__config__,
+      model: cssModel
+    });
+    cssContext.render();
+    cssContext.execute();
+    if (!options) {
+      var options = {};
+    }
+    if (!options.pluginId) options.pluginId = tributary.newPluginId();
+    var pluginsDiv = document.getElementById("plugins");
+    var pluginDiv = document.createElement("div");
+    pluginDiv.setAttribute("id", options.pluginId);
+    pluginsDiv.appendChild(pluginDiv);
+    pluginDiv.innerHTML = pluginContent.html;
+    try {
+      plugin = new Function("tributary", "options", pluginContent.js);
+    } catch (e) {
+      e.stack;
+      console.log("error?", e);
+      return false;
+    }
+    try {
+      console.log("activate");
+      plugin(tributary, options).activate();
+    } catch (e) {
+      e.stack;
+      console.log("error??", e);
+      return false;
+    }
+    return plugin;
+  };
+  tributary.plugins = function(urls, callback) {
+    var q = queue();
+    urls.forEach(function(url) {
+      q.defer(tributary.getPlugin, url);
+    });
+    q.awaitAll(function(err, plugins) {
+      plugins.forEach(function(plugin) {
+        tributary.setupPlugin(plugin, {});
+      });
     });
   };
   tributary.ui = {};
@@ -1391,11 +1251,6 @@ var Tributary = function() {
       model: config
     });
     config_view.render();
-    var controls_view = new tributary.ControlsView({
-      el: "#controls",
-      model: config
-    });
-    controls_view.render();
     $("#config-toggle").on("click", function() {
       $("#config-content").toggle();
       if ($("#config-toggle").text() == "Config") {
@@ -1430,6 +1285,7 @@ var Tributary = function() {
     });
     tributary.events.on("fullscreen", fullscreenEvent);
     tributary.events.trigger("fullscreen", config.get("fullscreen"));
+    tributary.events.trigger("loaded");
   }
   function serializeGist() {
     var config = tributary.__config__;

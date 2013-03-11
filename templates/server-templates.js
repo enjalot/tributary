@@ -72,6 +72,6 @@ function program3(depth0,data) {
   if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{}}); }
   else { stack1 = depth0.query; stack1 = typeof stack1 === functionType ? stack1() : stack1; }
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += ";\n  </script>\n\n\n  <!-- header.js sets up the header and does communication with child iframe -->\n  <script src='/static/header.js?v=0.8'></script>\n\n</body>\n</html>\n\n\n";
+  buffer += ";\n    \n    \n    $('i').tipsy({fade: true, gravity: 'n', opacity: 0.86});\n  </script>\n\n\n  <!-- header.js sets up the header and does communication with child iframe -->\n  <script src='/static/header.js?v=0.8'></script>\n\n</body>\n</html>\n\n\n";
   return buffer;});
 })();

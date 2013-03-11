@@ -131,74 +131,7 @@ tributary.Editor = Backbone.View.extend({
       d3.select(that.el).select(".CodeMirror-gutter")
         .classed("error", false);
     });
-
-
-
-    /*
-      //TODO: fix line highlighting with codemirror 3.0 api
-    var olderrors = [];
-    this.model.on("jshint", function(errors) {
-      //turn off highlighting of any error lines
-      //d3.select(that.el).selectAll(".lineerror").classed("lineerror", false);
-      //d3.select(that.el).selectAll(".linenumbererror").classed("linenumbererror", false);
-      //d3.selectAll("pre.linenumbererror").classed("linenumbererror", false);
-      var err;
-      //TODO: this actually misses sometimes, when you hit enter all the lines
-      //will be different from last time
-      try {
-
-        for(var i = olderrors.length; i--;) {
-          err = olderrors[i];
-          if(err) {
-            that.cm.setLineClass(err.line-1, null, null);
-            that.cm.setMarker(err.line-1, "%N%", null);
-          }
-        }
-
-      //console.log(olderrors, errors)
-              var oldlines = _.pluck(olderrors, "line");
-        var lines = _.pluck(errors, "line");
-        var diff = _.difference(oldlines, lines);
-        //console.log("diff", diff);
-        var line;
-        for(i = diff.length; i--;) {
-          line = diff[i];
-          that.cm.setLineClass(line-1, null, null);
-          that.cm.setMarker(line-1, "%N%", null);
-        }
-
-        for(var i = errors.length; i--; ) {
-          err = errors[i];
-          if(err) {
-            //go through the errors and highlight the lines
-            that.cm.setLineClass(err.line-1, null, "lineerror");
-            that.cm.setMarker(err.line-1, "%N%", "linenumbererror");
-            if(tributary.hint) {
-              console.log("Error on line: " + err.line + " (" + that.model.get("filename") + ") reason: " + err.reason)
-            }
-          }
-        }
-      } catch (e) {
-        //TODO: fix this shit?
-      }
-
-      olderrors = _.clone(errors);
-
-    });
-
-    this.model.on("nojshint", function() {
-      if(olderrors.length) {
-        //turn off highlighting of any error lines
-        for(var i = that.cm.lineCount(); i--;) {
-          that.cm.setLineClass(i, null, null);
-          that.cm.setMarker(i, "%N%", null);
-        }
-        olderrors = [];
-      }
-    })
-
-    */
-
+    
 
     //Setup toolbar functionality
     var toolbar = dis.select(".toolbar");

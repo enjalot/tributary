@@ -120,22 +120,7 @@ tributary.ConfigView = Backbone.View.extend({
         }
       })
     
-    var timecontrols = d3.select("#timecontrols")
-      .selectAll("button");
-
-    timecontrols.datum(function() { return this.dataset; })
-    timecontrols.filter(function(d) {
-      return that.model.get(d.name);
-    })
-    .classed("active", true);
-
-    timecontrols.on("click", function(d) {
-      var tf = !that.model.get(d.name);
-      d3.select(this).classed("active", tf);
-      that.model.set(d.name, tf);
-    });
-
-
+    
     // Editor controls config section
 
     var editorcontrols = d3.select(this.el)

@@ -65,12 +65,7 @@
 					<option value="div">HTML</option>
 				</select>
 
-        <div id="timecontrols">
-          <h4>Time Controls <small><i class="explain-this-shit icon-help-circled"></i></small></h4>
-          <button id="play" data-name="play">Play</button>
-          <button id="loop" data-name="loop">Loop</button>
-          <button id="restart" data-name="restart">Restart</button>
-        </div>
+        
 
         <div id="editorcontrols">
           <h4>Editor Controls <small><i class="explain-this-shit icon-help-circled"></i></small></h4>
@@ -111,6 +106,9 @@
     </section>
 
 	</aside>
+  
+  <section id="plugins">
+  </section>
 
 </div>
 
@@ -131,6 +129,7 @@
 <script src="/static/lib/jshint.js"></script>
 <script src="/static/lib/jsonlint.js"></script>
 <script src="/static/lib/handlebars-1.0.rc.1.js"></script>
+<script src="/static/lib/queue.min.js"></script>
 <!-- extra 3rd party libs 
 TODO: add these as defualt libs in the list
 <script src="http://d3js.org/topojson.v0.min.js"></script>
@@ -193,7 +192,20 @@ document.body.style.cursor = "default";
 
 $('i').tipsy({fade: true, gravity: 'n', opacity: 0.86});
 
+
 tb.ui.setup();
+
+tb.events.on("loaded", function() {
+  console.log("loading plugins")
+  var urls = [
+    "/static/plugins/play"
+  ];
+  
+  tb.plugins(urls, function(err, plugins) {
+    console.log("plugins loaded");
+  });
+  
+})
 
 </script>
 

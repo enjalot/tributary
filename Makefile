@@ -26,8 +26,8 @@ all: \
 	src/editor.js \
 	src/gist.js \
 	src/files.js \
-	src/controls.js \
 	src/batch.js \
+	src/plugin.js \
 	src/ui.js \
 	src/end.js
 
