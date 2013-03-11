@@ -35,8 +35,8 @@ plugin.activate = function() {
   
   //Setup the ui for choosing the controls in the config div
   var configDiv = d3.select("#config-content");
-  configDiv.node().appendChild(d3.select(el).select(".timecontrols").node());
-  var timecontrols = d3.select(".timecontrols")
+  var timecontrolsDiv = configDiv.node().appendChild(d3.select(el).select(".timecontrols").node());
+  var timecontrols = d3.select(timecontrolsDiv)
     .selectAll("button");
 
     timecontrols.datum(function() { return this.dataset; })
@@ -54,6 +54,10 @@ plugin.activate = function() {
 
 plugin.deactivate = function() {
   el.innerHTML = "";
+  
+  tributary.pause = true;
+  var configDiv = d3.select("#config-content");
+  var timecontrolsDiv = configDiv.select(".timecontrols").remove();
   
   //remove all the stuff we added to tributary
   destroy();
