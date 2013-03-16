@@ -151,7 +151,9 @@ tributary.TributaryContext = tributary.Context.extend({
         "xmlns":"http://www.w3.org/2000/svg",
         //this usually requires xmlns:xlink but chrome wont let me add that
         "xlink":"http://www.w3.org/1999/xlink",
-        class:"tributary_svg"       
+        class:"tributary_svg",
+        width: "100%",
+        height: "100%"
       });
     tributary.g = this.svg;
 
