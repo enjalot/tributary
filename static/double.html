@@ -9,11 +9,11 @@
     <link rel="stylesheet" href="./lib/CodeMirror3/theme/lesser-dark.css">
 
     <link rel='stylesheet' type='text/css' href='http://yui.yahooapis.com/2.9.0/build/reset/reset-min.css' />
-    <link rel='stylesheet' type='text/css' href='./lib/slider/css/humanity/jquery-ui-slider.css' />
-    <link href="./lib/colorpicker/Color.Picker.Classic.css" rel="stylesheet" type="text/css" />
 
-    <link rel="shortcut icon" href="./img/favicon.ico">
+    <link rel="stylesheet" href="/static/lib/inlet.css" type="text/css" media="screen" charset="utf-8">
 
+    <script src="./lib/html5slider.js"></script>
+    
     <style>
         #display1 {
             position:absolute;
@@ -25,6 +25,7 @@
         }
         #editor1 {
             position: absolute;
+            top: 20px;
             right: 0px;
             width: 400px;
             height: 400px;
@@ -40,7 +41,7 @@
         #editor2 {
             position: absolute;
             right: 0px;
-            top: 500px;
+            top: 550px;
             width: 400px;
             height: 400px;
         }
@@ -104,7 +105,9 @@
 
             var config = new tb.Config();
 
-            var model = new tb.CodeModel();
+            var model = new tb.CodeModel({
+              code: 'var svg = d3.select("#display1 svg").append("circle")\n  .attr({r:10,cx:100,cy:100});'
+            });
 
             var context = new tb.TributaryContext({
               config: config,
@@ -118,13 +121,16 @@
               el: d3.select("#editor1").node()
             });
             editor.render();
+            tb.events.trigger("execute");
 
 
             var tb2 = Tributary();
 
             var config2 = new tb2.Config();
 
-            var model2 = new tb2.CodeModel();
+            var model2 = new tb2.CodeModel({
+              code: 'var svg = d3.select("#display2 svg").append("circle")\n  .attr({r:10,cx:100,cy:100});'
+            });
 
             var context2 = new tb2.TributaryContext({
               config: config2,
@@ -138,6 +144,7 @@
               el: d3.select("#editor2").node()
             });
             editor2.render();
+            tb2.events.trigger("execute");
 
 
         }());

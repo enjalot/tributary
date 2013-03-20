@@ -85,7 +85,7 @@ function program5(depth0,data) {
   
   return "checked";}
 
-  buffer += "<div class=\"toolbar hidden\">\n  <label>default<input type=\"radio\" class=\"radio\" name=\"editmode\" value=\"default\" ";
+  buffer += "<!--\n<div class=\"toolbar hidden\">\n  <label>default<input type=\"radio\" class=\"radio\" name=\"editmode\" value=\"default\" ";
   stack1 = depth0['default'];
   stack1 = helpers['if'].call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(1, program1, data)});
   if(stack1 || stack1 === 0) { buffer += stack1; }
@@ -97,7 +97,7 @@ function program5(depth0,data) {
   stack1 = depth0.emacs;
   stack1 = helpers['if'].call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(5, program5, data)});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "></input></label>\n\n  <label class=\"fontSize\">Font Size:<label class='plusFontSize'>+</label><label class='minusFontSize'>-</label></label>\n</div>\n\n<div class=\"settings\">\n<img src=\"./img/settings%402x.png\" style=\"width: 14px; height: 14px;\" />\n</div>\n";
+  buffer += "></input></label>\n\n  <label class=\"fontSize\">Font Size:<label class='plusFontSize'>+</label><label class='minusFontSize'>-</label></label>\n</div>\n\n<div class=\"settings\">\n<img src=\"/static/img/settings@2x.png\" style=\"width: 14px; height: 14px;\" />\n</div>\n-->\n";
   return buffer;});
 templates['files'] = template(function (Handlebars,depth0,helpers,partials,data) {
   helpers = helpers || Handlebars.helpers;

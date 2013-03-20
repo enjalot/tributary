@@ -38,6 +38,7 @@ function recieveMessage(event) {
 
 //user has changed code, so let parent frame know not to let them leave too easy ;)
 tributary.events.on("warnchanged", function() {
+  if(parentWindow)
   parentWindow.postMessage({request: "warnchanged" }, tributary._origin);
 })
 tributary.events.on("imgur", function(img) {
@@ -46,6 +47,7 @@ tributary.events.on("imgur", function(img) {
 
 //let the parent frame know we went fullsize so it can style itself accordingly
 function goFullscreen() {
+  if(parentWindow)
   parentWindow.postMessage({request: "fullscreen" }, tributary._origin);
 }
 

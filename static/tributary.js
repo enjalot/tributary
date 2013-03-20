@@ -1133,7 +1133,7 @@ var Tributary = function() {
     }
   }
   tributary.events.on("warnchanged", function() {
-    parentWindow.postMessage({
+    if (parentWindow) parentWindow.postMessage({
       request: "warnchanged"
     }, tributary._origin);
   });
@@ -1144,7 +1144,7 @@ var Tributary = function() {
     }, tributary._origin);
   });
   function goFullscreen() {
-    parentWindow.postMessage({
+    if (parentWindow) parentWindow.postMessage({
       request: "fullscreen"
     }, tributary._origin);
   }
