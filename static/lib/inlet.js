@@ -849,7 +849,7 @@ var Inlet = function() {
         var len = val.length;
         var start = match.index;
         var end = match.index + len;
-        if (cursor.ch >= start && cursor.ch <= end) {
+        if (cursor.ch >= start && (cursor.ch <= end || cursor.ch - 1 == end))  {
           match = null;
           return {
             start: start,
