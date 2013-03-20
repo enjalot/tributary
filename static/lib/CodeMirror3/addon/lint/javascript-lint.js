@@ -9,19 +9,18 @@
 	         "Unmatched ", " and instead saw", " is not defined",
 	         "Unclosed string", "Stopping, unable to continue" ];
 
-  CodeMirror.javascriptValidator = function(text) {
-    JSHINT(text, {
-        asi: true,
-        laxcomma: true,
-        laxbreak: true,
-        loopfunc: true,
-        smarttabs: true,
-        sub: true
-      });
+  function validator(options, text) {
+    JSHINT(text, options);
     var errors = JSHINT.data().errors, result = [];
     if (errors) parseErrors(errors, result);
     return result;
+  }
+
+  CodeMirror.javascriptValidatorWithOptions = function(options) {
+    return function(text) { return validator(options, text); };
   };
+
+  CodeMirror.javascriptValidator = CodeMirror.javascriptValidatorWithOptions(null);
 
   function cleanup(error) {
     // All problems are warnings by default

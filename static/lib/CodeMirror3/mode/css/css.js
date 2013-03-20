@@ -22,7 +22,7 @@ CodeMirror.defineMode("css-base", function(config, parserConfig) {
     if (hooks[ch]) {
       // result[0] is style and result[1] is type
       var result = hooks[ch](stream, state);
-      if (result !== false) return ret(result[0], result[1]);
+      if (result !== false) return result;
     }
     if (ch == "@") {stream.eatWhile(/[\w\\\-]/); return ret("def", stream.current());}
     else if (ch == "=") ret(null, "compare");
@@ -157,6 +157,7 @@ CodeMirror.defineMode("css-base", function(config, parserConfig) {
       state.tokenize = state.tokenize || tokenBase;
       if (state.tokenize == tokenBase && stream.eatSpace()) return null;
       var style = state.tokenize(stream, state);
+      if (style && typeof style != "string") style = ret(style[0], style[1]);
 
       // Changing style returned based on context
       var context = state.stack[state.stack.length-1];
@@ -233,7 +234,7 @@ CodeMirror.defineMode("css-base", function(config, parserConfig) {
           style = "error";
         }
       } else if (style == "atom") {
-        if(!context || context == "@media{") {
+        if(!context || context == "@media{" || context == "block") {
           style = "builtin";
         } else if (context == "propertyValue") {
           if (!/^#([0-9a-fA-f]{3}|[0-9a-fA-f]{6})$/.test(stream.current())) {
@@ -444,7 +445,7 @@ CodeMirror.defineMode("css-base", function(config, parserConfig) {
     "menu", "menulist", "menulist-button", "menulist-text",
     "menulist-textfield", "menutext", "message-box", "middle", "min-intrinsic",
     "mix", "mongolian", "monospace", "move", "multiple", "myanmar", "n-resize",
-    "narrower", "navy", "ne-resize", "nesw-resize", "no-close-quote", "no-drop",
+    "narrower", "ne-resize", "nesw-resize", "no-close-quote", "no-drop",
     "no-open-quote", "no-repeat", "none", "normal", "not-allowed", "nowrap",
     "ns-resize", "nw-resize", "nwse-resize", "oblique", "octal", "open-quote",
     "optimizeLegibility", "optimizeSpeed", "oriya", "oromo", "outset",
@@ -476,7 +477,7 @@ CodeMirror.defineMode("css-base", function(config, parserConfig) {
     "vertical", "vertical-text", "visible", "visibleFill", "visiblePainted",
     "visibleStroke", "visual", "w-resize", "wait", "wave", "white", "wider",
     "window", "windowframe", "windowtext", "x-large", "x-small", "xor",
-    "xx-large", "xx-small", "yellow"
+    "xx-large", "xx-small"
   ]);
 
   function tokenCComment(stream, state) {

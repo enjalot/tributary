@@ -169,6 +169,10 @@
         motionArgs: { forward: false }},
     { keys: ['\'', 'character'], type: 'motion', motion: 'goToMark' },
     { keys: ['`', 'character'], type: 'motion', motion: 'goToMark' },
+    { keys: [']', '`',], type: 'motion', motion: 'jumpToMark', motionArgs: { forward: true } },
+    { keys: ['[', '`',], type: 'motion', motion: 'jumpToMark', motionArgs: { forward: false } },
+    { keys: [']', '\''], type: 'motion', motion: 'jumpToMark', motionArgs: { forward: true, linewise: true } },
+    { keys: ['[', '\''], type: 'motion', motion: 'jumpToMark', motionArgs: { forward: false, linewise: true } },
     { keys: ['|'], type: 'motion',
         motion: 'moveToColumn',
         motionArgs: { }},
@@ -729,7 +733,7 @@
         getSearchState(cm).setReversed(!forward);
         var promptPrefix = (forward) ? '/' : '?';
         var originalQuery = getSearchState(cm).getQuery();
-        var originalPos = cm.getCursor();
+        var originalScrollPos = cm.getScrollInfo();
         function handleQuery(query, ignoreCase, smartCase) {
           try {
             updateSearchQuery(cm, query, ignoreCase, smartCase);
@@ -744,21 +748,22 @@
           });
         }
         function onPromptClose(query) {
-          cm.scrollIntoView(originalPos);
+          cm.scrollTo(originalScrollPos.left, originalScrollPos.top);
           handleQuery(query, true /** ignoreCase */, true /** smartCase */);
         }
         function onPromptKeyUp(e, query) {
-          if (query) {
-            try {
-              updateSearchQuery(cm, query, true /** ignoreCase */,
-                                true /** smartCase */);
-              cm.scrollIntoView(findNext(cm, forward, query));
-            } catch (e) {
-              // Swallow bad regexes for incremental search.
-            }
+          var parsedQuery;
+          try {
+            parsedQuery = updateSearchQuery(cm, query,
+                true /** ignoreCase */, true /** smartCase */)
+          } catch (e) {
+            // Swallow bad regexes for incremental search.
+          }
+          if (parsedQuery) {
+            cm.scrollIntoView(findNext(cm, !forward, parsedQuery), 30);
           } else {
             clearSearchHighlight(cm);
-            cm.scrollIntoView(originalPos);
+            cm.scrollTo(originalScrollPos.left, originalScrollPos.top);
           }
         }
         function onPromptKeyDown(e, query, close) {
@@ -766,7 +771,7 @@
           if (keyName == 'Esc' || keyName == 'Ctrl-C' || keyName == 'Ctrl-[') {
             updateSearchQuery(cm, originalQuery);
             clearSearchHighlight(cm);
-            cm.scrollIntoView(originalPos);
+            cm.scrollTo(originalScrollPos.left, originalScrollPos.top);
 
             CodeMirror.e_stop(e);
             close();
@@ -1007,6 +1012,44 @@
           return mark.find();
         }
         return null;
+      },
+      jumpToMark: function(cm, motionArgs, vim) {
+        var best = cm.getCursor(); 
+        for (var i = 0; i < motionArgs.repeat; i++) {
+          var cursor = best;
+          for (var key in vim.marks) {
+            if (!isLowerCase(key)) {
+              continue;
+            }
+            var mark = vim.marks[key].find();
+            var isWrongDirection = (motionArgs.forward) ?
+              cursorIsBefore(mark, cursor) : cursorIsBefore(cursor, mark)
+
+            if (isWrongDirection) {
+              continue;
+            }
+            if (motionArgs.linewise && (mark.line == cursor.line)) {
+              continue;
+            }
+
+            var equal = cursorEqual(cursor, best);
+            var between = (motionArgs.forward) ? 
+              cusrorIsBetween(cursor, mark, best) :
+              cusrorIsBetween(best, mark, cursor);
+
+            if (equal || between) {
+              best = mark;
+            }
+          }
+        }
+
+        if (motionArgs.linewise) {
+          // Vim places the cursor on the first non-whitespace character of
+          // the line if there is one, else it places the cursor at the end
+          // of the line, regardless of whether a mark was found.
+          best.ch = findFirstNonWhiteSpaceCharacter(cm.getLine(best.line));
+        }
+        return best;
       },
       moveByCharacters: function(cm, motionArgs) {
         var cur = cm.getCursor();
@@ -1595,6 +1638,12 @@
       }
       return false;
     }
+    function cusrorIsBetween(cur1, cur2, cur3) {
+      // returns true if cur2 is between cur1 and cur3.
+      var cur1before2 = cursorIsBefore(cur1, cur2);
+      var cur2before3 = cursorIsBefore(cur2, cur3);
+      return cur1before2 && cur2before3;
+    }
     function lineLength(cm, lineNum) {
       return cm.getLine(lineNum).length;
     }
@@ -2148,28 +2197,40 @@
       }
       return(false);
     }
+    // Returns true if the query is valid.
     function updateSearchQuery(cm, rawQuery, ignoreCase, smartCase) {
-      cm.operation(function() {
-        var state = getSearchState(cm);
-        if (!rawQuery) {
-          return;
-        }
-        var query = parseQuery(cm, rawQuery, !!ignoreCase, !!smartCase);
-        if (!query) {
-          return;
-        }
-        highlightSearchMatches(cm, query);
-        if (regexEqual(query, state.getQuery())) {
-          return;
-        }
-        state.setQuery(query);
-      });
+      if (!rawQuery) {
+        return;
+      }
+      var state = getSearchState(cm);
+      var query = parseQuery(cm, rawQuery, !!ignoreCase, !!smartCase);
+      if (!query) {
+        return;
+      }
+      highlightSearchMatches(cm, query);
+      if (regexEqual(query, state.getQuery())) {
+        return query;
+      }
+      state.setQuery(query);
+      return query;
     }
     function searchOverlay(query) {
+      if (query.source.charAt(0) == '^') {
+        var matchSol = true;
+      }
       return {
         token: function(stream) {
+          if (matchSol && !stream.sol()) {
+            stream.skipToEnd();
+            return;
+          }
           var match = stream.match(query, false);
           if (match) {
+            if (match[0].length == 0) {
+              // Matched empty string, skip to next.
+              stream.next();
+              return;
+            }
             if (!stream.sol()) {
               // Backtrack 1 to match \b
               stream.backUp(1);

@@ -803,7 +803,14 @@ var Tributary = function() {
       if (filetype == "js") {
         options.theme = "lesser-dark";
         options.gutters = [ "CodeMirror-lint-markers" ];
-        options.lintWith = CodeMirror.javascriptValidator;
+        options.lintWith = CodeMirror.javascriptValidatorWithOptions({
+          asi: true,
+          laxcomma: true,
+          laxbreak: true,
+          loopfunc: true,
+          smarttabs: true,
+          sub: true
+        });
       } else if (filetype == "json") {
         options.mode = "application/json";
         options.gutters = [ "CodeMirror-lint-markers" ];
