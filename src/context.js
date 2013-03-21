@@ -48,26 +48,6 @@ tributary.TributaryContext = tributary.Context.extend({
   execute: function() {   
     var js = this.model.handle_coffee();
 
-    //jshint step
-    if(js.length > 0 && this.model.get("type") !== "coffee") {
-      var hints = JSHINT(js, {
-        asi: true,
-        laxcomma: true,
-        laxbreak: true,
-        loopfunc: true,
-        smarttabs: true,
-        sub: true
-      })
-      if(!hints) {
-        this.model.trigger("jshint", JSHINT.errors);
-        //for now, we can let the user continue incase JSHINT is too strict
-        //this.model.trigger("error", null);
-        //return false;
-      } else {
-        this.model.trigger("nojshint");
-      }
-    }
-
     try {
       //eval(js);
       tributary.initialize = new Function("g", "tributary", js);
@@ -78,13 +58,7 @@ tributary.TributaryContext = tributary.Context.extend({
     }
 
     try {
-        //for the datGUI stuff
-        //TODO: move this out of here to it's own function
-        window.trib = {};               //reset global trib object
-        window.trib_options = {};       //reset global trib_options object
-        trib = window.trib;
-        trib_options = window.trib_options;
-
+        
         //empty out our display element
         if(tributary.autoinit) {
           tributary.clear();
@@ -156,9 +130,10 @@ tributary.TributaryContext = tributary.Context.extend({
         height: "100%"
       });
     tributary.g = this.svg;
+    tributary.__svg__ = this.svg;
 
     tributary.clear = function() {
-      $(tributary.g.node()).empty();
+      $(tributary.__svg__.node()).empty();
       //this handles delta (clones)
       //$(tributary.svg.node()).empty();
     };

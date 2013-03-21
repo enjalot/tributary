@@ -276,10 +276,14 @@ function tributaryPlayPlugin(tributary, plugin) {
     //Clones
     tributary.events.on("prerender", function() {
       if(tributary.clones && config.get("display") === "svg") { 
-        $(tributary.clones.node()).empty(); 
+        //$(tributary.clones.node()).empty(); 
+        tributary.clones.remove();
+        tributary.__svg__.select("g.base").remove();
       }
       if(tributary.bv) {
         makeClones();
+      } else {
+        tributary.g = tributary.__svg__;
       }
     });
   }
@@ -291,17 +295,14 @@ function tributaryPlayPlugin(tributary, plugin) {
   //This function 
   makeClones = function() {
     //create the clone and tributary g elements if they don't exist
-    var svg = d3.select("#display").select("svg");
+    var svg = tributary.__svg__;
     tributary.clones = svg.selectAll("g.clones")
       .data([0]);
     tributary.clones
       .enter()
       .append("g").attr("class", "clones");
-    tributary.g = svg.selectAll("g.clones")
-      .data([0]);
-    tributary.g
-      .enter()
-      .append("g").attr("class", "clones");
+    tributary.g = svg
+      .append("g").attr("class", "base");
 
     //make n frames with lowered opacity
     var frames = d3.range(tributary.nclones);
@@ -312,13 +313,19 @@ function tributaryPlayPlugin(tributary, plugin) {
         .style("opacity", tributary.clone_opacity);
 
     gf.each(function(d, i) {
-      var j = i+1;
+      var j = i;
       var frame = d3.select(this);
-      tributary.init(frame, j);
+      if(tributary.init)
+        tributary.init(frame, j);
       //tributary.run(i/tributary.nclones, frame, i);
-      var t = tributary.ease(j/(tributary.nclones+1));
+      var t = tributary.ease(j/(tributary.nclones-1));
       tributary.run(frame, t, j);
     });
+    /*
+    if(tributary.init) 
+      tributary.init(gbase, 0);
+    tributary.run(gbase, 0, 0);
+    */
   }
 
   return plugin;

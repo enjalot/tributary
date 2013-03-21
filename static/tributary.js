@@ -402,21 +402,6 @@ var Tributary = function() {
     },
     execute: function() {
       var js = this.model.handle_coffee();
-      if (js.length > 0 && this.model.get("type") !== "coffee") {
-        var hints = JSHINT(js, {
-          asi: true,
-          laxcomma: true,
-          laxbreak: true,
-          loopfunc: true,
-          smarttabs: true,
-          sub: true
-        });
-        if (!hints) {
-          this.model.trigger("jshint", JSHINT.errors);
-        } else {
-          this.model.trigger("nojshint");
-        }
-      }
       try {
         tributary.initialize = new Function("g", "tributary", js);
       } catch (e) {
@@ -424,10 +409,6 @@ var Tributary = function() {
         return false;
       }
       try {
-        window.trib = {};
-        window.trib_options = {};
-        trib = window.trib;
-        trib_options = window.trib_options;
         if (tributary.autoinit) {
           tributary.clear();
           tributary.events.trigger("prerender");
@@ -478,8 +459,9 @@ var Tributary = function() {
         height: "100%"
       });
       tributary.g = this.svg;
+      tributary.__svg__ = this.svg;
       tributary.clear = function() {
-        $(tributary.g.node()).empty();
+        $(tributary.__svg__.node()).empty();
       };
     },
     make_canvas: function() {
