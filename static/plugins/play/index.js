@@ -297,11 +297,11 @@ function tributaryPlayPlugin(tributary, plugin) {
     tributary.clones
       .enter()
       .append("g").attr("class", "clones");
-    tributary.g = svg.selectAll("g.delta")
+    tributary.g = svg.selectAll("g.clones")
       .data([0]);
     tributary.g
       .enter()
-      .append("g").attr("class", "delta");
+      .append("g").attr("class", "clones");
 
     //make n frames with lowered opacity
     var frames = d3.range(tributary.nclones);
