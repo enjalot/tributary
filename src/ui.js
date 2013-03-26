@@ -5,50 +5,53 @@ tributary.hint = false;
 
 var parentWindow;
 
-//listen on window postMessage to load gist and handle save/forks
-window.addEventListener("message", recieveMessage, false)
+if(window) {
+  //listen on window postMessage to load gist and handle save/forks
+  window.addEventListener("message", recieveMessage, false)
 
-function recieveMessage(event) {
-  //console.log(event.origin, tributary._origin, event.data);
-  if(event.origin !== tributary._origin || !event.data) return;
-  var data = event.data;
+  function recieveMessage(event) {
+    //console.log(event.origin, tributary._origin, event.data);
+    if(event.origin !== tributary._origin || !event.data) return;
+    var data = event.data;
 
-  if(data.request === "load") {
-    //assemble the ui using gist data;
-    parentWindow = event.source;
-    tributary.query = data.query;
-    tributary.loadGist(data.gist, _assemble);
-  } else if(data.request === "save") {
-    //postMessage the host frame with the tributary.context information
-    var json = serializeGist();
-    event.source.postMessage({request: "save", config: json, salt: data.salt}, event.origin)
-  } else if(data.request === "description") {
-    //update the gist's description
-    tributary.__config__.set("description", data.description);
-  } else if( data.request === "exitfullscreen") {
-    tributary.events.trigger("fullscreen", false); 
-  } else if( data.request === "thumbnail" ) {
-    //we have successful upload!
-    var image = data.image;
-    d3.select("#trib-thumbnail").attr("src", image.data.link);
-    d3.select("#trib-thumbnail").style("display", "");
-    tributary.__config__.set("thumbnail", image.data.link);
+    if(data.request === "load") {
+      //assemble the ui using gist data;
+      parentWindow = event.source;
+      tributary.query = data.query;
+      tributary.loadGist(data.gist, _assemble);
+    } else if(data.request === "save") {
+      //postMessage the host frame with the tributary.context information
+      var json = serializeGist();
+      event.source.postMessage({request: "save", config: json, salt: data.salt}, event.origin)
+    } else if(data.request === "description") {
+      //update the gist's description
+      tributary.__config__.set("description", data.description);
+    } else if( data.request === "exitfullscreen") {
+      tributary.events.trigger("fullscreen", false); 
+    } else if( data.request === "thumbnail" ) {
+      //we have successful upload!
+      var image = data.image;
+      d3.select("#trib-thumbnail").attr("src", image.data.link);
+      d3.select("#trib-thumbnail").style("display", "");
+      tributary.__config__.set("thumbnail", image.data.link);
+    }
   }
 }
 
 //user has changed code, so let parent frame know not to let them leave too easy ;)
 tributary.events.on("warnchanged", function() {
   if(parentWindow)
-  parentWindow.postMessage({request: "warnchanged" }, tributary._origin);
+    parentWindow.postMessage({request: "warnchanged" }, tributary._origin);
 })
 tributary.events.on("imgur", function(img) {
-  parentWindow.postMessage({request: "imgur", img: img }, tributary._origin);
+  if(parentWindow)
+    parentWindow.postMessage({request: "imgur", img: img }, tributary._origin);
 })
 
 //let the parent frame know we went fullsize so it can style itself accordingly
 function goFullscreen() {
   if(parentWindow)
-  parentWindow.postMessage({request: "fullscreen" }, tributary._origin);
+    parentWindow.postMessage({request: "fullscreen" }, tributary._origin);
 }
 
 

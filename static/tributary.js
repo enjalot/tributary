@@ -1095,30 +1095,32 @@ var Tributary = function() {
   tributary.trace = false;
   tributary.hint = false;
   var parentWindow;
-  window.addEventListener("message", recieveMessage, false);
-  function recieveMessage(event) {
-    if (event.origin !== tributary._origin || !event.data) return;
-    var data = event.data;
-    if (data.request === "load") {
-      parentWindow = event.source;
-      tributary.query = data.query;
-      tributary.loadGist(data.gist, _assemble);
-    } else if (data.request === "save") {
-      var json = serializeGist();
-      event.source.postMessage({
-        request: "save",
-        config: json,
-        salt: data.salt
-      }, event.origin);
-    } else if (data.request === "description") {
-      tributary.__config__.set("description", data.description);
-    } else if (data.request === "exitfullscreen") {
-      tributary.events.trigger("fullscreen", false);
-    } else if (data.request === "thumbnail") {
-      var image = data.image;
-      d3.select("#trib-thumbnail").attr("src", image.data.link);
-      d3.select("#trib-thumbnail").style("display", "");
-      tributary.__config__.set("thumbnail", image.data.link);
+  if (window) {
+    window.addEventListener("message", recieveMessage, false);
+    function recieveMessage(event) {
+      if (event.origin !== tributary._origin || !event.data) return;
+      var data = event.data;
+      if (data.request === "load") {
+        parentWindow = event.source;
+        tributary.query = data.query;
+        tributary.loadGist(data.gist, _assemble);
+      } else if (data.request === "save") {
+        var json = serializeGist();
+        event.source.postMessage({
+          request: "save",
+          config: json,
+          salt: data.salt
+        }, event.origin);
+      } else if (data.request === "description") {
+        tributary.__config__.set("description", data.description);
+      } else if (data.request === "exitfullscreen") {
+        tributary.events.trigger("fullscreen", false);
+      } else if (data.request === "thumbnail") {
+        var image = data.image;
+        d3.select("#trib-thumbnail").attr("src", image.data.link);
+        d3.select("#trib-thumbnail").style("display", "");
+        tributary.__config__.set("thumbnail", image.data.link);
+      }
     }
   }
   tributary.events.on("warnchanged", function() {
@@ -1127,7 +1129,7 @@ var Tributary = function() {
     }, tributary._origin);
   });
   tributary.events.on("imgur", function(img) {
-    parentWindow.postMessage({
+    if (parentWindow) parentWindow.postMessage({
       request: "imgur",
       img: img
     }, tributary._origin);

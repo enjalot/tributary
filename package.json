@@ -10,6 +10,7 @@
     "animation",
     "canvas"
   ],
+  "main": "index.js",
   "homepage": "http://tributary.io",
   "author": {
     "name": "Ian Johnson",
