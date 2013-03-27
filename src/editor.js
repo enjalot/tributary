@@ -131,7 +131,18 @@ tributary.Editor = Backbone.View.extend({
     this.cm.setValue(this.model.get("code"));
     this.inlet = Inlet(this.cm);
 
-    this.model.on("error", function() {
+    this.model.on("error", function(error) {
+      /*
+      var trace = error.stack;
+      var match = trace.match(/eval at \<anonymous\>.*\<anonymous\>:([0-9]+):([0-9]+)/)
+      console.log("trace", trace);
+      console.log("match", match);
+      */
+      /*
+      if(match) {
+        //console.logJack("MATCH", match[1]);
+        args = ["line " + (+match[1]-1) + ":"].concat([].splice.call(arguments,0))
+      */
       d3.select(that.el).select(".CodeMirror-gutter")
         .classed("error", true);
     });

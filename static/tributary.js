@@ -815,7 +815,7 @@ var Tributary = function() {
       });
       this.cm.setValue(this.model.get("code"));
       this.inlet = Inlet(this.cm);
-      this.model.on("error", function() {
+      this.model.on("error", function(error) {
         d3.select(that.el).select(".CodeMirror-gutter").classed("error", true);
       });
       this.model.on("noerror", function() {
@@ -1261,7 +1261,6 @@ var Tributary = function() {
       }
     });
     function fullscreenEvent(fullscreen) {
-      console.log("fullscreen!", fullscreen);
       if (fullscreen) {
         config.set("fullscreen", true);
         $("#container").addClass("fullscreen");

@@ -225,7 +225,6 @@ function _assemble(error, ret) {
   })
 
   function fullscreenEvent(fullscreen) {
-    console.log("fullscreen!", fullscreen)
     if(fullscreen) {
       config.set("fullscreen", true);
       $("#container").addClass("fullscreen")
