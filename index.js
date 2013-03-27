@@ -1,3 +1,4 @@
-module.exports = require("./static/tributary.js");
+require("./static/tributary.js");
+module.exports = Tributary;
 
 
