@@ -1,2 +1,2 @@
 //(function(){
-var Tributary = function() {
+Tributary = function() {

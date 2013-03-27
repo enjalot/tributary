@@ -1,5 +1,5 @@
 //(function(){
-var Tributary = function() {
+Tributary = function() {
   var tributary = {};
   tributary.events = _.clone(Backbone.Events);
   Tributary.__events__ = _.clone(Backbone.Events);
