@@ -1,4 +1,14 @@
 //(function(){
+var d3 = require("d3");
+
+var _ = require("underscore");
+
+var Backbone = require("backbone");
+
+var cm = require("CodeMirror");
+
+var queue = require("queue-async");
+
 Tributary = function() {
   var tributary = {};
   tributary.events = _.clone(Backbone.Events);
@@ -259,11 +269,12 @@ Tributary = function() {
     },
     require: function(callback) {
       var modules = this.get("require");
-      var scripts = _.pluck(modules, "url");
-      var rcb = function() {
-        return callback(null, arguments);
-      };
-      require(scripts, rcb);
+      var required = d3.select("head").selectAll("script.require").data(modules, function(d) {
+        return d.name;
+      });
+      required.enter().append("script").classed("require", true).attr("scr", module.url);
+      required.exit().remove();
+      callback(null, null);
     },
     initialize: function() {
       this.on("hide", function() {
@@ -773,10 +784,8 @@ Tributary = function() {
     render: function() {
       var that = this;
       var dis = d3.select(this.el).classed("editor", true);
-      var template = Handlebars.templates.editor;
-      var html = template(this.getConfig());
-      this.$el.html(html);
       filetype = that.model.get("filename").split(".")[1];
+      console.log("CM", CodeMirror);
       var options = {
         mode: that.model.get("mode"),
         lineNumbers: true,
@@ -785,14 +794,7 @@ Tributary = function() {
       if (filetype == "js") {
         options.theme = "lesser-dark";
         options.gutters = [ "CodeMirror-lint-markers" ];
-        options.lintWith = CodeMirror.javascriptValidatorWithOptions({
-          asi: true,
-          laxcomma: true,
-          laxbreak: true,
-          loopfunc: true,
-          smarttabs: true,
-          sub: true
-        });
+        options.linWith = CodeMirror.javascriptValidator;
       } else if (filetype == "json") {
         options.mode = "application/json";
         options.gutters = [ "CodeMirror-lint-markers" ];

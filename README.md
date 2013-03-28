@@ -54,7 +54,6 @@ there is also a watch.sh bash script which will recompile the frontend code
 when any files change.
 
 
-
 Reserved properties of the tributary object:
 tributary.initialize  
 tributary.init  
@@ -76,6 +75,10 @@ tributary.reverse
 tributary.render  
 
 
+# Usage as a node module
+
+
+
 ###Contexts
 
 I'm using latest CodeMirror from git (updating every-so often)  
@@ -90,6 +93,8 @@ I have customized the JSHINT options in addons/lint/javascript-lint.js to be:
   sub: true
 }
 ```
+
+
 
 
 ### TODO:  

@@ -76,12 +76,13 @@ tributary.Editor = Backbone.View.extend({
       .classed("editor", true)
 
     //create the toolbar
-    var template = Handlebars.templates.editor;
-    var html = template(this.getConfig());
-    this.$el.html(html);
+    //var template = Handlebars.templates.editor;
+    //var html = template(this.getConfig());
+    //this.$el.html(html);
 
 
     filetype = that.model.get("filename").split(".")[1];
+    console.log("CM", CodeMirror)
 
     var options = {
       mode: that.model.get("mode"),
@@ -91,6 +92,8 @@ tributary.Editor = Backbone.View.extend({
     if(filetype == "js") {
       options.theme = "lesser-dark";
       options.gutters = ["CodeMirror-lint-markers"];
+      options.linWith = CodeMirror.javascriptValidator;
+      /*
       options.lintWith = CodeMirror.javascriptValidatorWithOptions({
         asi: true,
         laxcomma: true,
@@ -99,6 +102,7 @@ tributary.Editor = Backbone.View.extend({
         smarttabs: true,
         sub: true
       })
+      */
     } else if(filetype == "json") {
       options.mode = "application/json";
       options.gutters = ["CodeMirror-lint-markers"];

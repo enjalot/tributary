@@ -25,7 +25,15 @@
     "request":"2.12.0",
     "handlebars":"1.0.7",
     "mongoskin":"0.5.0",
-    "connect-mongo": "0.1.x"
+    "connect-mongo": "0.1.x",
+    
+    "d3":"3.1.4",
+    "underscore":"1.4.4",
+    "backbone":"1.0.0",
+    "codemirror":"3.11.01",
+    "queue-async": "1.0.1",
+    "handlebars": "1.0.10",
+    "coffee-script":"1.6.2"
   },
   "devDependencies": {
     "uglify-js": "1.2.3",
