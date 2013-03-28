@@ -1,7 +1,7 @@
 
 //list of old filenames that are broken by the change.
 //TODO: decide if want to allow for arbitrary file to be the tributary context, in config somehow?
-var mainfiles = ["inlet.js", "inlet.coffee", "sinwaves.js", "squarecircle.js"];
+tributary.__mainfiles__ = ["inlet.js", "inlet.coffee", "sinwaves.js", "squarecircle.js"];
 
 var reservedFiles = ["_.md", "config.json"];
 
@@ -64,7 +64,7 @@ tributary.make_context = function(options) {
   }
   
   model.set("type", type);
-  if(mainfiles.indexOf(filename) >= 0 ) {//  === "inlet.js") {
+  if(tributary.__mainfiles__.indexOf(filename) >= 0 ) {//  === "inlet.js") {
     if(type === "coffee") model.set("mode", "coffeescript");
     context = new tributary.TributaryContext({
       config: config,

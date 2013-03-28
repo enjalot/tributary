@@ -50,7 +50,13 @@ tributary.Config = Backbone.Model.extend({
     required.enter()
       .append("script")
       .classed("require", true)
-      .attr("scr", module.url);
+      .attr("src", function(d) { return d.url })
+      .on("load", function() {
+        //TODO: defer all loaded events and execute once?
+        tributary.events.trigger("execute");
+      })
+     
+    
     required.exit().remove();
 
     callback(null, null);

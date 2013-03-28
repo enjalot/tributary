@@ -80,9 +80,7 @@ tributary.Editor = Backbone.View.extend({
     //var html = template(this.getConfig());
     //this.$el.html(html);
 
-
     filetype = that.model.get("filename").split(".")[1];
-    console.log("CM", CodeMirror)
 
     var options = {
       mode: that.model.get("mode"),

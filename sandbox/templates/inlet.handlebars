@@ -14,6 +14,7 @@
 
   <!-- Add jQuery -->
   <script src="/static/lib/jquery-1.7.min.js"></script>
+  <script src="/static/lib/jquery.tipsy.js" type="text/javascript" charset="utf-8"></script>
 
   
   <!-- CodeMirror Things -->
@@ -110,81 +111,36 @@
 </div>
 
 
-
-
-
-
-<!-- Essential 3rd party libraries 
-<script src="/static/lib/d3.min.js"></script>
-<script src="/static/lib/queue.min.js"></script>
-<script src="/static/lib/underscore-min.js"></script>
-<script src="/static/lib/backbone-min.js"></script>
--->
-
+<!-- Essential 3rd party libraries (that can't be browserified for now) -->
 <script src="/static/lib/coffee-script.js"></script>
-<script src="/static/lib/handlebars-1.0.rc.1.js"></script>
+<script src="/static/lib/jsonlint.js"></script>
 
-<script src="/static/lib/underscore.math.js"></script>
-
-
-<!--
-<script src="/static/lib/require.js"></script>
--->
-
-<script src='/static/lib/three.min.js'></script>
+<!-- three.js should probably be done as a plugin -->
+<script src="/static/lib/three.min.js"></script>
 <script src="/static/lib/Stats.js"></script>
 
-<script src="/static/lib/jshint.js"></script>
-<script src="/static/lib/jsonlint.js"></script>
+<!-- 3rd party libs we want available as global variables (should be libs in the add libraries list) -->
+<script src="/static/lib/underscore-min.js"></script>
+<script src="/static/lib/queue.min.js"></script>
 <!-- extra 3rd party libs 
 TODO: add these as defualt libs in the list
 <script src="http://d3js.org/topojson.v0.min.js"></script>
 <script src="http://d3js.org/d3.geo.projection.v0.min.js"></script>
 -->
 
-<!-- CodeMirror 
-<script src="/static/lib/CodeMirror3/lib/codemirror.js"></script>
-<script src="/static/lib/CodeMirror3/lib/util/searchcursor.js"></script>
-<script src="/static/lib/CodeMirror3/lib/util/search.js"></script>
-<script src="/static/lib/CodeMirror3/lib/util/dialog.js"></script>
-<script src="/static/lib/CodeMirror3/lib/util/runmode.js"></script>
-
-<script src="/static/lib/CodeMirror3/mode/javascript/javascript.js"></script>
-<script src="/static/lib/CodeMirror3/mode/css/css.js"></script>
-<script src="/static/lib/CodeMirror3/mode/xml/xml.js"></script>
-<script src="/static/lib/CodeMirror3/mode/htmlmixed/htmlmixed.js"></script>
-<script src="/static/lib/CodeMirror3/mode/coffeescript/coffeescript.js"></script>
-<script src="/static/lib/CodeMirror3/mode/clike/clike.js"></script>
-<script src="/static/lib/CodeMirror3/keymap/vim.js"></script>
-<script src="/static/lib/CodeMirror3/keymap/emacs.js"></script>
-
-<script src="/static/lib/CodeMirror3/addon/lint/lint.js"></script>
-<script src="/static/lib/CodeMirror3/addon/lint/javascript-lint.js"></script>
-<script src="/static/lib/CodeMirror3/addon/lint/json-lint.js"></script>
-
--->
-
-<script src="/static/lib/jquery.tipsy.js" type="text/javascript" charset="utf-8"></script>
-
-<script src="/static/lib/dat.gui.min.js"></script>
 
 <!-- Tributary -->
+<script src="/static/tributary.min.js?v=0.8"></script>
+
+<!-- UI related -->
+<script src="/static/lib/handlebars-1.0.rc.1.js"></script>
 <script src="/static/templates.js"></script>
-<script src="/static/lib/inlet.min.js"></script>
-<script src="/static/bundle.js"></script>
+<script src="/static/tributary-ui.min.js"></script>
 
-<!--
-<script src='/static/tributary.js?v=0.8'></script>
--->
-
-<script type="text/javascript">
-  var tb = Tributary();
-  tb._origin = "{{ origin }}";
-</script>
 
 
 <script type="text/javascript">
-
+  
 //get rid of selection when dragging things
 if(typeof document.body.style.MozUserSelect!="undefined")
     document.body.style.MozUserSelect="none";
@@ -194,7 +150,12 @@ else
     document.body.onmousedown=function(){return false};
 document.body.style.cursor = "default";
 
-$('i').tipsy({fade: true, gravity: 'n', opacity: 0.86});
+
+var tb = Tributary();
+tb._origin = "{{ origin }}";
+
+//decorate the tributary object with the ui logic
+TributaryUi(tb);
 
 tb.ui.setup();
 
@@ -211,6 +172,9 @@ tb.events.on("loaded", function() {
   );
   */
 })
+
+
+$('i').tipsy({fade: true, gravity: 'n', opacity: 0.86});
 </script>
 
 </body>

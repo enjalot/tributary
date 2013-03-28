@@ -1,4 +1,6 @@
-tributary.ui = {};
+if(!tributary.ui) {
+  tributary.ui = {};
+}
 
 tributary.trace = false;
 tributary.hint = false;
@@ -166,7 +168,7 @@ function _assemble(error, ret) {
     if(context) {
       config.contexts.push(context);
       context.render();
-      if(mainfiles.indexOf(m.get("filename")) < 0) {
+      if(tributary.__mainfiles__.indexOf(m.get("filename")) < 0) {
         context.execute();
       }
       context.editor = tributary.make_editor({model: m, parent:edit});
@@ -178,7 +180,7 @@ function _assemble(error, ret) {
   config.contexts.forEach(function(c) {
     //select appropriate html ui containers
     // and create contexts
-    if(mainfiles.indexOf(c.model.get("filename")) >= 0) {
+    if(tributary.__mainfiles__.indexOf(c.model.get("filename")) >= 0) {
       c.model.trigger("show");
       //first load should auto init
       tributary.autoinit = true;

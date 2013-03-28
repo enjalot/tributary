@@ -11,6 +11,8 @@ LOCALE ?= en_US
 all: \
 	tributary.js \
 	tributary.min.js \
+	tributary-ui.js \
+	tributary-ui.min.js \
 	handlebars \
 	less
 
@@ -25,24 +27,41 @@ all: \
 	src/context.js \
 	src/editor.js \
 	src/gist.js \
-	src/files.js \
 	src/batch.js \
 	src/plugin.js \
-	src/ui.js \
 	src/end.js
+	
+UI = \
+	src/ui/start.js \
+  src/ui/ui.js \
+	src/ui/files.js \
+	src/ui/end.js
 
+#THIRD_PARTY = \
+	#static/lib/three.min.js \
+	#static/lib/Stats.js
+	#static/lib/jsonlint.js
+	
 
 test: all
 	@$(JS_TESTER)
 
 %.min.js: %.js Makefile
 	@rm -f static/$@
-	$(JS_COMPILER) < static/$< > static/$@
+	#$(JS_COMPILER) < static/$< > static/$@
+	#browserify -x $(THIRD_PARTY) static/tributary.js -o static/tributary.min.js
+	browserify static/$< -o static/$@
 
 tributary.js: Makefile
 	@rm -f static/$@
 	cat $(filter %.js,$^) | $(JS_BEAUTIFIER) > static/$@
 	@chmod a-w static/$@
+	
+tributary-ui.js: Makefile
+	@rm -f static/$@
+	cat $(UI) | $(JS_BEAUTIFIER) > static/$@
+	@chmod a-w static/$@
+
 
 handlebars: Makefile
 	$(HANDLEBARS_COMPILER) static/templates/* > static/templates.js

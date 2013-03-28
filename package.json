@@ -28,10 +28,13 @@
     "connect-mongo": "0.1.x",
     
     "d3":"3.1.4",
+    "inlet":"git://github.com/enjalot/Inlet.git",
     "underscore":"1.4.4",
     "backbone":"1.0.0",
     "codemirror":"3.11.01",
     "queue-async": "1.0.1",
+    "jshint": "0.9.1",
+    "jsonlint": "1.5.1",
     "handlebars": "1.0.10",
     "coffee-script":"1.6.2"
   },
