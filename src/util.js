@@ -181,28 +181,3 @@ tributary.getModel = function(filename) {
   return context.model;
 }
 
-//Handlebars getTemplate from:
-//http://berzniz.com/post/24743062344/handling-handlebars-js-like-a-pro
-//async:
-//http://www.jblotus.com/2011/05/24/keeping-your-handlebars-js-templates-organized/
-Handlebars.getTemplate = function(name, callback) {
-  if (Handlebars.templates === undefined || Handlebars.templates[name] === undefined) {
-    $.ajax({
-      url : '/static/templates/' + name + '.handlebars',
-      success : function(data) {
-        if (Handlebars.templates === undefined) {
-          Handlebars.templates = {};
-        }
-        Handlebars.templates[name] = Handlebars.compile(data);
-        if (callback) callback(template);
-      },
-      //async : false
-    });
-  }
-  //return Handlebars.templates[name];
-};
-
-
-
-
-

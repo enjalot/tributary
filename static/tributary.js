@@ -1,17 +1,17 @@
 //(function(){
 var d3 = require("d3");
 
+var queue = require("queue-async");
+
 var _ = require("underscore");
 
 var Backbone = require("backbone");
 
 var Inlet = require("inlet");
 
-var JSHINT = require("jshint");
-
 var cm = require("CodeMirror");
 
-var queue = require("queue-async");
+var thirdparty = require("../static/lib/3rdparty.js");
 
 Tributary = function() {
   var tributary = {};
@@ -185,20 +185,6 @@ Tributary = function() {
     var context = tributary.getContext(filename);
     if (!context || !context.model) return;
     return context.model;
-  };
-  Handlebars.getTemplate = function(name, callback) {
-    if (Handlebars.templates === undefined || Handlebars.templates[name] === undefined) {
-      $.ajax({
-        url: "/static/templates/" + name + ".handlebars",
-        success: function(data) {
-          if (Handlebars.templates === undefined) {
-            Handlebars.templates = {};
-          }
-          Handlebars.templates[name] = Handlebars.compile(data);
-          if (callback) callback(template);
-        }
-      });
-    }
   };
   tributary.CodeModel = Backbone.Model.extend({
     defaults: {
@@ -786,7 +772,14 @@ Tributary = function() {
       if (filetype == "js") {
         options.theme = "lesser-dark";
         options.gutters = [ "CodeMirror-lint-markers" ];
-        options.linWith = CodeMirror.javascriptValidator;
+        options.lintWith = CodeMirror.javascriptValidatorWithOptions({
+          asi: true,
+          laxcomma: true,
+          laxbreak: true,
+          loopfunc: true,
+          smarttabs: true,
+          sub: true
+        });
       } else if (filetype == "json") {
         options.mode = "application/json";
         options.gutters = [ "CodeMirror-lint-markers" ];

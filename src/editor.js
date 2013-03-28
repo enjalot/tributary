@@ -90,8 +90,7 @@ tributary.Editor = Backbone.View.extend({
     if(filetype == "js") {
       options.theme = "lesser-dark";
       options.gutters = ["CodeMirror-lint-markers"];
-      options.linWith = CodeMirror.javascriptValidator;
-      /*
+      //options.lintWith = CodeMirror.javascriptValidator;
       options.lintWith = CodeMirror.javascriptValidatorWithOptions({
         asi: true,
         laxcomma: true,
@@ -100,7 +99,6 @@ tributary.Editor = Backbone.View.extend({
         smarttabs: true,
         sub: true
       })
-      */
     } else if(filetype == "json") {
       options.mode = "application/json";
       options.gutters = ["CodeMirror-lint-markers"];
