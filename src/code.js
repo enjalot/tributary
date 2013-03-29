@@ -20,13 +20,20 @@ tributary.CodeModel = Backbone.Model.extend({
     this.on("error", this.handleError);
     this.on("noerror", this.handleNoError);
   },
-  handleError: function(e) {
+  handleError: function(err) {
     tributary.__error__ = true;
     if(tributary.trace) {
       //console.trace();
-      //console.log(e.stack);
-      e.stack;
-      console.error(e);
+      //console.log(err.stack);
+      //console.error(err);
+      var trace = err.stack;
+      var match = trace.match(/eval at \<anonymous\>.*\<anonymous\>:([0-9]+):([0-9]+)/)
+      if(match) {
+        console.log("Error in " + this.get("filename") + ": line: " + (match[1]-1) + " column: " + (match[2]-1) + "\n" + err.toString());
+      } else {
+        console.error(err);
+      }
+
     }
   },
   handleNoError: function() {

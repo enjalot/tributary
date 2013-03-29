@@ -309,9 +309,12 @@ tributary.CoffeeContext = tributary.Context.extend({
   },
 
   execute: function() {
-
-    var js = this.model.handle_coffee();
-    console.log("JS", js)
+    try {
+      var js = this.model.handle_coffee();
+    } catch(err) {
+      this.model.trigger("error", err);
+      return false;
+    }
     //TODO: use coffee compilation to give errors/warnings
     /*
     if(js.length > 0) {
@@ -336,8 +339,8 @@ tributary.CoffeeContext = tributary.Context.extend({
 
     try {
       eval(js);
-    } catch (e) {
-      this.model.trigger("error", e);
+    } catch (err) {
+      this.model.trigger("error", err);
       return false;
     }
     this.model.trigger("noerror");

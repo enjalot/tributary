@@ -201,11 +201,16 @@ Tributary = function() {
       this.on("error", this.handleError);
       this.on("noerror", this.handleNoError);
     },
-    handleError: function(e) {
+    handleError: function(err) {
       tributary.__error__ = true;
       if (tributary.trace) {
-        e.stack;
-        console.error(e);
+        var trace = err.stack;
+        var match = trace.match(/eval at \<anonymous\>.*\<anonymous\>:([0-9]+):([0-9]+)/);
+        if (match) {
+          console.log("Error in " + this.get("filename") + ": line: " + (match[1] - 1) + " column: " + (match[2] - 1) + "\n" + err.toString());
+        } else {
+          console.error(err);
+        }
       }
     },
     handleNoError: function() {
@@ -575,12 +580,16 @@ Tributary = function() {
       });
     },
     execute: function() {
-      var js = this.model.handle_coffee();
-      console.log("JS", js);
+      try {
+        var js = this.model.handle_coffee();
+      } catch (err) {
+        this.model.trigger("error", err);
+        return false;
+      }
       try {
         eval(js);
-      } catch (e) {
-        this.model.trigger("error", e);
+      } catch (err) {
+        this.model.trigger("error", err);
         return false;
       }
       this.model.trigger("noerror");
@@ -763,7 +772,7 @@ Tributary = function() {
     render: function() {
       var that = this;
       var dis = d3.select(this.el).classed("editor", true);
-      filetype = that.model.get("filename").split(".")[1];
+      var filetype = that.model.get("type");
       var options = {
         mode: that.model.get("mode"),
         lineNumbers: true,

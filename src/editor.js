@@ -74,13 +74,10 @@ tributary.Editor = Backbone.View.extend({
 
     var dis = d3.select(this.el)
       .classed("editor", true)
-
-    //create the toolbar
-    //var template = Handlebars.templates.editor;
-    //var html = template(this.getConfig());
-    //this.$el.html(html);
-
-    filetype = that.model.get("filename").split(".")[1];
+    
+    //filetype = that.model.get("filename").split(".")[1];
+    var filetype = that.model.get("type");
+    
 
     var options = {
       mode: that.model.get("mode"),
