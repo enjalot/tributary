@@ -20,7 +20,12 @@ tributary.TributaryContext = tributary.Context.extend({
     });
     tributary.events.on("execute", this.execute, this);
 
-    if(!tributary.__config__) tributary.__config__ = this.options.config;
+    if(!tributary.__config__ && this.options.config) {
+      tributary.__config__ = this.options.config;
+    } else {
+      tributary.__config__ = tributary.Config();
+    }
+    
 
     //if the user has modified the code, we want to protect them from losing their work
     this.model.on("change:code", function() {
@@ -30,7 +35,7 @@ tributary.TributaryContext = tributary.Context.extend({
     //allow other context's to make this code execute
     //tributary.events.on("execute", this.execute, this);
 
-    this.config = this.options.config;
+    this.config = tributary.__config__;
     this.config.on("change:display", this.set_display, this);
     var config = this.config;
 
