@@ -1,0 +1,8 @@
+{
+  "id": "stylus"
+, "description": "provide Stylus css compilation"
+, "url": "/static/plugins/stylus"
+, "js": "index.js"
+, "html": "index.html"
+, "css": "style.css"
+}

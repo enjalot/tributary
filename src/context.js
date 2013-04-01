@@ -424,6 +424,7 @@ tributary.CSSContext = tributary.Context.extend({
     this.model.on("change:code", function() {
       tributary.events.trigger("execute");
     });
+    tributary.events.on("prerender", this.execute, this);
     this.model.on("delete", function() {
       d3.select(this.el).remove();
     }, this)

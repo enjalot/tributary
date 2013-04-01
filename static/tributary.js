@@ -647,6 +647,7 @@ Tributary = function() {
       this.model.on("change:code", function() {
         tributary.events.trigger("execute");
       });
+      tributary.events.on("prerender", this.execute, this);
       this.model.on("delete", function() {
         d3.select(this.el).remove();
       }, this);
@@ -944,7 +945,7 @@ Tributary = function() {
     }
     d3.text(plugin.url + "/" + plugin.html, function(err, html) {
       if (err) return console.error(err);
-      var pluginsDiv = document.getElementById("plugins");
+      var pluginsDiv = document.getElementById("plugins") || d3.select("body").append("div").attr("id", "plugins").node();
       var pluginDiv = document.createElement("div");
       pluginDiv.setAttribute("id", plugin.elId);
       pluginsDiv.appendChild(pluginDiv);
@@ -964,7 +965,7 @@ Tributary = function() {
       if (id === plugin.id) callback();
     });
   }
-  tributary.loadPlugin = function(url, opts, onErr) {
+  tributary.loadPlugin = function(url, opts, cb) {
     d3.json(url, function(err, plugin) {
       if (err) return onErr(err);
       plugin.options = opts;
@@ -975,8 +976,9 @@ Tributary = function() {
       q.defer(loadHtml, plugin);
       q.defer(loadScript, plugin);
       q.awaitAll(function(err) {
-        if (err) console.error(err);
+        if (err) return cb(err);
         Tributary.activatePlugin(tributary, plugin.id);
+        cb(null, plugin.id);
       });
     });
   };

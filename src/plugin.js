@@ -17,7 +17,7 @@ function loadHtml(plugin, callback) {
   if(!plugin.html) { return callback() };
   d3.text(plugin.url + "/" + plugin.html, function(err, html) {
     if(err) return console.error(err);
-    var pluginsDiv = document.getElementById("plugins")
+    var pluginsDiv = document.getElementById("plugins") || d3.select('body').append("div").attr("id", "plugins").node();
     var pluginDiv = document.createElement("div");
     pluginDiv.setAttribute("id", plugin.elId);
     pluginsDiv.appendChild(pluginDiv);
@@ -43,7 +43,7 @@ function loadScript(plugin, callback) {
   })
 }
 
-tributary.loadPlugin = function (url, opts, onErr) {
+tributary.loadPlugin = function (url, opts, cb) {
   d3.json(url, function (err, plugin) {
     if (err) return onErr(err);
     
@@ -56,9 +56,9 @@ tributary.loadPlugin = function (url, opts, onErr) {
     q.defer(loadHtml, plugin);
     q.defer(loadScript, plugin)
     q.awaitAll(function (err) {
-      if(err) console.error(err);
-      //if (err) return onErr(err);
+      if (err) return cb(err);
       Tributary.activatePlugin(tributary, plugin.id);
+      cb(null, plugin.id);
     });
   });
 };
