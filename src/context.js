@@ -20,10 +20,12 @@ tributary.TributaryContext = tributary.Context.extend({
     });
     tributary.events.on("execute", this.execute, this);
 
-    if(!tributary.__config__ && this.options.config) {
-      tributary.__config__ = this.options.config;
-    } else {
-      tributary.__config__ = tributary.Config();
+    if(!tributary.__config__) {
+      if(this.options.config) {
+        tributary.__config__ = this.options.config;
+      } else {
+        tributary.__config__ = new tributary.Config();
+      }
     }
     
 
@@ -111,6 +113,7 @@ tributary.TributaryContext = tributary.Context.extend({
     } else if (display === "webgl") {
       this.make_webgl();
     } else if (display === "div") {
+      console.log("yeaaaah");
       this.g = d3.select(this.el);
       tributary.g = this.g;
       tributary.clear = function() {

@@ -1,16 +1,16 @@
 //GUI for loading files
-tributary.FilesView = Backbone.View.extend({
-  initialize: function() {
-
+Tributary.FilesView = Backbone.View.extend({
+  initialize: function(options) {
   },
   render: function() {
     var that = this;
 
     var template = Handlebars.templates.files;
-
+    var config = this.model;
+    
     //render all the file tabs
     //var contexts = _.map(this.model.contexts, function(ctx) { return ctx.model.toJSON(); });
-    var contexts = _.map(tributary.__config__.contexts, function(ctx) { return ctx.model.toJSON(); });
+    var contexts = _.map(config.contexts, function(ctx) { return ctx.model.toJSON(); });
     //sort by filename
     contexts = contexts.sort(function(a,b) { if(a.filename < b.filename) return -1; return 1; });
     //inlet.js comes first TODO: mainfile comes first (TributaryContext)
@@ -30,7 +30,7 @@ tributary.FilesView = Backbone.View.extend({
     //setup the event handlers for the file tabs
     filelist.on("click", function(d) {
       var filename = this.dataset.filename;
-      var ctx = _.find(tributary.__config__.contexts, function(d) { return d.model.get("filename") === filename; });
+      var ctx = _.find(config.contexts, function(d) { return d.model.get("filename") === filename; });
       that.model.trigger("hide");
       ctx.model.trigger("show");
     });
@@ -46,22 +46,22 @@ tributary.FilesView = Backbone.View.extend({
         //delete the model
         //delete that.model;
         //delete the file from the config
-        tributary.__config__.unset(filename);
+        config.unset(filename);
         //delete the context
-        var context = _.find(tributary.__config__.contexts, function(d) {
+        var context = _.find(config.contexts, function(d) {
           return d.model.get("filename") === filename;
         })
         //delete the editor
         context.model.trigger("delete");
 
-        var ind = tributary.__config__.contexts.indexOf(context);
-        tributary.__config__.contexts.splice(ind,1);
+        var ind = config.contexts.indexOf(context);
+        config.contexts.splice(ind,1);
         delete context;
 
-        if(!tributary.__config__.todelete) {
-          tributary.__config__.todelete = [];
+        if(!config.todelete) {
+          config.todelete = [];
         }
-        tributary.__config__.todelete.push(filename);
+        config.todelete.push(filename);
 
 
         //remove the tab
@@ -73,7 +73,7 @@ tributary.FilesView = Backbone.View.extend({
           })
 
         //show the first context available
-        var othertab = tributary.__config__.contexts[0].model;
+        var othertab = config.contexts[0].model;
         othertab.trigger("show");
         d3.event.stopPropagation();
       })
@@ -93,19 +93,19 @@ tributary.FilesView = Backbone.View.extend({
               return input.style("display","none");
             }
             //create a new file with the given name
-            var context = tributary.make_context({ filename: input.node().value, config: tributary.__config__ });
+            var context = tributary.make_context({ filename: input.node().value, config: config });
             if(context) {
-              tributary.__config__.contexts.push(context);
+              config.contexts.push(context);
               context.render();
               context.execute();
-              var editor = tributary.make_editor({model: context.model});
+              var editor = Tributary.makeEditor({model: context.model});
               context.editor = editor;
 
               //rerender the files view to show new file
               that.$el.empty();
               that.render();
               //that.model.trigger("hide");
-              tributary.__config__.contexts.forEach(function(c) { c.model.trigger("hide") });
+              config.contexts.forEach(function(c) { c.model.trigger("hide") });
               context.model.trigger("show");
               editor.cm.focus();
 
@@ -127,7 +127,7 @@ tributary.FilesView = Backbone.View.extend({
   },
 });
 
-tributary.FileView = Backbone.View.extend({
+Tributary.FileView = Backbone.View.extend({
   render: function() {
   }
 });

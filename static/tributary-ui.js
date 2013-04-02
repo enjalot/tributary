@@ -73,7 +73,7 @@ TributaryUi = function(tributary) {
     }
     var config = ret.config;
     tributary.__config__ = config;
-    config.contexts = [];
+    console.log("CONFIG", config);
     var context;
     var edel;
     var editor;
@@ -120,7 +120,7 @@ TributaryUi = function(tributary) {
     tributary.edit = edit;
     ret.models.each(function(m) {
       type = m.get("type");
-      context = tributary.make_context({
+      context = Tributary.makeContext({
         config: config,
         model: m,
         display: d3.select("#display")
@@ -131,7 +131,7 @@ TributaryUi = function(tributary) {
         if (tributary.__mainfiles__.indexOf(m.get("filename")) < 0) {
           context.execute();
         }
-        context.editor = tributary.make_editor({
+        context.editor = Tributary.makeEditor({
           model: m,
           parent: edit
         });
@@ -146,7 +146,7 @@ TributaryUi = function(tributary) {
         tributary.autoinit = config.get("autoinit");
       }
     });
-    var files_view = new tributary.FilesView({
+    var files_view = new Tributary.FilesView({
       el: "#file-list",
       model: config
     });
@@ -216,12 +216,13 @@ TributaryUi = function(tributary) {
     };
     return gist;
   }
-  tributary.FilesView = Backbone.View.extend({
-    initialize: function() {},
+  Tributary.FilesView = Backbone.View.extend({
+    initialize: function(options) {},
     render: function() {
       var that = this;
       var template = Handlebars.templates.files;
-      var contexts = _.map(tributary.__config__.contexts, function(ctx) {
+      var config = this.model;
+      var contexts = _.map(config.contexts, function(ctx) {
         return ctx.model.toJSON();
       });
       contexts = contexts.sort(function(a, b) {
@@ -241,7 +242,7 @@ TributaryUi = function(tributary) {
       var filelist = d3.select("#file-list").selectAll("li.file");
       filelist.on("click", function(d) {
         var filename = this.dataset.filename;
-        var ctx = _.find(tributary.__config__.contexts, function(d) {
+        var ctx = _.find(config.contexts, function(d) {
           return d.model.get("filename") === filename;
         });
         that.model.trigger("hide");
@@ -251,24 +252,24 @@ TributaryUi = function(tributary) {
         var dataset = this.parentNode.dataset;
         var filename = dataset.filename;
         var name = dataset.filename.split(".")[0];
-        tributary.__config__.unset(filename);
-        var context = _.find(tributary.__config__.contexts, function(d) {
+        config.unset(filename);
+        var context = _.find(config.contexts, function(d) {
           return d.model.get("filename") === filename;
         });
         context.model.trigger("delete");
-        var ind = tributary.__config__.contexts.indexOf(context);
-        tributary.__config__.contexts.splice(ind, 1);
+        var ind = config.contexts.indexOf(context);
+        config.contexts.splice(ind, 1);
         delete context;
-        if (!tributary.__config__.todelete) {
-          tributary.__config__.todelete = [];
+        if (!config.todelete) {
+          config.todelete = [];
         }
-        tributary.__config__.todelete.push(filename);
+        config.todelete.push(filename);
         d3.select(that.el).selectAll("li.file").each(function() {
           if (this.dataset.filename === filename) {
             $(this).remove();
           }
         });
-        var othertab = tributary.__config__.contexts[0].model;
+        var othertab = config.contexts[0].model;
         othertab.trigger("show");
         d3.event.stopPropagation();
       });
@@ -282,19 +283,19 @@ TributaryUi = function(tributary) {
             }
             var context = tributary.make_context({
               filename: input.node().value,
-              config: tributary.__config__
+              config: config
             });
             if (context) {
-              tributary.__config__.contexts.push(context);
+              config.contexts.push(context);
               context.render();
               context.execute();
-              var editor = tributary.make_editor({
+              var editor = Tributary.makeEditor({
                 model: context.model
               });
               context.editor = editor;
               that.$el.empty();
               that.render();
-              tributary.__config__.contexts.forEach(function(c) {
+              config.contexts.forEach(function(c) {
                 c.model.trigger("hide");
               });
               context.model.trigger("show");
@@ -307,7 +308,7 @@ TributaryUi = function(tributary) {
       });
     }
   });
-  tributary.FileView = Backbone.View.extend({
+  Tributary.FileView = Backbone.View.extend({
     render: function() {}
   });
   return tributary;

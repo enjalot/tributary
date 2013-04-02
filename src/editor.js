@@ -1,4 +1,4 @@
-tributary.make_editor = function(options) {
+Tributary.makeEditor = function(options) {
   //Creates a editor from a model and optional editor container
   //{
   //  model: REQUIRED

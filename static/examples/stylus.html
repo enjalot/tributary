@@ -74,7 +74,7 @@
         var config = new tb.Config();
 
         var model = new tb.CodeModel({
-          code: 'var svg = d3.select("#display1 svg").append("g").append("circle")\n  .attr({r:10,cx:100,cy:100});'
+          code: 'var svg = d3.select("#display1 svg")\n  .append("circle")\n  .attr({r:10,cx:100,cy:100});'
         });
 
         var context = new tb.TributaryContext({
@@ -95,7 +95,7 @@
           filename: "index.styl",
           type: "css",
           mode: "css",
-          code: '#display1\n  background-color #9A9DCE;'
+          code: '#display1\n  background-color #9A9DCE'
         });
         var stylusContext = new tb.StylusContext({
           config: config,

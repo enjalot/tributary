@@ -96,7 +96,8 @@ function _assemble(error, ret) {
   var config = ret.config;
   tributary.__config__ = config;
 
-  config.contexts = [];
+  //config.contexts = [];
+  console.log("CONFIG", config)
   var context;
   var edel;
   var editor;
@@ -160,7 +161,7 @@ function _assemble(error, ret) {
   ret.models.each(function(m) {
     type = m.get("type");
 
-    context = tributary.make_context({
+    context = Tributary.makeContext({
       config: config,
       model: m,
       display: d3.select("#display")
@@ -171,7 +172,7 @@ function _assemble(error, ret) {
       if(tributary.__mainfiles__.indexOf(m.get("filename")) < 0) {
         context.execute();
       }
-      context.editor = tributary.make_editor({model: m, parent:edit});
+      context.editor = Tributary.makeEditor({model: m, parent:edit});
       m.trigger("hide");
     }
   });
@@ -190,7 +191,7 @@ function _assemble(error, ret) {
   });
 
   //fill in the file tabs
-  var files_view = new tributary.FilesView({
+  var files_view = new Tributary.FilesView({
     el: "#file-list",
     model: config,
   });

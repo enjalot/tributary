@@ -48,7 +48,7 @@ Tributary = function() {
     name: "restart",
     description: "assumes you only want tributary.init(g) to be run when the restart button is clicked"
   } ];
-  tributary.make_context = function(options) {
+  Tributary.makeContext = function(options) {
     var context, model, display, type;
     var config = options.config;
     if (options.model) {
@@ -171,6 +171,7 @@ Tributary = function() {
     }
   };
   tributary.getContext = function(filename) {
+    if (!tributary.__config__) return;
     var context = _.find(tributary.__config__.contexts, function(d) {
       return d.model.get("filename") === filename;
     });
@@ -276,6 +277,7 @@ Tributary = function() {
       callback(null, null);
     },
     initialize: function() {
+      this.contexts = [];
       this.on("hide", function() {
         this.contexts.forEach(function(context) {
           context.model.trigger("hide");
@@ -397,10 +399,12 @@ Tributary = function() {
         tributary.events.trigger("execute");
       });
       tributary.events.on("execute", this.execute, this);
-      if (!tributary.__config__ && this.options.config) {
-        tributary.__config__ = this.options.config;
-      } else {
-        tributary.__config__ = tributary.Config();
+      if (!tributary.__config__) {
+        if (this.options.config) {
+          tributary.__config__ = this.options.config;
+        } else {
+          tributary.__config__ = new tributary.Config;
+        }
       }
       this.model.on("change:code", function() {
         tributary.events.trigger("warnchanged");
@@ -453,6 +457,7 @@ Tributary = function() {
       } else if (display === "webgl") {
         this.make_webgl();
       } else if (display === "div") {
+        console.log("yeaaaah");
         this.g = d3.select(this.el);
         tributary.g = this.g;
         tributary.clear = function() {
@@ -722,7 +727,7 @@ Tributary = function() {
     },
     render: function() {}
   });
-  tributary.make_editor = function(options) {
+  Tributary.makeEditor = function(options) {
     var editorParent = options.parent || tributary.edit;
     var model = options.model;
     if (options.container) {

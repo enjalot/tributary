@@ -22,7 +22,7 @@ tributary.time_controls = [
 ];
 
 
-tributary.make_context = function(options) {
+Tributary.makeContext = function(options) {
   //Creates a context from a filename and/or file content
   //{
   //  config: REQUIRED
@@ -165,7 +165,8 @@ tributary.appendSVGFragment = function(element, fragment) {
 
 
 tributary.getContext = function(filename) {
- var context = _.find(tributary.__config__.contexts, function(d) {
+  if(!tributary.__config__) return;
+  var context = _.find(tributary.__config__.contexts, function(d) {
     return d.model.get("filename") === filename;
   })
  return context;

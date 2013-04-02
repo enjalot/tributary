@@ -63,6 +63,7 @@ tributary.Config = Backbone.Model.extend({
   },
 
   initialize: function() {
+    this.contexts = [];
     //convenience event to trigger a hide event on all contexts (and thus their editors)
     this.on("hide", function() {
       this.contexts.forEach(function(context) {
