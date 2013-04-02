@@ -73,7 +73,6 @@ TributaryUi = function(tributary) {
     }
     var config = ret.config;
     tributary.__config__ = config;
-    console.log("CONFIG", config);
     var context;
     var edel;
     var editor;
@@ -281,7 +280,7 @@ TributaryUi = function(tributary) {
             if (input.node().value === "") {
               return input.style("display", "none");
             }
-            var context = tributary.make_context({
+            var context = Tributary.makeContext({
               filename: input.node().value,
               config: config
             });

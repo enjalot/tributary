@@ -97,7 +97,6 @@ function _assemble(error, ret) {
   tributary.__config__ = config;
 
   //config.contexts = [];
-  console.log("CONFIG", config)
   var context;
   var edel;
   var editor;

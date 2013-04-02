@@ -113,7 +113,6 @@ tributary.TributaryContext = tributary.Context.extend({
     } else if (display === "webgl") {
       this.make_webgl();
     } else if (display === "div") {
-      console.log("yeaaaah");
       this.g = d3.select(this.el);
       tributary.g = this.g;
       tributary.clear = function() {

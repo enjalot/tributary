@@ -93,7 +93,7 @@ Tributary.FilesView = Backbone.View.extend({
               return input.style("display","none");
             }
             //create a new file with the given name
-            var context = tributary.make_context({ filename: input.node().value, config: config });
+            var context = Tributary.makeContext({ filename: input.node().value, config: config });
             if(context) {
               config.contexts.push(context);
               context.render();
