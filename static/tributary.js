@@ -582,7 +582,9 @@ Tributary = function() {
   });
   tributary.CoffeeContext = tributary.Context.extend({
     initialize: function() {
-      this.model.on("change:code", this.execute, this);
+      if (!this.options.silent) {
+        this.model.on("change:code", this.execute, this);
+      }
       this.model.on("change:code", function() {
         tributary.events.trigger("execute");
       });

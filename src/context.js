@@ -309,7 +309,10 @@ tributary.JSContext = tributary.Context.extend({
 //Coffeescript Context
 tributary.CoffeeContext = tributary.Context.extend({
   initialize: function() {
-    this.model.on("change:code", this.execute, this);
+    //TODO: add this in as a pattern for all contexts? or just make a better way of wiring up events period.
+    if(!this.options.silent) {
+      this.model.on("change:code", this.execute, this);
+    }
     this.model.on("change:code", function() {
       tributary.events.trigger("execute");
     });
