@@ -40,7 +40,7 @@ tributary.CodeModel = Backbone.Model.extend({
     tributary.__error__ = false;
   },
 
-  handle_coffee: function() {
+  handleCoffee: function() {
     //This checks if coffeescript is being used
     //and returns compiled javascript
     var js = this.get("code");

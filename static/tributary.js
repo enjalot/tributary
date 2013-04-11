@@ -217,7 +217,7 @@ Tributary = function() {
     handleNoError: function() {
       tributary.__error__ = false;
     },
-    handle_coffee: function() {
+    handleCoffee: function() {
       var js = this.get("code");
       if (this.get("mode") === "coffeescript") {
         js = CoffeeScript.compile(js, {
@@ -419,7 +419,12 @@ Tributary = function() {
       tributary.execute = function() {};
     },
     execute: function() {
-      var js = this.model.handle_coffee();
+      try {
+        var js = this.model.handleCoffee();
+      } catch (e) {
+        this.model.trigger("error", e);
+        return false;
+      }
       try {
         tributary.initialize = new Function("g", "tributary", js);
       } catch (e) {
@@ -591,7 +596,7 @@ Tributary = function() {
     },
     execute: function() {
       try {
-        var js = this.model.handle_coffee();
+        var js = this.model.handleCoffee();
       } catch (err) {
         this.model.trigger("error", err);
         return false;

@@ -21,7 +21,9 @@ function stylusTributaryPlugin(tributary, plugin) {
         try {
           var that = this;
           //set the text of the style element to the code
-          stylus(this.model.get("code"), { filename: this.model.get("filename") })
+          var imports = this.model.get("imports") || ''; //allow user to manually provide imports (for stylus functions etc)
+          var styl = imports + '\n' + this.model.get("code");
+          stylus(styl, { filename: this.model.get("filename") })
             .set("imports", [])  //turn off imports in browser
             .render(function(err, css) {
               if(err) throw err;

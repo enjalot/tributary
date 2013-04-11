@@ -53,15 +53,20 @@ tributary.TributaryContext = tributary.Context.extend({
   },
 
   execute: function() {   
-    var js = this.model.handle_coffee();
+    try {
+      var js = this.model.handleCoffee();
+    } catch (e) {
+      this.model.trigger("error", e);
+      return false;
+    }
 
     try {
       //eval(js);
       tributary.initialize = new Function("g", "tributary", js);
       //tributary.initialize(tributary.g);
     } catch (e) {
-        this.model.trigger("error", e);
-        return false;
+      this.model.trigger("error", e);
+      return false;
     }
 
     try {
@@ -174,13 +179,13 @@ tributary.TributaryContext = tributary.Context.extend({
     tributary.scene = new THREE.Scene();
 
     THREE.Object3D.prototype.clear = function(){
-        var children = this.children;
-        var i;
-        for(i = children.length-1;i>=0;i--){
-            var child = children[i];
-            child.clear();
-            this.remove(child);
-        }
+      var children = this.children;
+      var i;
+      for(i = children.length-1;i>=0;i--){
+        var child = children[i];
+        child.clear();
+        this.remove(child);
+      }
     };
     tributary.renderer = new THREE.WebGLRenderer();
     //tributary.renderer = new THREE.CanvasRenderer();
@@ -320,7 +325,7 @@ tributary.CoffeeContext = tributary.Context.extend({
 
   execute: function() {
     try {
-      var js = this.model.handle_coffee();
+      var js = this.model.handleCoffee();
     } catch(err) {
       this.model.trigger("error", err);
       return false;
