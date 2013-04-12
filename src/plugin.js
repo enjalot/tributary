@@ -31,6 +31,7 @@ function loadScript(plugin, callback) {
   if(!plugin.js) { return callback() };
   // Add <script> to page
   // That script invokes tributary.plugin(id, fn), where fn = function (tributary, opts)
+  // TODO: add optional cachebuster (maybe based on version of plugin?)
   d3.select("head").append("script")
   .attr({
     id: "js-" + plugin.id,

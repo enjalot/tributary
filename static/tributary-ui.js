@@ -8,8 +8,7 @@ TributaryUi = function(tributary) {
   tributary.hint = false;
   var parentWindow;
   if (window) {
-    window.addEventListener("message", recieveMessage, false);
-    function recieveMessage(event) {
+    function receiveMessage(event) {
       if (event.origin !== tributary._origin || !event.data) return;
       var data = event.data;
       if (data.request === "load") {
@@ -34,6 +33,7 @@ TributaryUi = function(tributary) {
         tributary.__config__.set("thumbnail", image.data.link);
       }
     }
+    window.addEventListener("message", receiveMessage, false);
   }
   tributary.events.on("warnchanged", function() {
     if (parentWindow) parentWindow.postMessage({

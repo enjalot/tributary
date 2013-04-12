@@ -8,10 +8,7 @@ tributary.hint = false;
 var parentWindow;
 
 if(window) {
-  //listen on window postMessage to load gist and handle save/forks
-  window.addEventListener("message", recieveMessage, false)
-
-  function recieveMessage(event) {
+  function receiveMessage(event) {
     //console.log(event.origin, tributary._origin, event.data);
     if(event.origin !== tributary._origin || !event.data) return;
     var data = event.data;
@@ -38,6 +35,10 @@ if(window) {
       tributary.__config__.set("thumbnail", image.data.link);
     }
   }
+
+  //listen on window postMessage to load gist and handle save/forks
+  window.addEventListener("message", receiveMessage, false)
+
 }
 
 //user has changed code, so let parent frame know not to let them leave too easy ;)
