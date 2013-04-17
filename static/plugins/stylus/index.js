@@ -18,22 +18,21 @@ function stylusTributaryPlugin(tributary, plugin) {
   plugin.activate = function() {
     tributary.StylusContext = tributary.CSSContext.extend({
       execute: function() {
-        try {
-          var that = this;
-          //set the text of the style element to the code
-          var imports = this.model.get("imports") || ''; //allow user to manually provide imports (for stylus functions etc)
-          var styl = imports + '\n' + this.model.get("code");
-          stylus(styl, { filename: this.model.get("filename") })
-            .set("imports", [])  //turn off imports in browser
-            .render(function(err, css) {
-              if(err) throw err;
-              that.el.textContent = css;
-            })
-        } catch (e) {
-          this.model.trigger("error", e);
-          return false;
-        }
-        this.model.trigger("noerror");
+      var that = this;
+      //set the text of the style element to the code
+      var imports = this.model.get("imports") || ''; //allow user to manually provide imports (for stylus functions etc)
+      //HACK: remove curlies from incoming css to avoid freezing.
+      var code = this.model.get("code").replace(/[{}]/g, '')
+      var styl = imports + '\n' + code
+      stylus(styl, { filename: this.model.get("filename") })
+        .set("imports", [])  //turn off imports in browser
+        .render(function(err, css) {
+          if (err) {
+            return that.model.trigger("error", err);
+          }
+          that.el.textContent = css;
+          that.model.trigger("noerror");
+        })
         return true;
       }
     });
