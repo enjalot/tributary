@@ -33,6 +33,7 @@ Tributary.FilesView = Backbone.View.extend({
       var ctx = _.find(config.contexts, function(d) { return d.model.get("filename") === filename; });
       that.model.trigger("hide");
       ctx.model.trigger("show");
+      ctx.editor.cm.refresh();
     });
 
     //delete

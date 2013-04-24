@@ -246,6 +246,7 @@ TributaryUi = function(tributary) {
         });
         that.model.trigger("hide");
         ctx.model.trigger("show");
+        ctx.editor.cm.refresh();
       });
       filelist.select(".delete-file").style("z-index", 1e3).on("click", function() {
         var dataset = this.parentNode.dataset;

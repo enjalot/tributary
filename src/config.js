@@ -146,10 +146,10 @@ tributary.ConfigView = Backbone.View.extend({
     // Editor controls config section
 
     var editorcontrols = d3.select(this.el)
-      .select("#logerrors")
+    editorcontrols.select("#logerrors")
       .on("click", function(d) {
         var dis = d3.select(this);
-        if($(this).attr("data-name") === "log-errors") {
+        //if($(this).attr("data-name") === "log-errors") {
           //if (tributary.hint === true && tributary.trace === true) {
           if( dis.classed("active") ) {
             console.log("Error logging disabled");
@@ -165,8 +165,29 @@ tributary.ConfigView = Backbone.View.extend({
             tributary.events.trigger("execute");
             dis.classed("active", true)
           }
-        }
+       // }
       })
+    editorcontrols.select("#updatecode")
+      .on("click", function(d) {
+        var dis = d3.select(this);
+        //if($(this).attr("data-name") === "log-errors") {
+          //if (tributary.hint === true && tributary.trace === true) {
+          if( dis.classed("active") ) {
+            console.log("Auto updating disabled");
+            tributary.__noupdate__ = true;
+            //tributary.events.trigger("execute");
+            dis.classed("active", false)
+          }
+          else {
+            console.log("Auto updating initiated");
+            tributary.__noupdate__ = false;
+            tributary.events.trigger("execute");
+            dis.classed("active", true)
+          }
+       // }
+      })
+
+
 
     // Require / External files config section
     var checkList = d3.select(this.el)

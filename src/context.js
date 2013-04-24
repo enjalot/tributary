@@ -53,6 +53,7 @@ tributary.TributaryContext = tributary.Context.extend({
   },
 
   execute: function() {   
+    if(tributary.__noupdate__) return;
     try {
       var js = this.model.handleCoffee();
     } catch (e) {
@@ -70,29 +71,21 @@ tributary.TributaryContext = tributary.Context.extend({
     }
 
     try {
-        
-        //empty out our display element
-        if(tributary.autoinit) {
-          tributary.clear();
-          //call anything that needs to be prerendered (SVG and HTML contexts)
-          tributary.events.trigger("prerender");
-        }
+      //empty out our display element
+      if(tributary.autoinit) {
+        tributary.clear();
+        //call anything that needs to be prerendered (SVG and HTML contexts)
+        tributary.events.trigger("prerender");
+      }
 
-      
-        //execute the code
-        //eval(js);
-        tributary.initialize(tributary.g, tributary);
+      //execute the code
+      tributary.initialize(tributary.g, tributary);
 
-        if(tributary.autoinit && tributary.init !== undefined) {
-          tributary.init(tributary.g, 0);
-        }
-        //then we run the user defined run function
-        tributary.execute();
-        /*
-        if(tributary.run !== undefined) {
-          tributary.run(tributary.g, tributary.ease(tributary.t), 0);
-        }
-        */
+      if(tributary.autoinit && tributary.init !== undefined) {
+        tributary.init(tributary.g, 0);
+      }
+      //then we run the user defined run function
+      tributary.execute();
     } catch (err) {
         this.model.trigger("error", err);
         return false;
@@ -262,6 +255,7 @@ tributary.JSONContext = tributary.Context.extend({
   },
 
   execute: function() {
+    if(tributary.__noupdate__) return;
     try {
       var json = JSON.parse(this.model.get("code"));
       tributary[this.model.get("name")] = json;
@@ -292,6 +286,7 @@ tributary.JSContext = tributary.Context.extend({
   },
 
   execute: function() {
+    if(tributary.__noupdate__) return;
     var js = this.model.get("code");
 
     try {
@@ -324,6 +319,7 @@ tributary.CoffeeContext = tributary.Context.extend({
   },
 
   execute: function() {
+    if(tributary.__noupdate__) return;
     try {
       var js = this.model.handleCoffee();
     } catch(err) {
@@ -380,6 +376,7 @@ tributary.CSVContext = tributary.Context.extend({
   },
 
   execute: function() {
+    if(tributary.__noupdate__) return;
     try {
       var json = d3.csv.parse(this.model.get("code"));
       tributary[this.model.get("name")] = json;
@@ -407,6 +404,7 @@ tributary.TSVContext = tributary.Context.extend({
   },
 
   execute: function() {
+    if(tributary.__noupdate__) return;
     try {
       var json = d3.tsv.parse(this.model.get("code"));
       tributary[this.model.get("name")] = json;
@@ -441,6 +439,7 @@ tributary.CSSContext = tributary.Context.extend({
   },
 
   execute: function() {
+    if(tributary.__noupdate__) return;
     try {
       //set the text of the style element to the code
       this.el.textContent = this.model.get("code");
@@ -480,6 +479,7 @@ tributary.HTMLContext = tributary.Context.extend({
   },
 
   execute: function() {
+    if(tributary.__noupdate__) return;
     try {
       //set the text of the style element to the code
       $(this.el).append(this.model.get("code"));
@@ -507,6 +507,7 @@ tributary.SVGContext = tributary.Context.extend({
   },
 
   execute: function() {
+    if(tributary.__noupdate__) return;
     try {
       //TODO: validate the SVG?
       var svg = d3.select(this.el).select("svg").node();
@@ -538,6 +539,7 @@ tributary.TextContext = tributary.Context.extend({
   },
 
   execute: function() {
+    if(tributary.__noupdate__) return;
     this.model.trigger("noerror");
 
     return true;

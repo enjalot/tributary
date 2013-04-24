@@ -323,22 +323,34 @@ Tributary = function() {
           displaySelect.node().value = this.value;
         }
       });
-      var editorcontrols = d3.select(this.el).select("#logerrors").on("click", function(d) {
+      var editorcontrols = d3.select(this.el);
+      editorcontrols.select("#logerrors").on("click", function(d) {
         var dis = d3.select(this);
-        if ($(this).attr("data-name") === "log-errors") {
-          if (dis.classed("active")) {
-            console.log("Error logging disabled");
-            tributary.hint = false;
-            tributary.trace = false;
-            tributary.events.trigger("execute");
-            dis.classed("active", false);
-          } else {
-            console.log("Error logging initiated");
-            tributary.hint = true;
-            tributary.trace = true;
-            tributary.events.trigger("execute");
-            dis.classed("active", true);
-          }
+        if (dis.classed("active")) {
+          console.log("Error logging disabled");
+          tributary.hint = false;
+          tributary.trace = false;
+          tributary.events.trigger("execute");
+          dis.classed("active", false);
+        } else {
+          console.log("Error logging initiated");
+          tributary.hint = true;
+          tributary.trace = true;
+          tributary.events.trigger("execute");
+          dis.classed("active", true);
+        }
+      });
+      editorcontrols.select("#updatecode").on("click", function(d) {
+        var dis = d3.select(this);
+        if (dis.classed("active")) {
+          console.log("Auto updating disabled");
+          tributary.__noupdate__ = true;
+          dis.classed("active", false);
+        } else {
+          console.log("Auto updating initiated");
+          tributary.__noupdate__ = false;
+          tributary.events.trigger("execute");
+          dis.classed("active", true);
         }
       });
       var checkList = d3.select(this.el).select("#library-checklist");
@@ -419,6 +431,7 @@ Tributary = function() {
       tributary.execute = function() {};
     },
     execute: function() {
+      if (tributary.__noupdate__) return;
       try {
         var js = this.model.handleCoffee();
       } catch (e) {
@@ -553,6 +566,7 @@ Tributary = function() {
       });
     },
     execute: function() {
+      if (tributary.__noupdate__) return;
       try {
         var json = JSON.parse(this.model.get("code"));
         tributary[this.model.get("name")] = json;
@@ -573,6 +587,7 @@ Tributary = function() {
       });
     },
     execute: function() {
+      if (tributary.__noupdate__) return;
       var js = this.model.get("code");
       try {
         eval(js);
@@ -595,6 +610,7 @@ Tributary = function() {
       });
     },
     execute: function() {
+      if (tributary.__noupdate__) return;
       try {
         var js = this.model.handleCoffee();
       } catch (err) {
@@ -620,6 +636,7 @@ Tributary = function() {
       });
     },
     execute: function() {
+      if (tributary.__noupdate__) return;
       try {
         var json = d3.csv.parse(this.model.get("code"));
         tributary[this.model.get("name")] = json;
@@ -640,6 +657,7 @@ Tributary = function() {
       });
     },
     execute: function() {
+      if (tributary.__noupdate__) return;
       try {
         var json = d3.tsv.parse(this.model.get("code"));
         tributary[this.model.get("name")] = json;
@@ -664,6 +682,7 @@ Tributary = function() {
       }, this);
     },
     execute: function() {
+      if (tributary.__noupdate__) return;
       try {
         this.el.textContent = this.model.get("code");
       } catch (e) {
@@ -689,6 +708,7 @@ Tributary = function() {
       tributary.events.on("prerender", this.execute, this);
     },
     execute: function() {
+      if (tributary.__noupdate__) return;
       try {
         $(this.el).append(this.model.get("code"));
       } catch (e) {
@@ -708,6 +728,7 @@ Tributary = function() {
       tributary.events.on("prerender", this.execute, this);
     },
     execute: function() {
+      if (tributary.__noupdate__) return;
       try {
         var svg = d3.select(this.el).select("svg").node();
         tributary.appendSVGFragment(svg, this.model.get("code"));
@@ -728,6 +749,7 @@ Tributary = function() {
       });
     },
     execute: function() {
+      if (tributary.__noupdate__) return;
       this.model.trigger("noerror");
       return true;
     },
