@@ -77,7 +77,10 @@ function getgist(gistid, callback) {
     + "?client_id=" + settings.GITHUB_CLIENT_ID
     + "&client_secret=" + settings.GITHUB_CLIENT_SECRET;
 
-  request.get(url, callback);
+  request.get({
+    url: url
+  , headers: { 'User-Agent': 'tributary' }
+  }, callback);
 }
 
 //Base view in tributary.
@@ -217,8 +220,9 @@ function newgist(data, token, callback) {
   var url = 'https://api.github.com/gists'
   var method = "POST";
   var headers = {
-      'content-type': 'application/json'
-    , 'accept': 'application/json'
+    'User-Agent': 'tributary'
+  , 'content-type': 'application/json'
+  , 'accept': 'application/json'
   };
   if(token) {
     headers['Authorization'] = 'token ' + token;
@@ -245,9 +249,10 @@ function save(gistid, data, token, callback) {
   var url = 'https://api.github.com/gists/' + gistid
   var method = "PATCH";
   var headers = {
-      'content-type': 'application/json'
-    , 'accept': 'application/json'
-    , 'Authorization': 'token ' + token
+    'User-Agent': 'tributary'
+  , 'content-type': 'application/json'
+  , 'accept': 'application/json'
+  , 'Authorization': 'token ' + token
   };
 
   var string = data.toString();
@@ -274,7 +279,8 @@ function fork(gistid, data, token, callback) {
   var url = 'https://api.github.com/gists/' + gistid + '/forks'
   var method = "POST";
   var headers = {
-    'Authorization': 'token ' + token
+    'User-Agent': 'tributary'
+  , 'Authorization': 'token ' + token
   }
 
   request({
@@ -393,7 +399,11 @@ app.get("/github-authenticated", github_authenticated)
 function github_authenticated(req,res,next) {
     var tempcode = req.query.code || '';
     var data = {'client_id': settings.GITHUB_CLIENT_ID, 'client_secret': settings.GITHUB_CLIENT_SECRET, 'code': tempcode }
-    var headers = {'content-type': 'application/json', 'accept': 'application/json'}
+    var headers = { 
+      'User-Agent': 'tributary'
+    , 'content-type': 'application/json'
+    , 'accept': 'application/json'
+    }
 
     // request an access token
     request({
@@ -405,7 +415,10 @@ function github_authenticated(req,res,next) {
         var access_token = body.access_token;
         req.session.access_token = access_token;
 
-        request("https://api.github.com/user?access_token=" + access_token, function(e,r,b){
+        request({
+          url: "https://api.github.com/user?access_token=" + access_token
+        , headers: headers
+        }, function(e,r,b){
           if (!e && r.statusCode == 200) {
             //store info about the user in the session
             req.session.user = JSON.parse(b);
@@ -489,7 +502,8 @@ function imgur_upload(req,res,next) {
   var url = 'https://api.imgur.com/3/image'
   var method = "POST";
   var headers = {
-    'Authorization': 'Client-ID ' + settings.IMGUR_CLIENT_ID
+    'User-Agent': 'tributary'
+  , 'Authorization': 'Client-ID ' + settings.IMGUR_CLIENT_ID
   };
 
   request({
