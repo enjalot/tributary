@@ -195,6 +195,7 @@ tributary.TributaryContext = tributary.Context.extend({
     */
     //tributary.renderer.render( tributary.scene, tributary.camera );
 
+    /*
     var controls = new THREE.TrackballControls( tributary.camera );
     controls.target.set( 0, 0, 0 );
     controls.rotateSpeed = 1.0;
@@ -208,11 +209,12 @@ tributary.TributaryContext = tributary.Context.extend({
     controls.dynamicDampingFactor = 0.15;
 
     tributary.controls = controls;
+    */
     
 
     tributary.render = function() {
       if(tributary.useThreejsControls) {
-        tributary.controls.update();
+        //tributary.controls.update();
       }
       tributary.renderer.render( tributary.scene, tributary.camera );
     };
