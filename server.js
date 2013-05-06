@@ -620,6 +620,7 @@ function api_users(req,res,next) {
 
 
 app.get('/api/user/:login/latest', user_latest)
+app.get('/api/user/:login/latest/:limit', user_latest)
 function user_latest(req,res,next) {
   res.header("Access-Control-Allow-Origin", "*");
   var query = { 
