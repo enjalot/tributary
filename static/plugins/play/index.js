@@ -146,11 +146,17 @@ function tributaryPlayPlugin(tributary, plugin) {
   //makes it so that normal execution does not call the init function
   function onRestart() {
     tributary.clear();
-    tributary.initialize(tributary.g, tributary);
-    if(tributary.init) {
-      tributary.init(tributary.g);
+    try {
+      if(tributary.initialize) {
+        tributary.initialize(tributary.g, tributary);
+      }
+      if(tributary.init) {
+        tributary.init(tributary.g);
+      }
+      tributary.execute();
+    } catch(e) {
+      tributary.events.trigger("error", e);
     }
-    tributary.execute();
     tributary.events.trigger("restart");
   }
   function restartButton() {
