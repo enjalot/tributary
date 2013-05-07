@@ -136,8 +136,8 @@
 
   function setup_header(gistUser, description) {
     if(gistUser) {
-
-      $("#inlet-author").html('<a href="https://github.com/' + gistUser.login + '">' + gistUser.login + "</a>")
+      var profileUrl = "http://tributary.io/inlet/5088240?user=" + gistUser.login;
+      $("#inlet-author").html('<a href="' + profileUrl + '">' + gistUser.login + "</a>")
       $("#gist-title").val(description)
 
       $("#author-avatar img").attr("src", function(d){
