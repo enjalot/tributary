@@ -167,13 +167,15 @@
 
 
 		<ul id="mostactive-users">
-			<h5>Most active users <i class="icon-users-1"></i></h5>
+			<h5><a target=_blank href="http://tributary.io/inlet/4569273">Most active users</a> <i class="icon-users-1"></i></h5>
 
  		</ul>
 
 		<ul id="mostactive-inlets">
-			<h5>Most active inlets <i class="icon-window"></i></h5>
+			<h5><a target=_blank href="http://tributary.io/inlet/4678266">Most active inlets</a> <i class="icon-window"></i></h5>
 		</ul>
+
+    <ul id="latest-inlets"><h5><a target=_blank href="http://tributary.io/inlet/4569668">Latest inlets</a></h5></ul>
 
 
 		<h3>Examples</h3>
@@ -273,7 +275,7 @@ $(document).ready(function(){
 
   //grab the users
   function getUsers() {
-    var users_url = '/api/users/visits/4/-1';
+    var users_url = '/api/users/visits/8/-1';
     d3.json(users_url, function(err, res) {
       renderUsers(res);
     })
@@ -288,14 +290,21 @@ $(document).ready(function(){
       .enter()
       .append("li")
       .classed("user", true)
+      .append("a")
     
     usersSel
+    .select("a")
+      .attr({
+        href: function(d) { return 'http://tributary.io/inlet/5088240?user=' + d.login }
+      , target: '_blank'
+      })
       .text(function(d) { 
         return d.login + " ";
       });
     
-    users.append("img")
-    usersSel.select("img")
+    users
+      .append("img")
+    usersSel.select("a").select("img")
       .attr({
         src: function(d) { 
           return d.avatar_url;

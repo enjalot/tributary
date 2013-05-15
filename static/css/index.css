@@ -345,6 +345,13 @@ nav li {
   list-style: none;
   vertical-align: top;
 }
+#latest-inlets {
+  padding: 20px;
+  font-size: 30px;
+  width: 80%;
+  text-align: center;
+}
+
 #popular-inlets {
   margin-bottom: 52px;
 }
@@ -380,6 +387,7 @@ nav li {
   transition: all 1.3s ease-out 0.07s;
   margin-top: 0;
 }
+
 #more-details {
   margin-top: 10%;
 }
@@ -498,6 +506,10 @@ px      68    160    252    */
     margin: 1.4em 0;
   }
   #mostactive-inlets {
+    width: 100%;
+    text-align: left;
+  }
+  #latest-inlets {
     width: 100%;
     text-align: left;
   }
