@@ -19,14 +19,6 @@ where the number: 2958568 is the gist id
 
 
 # Development:
-Tributary is an experimental environment and an experimental project. We are playing with
-different "views" on code which have different assumptions. Once you get into it you may
-find you want to make your own view. 
-
-It's not too hard, just adding one endpoint to the backend, making a new template html and a new view javascript file.
-
-If you want to have github authentication working you will need to setup a
-github app and fill out the settings.js (see example-settings.js)
 
 On the backend tributary only depends on node and mongodb:
 To deploy locally run
@@ -37,10 +29,12 @@ npm install
 node server.js
 ```
 
-If you want to deploy behind apache, check out the sample apache config in server/sample_apache_config.txt
-If you want to setup wsgi there is a sample wsgi file in deploy/sample_tributary.wsgi (you can copy it into the base directory to match the sample apache config)
 
-Frontend JS src file compilation with make to static requires node.js and uglify-js
+If you want to have github authentication working you will need to setup a
+github app and fill out the settings.js (see example-settings.js)
+
+
+Frontend JS src file compilation with make to static requires node.js, uglify-js and browserify
 ```
 npm install
 ```
@@ -51,7 +45,14 @@ make
 ```
 You can check the Makefile to see how it's done with uglify and handlebars.
 there is also a watch.sh bash script which will recompile the frontend code
-when any files change.
+when any files change.  
+
+
+Some 3rd party libraries are minified and catted together for convenience. The
+result is found in /static/3rdparty.js
+To see what those are and how they are bundled look at this repository:
+http://github.com/enjalot/3rdparty
+
 
 
 Reserved properties of the tributary object:
