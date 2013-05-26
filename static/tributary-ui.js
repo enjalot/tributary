@@ -308,11 +308,13 @@ TributaryUi = function(tributary) {
         othertab.trigger("show");
         d3.event.stopPropagation();
       });
+      console.log("supppp");
       var plus = d3.select(this.el).select(".add-file").on("click", function() {
         var input = d3.select(this).select("input").style("display", "inline-block");
         input.node().focus();
-        input.on("keypress", function() {
-          if (d3.event.charCode === 13) {
+        input.on("keyup", keyPress);
+        function keyPress() {
+          if (d3.event.keyCode === 13) {
             if (input.node().value === "") {
               return input.style("display", "none");
             }
@@ -339,7 +341,7 @@ TributaryUi = function(tributary) {
               input.classed("error", true);
             }
           }
-        });
+        }
       });
     }
   });

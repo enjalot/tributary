@@ -79,6 +79,7 @@ Tributary.FilesView = Backbone.View.extend({
         d3.event.stopPropagation();
       })
 
+    console.log("supppp");
 
     //the new file button
     var plus = d3.select(this.el).select(".add-file")
@@ -87,9 +88,11 @@ Tributary.FilesView = Backbone.View.extend({
           .style("display","inline-block");
 
         input.node().focus();
-        input.on("keypress", function() {
+        //input.on("keypress", keyPress)
+        input.on("keyup", keyPress)
+        function keyPress() {
           //they hit enter
-          if(d3.event.charCode === 13) {
+          if(d3.event.keyCode === 13) {
             if(input.node().value === "") {
               return input.style("display","none");
             }
@@ -122,7 +125,7 @@ Tributary.FilesView = Backbone.View.extend({
               input.classed("error", true);
             }
           }
-        });
+        }
     });
 
   },
