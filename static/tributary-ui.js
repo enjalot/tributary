@@ -12,9 +12,15 @@ TributaryUi = function(tributary) {
       if (event.origin !== tributary._origin || !event.data) return;
       var data = event.data;
       if (data.request === "load") {
+        if (data.gistid) {
+          getGist(data.gistid, function(err, gist) {
+            tributary.loadGist(gist, _assemble);
+          });
+        } else {
+          tributary.loadGist(undefined, _assemble);
+        }
         parentWindow = event.source;
         tributary.query = data.query;
-        tributary.loadGist(data.gist, _assemble);
       } else if (data.request === "save") {
         var json = serializeGist();
         event.source.postMessage({
@@ -214,6 +220,35 @@ TributaryUi = function(tributary) {
       content: JSON.stringify(config.toJSON())
     };
     return gist;
+  }
+  function getGist(id, callback) {
+    var ret = {};
+    var cachebust = "?cachebust=" + Math.random() * 0xf12765df4c9b2;
+    var url = "https://api.github.com/gists/" + id + cachebust;
+    $.ajax({
+      url: url,
+      contentType: "application/json",
+      dataType: "json",
+      success: function(data) {
+        callback(null, data);
+      },
+      error: function(e) {
+        console.log(e);
+        url = "/gist/" + id + cachebust;
+        $.ajax({
+          url: url,
+          contentType: "application/json",
+          dataType: "json",
+          success: function(data) {
+            callback(null, data);
+          },
+          error: function(er) {
+            console.log(er);
+            callback(er, null);
+          }
+        });
+      }
+    });
   }
   Tributary.FilesView = Backbone.View.extend({
     initialize: function(options) {},

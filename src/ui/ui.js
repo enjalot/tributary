@@ -7,17 +7,28 @@ tributary.hint = false;
 
 var parentWindow;
 
+
+
 if(window) {
   function receiveMessage(event) {
     //console.log(event.origin, tributary._origin, event.data);
     if(event.origin !== tributary._origin || !event.data) return;
+    
     var data = event.data;
 
     if(data.request === "load") {
+      if(data.gistid) {
+        getGist(data.gistid,function(err, gist) {
+          tributary.loadGist(gist, _assemble);
+        });
+      } else {
+        tributary.loadGist(undefined, _assemble);
+      }
+
       //assemble the ui using gist data;
       parentWindow = event.source;
       tributary.query = data.query;
-      tributary.loadGist(data.gist, _assemble);
+      //tributary.loadGist(data.gist, _assemble);
     } else if(data.request === "save") {
       //postMessage the host frame with the tributary.context information
       var json = serializeGist();
@@ -38,6 +49,9 @@ if(window) {
 
   //listen on window postMessage to load gist and handle save/forks
   window.addEventListener("message", receiveMessage, false)
+    
+
+    
 
 }
 
@@ -295,3 +309,34 @@ function serializeGist() {
   }*/
   return gist;
 }
+
+//get the gist
+function getGist(id, callback) {
+  //return object
+  var ret = {};
+  var cachebust = "?cachebust=" + Math.random() * 4242424242424242;
+  var url = 'https://api.github.com/gists/' + id + cachebust;
+  $.ajax({
+    url: url,
+    contentType: 'application/json',
+    dataType: 'json',
+    success: function(data) { callback(null, data) },
+    error: function(e) {
+      console.log(e)
+      //if a 403 error (because of rate limiting) 
+      url = "/gist/" + id + cachebust;
+      $.ajax({
+        url: url,
+        contentType: 'application/json',
+        dataType: 'json',
+        success: function(data) { callback(null, data) },
+        error: function(er) {
+          console.log(er)
+          //OH NOES
+          callback(er, null);
+        }
+      })
+    },
+  }) 
+}
+
