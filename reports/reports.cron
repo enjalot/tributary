@@ -1,3 +1,0 @@
-*/15 * * * * /home/ubuntu/tributary/reports/reports.sh
-0 9 * * * /home/ubuntu/tributary/reports/backup.sh
-

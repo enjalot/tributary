@@ -1,8 +1,0 @@
-{
-  "id": "simple"
-, "description": "Simple demo plugin"
-, "url": "/static/plugins/simple"
-, "js": "index.js"
-, "html": "index.html"
-, "css": "style.css"
-}

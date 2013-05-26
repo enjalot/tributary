@@ -1,3 +1,0 @@
-#!/bin/bash
-./node_modules/vows/bin/vows tests/core/*
-echo ''

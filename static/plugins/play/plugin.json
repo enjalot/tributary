@@ -1,8 +1,0 @@
-{
-  "id": "play"
-, "description": "time controls, play with time!"
-, "url": "/static/plugins/play"
-, "js": "index.js"
-, "html": "index.html"
-, "css": "style.css"
-}

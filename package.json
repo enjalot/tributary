@@ -1,7 +1,7 @@
 {
   "name": "tributary",
-  "version": "0.7.0",
-  "description": "A live coding playground for producing visuals on the web.",
+  "version": "1.0.0",
+  "description": "A toolset for creating live coding environments on the web.",
   "keywords": [
     "dom",
     "w3c",
