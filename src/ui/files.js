@@ -79,8 +79,6 @@ Tributary.FilesView = Backbone.View.extend({
         d3.event.stopPropagation();
       })
 
-    console.log("supppp");
-
     //the new file button
     var plus = d3.select(this.el).select(".add-file")
       .on("click", function() {
