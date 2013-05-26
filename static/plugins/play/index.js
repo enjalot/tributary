@@ -201,7 +201,6 @@ function tributaryPlayPlugin(tributary, plugin) {
     //we can finish a transition
     tributary.timer = {
       then: new Date(),
-      duration: tributary.duration,
       ctime: tributary.t
     };
 
@@ -229,9 +228,9 @@ function tributaryPlayPlugin(tributary, plugin) {
       //TODO: implement play button, should reset the timer
       if(tributary.loop) {
         if (tributary.reverse) {
-          dt = tributary.timer.ctime * dtime / tributary.timer.duration * -1;
+          dt = tributary.timer.ctime * dtime / tributary.duration * -1;
         } else {
-          dt = (1 - tributary.timer.ctime) * dtime / tributary.timer.duration;
+          dt = (1 - tributary.timer.ctime) * dtime / tributary.duration;
         }
         tributary.t = tributary.timer.ctime + dt;
 
@@ -241,7 +240,6 @@ function tributaryPlayPlugin(tributary, plugin) {
           if(tributary.loop_type === "period") {
             tributary.t = 0;
             tributary.timer.then = new Date();
-            tributary.timer.duration = tributary.duration;
             tributary.timer.ctime = tributary.t;
             tributary.reverse = false;
             //tributary.pause = false;
@@ -249,7 +247,6 @@ function tributaryPlayPlugin(tributary, plugin) {
             //this sets tributary.t to 0 when we get to 0 and 1 when we get to 1 (because of the direction we were going)
             tributary.t = !tributary.reverse; //*1 casts the boolean to an int;
             tributary.timer.then = new Date();
-            tributary.timer.duration = tributary.duration;
             tributary.timer.ctime = tributary.t;
             tributary.reverse = !tributary.reverse;
           }

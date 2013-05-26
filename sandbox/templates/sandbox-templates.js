@@ -9,6 +9,6 @@ templates['inlet'] = template(function (Handlebars,depth0,helpers,partials,data)
   foundHelper = helpers.origin;
   if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{}}); }
   else { stack1 = depth0.origin; stack1 = typeof stack1 === functionType ? stack1() : stack1; }
-  buffer += escapeExpression(stack1) + "\";\n\n//decorate the tributary object with the ui logic\nTributaryUi(tb);\n\ntb.ui.setup();\n\ntb.events.on(\"loaded\", function() {\n  tb.loadPlugin(\"/static/plugins/play/plugin.json\"\n  , {}\n  , function (err, pluginId) { /*console.log(\"plugin load err?\", err)*/ }\n  );\n  /*\n  //example simple plugin\n  tb.loadPlugin(\"/static/plugins/simple/plugin.json\"\n  , {}\n  , function (err) { console.log(\"plugin load err?\", err) }\n  );\n  */\n})\n\n\n$('i').tipsy({fade: true, gravity: 'n', opacity: 0.86});\n</script>\n\n</body>\n</html>\n";
+  buffer += escapeExpression(stack1) + "\";\n\n//decorate the tributary object with the ui logic\nTributaryUi(tb);\n\ntb.ui.setup();\n\ntb.events.on(\"loaded\", function() {\n  tb.loadPlugin(\"/static/plugins/play/plugin.json\"\n  , {}\n  , function (err, pluginId) { /*console.log(\"plugin load err?\", err)*/ \n      tb.events.trigger(\"execute\");\n    }\n  );\n  /*\n  //example simple plugin\n  tb.loadPlugin(\"/static/plugins/simple/plugin.json\"\n  , {}\n  , function (err) { console.log(\"plugin load err?\", err) }\n  );\n  */\n})\n\n\n$('i').tipsy({fade: true, gravity: 'n', opacity: 0.86});\n</script>\n\n</body>\n</html>\n";
   return buffer;});
 })();

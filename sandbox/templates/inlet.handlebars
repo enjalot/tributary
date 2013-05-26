@@ -162,7 +162,9 @@ tb.ui.setup();
 tb.events.on("loaded", function() {
   tb.loadPlugin("/static/plugins/play/plugin.json"
   , {}
-  , function (err, pluginId) { /*console.log("plugin load err?", err)*/ }
+  , function (err, pluginId) { /*console.log("plugin load err?", err)*/ 
+      tb.events.trigger("execute");
+    }
   );
   /*
   //example simple plugin
