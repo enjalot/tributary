@@ -74,3 +74,41 @@ Data visualization prototyping tool
 [tributary.io >](http://tributary.io)
 
 You can power arbitrary static pages with live code snippets
+
+
+API
+===
+
+Introduction
+------------
+Tributary is broken up into two main parts: *Contexts* and *Displays*.
+Context's provide a way to turn code (or any text) into something to be played with.  
+A Display provides some default infrastructure for making it easy to use different graphical web standards.  
+
+Contexts
+--------
+### JavaScript Context
+### JSON Context
+### CSV Context
+### HTML Context
+### SVG Context
+### CoffeeScript Context
+
+Displays
+--------
+### SVG Display
+### HTML Display
+
+
+Frame
+-----
+The Frame object lets you wall off your code and displays from the rest of your page easily.
+It provides convenience methods for communicating with the frame as well.  
+The default way of using it is for iframes with the same domain as the page.
+This keeps the rendering and javascript scope clean but does not provide security. 
+If you allow arbitrary user input to your code editors you should use tributary inside a quarantined iframe (using a different domain or subdomain). More on that [here >](https://github.com/enjalot/tributary/wiki/Security)
+
+
+
+
+
