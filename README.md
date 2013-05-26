@@ -5,7 +5,7 @@ Tributary is a javascript library for bringing the writing of code and its execu
 Tributary makes it easy to build your own prototyping environment by wiring together 
 several existing tools for working with javascript.
 
-Tributary powers the data visualization prototyping tool [tributary.io][http://tributary.io]
+Tributary powers the data visualization prototyping tool [tributary.io >](http://tributary.io)
 
 Getting started
 ---------------
@@ -71,6 +71,6 @@ The following diagram shows one way to group the components by functionality:
 Examples
 --------
 Data visualization prototyping tool
-> [tributary.io >][http://tributary.io]
+[tributary.io >](http://tributary.io)
 
 You can power arbitrary static pages with live code snippets
