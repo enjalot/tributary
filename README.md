@@ -1,120 +1,111 @@
-# Tributary
-Tributary allows you to share live-editable code snippets. These snippets will
-most likely use d3.js and allow a user to play with code in a very responsive
-way.
+Tributary
+=========
 
-Tributary is innovation on principle, taking the excellent work of Gabriel
-Florit which was in turn inspired by Bret Victor's genius and making it sharable.
+Tributary is a javascript library for bringing the writing of code and its execution closer together. 
+Tributary makes it easy to build your own prototyping environment by wiring together 
+several existing tools for working with javascript.
 
-Tributary is a labor of love by Ian '@enjalot' Johnson and EJ '@mrejfox' Fox.
+Tributary powers the data visualization prototyping tool [tributary.io >](http://tributary.io)
 
-# Usage:
-Start typing into the code editor and watch your code come to life!
-If you want to save your work you can click the fork button and it will save into a gist.
-The url in your browser will update to something like:
-http://tributary.io/inlet/2958568
+Getting started
+---------------
+You can turn any CodeMirror editor into a live coding environment with a few lines of code:
 
-where the number: 2958568 is the gist id 
-(you can see it here: https://gist.github.com/2958568 ) 
-
-
-# Development:
-
-On the backend tributary only depends on node and mongodb:
-To deploy locally run
+tributary will create an iframe for code to be rendered in  
+```javascript
+var frame = new Tributary.Frame("#display");
 ```
-git clone https://github.com/enjalot/tributary
-cd ./tributary
-npm install
-node server.js
+the context is what does all the magic around interpreting the code  
+```javascript
+var jscontext = new Tributary.JSContext(frame);
+```
+The display will provide some default rendering environment (like an svg element in this case)  
+```javascript
+var display = new Tributary.SVGDisplay(frame);
 ```
 
-
-If you want to have github authentication working you will need to setup a
-github app and fill out the settings.js (see example-settings.js)
-
-
-Frontend JS src file compilation with make to static requires node.js, uglify-js and browserify
+we can hook up to events on the context, like before it re-runs the code
+we can clear the display.   
+we are using d3 events so they can be namespaced.
+```javascript
+jscontext.on("execute:pre.display", function() {
+  display.clear();
+})
+````
+we then setup our context to be updated when the code editor changes
+```javascript
+editor.on("change", function() {
+  jscontext.code(editor.getValue());
+})
 ```
-npm install
+
+### Setup
+
+You can be up and running with just one script tag
+```html
+  <script type="javascript" src="http://enjalot.github.io/tributary/tributary.v0.min.js"></script>
 ```
 
-You need to compile the frontend code and templates using make:
-```
-make
-```
-You can check the Makefile to see how it's done with uglify and handlebars.
-there is also a watch.sh bash script which will recompile the frontend code
-when any files change.  
-
-
-Some 3rd party libraries are minified and catted together for convenience. The
-result is found in /static/3rdparty.js
-To see what those are and how they are bundled look at this repository:
-http://github.com/enjalot/3rdparty
-
-
-
-Reserved properties of the tributary object:
-tributary.initialize  
-tributary.init  
-tributary.run  
-tributary.g  
-tributary.ctx  
-tributary.t  
-tributary.dt  
-tributary.loop  
-tributary.loop_type  
-tributary.autoinit  
-tributary.pause  
-tributary.bv  
-tributary.nclones  
-tributary.clone_opacity  
-tributary.duration  
-tributary.ease  
-tributary.reverse  
-tributary.render  
-
-
-# Usage as a node module
-
-
-
-###Contexts
-
-I'm using latest CodeMirror from git (updating every-so often)  
-I have customized the JSHINT options in addons/lint/javascript-lint.js to be:
-```
-{
-  asi: true,
-  laxcomma: true,
-  laxbreak: true,
-  loopfunc: true,
-  smarttabs: true,
-  sub: true
-}
+If you want tributary to provide you with CodeMirror and some other useful tools like JSHint you can use the 3rdparty lib 
+```html
+  <link  href='http://enjalot.github.io/tributary/tributary.3rdparty.css' rel='stylesheet'>
+  <script src="http://enjalot.github.io/tributary/tributary.3rdparty.min.js" type="javascript" ></script>
 ```
 
 
+Advanced Environments
+---------------------
+
+You can compose tributary contexts to make more complex environments
+### Setup multiple contexts
 
 
-### TODO:  
 
-#### Editor UI:  
-+ re-enable vim and emacs mode (add ui for those selections somewhere)  
-+ re-enable local storage backups per editor (need it so you can load code back but not execute it)  
+Event Model
+-----------
 
-#### File UI:  
-+ open file from disk (file dialog)  
-+ edit filename  
-+ delete files  
+Each piece of tributary listens and emits certain events.  
+The following diagram shows one way to group the components by functionality:
 
-+ Embedding example (simpler UI, assemble from fewer pieces)  
 
-+ Make BV button work for any of the renders (not just svg)  
+Examples
+--------
+Data visualization prototyping tool
+[tributary.io >](http://tributary.io)
 
-#### Contexts
+You can power arbitrary static pages with live code snippets
 
-+ enable number scrubbing for text mode (csv and tsv files)
+
+API
+===
+
+Introduction
+------------
+Tributary is broken up into two main parts: *Contexts* and *Displays*.
+Context's provide a way to turn code (or any text) into something to be played with.  
+A Display provides some default infrastructure for making it easy to use different graphical web standards.  
+
+Contexts
+--------
+### JavaScript Context
+### JSON Context
+### CSV Context
+### HTML Context
+### SVG Context
+### CoffeeScript Context
+
+Displays
+--------
+### SVG Display
+### HTML Display
+
+
+Frame
+-----
+The Frame object lets you wall off your code and displays from the rest of your page easily.
+It provides convenience methods for communicating with the frame as well.  
+The default way of using it is for iframes with the same domain as the page.
+This keeps the rendering and javascript scope clean but does not provide security. 
+If you allow arbitrary user input to your code editors you should use tributary inside a quarantined iframe (using a different domain or subdomain). More on that [here >](https://github.com/enjalot/tributary/wiki/Security)
 
 
