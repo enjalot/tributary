@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<head>
+  <script>
+    var T = {};
+  </script>
+  <script src="../tributary.js"></script>
+
+  <style>
+    #display {
+    }
+    
+  </style>
+</head>
+<body>
+
+  <div id="display">
+  </div>
+
+  <script>
+    var display = document.getElementById("display")
+    var frame = T.framer(display);
+
+    frame.on("error", function(e) {
+      //we can ask for a stack trace and get back the line/col number of runtime errors
+      console.log("error handled", e.stack)
+      //unfortunately it doesn't catch syntax errors, but we can use jslint for that
+    })
+
+    //var fn = frame.fn("console.log('hi', d3, queue)");
+    var fn = frame.fn("console.log('hi', tributary)");
+    //this throws a runtime error because asdf isn't defined
+    var badFn = frame.fn("var x;\nvar y;\nconsole.log('hi', tributary, asdf)");
+
+    frame.scripts(["../tributary.js"], function() {
+      //console.log("args", arguments)
+      //fn("a");
+    })
+    
+    frame.on("load", function() {
+      console.log("load event");
+      fn("b");
+      try {
+        badFn("c");
+      } catch(e) {
+        console.log("trace", e.stack)
+      }
+    })
+    frame.scripts(["../tributary.js"]);
+
+    /*
+    frame.script("../d3.js", function() {
+      frame.call("a", 1);
+      frame.rebuild(function() {
+        frame.call("a", 1);
+      });
+    });
+    */
+    
+
+  </script>
+
+</body>
+
