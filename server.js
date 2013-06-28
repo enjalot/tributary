@@ -398,22 +398,36 @@ function after_save(gist, callback) {
 app.get("/github-authenticated", github_authenticated)
 function github_authenticated(req,res,next) {
     var tempcode = req.query.code || '';
-    var data = {'client_id': settings.GITHUB_CLIENT_ID, 'client_secret': settings.GITHUB_CLIENT_SECRET, 'code': tempcode }
-    var headers = { 
+    var data = {
+      'client_id': settings.GITHUB_CLIENT_ID,
+      'client_secret': settings.GITHUB_CLIENT_SECRET,
+      'code': tempcode
+    }
+    var headers = {
       'User-Agent': 'tributary'
-    , 'content-type': 'application/json'
+    //, 'content-type': 'application/json'
     , 'accept': 'application/json'
     }
+    //well, github just decided that it didn't want json payload anymore...
+    var url = 'https://github.com/login/oauth/access_token';
+    url += "?client_id=" + data.client_id;
+    url += "&client_secret=" + data.client_secret;
+    url += "&code=" + data.code;
 
     // request an access token
     request({
-      url:'https://github.com/login/oauth/access_token',
-      json: data,
+      url: url,
+      method: "POST",
       headers: headers
     }, function(error, response, body) {
       if (!error && response.statusCode == 200) {
-        var access_token = body.access_token;
-        req.session.access_token = access_token;
+        var access_token;
+        try {
+          access_token = JSON.parse(body).access_token;
+          req.session.access_token = access_token;
+        } catch (e) {
+          return res.redirect('/404')
+        }
 
         request({
           url: "https://api.github.com/user?access_token=" + access_token
@@ -438,6 +452,7 @@ function github_authenticated(req,res,next) {
 
       } else {
         console.log("authentication error!", error);
+        res.redirect('/404')
       }
     })
 }
