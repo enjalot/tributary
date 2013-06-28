@@ -141,7 +141,8 @@
 
   function setup_header(gistUser, description) {
     if(gistUser) {
-      var profileUrl = "http://tributary.io/inlet/5088240?user=" + gistUser.login;
+      //old user page 5088240
+      var profileUrl = "http://tributary.io/inlet/5860371?user=" + gistUser.login;
       $("#inlet-author").html('<a href="' + profileUrl + '">' + gistUser.login + "</a>")
       $("#gist-title").val(description)
 
