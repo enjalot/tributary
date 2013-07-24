@@ -137,6 +137,11 @@ TODO: add these as defualt libs in the list
 <script src="/static/templates.js"></script>
 <script src="/static/tributary-ui.min.js"></script>
 
+<!-- canvg for screenshots -->
+<script type="text/javascript" src="/static/plugins/tb-screenshot-plugin/lib/rgbcolor.js"></script>
+<script type="text/javascript" src="/static/plugins/tb-screenshot-plugin/lib/StackBlur.js"></script>
+<script type="text/javascript" src="/static/plugins/tb-screenshot-plugin/lib/canvg.js"></script>
+
 <script type="text/javascript">
   
 /*
@@ -173,6 +178,9 @@ tb.events.on("loaded", function() {
   , function (err) { console.log("plugin load err?", err) }
   );
   */
+  tb.loadPlugin("/static/plugins/tb-screenshot-plugin/plugin.json", {}, 
+    function(e) {console.log("callback: ",e);}
+  );
 })
 
 
