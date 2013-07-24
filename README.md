@@ -47,6 +47,12 @@ You can check the Makefile to see how it's done with uglify and handlebars.
 there is also a watch.sh bash script which will recompile the frontend code
 when any files change.  
 
+To run the server you need to modify your /etc/hosts file and add
+```
+127.0.0.1 sandbox.localhost
+```
+this is because tributary uses a separate subdomain to execute unsafe code in an iframe.
+
 
 Some 3rd party libraries are minified and catted together for convenience. The
 result is found in /static/3rdparty.js
