@@ -160,7 +160,7 @@ document.body.style.cursor = "default";
 
 var tb = Tributary();
 tb._origin = "{{ origin }}";
-tb.__fullscreen__ = {{ fullscreen }}
+{{#if fullscreen}}tb.__fullscreen__ = {{ fullscreen }}; {{/if}}
 
 //decorate the tributary object with the ui logic
 TributaryUi(tb);

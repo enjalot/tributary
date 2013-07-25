@@ -2,12 +2,22 @@
   var template = Handlebars.template, templates = Handlebars.templates = Handlebars.templates || {};
 templates['inlet'] = template(function (Handlebars,depth0,helpers,partials,data) {
   helpers = helpers || Handlebars.helpers;
-  var buffer = "", stack1, foundHelper, self=this, functionType="function", escapeExpression=this.escapeExpression;
+  var buffer = "", stack1, foundHelper, functionType="function", escapeExpression=this.escapeExpression, self=this;
 
 function program1(depth0,data) {
   
   
   return "class=\"hidden\"";}
+
+function program3(depth0,data) {
+  
+  var buffer = "", stack1, foundHelper;
+  buffer += "tb.__fullscreen__ = ";
+  foundHelper = helpers.fullscreen;
+  if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{}}); }
+  else { stack1 = depth0.fullscreen; stack1 = typeof stack1 === functionType ? stack1() : stack1; }
+  buffer += escapeExpression(stack1) + "; ";
+  return buffer;}
 
   buffer += "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n	<meta charset=\"utf-8\"/>\n	<title>Tributary Sandbox</title>\n	<link rel=\"stylesheet\" media=\"all\" href=\"\"/>\n	<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"/>\n	<!-- Adding \"maximum-scale=1\" fixes the Mobile Safari auto-zoom bug: http://filamentgroup.com/examples/iosScaleBug/ -->\n\n  <link rel=\"stylesheet\" href=\"/static/css/trib.css\">\n  <link rel=\"stylesheet\" href=\"/static/css/animation.css\">\n  <link href='http://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700,400italic,700italic' rel='stylesheet' type='text/css'>\n  <link rel=\"stylesheet\" href=\"/static/css/tipsy.css\">\n\n  <!-- Add jQuery -->\n  <script src=\"/static/lib/jquery-1.7.min.js\"></script>\n  <script src=\"/static/lib/jquery.tipsy.js\" type=\"text/javascript\" charset=\"utf-8\"></script>\n  \n  <!-- CodeMirror Things -->\n<link rel=\"stylesheet\" href=\"/static/lib/CodeMirror3/lib/codemirror.css\">\n<link rel=\"stylesheet\" href=\"/static/lib/CodeMirror3/lib/util/dialog.css\">\n<link rel=\"stylesheet\" href=\"/static/lib/CodeMirror3/theme/night.css\">\n<link rel=\"stylesheet\" href=\"/static/lib/CodeMirror3/theme/vibrant-ink.css\">\n<link rel=\"stylesheet\" href=\"/static/lib/CodeMirror3/theme/ambiance.css\">\n<link rel=\"stylesheet\" href=\"/static/lib/CodeMirror3/theme/elegant.css\">\n<link rel=\"stylesheet\" href=\"/static/lib/CodeMirror3/addon/lint/lint.css\">\n\n<!-- Add EJ modified lesser dark -->\n<link rel=\"stylesheet\" href=\"/static/lib/CodeMirror3/theme/ej.css\">\n\n<link rel=\"stylesheet\" href=\"/static/lib/inlet.css\" type=\"text/css\" media=\"screen\" charset=\"utf-8\">\n<!-- And the main styles -->\n<link rel=\"stylesheet\" href=\"/static/css/style.css\" type=\"text/css\" media=\"screen\" title=\"Primary Stylesheet\" charset=\"utf-8\">\n\n<script src=\"/static/lib/html5slider.js\"></script>\n\n</head>\n<body>\n<div id=\"container\">\n\n	<section id=\"display\">\n	</section>\n  \n  <aside id=\"panel\" ";
   stack1 = depth0.fullscreen;
@@ -17,10 +27,10 @@ function program1(depth0,data) {
   foundHelper = helpers.origin;
   if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{}}); }
   else { stack1 = depth0.origin; stack1 = typeof stack1 === functionType ? stack1() : stack1; }
-  buffer += escapeExpression(stack1) + "\";\ntb.__fullscreen__ = ";
-  foundHelper = helpers.fullscreen;
-  if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{}}); }
-  else { stack1 = depth0.fullscreen; stack1 = typeof stack1 === functionType ? stack1() : stack1; }
-  buffer += escapeExpression(stack1) + "\n\n//decorate the tributary object with the ui logic\nTributaryUi(tb);\n\ntb.ui.setup();\n\ntb.events.on(\"loaded\", function() {\n  tb.loadPlugin(\"/static/plugins/play/plugin.json\"\n  , {}\n  , function (err, pluginId) { /*console.log(\"plugin load err?\", err)*/\n      tb.events.trigger(\"execute\");\n    }\n  );\n  /*\n  //example simple plugin\n  tb.loadPlugin(\"/static/plugins/simple/plugin.json\"\n  , {}\n  , function (err) { console.log(\"plugin load err?\", err) }\n  );\n  */\n  tb.loadPlugin(\"/static/plugins/tb-screenshot-plugin/plugin.json\", {},\n    function(e) { /*console.log(\"callback: \",e); */}\n  );\n})\n\n\n$('i').tipsy({fade: true, gravity: 'n', opacity: 0.86});\n</script>\n\n</body>\n</html>\n";
+  buffer += escapeExpression(stack1) + "\";\n";
+  stack1 = depth0.fullscreen;
+  stack1 = helpers['if'].call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(3, program3, data)});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n\n//decorate the tributary object with the ui logic\nTributaryUi(tb);\n\ntb.ui.setup();\n\ntb.events.on(\"loaded\", function() {\n  tb.loadPlugin(\"/static/plugins/play/plugin.json\"\n  , {}\n  , function (err, pluginId) { /*console.log(\"plugin load err?\", err)*/\n      tb.events.trigger(\"execute\");\n    }\n  );\n  /*\n  //example simple plugin\n  tb.loadPlugin(\"/static/plugins/simple/plugin.json\"\n  , {}\n  , function (err) { console.log(\"plugin load err?\", err) }\n  );\n  */\n  tb.loadPlugin(\"/static/plugins/tb-screenshot-plugin/plugin.json\", {},\n    function(e) { /*console.log(\"callback: \",e); */}\n  );\n})\n\n\n$('i').tipsy({fade: true, gravity: 'n', opacity: 0.86});\n</script>\n\n</body>\n</html>\n";
   return buffer;});
 })();
