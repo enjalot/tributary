@@ -51,7 +51,7 @@ tributary.loadPlugin = function (url, opts, cb) {
     plugin.options = opts;
     plugin.elId = Tributary.newPluginId();
     Tributary.plugins[plugin.id] = plugin;
-   
+
     var q = queue();
     q.defer(loadCss, plugin);
     q.defer(loadHtml, plugin);

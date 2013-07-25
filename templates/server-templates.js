@@ -63,7 +63,7 @@ function program3(depth0,data) {
   stack1 = depth0.user;
   stack1 = stack1 == null || stack1 === false ? stack1 : stack1.html_url;
   stack1 = typeof stack1 === functionType ? stack1() : stack1;
-  buffer += escapeExpression(stack1) + "\";\n    header.userurl = \"http://tributary.io/inlet/5088240?user=";
+  buffer += escapeExpression(stack1) + "\";\n    header.userurl = \"http://tributary.io/inlet/5860371?user=";
   stack1 = depth0.user;
   stack1 = stack1 == null || stack1 === false ? stack1 : stack1.login;
   stack1 = typeof stack1 === functionType ? stack1() : stack1;
