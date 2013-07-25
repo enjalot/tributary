@@ -9,11 +9,6 @@ function tributaryScreenshotPlugin(tributary, plugin) {
     // get the screenshot button and put it on the config panel
     d3.select("#thumbnail-content").node().appendChild(d3.select(el).select("#screenshot").node());
     d3.select("#screenshot").on("click", handleScreenshot);
-    var link = tributary.__config__.get("thumbnail");
-    // Update the thumbnail in the config panel
-    if (link) {
-      d3.select("#thumbnail-content").select("img").attr("src", link).style("display", "");
-    }
   }
   plugin.deactivate = function()  {
     el = document.getElementById(plugin.elId);
