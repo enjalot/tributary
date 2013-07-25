@@ -41,6 +41,7 @@ if(window) {
     } else if( data.request === "thumbnail" ) {
       //we have successful upload!
       var image = data.image;
+      d3.select("#thumb-load").transition().duration(1000).style("opacity",0);
       d3.select("#trib-thumbnail").attr("src", image.data.link);
       d3.select("#trib-thumbnail").style("display", "");
       tributary.__config__.set("thumbnail", image.data.link);
@@ -61,8 +62,10 @@ tributary.events.on("warnchanged", function() {
     parentWindow.postMessage({request: "warnchanged" }, tributary._origin);
 })
 tributary.events.on("imgur", function(img) {
-  if(parentWindow)
+  if(parentWindow)  {
+    d3.select("#thumb-load").style("opacity", 1);
     parentWindow.postMessage({request: "imgur", img: img }, tributary._origin);
+  }
 })
 
 //let the parent frame know we went fullsize so it can style itself accordingly
