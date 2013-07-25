@@ -59,14 +59,15 @@ TributaryUi = function(tributary) {
   }
   tributary.ui.setup = function() {
     tributary.events.on("resize", function() {
-      if ($("#display").width() > 767) {
-        tributary.sw = $("#display").width() - $("#panel").width();
+      if ($("#container").width() > 767) {
+        tributary.sw = $("#container").width() - $("#panel").width();
       } else {
-        tributary.sw = $("#display").width();
+        tributary.sw = $("#container").width();
       }
       if ($("#container").hasClass("fullscreen")) {
-        tributary.sw = $("#display").width();
+        tributary.sw = $("#container").width();
       }
+      $("#display").width(tributary.sw + "px");
       tributary.sh = $("#display").height();
       tributary.events.trigger("execute");
     });
