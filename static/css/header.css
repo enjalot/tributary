@@ -448,6 +448,9 @@ input[type=submit]:active {
 
     More info at: http://lesselements.com
 -----------------------------------------------------*/
+.hidden {
+  display: none;
+}
 #sandbox {
   width: 100%;
   height: 100%;

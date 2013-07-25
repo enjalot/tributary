@@ -448,6 +448,9 @@ input[type=submit]:active {
 
     More info at: http://lesselements.com
 -----------------------------------------------------*/
+.hidden {
+  display: none;
+}
 /*    Default Layout: 992px.
     Gutters: 24px.
     Outer margins: 48px.

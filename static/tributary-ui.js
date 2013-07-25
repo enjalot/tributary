@@ -178,7 +178,7 @@ TributaryUi = function(tributary) {
       }
     });
     function fullscreenEvent(fullscreen) {
-      if (fullscreen) {
+      if (fullscreen || tributary.__fullscreen__) {
         config.set("fullscreen", true);
         $("#container").addClass("fullscreen");
         goFullscreen();
@@ -233,7 +233,7 @@ TributaryUi = function(tributary) {
         callback(null, data);
       },
       error: function(e) {
-        console.log(e);
+        console.log("err", e);
         url = "/gist/" + id + cachebust;
         $.ajax({
           url: url,
@@ -243,7 +243,7 @@ TributaryUi = function(tributary) {
             callback(null, data);
           },
           error: function(er) {
-            console.log(er);
+            console.log("err", er);
             callback(er, null);
           }
         });

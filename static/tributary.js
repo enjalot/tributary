@@ -495,7 +495,6 @@ Tributary = function() {
         width: "100%",
         height: "100%"
       });
-      console.log("????");
       tributary.g = this.svg;
       tributary.__svg__ = this.svg;
       tributary.clear = function() {
