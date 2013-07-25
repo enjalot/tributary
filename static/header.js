@@ -100,14 +100,14 @@
           contentType: 'application/json',
           dataType: 'json',
           success: function(data) { handle_gist(data, callback) },
-          error: function("err", er) {
-            console.log(er)
+          error: function(er) {
+            console.log("err", er)
             //OH NOES
             callback(er, null);
           }
         })
       },
-    }) 
+    })
   }
 
   //callback when we get gist back, initiate setup of header and save panels
