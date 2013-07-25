@@ -41,7 +41,7 @@
 	<section id="display">
 	</section>
   
-	<aside id="panel">
+  <aside id="panel" {{#if fullscreen}}class="hidden"{{/if}}>
 		<section id="files">
 			<ul id="file-list">
 			</ul>
@@ -160,6 +160,7 @@ document.body.style.cursor = "default";
 
 var tb = Tributary();
 tb._origin = "{{ origin }}";
+tb.__fullscreen__ = {{ fullscreen }}
 
 //decorate the tributary object with the ui logic
 TributaryUi(tb);

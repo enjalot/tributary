@@ -18,8 +18,7 @@
   d3.select("#sandbox").node().onload = function() {
     sandbox.postMessage({request: "load", gistid: header.gistid, query: header.query}, _origin);
   }
-  
-  
+
   //Config object has everything we need to save our gist
   function getConfig() {
     salt = +new Date() + Math.random() * 99999999;
@@ -40,10 +39,10 @@
   //on the load of the iframe, we want to get the gist (if any)
   //and then give it what it needs to fill out
   d3.select("#sandbox").on("load", function() {
+    load();
     if(header.gistid !== "" && header.gistid) {
-      getGist(header.gistid, load);
+      getGist(header.gistid, function(err) { if(err) console.log("err", err) });
     } else {
-      load(null, undefined);
       //this sets up the ui even tho we have no gist;
       handle_gist();
     }
@@ -93,7 +92,7 @@
       dataType: 'json',
       success: function(data) { handle_gist(data, callback) },
       error: function(e) {
-        console.log(e)
+        console.log("err", e)
         //if a 403 error (because of rate limiting) 
         url = "/gist/" + id + cachebust;
         $.ajax({
@@ -101,7 +100,7 @@
           contentType: 'application/json',
           dataType: 'json',
           success: function(data) { handle_gist(data, callback) },
-          error: function(er) {
+          error: function("err", er) {
             console.log(er)
             //OH NOES
             callback(er, null);

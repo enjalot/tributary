@@ -242,7 +242,7 @@ function _assemble(error, ret) {
   })
 
   function fullscreenEvent(fullscreen) {
-    if(fullscreen) {
+    if(fullscreen  || tributary.__fullscreen__) {
       config.set("fullscreen", true);
       $("#container").addClass("fullscreen")
       goFullscreen();
@@ -322,7 +322,7 @@ function getGist(id, callback) {
     dataType: 'json',
     success: function(data) { callback(null, data) },
     error: function(e) {
-      console.log(e)
+      console.log("err", e)
       //if a 403 error (because of rate limiting) 
       url = "/gist/" + id + cachebust;
       $.ajax({
@@ -331,12 +331,12 @@ function getGist(id, callback) {
         dataType: 'json',
         success: function(data) { callback(null, data) },
         error: function(er) {
-          console.log(er)
+          console.log("err", er)
           //OH NOES
           callback(er, null);
         }
       })
     },
-  }) 
+  })
 }
 

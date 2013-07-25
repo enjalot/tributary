@@ -5,6 +5,7 @@ var request = require('request');
 
 var port = settings.port || 8888;
 var sandboxOrigin = settings.sandboxOrigin || "http://sandbox.localhost:8888";
+var shareSandboxOrigin = sandboxOrigin + "/s";
 
 //SERVER SIDE TEMPLATES
 GLOBAL.Handlebars = require('handlebars');
@@ -92,6 +93,7 @@ app.get('/tributary/:gistid', inlet)
 app.get('/tributary/:gistid/:filename', inlet)
 app.get('/delta/:gistid', inlet)
 app.get('/delta/:gistid/:filename', inlet)
+app.get('/s/:gistid', inlet)
 function inlet(req,res,next) {
   var gistid = req.params['gistid'];
   var user = req.session.user;
@@ -115,14 +117,20 @@ function inlet(req,res,next) {
   } catch(e) {
     var query = "";
   }
-  var template = Handlebars.templates.header;
+  if(req.route.path === '/s/:gistid') {
+    var template = Handlebars.templates.headerShare;
+    var sbo = shareSandboxOrigin
+  } else {
+    var template = Handlebars.templates.header;
+    var sbo = sandboxOrigin
+  }
   var html = template({
     user: user,
     avatar_url: user? user.avatar_url : "",
     loggedin: user ? true : false,
     gistid: gistid,
     query: query,
-    sandboxOrigin: sandboxOrigin
+    sandboxOrigin: sbo 
   });
   res.send(html);
 }

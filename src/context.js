@@ -27,7 +27,6 @@ tributary.TributaryContext = tributary.Context.extend({
         tributary.__config__ = new tributary.Config();
       }
     }
-    
 
     //if the user has modified the code, we want to protect them from losing their work
     this.model.on("change:code", function() {
@@ -139,7 +138,6 @@ tributary.TributaryContext = tributary.Context.extend({
         width: "100%",
         height: "100%"
       });
-    console.log("????")
     tributary.g = this.svg;
     tributary.__svg__ = this.svg;
 

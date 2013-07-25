@@ -15,8 +15,18 @@ require('./templates/sandbox-templates');
 app.get("/", index);
 function index(req, res, next) {
   var template = Handlebars.templates.inlet;
-  var html = template({ 
-    origin: origin
+  var html = template({
+    origin: origin,
+    fullscreen: false
+  });
+  res.send(html);
+};
+app.get("/s", share);
+function share(req, res, next) {
+  var template = Handlebars.templates.inlet;
+  var html = template({
+    origin: origin,
+    fullscreen: true
   });
   res.send(html);
 };
