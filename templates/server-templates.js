@@ -35,11 +35,11 @@ function program3(depth0,data) {
   foundHelper = helpers.author;
   if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{}}); }
   else { stack1 = depth0.author; stack1 = typeof stack1 === functionType ? stack1() : stack1; }
-  buffer += escapeExpression(stack1) + "</span>\n\n\n			<button id=\"save\" title=\"Save current state\" onclick='$(\".icon-load\").css(\"opacity\", 1);'>Save</button>\n			<button id=\"fork\" title=\"Save a copy\" style=\"display:none;\">Fork</button>\n\n			<!-- Export one day <button id=\"export\"><i class=\"icon-export\"></i></button> -->\n\n			<i class=\"icon-load animate-spin\" style=\"opacity: 0;\"></i>\n		</section>\n\n\n\n		<section id=\"login\">\n			";
+  buffer += escapeExpression(stack1) + "</span>\n\n\n			<button id=\"save\" title=\"Save current state\" onclick='$(\".icon-load\").css(\"opacity\", 1);'>Save</button>\n			<button id=\"fork\" title=\"Save a copy\" style=\"display:none;\">Fork</button>\n\n			<!-- Export one day <button id=\"export\"><i class=\"icon-export\"></i></button> -->\n\n			<i class=\"icon-load animate-spin\" style=\"opacity: 0;\"></i>\n		</section>\n\n\n\n    <button id=\"exit-fullscreen\" style=\"display: none;\">Exit fullscreen</button>\n      \n		<section id=\"login\">\n			";
   stack1 = depth0.loggedin;
   stack1 = helpers['if'].call(depth0, stack1, {hash:{},inverse:self.program(3, program3, data),fn:self.program(1, program1, data)});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n      \n      <button id=\"exit-fullscreen\" style=\"display: none;\">Exit fullscreen</button>\n\n		</section>\n\n	</header>\n\n  <iframe id=\"sandbox\" src=\"";
+  buffer += "\n		</section>\n\n	</header>\n\n  <iframe id=\"sandbox\" src=\"";
   foundHelper = helpers.sandboxOrigin;
   if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{}}); }
   else { stack1 = depth0.sandboxOrigin; stack1 = typeof stack1 === functionType ? stack1() : stack1; }
