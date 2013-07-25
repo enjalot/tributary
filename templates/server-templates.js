@@ -7,15 +7,19 @@ templates['header'] = template(function (Handlebars,depth0,helpers,partials,data
 function program1(depth0,data) {
   
   var buffer = "", stack1, foundHelper;
-  buffer += "\n      <span id=\"current-user\"><span class=\"user-avatar\"><img id=\"user-avatar\" class=\"avatar\" src=\"";
+  buffer += "\n      <span id=\"current-user\">\n        <span class=\"user-avatar\">\n          <img id=\"user-avatar\" class=\"avatar\" src=\"";
   foundHelper = helpers.avatar_url;
   if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{}}); }
   else { stack1 = depth0.avatar_url; stack1 = typeof stack1 === functionType ? stack1() : stack1; }
-  buffer += escapeExpression(stack1) + "\"/></span><span id=\"current-username\">";
+  buffer += escapeExpression(stack1) + "\"/>\n        </span>\n        <a id=\"current-username\" href=\"http://tributary.io/inlet/5860371?user=";
+  stack1 = depth0.user;
+  stack1 = stack1 == null || stack1 === false ? stack1 : stack1.login;
+  stack1 = typeof stack1 === functionType ? stack1() : stack1;
+  buffer += escapeExpression(stack1) + "\">";
   stack1 = depth0.user;
   stack1 = stack1 == null || stack1 === false ? stack1 : stack1.name;
   stack1 = typeof stack1 === functionType ? stack1() : stack1;
-  buffer += escapeExpression(stack1) + "</span></span>\n			<button id=\"loginPanel\">Log out</button>\n      ";
+  buffer += escapeExpression(stack1) + "</a>\n      </span>\n			<button id=\"loginPanel\">Log out</button>\n      ";
   return buffer;}
 
 function program3(depth0,data) {

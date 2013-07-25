@@ -74,7 +74,12 @@
 
 		<section id="login">
 			{{#if loggedin}}
-      <span id="current-user"><span class="user-avatar"><img id="user-avatar" class="avatar" src="{{avatar_url}}"/></span><span id="current-username">{{ user.name }}</span></span>
+      <span id="current-user">
+        <span class="user-avatar">
+          <img id="user-avatar" class="avatar" src="{{avatar_url}}"/>
+        </span>
+        <a id="current-username" href="http://tributary.io/inlet/5860371?user={{user.login}}">{{ user.name }}</a>
+      </span>
 			<button id="loginPanel">Log out</button>
       {{else}}
       <button id="loginPanel">Log in <i class="icon-github"></i></button>

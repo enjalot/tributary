@@ -178,7 +178,6 @@ TributaryUi = function(tributary) {
       }
     });
     function fullscreenEvent(fullscreen) {
-      console.log("fullscreen?", fullscreen, tributary.__fullscreen__);
       if (fullscreen || tributary.__fullscreen__) {
         config.set("fullscreen", true);
         $("#container").addClass("fullscreen");

@@ -142,7 +142,7 @@
     if(gistUser) {
       //old user page 5088240
       var profileUrl = "http://tributary.io/inlet/5860371?user=" + gistUser.login;
-      $("#inlet-author").html('<a href="' + profileUrl + '">' + gistUser.login + "</a>")
+      $("#inlet-author").html('<a target="_blank" href="' + profileUrl + '">' + gistUser.login + "</a>")
       $("#gist-title").val(description)
 
       $("#author-avatar img").attr("src", function(d){
@@ -150,7 +150,7 @@
       })
 
       d3.select("title").text("Tributary | " + (description || "Inlet"))
-    } 
+    }
 
     $("#gist-title").on("keyup", function(){
       //console.log($("#gist-title").val());
