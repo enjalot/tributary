@@ -71,11 +71,16 @@ tributary.TributaryContext = tributary.Context.extend({
     }
 
     try {
+      
       //empty out our display element
       if(tributary.autoinit) {
         tributary.clear();
         //call anything that needs to be prerendered (SVG and HTML contexts)
         tributary.events.trigger("prerender");
+      }
+      if(tributary.ctx && !tributary.g) {
+        //somehow tributary.g ends up undefined...
+      //  tributary.g = tributary.ctx;
       }
 
       //execute the code
@@ -134,6 +139,7 @@ tributary.TributaryContext = tributary.Context.extend({
         width: "100%",
         height: "100%"
       });
+    console.log("????")
     tributary.g = this.svg;
     tributary.__svg__ = this.svg;
 
@@ -159,7 +165,6 @@ tributary.TributaryContext = tributary.Context.extend({
       .node();
     tributary.ctx = tributary.canvas.getContext('2d');
     tributary.g = tributary.ctx;
-
   },
 
   make_webgl: function() {

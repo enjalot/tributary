@@ -449,6 +449,7 @@ Tributary = function() {
           tributary.clear();
           tributary.events.trigger("prerender");
         }
+        if (tributary.ctx && !tributary.g) {}
         tributary.initialize(tributary.g, tributary);
         if (tributary.autoinit && tributary.init !== undefined) {
           tributary.init(tributary.g, 0);
@@ -494,6 +495,7 @@ Tributary = function() {
         width: "100%",
         height: "100%"
       });
+      console.log("????");
       tributary.g = this.svg;
       tributary.__svg__ = this.svg;
       tributary.clear = function() {

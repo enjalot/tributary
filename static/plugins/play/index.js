@@ -286,7 +286,7 @@ function tributaryPlayPlugin(tributary, plugin) {
       if(tributary.bv) {
         makeClones();
       } else {
-        tributary.g = tributary.__svg__;
+        if(tributary.__svg__) tributary.g = tributary.__svg__;
       }
     });
   }
