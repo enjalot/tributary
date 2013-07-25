@@ -22,11 +22,12 @@ function tributaryScreenshotPlugin(tributary, plugin) {
 
   function handleScreenshot() {
     var display = tributary.__config__.get("display");
-    console.log("display", display)
     if(display === "svg") {
       svgScreenshot();
     } else if(display === "canvas" || display === "webgl") {
       canvasScreenshot();
+    } else if(display === "div") {
+      htmlScreenshot();
     }
   }
   function svgScreenshot() {
@@ -45,10 +46,17 @@ function tributaryScreenshotPlugin(tributary, plugin) {
   function canvasScreenshot() {
     canvas = d3.select("#display canvas").node()
     var len = "data:image/png;base64,".length;
-    console.log("len", len)
     var img = canvas.toDataURL("image/png").substring(len);
-    console.log("image", img.length)
     tributary.events.trigger("imgur", img);
+  }
+  function htmlScreenshot() {
+    html2canvas( [ d3.select("#display").node() ], {
+      onrendered: function(canvas) {
+        var len = "data:image/png;base64,".length;
+        var img = canvas.toDataURL("image/png").substring(len);
+        tributary.events.trigger("imgur", img);
+    }
+    });
   }
 
   return plugin;
