@@ -115,6 +115,7 @@ tributary.TributaryContext = tributary.Context.extend({
     } else if (display === "webgl") {
       this.make_webgl();
     } else if (display === "div") {
+      tributary.__svg__ = null;
       this.g = d3.select(this.el);
       tributary.g = this.g;
       tributary.clear = function() {
@@ -150,6 +151,7 @@ tributary.TributaryContext = tributary.Context.extend({
   },
 
   make_canvas: function() {
+    tributary.__svg__ = null;
     tributary.clear = function() {
       //var sw = parseInt(d3.select("#display").style("width"));
       //var sh = parseInt(d3.select("#display").style("height"));
@@ -166,6 +168,7 @@ tributary.TributaryContext = tributary.Context.extend({
   },
 
   make_webgl: function() {
+    tributary.__svg__ = null;
     container = this.el;
 
     tributary.camera = new THREE.PerspectiveCamera( 70, tributary.sw / tributary.sh, 1, 1000 );

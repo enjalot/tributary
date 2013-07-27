@@ -476,6 +476,7 @@ Tributary = function() {
       } else if (display === "webgl") {
         this.make_webgl();
       } else if (display === "div") {
+        tributary.__svg__ = null;
         this.g = d3.select(this.el);
         tributary.g = this.g;
         tributary.clear = function() {
@@ -502,6 +503,7 @@ Tributary = function() {
       };
     },
     make_canvas: function() {
+      tributary.__svg__ = null;
       tributary.clear = function() {
         tributary.canvas.width = tributary.sw;
         tributary.canvas.height = tributary.sh;
@@ -512,6 +514,7 @@ Tributary = function() {
       tributary.g = tributary.ctx;
     },
     make_webgl: function() {
+      tributary.__svg__ = null;
       container = this.el;
       tributary.camera = new THREE.PerspectiveCamera(70, tributary.sw / tributary.sh, 1, 1e3);
       tributary.camera.position.y = 150;
