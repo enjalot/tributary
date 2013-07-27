@@ -701,7 +701,8 @@ px      68    160    252    344    436    528    620    712    804    896    */
   padding: 2px;
 }
 #code {
-  margin-top: 1.6em;
+  margin-top: 45px;
+  padding-bottom: 30px;
   height: 100%;
   width: 100%;
   overflow-y: auto;
