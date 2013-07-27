@@ -460,7 +460,7 @@ input[type=submit]:active {
   position: fixed;
   top: 0;
   left: 0;
-  height: 3.5em;
+  height: 62px;
   width: 100%;
   background-image: url("/static/img/cartographer@2x.png");
   background-size: 500px 499px;
@@ -527,8 +527,8 @@ input[type=submit]:active {
   border-bottom: 1px solid rgba(255, 255, 255, 0.3);
 }
 #title .avatar {
-  width: 1.75em;
-  height: 1.75em;
+  width: 31px;
+  height: 31px;
   /*
     .transition(.4s,ease-out);
     &:hover {
