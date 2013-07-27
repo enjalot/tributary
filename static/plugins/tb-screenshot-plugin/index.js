@@ -34,9 +34,10 @@ function tributaryScreenshotPlugin(tributary, plugin) {
   function svgScreenshot() {
     //svg = d3.select("#display").html();
     var svg = new XMLSerializer().serializeToString(d3.select(".tributary_svg").node());
-    var findstring = '<svg xmlns="http://www.w3.org/2000/svg" xlink:xlink="http://www.w3.org/1999/xlink" class="tributary_svg" width="100%" height="100%">';
-    svg = svg.replace(findstring,'<svg>'); // hacky.
-    //console.log("SVG", d3.select("#display").html())
+    //var findstring = '<svg xmlns="http://www.w3.org/2000/svg" xlink:xlink="http://www.w3.org/1999/xlink" class="tributary_svg" width="100%" height="100%">';
+    //svg = svg.replace(findstring,''); // hacky.
+    svg = svg.replace(/^\<svg xmlns.+tributary_svg.+?>/,''); // hacky.
+    
     canvas = document.getElementById('pngit');
     canvg(canvas, svg, {renderCallback: function() {
       var len = "data:image/png;base64,".length;
