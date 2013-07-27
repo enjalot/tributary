@@ -38,6 +38,7 @@ TributaryUi = function(tributary) {
         tributary.events.trigger("fullscreen", false);
       } else if (data.request === "thumbnail") {
         var image = data.image;
+        d3.select("#thumb-load").transition().duration(1e3).style("opacity", 0);
         d3.select("#trib-thumbnail").attr("src", image.data.link);
         d3.select("#trib-thumbnail").style("display", "");
         tributary.__config__.set("thumbnail", image.data.link);
@@ -51,10 +52,13 @@ TributaryUi = function(tributary) {
     }, tributary._origin);
   });
   tributary.events.on("imgur", function(img) {
-    if (parentWindow) parentWindow.postMessage({
-      request: "imgur",
-      img: img
-    }, tributary._origin);
+    if (parentWindow) {
+      d3.select("#thumb-load").style("opacity", 1);
+      parentWindow.postMessage({
+        request: "imgur",
+        img: img
+      }, tributary._origin);
+    }
   });
   function goFullscreen() {
     if (parentWindow) parentWindow.postMessage({
