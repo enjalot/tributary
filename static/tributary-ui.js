@@ -22,12 +22,17 @@ TributaryUi = function(tributary) {
         parentWindow = event.source;
         tributary.query = data.query;
       } else if (data.request === "save") {
-        var json = serializeGist();
-        event.source.postMessage({
-          request: "save",
-          config: json,
-          salt: data.salt
-        }, event.origin);
+        console.log("WHATS UP", tributary.__config__.get("thumbnail"));
+        if (!tributary.__config__.get("thumbnail")) {
+          tributary._screenshot();
+        } else {
+          var json = serializeGist();
+          event.source.postMessage({
+            request: "save",
+            config: json,
+            salt: data.salt
+          }, event.origin);
+        }
       } else if (data.request === "description") {
         tributary.__config__.set("description", data.description);
       } else if (data.request === "exitfullscreen") {

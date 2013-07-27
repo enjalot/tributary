@@ -20,6 +20,7 @@ function tributaryScreenshotPlugin(tributary, plugin) {
     el.innerHTML = "";
   }
 
+  tributary._screenshot = handleScreenshot;
   function handleScreenshot() {
     var display = tributary.__config__.get("display");
     if(display === "svg") {

@@ -34,6 +34,7 @@
   }
   function setThumbnail(image) {
     sandbox.postMessage({request: "thumbnail", image: image}, _origin);
+    getConfig();
   }
 
   //on the load of the iframe, we want to get the gist (if any)
