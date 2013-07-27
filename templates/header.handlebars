@@ -50,6 +50,7 @@
 </head>
 <body>
 <div id="container">
+  {{#unless embedRoute}}
 	<header id="title">
   <h1>
     <a href="/inlet/" target="_blank">Tributary</a>
@@ -62,16 +63,16 @@
 			<span id="inlet-author">{{author}}</span>
 
 
+      {{#if inletRoute}}
 			<button id="save" title="Save current state" onclick='$(".icon-load").css("opacity", 1);'>Save</button>
 			<button id="fork" title="Save a copy" style="display:none;">Fork</button>
-
-			<!-- Export one day <button id="export"><i class="icon-export"></i></button> -->
-
 			<i class="icon-load animate-spin" style="opacity: 0;"></i>
+      {{/if}}
 		</section>
 
 
 
+    {{#if inletRoute}}
     <button id="exit-fullscreen" style="display: none;">Exit fullscreen</button>
       
 		<section id="login">
@@ -87,8 +88,10 @@
       <button id="loginPanel">Log in <i class="icon-github"></i></button>
       {{/if}}
 		</section>
+    {{/if}}
 
 	</header>
+  {{/unless}}
 
   <iframe id="sandbox" src="{{ sandboxOrigin }}" frameBorder=0></iframe>
 
@@ -112,6 +115,9 @@
     header.userurl = "http://tributary.io/inlet/5860371?user={{user.login}}";
     header.origin = "{{ sandboxOrigin }}";
     header.query = {{{query}}};
+    {{#unless inletRoute}}
+      header.fullscreen = true;
+    {{/unless}}
     
     
     $('i').tipsy({fade: true, gravity: 'n', opacity: 0.86});

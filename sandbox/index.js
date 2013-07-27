@@ -30,6 +30,18 @@ function share(req, res, next) {
   });
   res.send(html);
 };
+app.get("/e", share);
+function share(req, res, next) {
+  var template = Handlebars.templates.inlet;
+  var html = template({
+    origin: origin,
+    fullscreen: true,
+    embed: true
+  });
+  res.send(html);
+};
+
+
 
 //API endpoint for fetching a gist from github
 app.get("/gist/:gistid", getgist_endpoint);
