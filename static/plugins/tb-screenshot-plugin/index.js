@@ -36,7 +36,7 @@ function tributaryScreenshotPlugin(tributary, plugin) {
     var svg = new XMLSerializer().serializeToString(d3.select(".tributary_svg").node());
     //var findstring = '<svg xmlns="http://www.w3.org/2000/svg" xlink:xlink="http://www.w3.org/1999/xlink" class="tributary_svg" width="100%" height="100%">';
     //svg = svg.replace(findstring,''); // hacky.
-    svg = svg.replace(/^\<svg xmlns.+tributary_svg.+?>/,''); // hacky.
+    svg = svg.replace(/^\<svg xmlns.+tributary_svg.+?>/,'<svg>'); // hacky.
     
     canvas = document.getElementById('pngit');
     canvg(canvas, svg, {renderCallback: function() {
