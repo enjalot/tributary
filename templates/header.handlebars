@@ -81,7 +81,7 @@
         <span class="user-avatar">
           <img id="user-avatar" class="avatar" src="{{avatar_url}}"/>
         </span>
-        <a id="current-username" href="http://tributary.io/inlet/5860371?user={{user.login}}">{{ user.name }}</a>
+        <a id="current-username" href="http://tributary.io/s/6094415?user={{user.login}}">{{ user.name }}</a>
       </span>
 			<button id="loginPanel">Log out</button>
       {{else}}
@@ -112,7 +112,7 @@
     header.avatar = "{{ user.avatar_url }}";
     header.userid = parseInt("{{user.id}}");
     //header.userurl = "{{ user.html_url }}";
-    header.userurl = "http://tributary.io/inlet/5860371?user={{user.login}}";
+    header.userurl = "http://tributary.io/s/6094415?user={{user.login}}";
     header.origin = "{{ sandboxOrigin }}";
     header.query = {{{query}}};
     {{#unless inletRoute}}

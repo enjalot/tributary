@@ -46,7 +46,7 @@ function program5(depth0,data) {
   foundHelper = helpers.avatar_url;
   if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{}}); }
   else { stack1 = depth0.avatar_url; stack1 = typeof stack1 === functionType ? stack1() : stack1; }
-  buffer += escapeExpression(stack1) + "\"/>\n        </span>\n        <a id=\"current-username\" href=\"http://tributary.io/inlet/5860371?user=";
+  buffer += escapeExpression(stack1) + "\"/>\n        </span>\n        <a id=\"current-username\" href=\"http://tributary.io/s/6094415?user=";
   stack1 = depth0.user;
   stack1 = stack1 == null || stack1 === false ? stack1 : stack1.login;
   stack1 = typeof stack1 === functionType ? stack1() : stack1;
@@ -99,7 +99,7 @@ function program9(depth0,data) {
   stack1 = depth0.user;
   stack1 = stack1 == null || stack1 === false ? stack1 : stack1.html_url;
   stack1 = typeof stack1 === functionType ? stack1() : stack1;
-  buffer += escapeExpression(stack1) + "\";\n    header.userurl = \"http://tributary.io/inlet/5860371?user=";
+  buffer += escapeExpression(stack1) + "\";\n    header.userurl = \"http://tributary.io/s/6094415?user=";
   stack1 = depth0.user;
   stack1 = stack1 == null || stack1 === false ? stack1 : stack1.login;
   stack1 = typeof stack1 === functionType ? stack1() : stack1;
