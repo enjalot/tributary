@@ -26,12 +26,13 @@ function share(req, res, next) {
   var template = Handlebars.templates.inlet;
   var html = template({
     origin: origin,
-    fullscreen: true
+    fullscreen: true,
+    embed: false
   });
   res.send(html);
 };
-app.get("/e", share);
-function share(req, res, next) {
+app.get("/e", embed);
+function embed(req, res, next) {
   var template = Handlebars.templates.inlet;
   var html = template({
     origin: origin,
