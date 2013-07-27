@@ -3,11 +3,22 @@
   var sandbox = d3.select("#sandbox").node().contentWindow;
 
   var _origin = header.origin;
-  
+
   //these "globals" are modified by the save/fork buttons and referenced
   //when we recieve a save request
   var salt;
-  var saveType;
+  var saveCallback = function(newurl, newgist) {
+    console.log("saved!")
+    d3.select(".icon-load").transition().duration(1000).style("opacity", 0)
+    if(saveType === "fork") {
+      window.onunload = false;
+      window.onbeforeunload = false;
+      if(newurl) {
+        //TODO: better error notifying
+        window.location = newurl;
+      }
+    }
+  };
   var saveCallback;
 
   //pass in gist data
@@ -64,7 +75,7 @@
       //user has modified code, so we want to warn them before leaving page
       if(!window.onbeforeunload) {
         $(window).on('beforeunload', function() {
-            return 'Are you sure you want to leave?';
+          return 'Are you sure you want to leave?';
         });
       }
     } else if( data.request === "fullscreen" ) {
@@ -133,7 +144,7 @@
 
       setup_header(user, data.description);
       setup_save(user, !!data);
-      
+
       //send the data to the child frame
       callback(null, data);
     }
@@ -255,13 +266,13 @@
 
     var that = this;
     $.post(url, {"gist":JSON.stringify(gist)}, function(data) {
-        if(typeof(data) === "string") {
-          data = JSON.parse(data);
-        }
-        //TODO: add in error checking
-        var newgist = data.id;
-        var newurl = "/inlet/" + newgist;
-        callback(newurl, newgist);
+      if(typeof(data) === "string") {
+        data = JSON.parse(data);
+      }
+      //TODO: add in error checking
+      var newgist = data.id;
+      var newurl = "/inlet/" + newgist;
+      callback(newurl, newgist);
     });
   };
 
@@ -275,6 +286,4 @@
       }
     })
   }
-
-
 })();
