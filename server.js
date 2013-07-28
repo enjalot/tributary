@@ -651,15 +651,17 @@ function api_users(req,res,next) {
 
 app.get('/api/user/:login/latest', user_latest)
 app.get('/api/user/:login/latest/:limit', user_latest)
+app.get('/api/user/:login/latest/:limit/:skip', user_latest)
 function user_latest(req,res,next) {
   res.header("Access-Control-Allow-Origin", "*");
-  var query = { 
-    "user.login": req.params.login 
+  var skip = req.params.skip || 0
+  var query = {
+    "user.login": req.params.login
   , public: { $ne: false }
   };
   //TODO: pagination
   var limit = req.params.limit || 200;
-  $inlets.find(query, {limit: limit}).sort({ createdAt: -1 }).toArray(function(err, inlets) {
+  $inlets.find(query, {limit: limit, skip: skip}).sort({ createdAt: -1 }).toArray(function(err, inlets) {
     if(err) res.send(err);
     res.send(inlets);
   })
