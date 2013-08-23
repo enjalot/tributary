@@ -182,19 +182,17 @@ tb._origin = "{{ origin }}";
 //decorate the tributary object with the ui logic
 TributaryUi(tb);
 
-tb.ui.setup();
+tb.loadPlugin("/static/plugins/stylus/plugin.json", {}, function(e) { 
+  tb.ui.setup();
+});
+
 
 tb.events.on("loaded", function() {
-  tb.loadPlugin("/static/plugins/play/plugin.json"
-  , {}
+  tb.loadPlugin("/static/plugins/play/plugin.json", {}
   , function (err, pluginId) { /*console.log("plugin load err?", err)*/
       tb.events.trigger("execute");
-    }
-  );
+    });
   tb.loadPlugin("/static/plugins/tb-screenshot-plugin/plugin.json", {},
-    function(e) { /*console.log("callback: ",e); */}
-  );
-  tb.loadPlugin("/static/plugins/stylus/plugin.json", {},
     function(e) { /*console.log("callback: ",e); */}
   );
   /*
