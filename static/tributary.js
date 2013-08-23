@@ -7,6 +7,8 @@ var _ = require("underscore");
 
 var Backbone = require("backbone");
 
+Backbone.$ = $;
+
 var Inlet = require("inlet");
 
 var cm = require("CodeMirror");
@@ -120,6 +122,12 @@ Tributary = function() {
     } else if (type === "css") {
       model.set("mode", "css");
       context = new tributary.CSSContext({
+        config: config,
+        model: model
+      });
+    } else if (type === "styl") {
+      model.set("mode", "stylus");
+      context = new tributary.StylusContext({
         config: config,
         model: model
       });

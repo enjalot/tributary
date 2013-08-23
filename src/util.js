@@ -106,6 +106,12 @@ Tributary.makeContext = function(options) {
       config: config,
       model: model,
     });
+  } else if(type === "styl") {
+    model.set("mode", "stylus")
+    context = new tributary.StylusContext({
+      config: config,
+      model: model,
+    });
   } else if(type === "html") {
     model.set("mode", "text/html")
     context = new tributary.HTMLContext({
@@ -142,10 +148,10 @@ Tributary.makeContext = function(options) {
 }
 
 
-d3.selection.prototype.moveToFront = function() { 
-  return this.each(function() { 
-    this.parentNode.appendChild(this); 
-  }); 
+d3.selection.prototype.moveToFront = function() {
+  return this.each(function() {
+    this.parentNode.appendChild(this);
+  });
 };
 
 

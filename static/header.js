@@ -283,6 +283,7 @@
         setThumbnail(image);
       } else {
         //oops
+        getConfig();
       }
     })
   }

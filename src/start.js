@@ -2,8 +2,10 @@
 
 var d3 = require('d3');
 var queue = require('queue-async');
+//var $ = require('jquery-browserify')
 var _ = require('underscore');
 var Backbone = require('backbone');
+Backbone.$ = $;
 var Inlet = require('inlet');
 var cm = require('CodeMirror');
 //Third party includes the codemirror modes and addons, as well as jshint
