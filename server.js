@@ -69,7 +69,11 @@ function getgist_endpoint(req, res, next) {
       res.header("Content-Type", 'application/json');
       res.send(body);
     } else {
-      res.send(response.statusCode);
+      if(response) {
+        res.send({error: error, status: response.statusCode});
+      } else {
+        res.send(error)
+      }
     }
   })
 }
