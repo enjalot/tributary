@@ -130,6 +130,8 @@
 <script src="/static/lib/coffee-script.js"></script>
 <script src="/static/lib/jsonlint.js"></script>
 
+<script src="/static/lib/stylus.js"></script>
+
 <!-- three.js should probably be done as a plugin -->
 <!--<script src="/static/lib/three.min.js"></script>-->
 <script src="/static/lib/three.js"></script>
@@ -180,14 +182,18 @@ tb._origin = "{{ origin }}";
 //decorate the tributary object with the ui logic
 TributaryUi(tb);
 
-tb.ui.setup();
+tb.loadPlugin("/static/plugins/stylus/plugin.json", {}, function(e) { 
+  tb.ui.setup();
+});
+
 
 tb.events.on("loaded", function() {
-  tb.loadPlugin("/static/plugins/play/plugin.json"
-  , {}
+  tb.loadPlugin("/static/plugins/play/plugin.json", {}
   , function (err, pluginId) { /*console.log("plugin load err?", err)*/
       tb.events.trigger("execute");
-    }
+    });
+  tb.loadPlugin("/static/plugins/tb-screenshot-plugin/plugin.json", {},
+    function(e) { /*console.log("callback: ",e); */}
   );
   /*
   //example simple plugin
@@ -196,9 +202,6 @@ tb.events.on("loaded", function() {
   , function (err) { console.log("plugin load err?", err) }
   );
   */
-  tb.loadPlugin("/static/plugins/tb-screenshot-plugin/plugin.json", {},
-    function(e) { /*console.log("callback: ",e); */}
-  );
 })
 
 

@@ -4,9 +4,9 @@ stylus = require('stylus');
 
 },{"stylus":2}],2:[function(require,module,exports){
 
-module.exports = require('./lib/stylus');
+module.exports = require('./stylus');
 
-},{"./lib/stylus":3}],3:[function(require,module,exports){
+},{"./stylus":3}],3:[function(require,module,exports){
 
 /*!
  * Stylus
@@ -2270,7 +2270,118 @@ exports.merge = function(a, b){
   return a;
 }
 
-},{"path":17,"fs":19,"./nodes":12}],23:[function(require,module,exports){
+},{"path":17,"fs":19,"./nodes":12}],12:[function(require,module,exports){
+
+/*!
+ * Stylus - nodes
+ * Copyright(c) 2010 LearnBoost <dev@learnboost.com>
+ * MIT Licensed
+ */
+
+/**
+ * Constructors
+ */
+
+exports.Node = require('./node');
+exports.Root = require('./root');
+exports.Null = require('./null');
+exports.Each = require('./each');
+exports.If = require('./if');
+exports.Call = require('./call');
+exports.Page = require('./page');
+exports.FontFace = require('./fontface');
+exports.UnaryOp = require('./unaryop');
+exports.BinOp = require('./binop');
+exports.Ternary = require('./ternary');
+exports.Block = require('./block');
+exports.Unit = require('./unit');
+exports.String = require('./string');
+exports.HSLA = require('./hsla');
+exports.RGBA = require('./rgba');
+exports.Ident = require('./ident');
+exports.Group = require('./group');
+exports.Literal = require('./literal');
+exports.JSLiteral = require('./jsliteral');
+exports.Boolean = require('./boolean');
+exports.Return = require('./return');
+exports.Media = require('./media');
+exports.Params = require('./params');
+exports.Comment = require('./comment');
+exports.Keyframes = require('./keyframes');
+exports.Charset = require('./charset');
+exports.Import = require('./import');
+exports.Extend = require('./extend');
+exports.Function = require('./function');
+exports.Property = require('./property');
+exports.Selector = require('./selector');
+exports.Expression = require('./expression');
+exports.Arguments = require('./arguments');
+exports.MozDocument = require('./mozdocument');
+
+/**
+ * Singletons.
+ */
+
+exports.true = new exports.Boolean(true);
+exports.false = new exports.Boolean(false);
+exports.null = new exports.Null;
+
+},{"./node":23,"./root":24,"./null":25,"./each":26,"./if":27,"./call":28,"./page":29,"./fontface":30,"./unaryop":31,"./binop":32,"./ternary":33,"./block":34,"./string":35,"./unit":36,"./hsla":37,"./rgba":38,"./ident":39,"./group":40,"./literal":41,"./jsliteral":42,"./boolean":43,"./return":44,"./media":45,"./params":46,"./comment":47,"./keyframes":48,"./charset":49,"./import":50,"./extend":51,"./property":52,"./function":53,"./selector":54,"./expression":55,"./mozdocument":56,"./arguments":57}],58:[function(require,module,exports){
+
+/*!
+ * Stylus - Token
+ * Copyright(c) 2010 LearnBoost <dev@learnboost.com>
+ * MIT Licensed
+ */
+
+/**
+ * Module dependencies.
+ */
+
+var inspect = require('util').inspect;
+
+/**
+ * Initialize a new `Token` with the given `type` and `val`.
+ *
+ * @param {String} type
+ * @param {Mixed} val
+ * @api private
+ */
+
+var Token = exports = module.exports = function Token(type, val) {
+  this.type = type;
+  this.val = val;
+};
+
+/**
+ * Custom inspect.
+ *
+ * @return {String}
+ * @api public
+ */
+
+Token.prototype.inspect = function(){
+  var val = ' ' + inspect(this.val);
+  return '[Token:' + this.lineno + ' '
+    + '\x1b[32m' + this.type + '\x1b[0m'
+    + '\x1b[33m' + (this.val ? val : '') + '\x1b[0m'
+    + ']';
+};
+
+/**
+ * Return type or val.
+ *
+ * @return {String}
+ * @api public
+ */
+
+Token.prototype.toString = function(){
+  return (undefined === this.val
+    ? this.type
+    : this.val).toString();
+};
+
+},{"util":18}],59:[function(require,module,exports){
 
 /*!
  * Stylus - errors
@@ -2330,118 +2441,7 @@ function SyntaxError(msg) {
 SyntaxError.prototype.__proto__ = Error.prototype;
 
 
-},{}],24:[function(require,module,exports){
-
-/*!
- * Stylus - Token
- * Copyright(c) 2010 LearnBoost <dev@learnboost.com>
- * MIT Licensed
- */
-
-/**
- * Module dependencies.
- */
-
-var inspect = require('util').inspect;
-
-/**
- * Initialize a new `Token` with the given `type` and `val`.
- *
- * @param {String} type
- * @param {Mixed} val
- * @api private
- */
-
-var Token = exports = module.exports = function Token(type, val) {
-  this.type = type;
-  this.val = val;
-};
-
-/**
- * Custom inspect.
- *
- * @return {String}
- * @api public
- */
-
-Token.prototype.inspect = function(){
-  var val = ' ' + inspect(this.val);
-  return '[Token:' + this.lineno + ' '
-    + '\x1b[32m' + this.type + '\x1b[0m'
-    + '\x1b[33m' + (this.val ? val : '') + '\x1b[0m'
-    + ']';
-};
-
-/**
- * Return type or val.
- *
- * @return {String}
- * @api public
- */
-
-Token.prototype.toString = function(){
-  return (undefined === this.val
-    ? this.type
-    : this.val).toString();
-};
-
-},{"util":18}],12:[function(require,module,exports){
-
-/*!
- * Stylus - nodes
- * Copyright(c) 2010 LearnBoost <dev@learnboost.com>
- * MIT Licensed
- */
-
-/**
- * Constructors
- */
-
-exports.Node = require('./node');
-exports.Root = require('./root');
-exports.Null = require('./null');
-exports.Each = require('./each');
-exports.If = require('./if');
-exports.Call = require('./call');
-exports.Page = require('./page');
-exports.FontFace = require('./fontface');
-exports.UnaryOp = require('./unaryop');
-exports.BinOp = require('./binop');
-exports.Ternary = require('./ternary');
-exports.Block = require('./block');
-exports.Unit = require('./unit');
-exports.String = require('./string');
-exports.HSLA = require('./hsla');
-exports.RGBA = require('./rgba');
-exports.Ident = require('./ident');
-exports.Group = require('./group');
-exports.Literal = require('./literal');
-exports.JSLiteral = require('./jsliteral');
-exports.Boolean = require('./boolean');
-exports.Return = require('./return');
-exports.Media = require('./media');
-exports.Params = require('./params');
-exports.Comment = require('./comment');
-exports.Keyframes = require('./keyframes');
-exports.Charset = require('./charset');
-exports.Import = require('./import');
-exports.Extend = require('./extend');
-exports.Function = require('./function');
-exports.Property = require('./property');
-exports.Selector = require('./selector');
-exports.Expression = require('./expression');
-exports.Arguments = require('./arguments');
-exports.MozDocument = require('./mozdocument');
-
-/**
- * Singletons.
- */
-
-exports.true = new exports.Boolean(true);
-exports.false = new exports.Boolean(false);
-exports.null = new exports.Null;
-
-},{"./node":25,"./root":26,"./null":27,"./each":28,"./call":29,"./if":30,"./page":31,"./fontface":32,"./unaryop":33,"./binop":34,"./block":35,"./ternary":36,"./unit":37,"./string":38,"./hsla":39,"./rgba":40,"./ident":41,"./group":42,"./literal":43,"./jsliteral":44,"./boolean":45,"./return":46,"./media":47,"./params":48,"./comment":49,"./keyframes":50,"./charset":51,"./import":52,"./extend":53,"./function":54,"./property":55,"./selector":56,"./expression":57,"./arguments":58,"./mozdocument":59}],9:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 /*!
  * Stylus - Compiler
  * Copyright(c) 2010 LearnBoost <dev@learnboost.com>
@@ -5795,7 +5795,7 @@ Parser.prototype = {
   }
 };
 
-},{"util":18,"./lexer":64,"./token":24,"./errors":23,"./nodes":12,"debug":65}],7:[function(require,module,exports){
+},{"util":18,"./lexer":64,"./token":58,"./errors":59,"./nodes":12,"debug":65}],7:[function(require,module,exports){
 (function(){/*!
  * Stylus - middleware
  * Copyright(c) 2010 LearnBoost <dev@learnboost.com>
@@ -6817,7 +6817,7 @@ Lexer.prototype = {
   }
 };
 
-},{"./token":24,"./errors":23,"./units":60,"./nodes":12}],22:[function(require,module,exports){
+},{"./token":58,"./units":60,"./errors":59,"./nodes":12}],22:[function(require,module,exports){
 
 /*!
  * Stylus - Normalizer
@@ -7100,133 +7100,7 @@ Normalizer.prototype.compileSelectors = function(arr){
   return selectors;
 };
 
-},{"fs":19,"../utils":6,"./":14,"../nodes":12}],65:[function(require,module,exports){
-
-/**
- * Expose `debug()` as the module.
- */
-
-module.exports = debug;
-
-/**
- * Create a debugger with the given `name`.
- *
- * @param {String} name
- * @return {Type}
- * @api public
- */
-
-function debug(name) {
-  if (!debug.enabled(name)) return function(){};
-
-  return function(fmt){
-    var curr = new Date;
-    var ms = curr - (debug[name] || curr);
-    debug[name] = curr;
-
-    fmt = name
-      + ' '
-      + fmt
-      + ' +' + debug.humanize(ms);
-
-    // This hackery is required for IE8
-    // where `console.log` doesn't have 'apply'
-    window.console
-      && console.log
-      && Function.prototype.apply.call(console.log, console, arguments);
-  }
-}
-
-/**
- * The currently active debug mode names.
- */
-
-debug.names = [];
-debug.skips = [];
-
-/**
- * Enables a debug mode by name. This can include modes
- * separated by a colon and wildcards.
- *
- * @param {String} name
- * @api public
- */
-
-debug.enable = function(name) {
-  try {
-    localStorage.debug = name;
-  } catch(e){}
-
-  var split = (name || '').split(/[\s,]+/)
-    , len = split.length;
-
-  for (var i = 0; i < len; i++) {
-    name = split[i].replace('*', '.*?');
-    if (name[0] === '-') {
-      debug.skips.push(new RegExp('^' + name.substr(1) + '$'));
-    }
-    else {
-      debug.names.push(new RegExp('^' + name + '$'));
-    }
-  }
-};
-
-/**
- * Disable debug output.
- *
- * @api public
- */
-
-debug.disable = function(){
-  debug.enable('');
-};
-
-/**
- * Humanize the given `ms`.
- *
- * @param {Number} m
- * @return {String}
- * @api private
- */
-
-debug.humanize = function(ms) {
-  var sec = 1000
-    , min = 60 * 1000
-    , hour = 60 * min;
-
-  if (ms >= hour) return (ms / hour).toFixed(1) + 'h';
-  if (ms >= min) return (ms / min).toFixed(1) + 'm';
-  if (ms >= sec) return (ms / sec | 0) + 's';
-  return ms + 'ms';
-};
-
-/**
- * Returns true if the given mode name is enabled, false otherwise.
- *
- * @param {String} name
- * @return {Boolean}
- * @api public
- */
-
-debug.enabled = function(name) {
-  for (var i = 0, len = debug.skips.length; i < len; i++) {
-    if (debug.skips[i].test(name)) {
-      return false;
-    }
-  }
-  for (var i = 0, len = debug.names.length; i < len; i++) {
-    if (debug.names[i].test(name)) {
-      return true;
-    }
-  }
-  return false;
-};
-
-// persist
-
-if (window.localStorage) debug.enable(localStorage.debug);
-
-},{}],26:[function(require,module,exports){
+},{"fs":19,"../utils":6,"./":14,"../nodes":12}],24:[function(require,module,exports){
 
 /*!
  * Stylus - Root
@@ -7289,65 +7163,7 @@ Root.prototype.toString = function(){
   return '[Root]';
 };
 
-},{"./node":25}],29:[function(require,module,exports){
-
-/*!
- * Stylus - Call
- * Copyright(c) 2010 LearnBoost <dev@learnboost.com>
- * MIT Licensed
- */
-
-/**
- * Module dependencies.
- */
-
-var Node = require('./node');
-
-/**
- * Initialize a new `Call` with `name` and `args`.
- *
- * @param {String} name
- * @param {Expression} args
- * @api public
- */
-
-var Call = module.exports = function Call(name, args){
-  Node.call(this);
-  this.name = name;
-  this.args = args;
-};
-
-/**
- * Inherit from `Node.prototype`.
- */
-
-Call.prototype.__proto__ = Node.prototype;
-
-/**
- * Return a clone of this node.
- * 
- * @return {Node}
- * @api public
- */
-
-Call.prototype.clone = function(){
-  var clone = new Call(this.name, this.args.clone());
-  clone.lineno = this.lineno;
-  clone.filename = this.filename;
-  return clone;
-};
-
-/**
- * Return <name>().
- *
- * @return {String}
- * @api public
- */
-
-Call.prototype.toString = function(){
-  return this.name + '()';
-};
-},{"./node":25}],30:[function(require,module,exports){
+},{"./node":23}],27:[function(require,module,exports){
 
 /*!
  * Stylus - If
@@ -7405,7 +7221,65 @@ If.prototype.clone = function(){
   return clone;
 };
 
-},{"./node":25}],31:[function(require,module,exports){
+},{"./node":23}],28:[function(require,module,exports){
+
+/*!
+ * Stylus - Call
+ * Copyright(c) 2010 LearnBoost <dev@learnboost.com>
+ * MIT Licensed
+ */
+
+/**
+ * Module dependencies.
+ */
+
+var Node = require('./node');
+
+/**
+ * Initialize a new `Call` with `name` and `args`.
+ *
+ * @param {String} name
+ * @param {Expression} args
+ * @api public
+ */
+
+var Call = module.exports = function Call(name, args){
+  Node.call(this);
+  this.name = name;
+  this.args = args;
+};
+
+/**
+ * Inherit from `Node.prototype`.
+ */
+
+Call.prototype.__proto__ = Node.prototype;
+
+/**
+ * Return a clone of this node.
+ * 
+ * @return {Node}
+ * @api public
+ */
+
+Call.prototype.clone = function(){
+  var clone = new Call(this.name, this.args.clone());
+  clone.lineno = this.lineno;
+  clone.filename = this.filename;
+  return clone;
+};
+
+/**
+ * Return <name>().
+ *
+ * @return {String}
+ * @api public
+ */
+
+Call.prototype.toString = function(){
+  return this.name + '()';
+};
+},{"./node":23}],29:[function(require,module,exports){
 
 /*!
  * Stylus - Page
@@ -7450,7 +7324,7 @@ Page.prototype.toString = function(){
   return '@page ' + this.selector;
 };
 
-},{"./node":25}],32:[function(require,module,exports){
+},{"./node":23}],30:[function(require,module,exports){
 
 /*!
  * Stylus - FontFace
@@ -7507,7 +7381,7 @@ FontFace.prototype.toString = function(){
   return '@font-face';
 };
 
-},{"./node":25}],33:[function(require,module,exports){
+},{"./node":23}],31:[function(require,module,exports){
 
 /*!
  * Stylus - UnaryOp
@@ -7554,7 +7428,7 @@ UnaryOp.prototype.clone = function(){
   clone.filename = this.filename;
   return clone;
 };
-},{"./node":25}],34:[function(require,module,exports){
+},{"./node":23}],32:[function(require,module,exports){
 
 /*!
  * Stylus - BinOp
@@ -7609,7 +7483,59 @@ BinOp.prototype.clone = function(){
   if (this.val) clone.val = this.val.clone();
   return clone;
 };
-},{"./node":25}],35:[function(require,module,exports){
+},{"./node":23}],33:[function(require,module,exports){
+
+/*!
+ * Stylus - Ternary
+ * Copyright(c) 2010 LearnBoost <dev@learnboost.com>
+ * MIT Licensed
+ */
+
+/**
+ * Module dependencies.
+ */
+
+var Node = require('./node');
+
+/**
+ * Initialize a new `Ternary` with `cond`, `trueExpr` and `falseExpr`.
+ *
+ * @param {Expression} cond
+ * @param {Expression} trueExpr
+ * @param {Expression} falseExpr
+ * @api public
+ */
+
+var Ternary = module.exports = function Ternary(cond, trueExpr, falseExpr){
+  Node.call(this);
+  this.cond = cond;
+  this.trueExpr = trueExpr;
+  this.falseExpr = falseExpr;
+};
+
+/**
+ * Inherit from `Node.prototype`.
+ */
+
+Ternary.prototype.__proto__ = Node.prototype;
+
+/**
+ * Return a clone of this node.
+ * 
+ * @return {Node}
+ * @api public
+ */
+
+Ternary.prototype.clone = function(){
+  var clone = new Ternary(
+      this.cond.clone()
+    , this.trueExpr.clone()
+    , this.falseExpr.clone());
+  clone.lineno = this.lineno;
+  clone.filename = this.filename;
+  return clone;
+};
+},{"./node":23}],34:[function(require,module,exports){
 
 /*!
  * Stylus - Block
@@ -7710,59 +7636,7 @@ Block.prototype.push = function(node){
   this.nodes.push(node);
 };
 
-},{"./node":25}],36:[function(require,module,exports){
-
-/*!
- * Stylus - Ternary
- * Copyright(c) 2010 LearnBoost <dev@learnboost.com>
- * MIT Licensed
- */
-
-/**
- * Module dependencies.
- */
-
-var Node = require('./node');
-
-/**
- * Initialize a new `Ternary` with `cond`, `trueExpr` and `falseExpr`.
- *
- * @param {Expression} cond
- * @param {Expression} trueExpr
- * @param {Expression} falseExpr
- * @api public
- */
-
-var Ternary = module.exports = function Ternary(cond, trueExpr, falseExpr){
-  Node.call(this);
-  this.cond = cond;
-  this.trueExpr = trueExpr;
-  this.falseExpr = falseExpr;
-};
-
-/**
- * Inherit from `Node.prototype`.
- */
-
-Ternary.prototype.__proto__ = Node.prototype;
-
-/**
- * Return a clone of this node.
- * 
- * @return {Node}
- * @api public
- */
-
-Ternary.prototype.clone = function(){
-  var clone = new Ternary(
-      this.cond.clone()
-    , this.trueExpr.clone()
-    , this.falseExpr.clone());
-  clone.lineno = this.lineno;
-  clone.filename = this.filename;
-  return clone;
-};
-},{"./node":25}],42:[function(require,module,exports){
+},{"./node":23}],40:[function(require,module,exports){
 
 /*!
  * Stylus - Group
@@ -7844,7 +7718,7 @@ Group.prototype.clone = function(){
   return clone;
 };
 
-},{"./node":25}],48:[function(require,module,exports){
+},{"./node":23}],46:[function(require,module,exports){
 
 /*!
  * Stylus - Params
@@ -7918,7 +7792,7 @@ Params.prototype.clone = function(){
 };
 
 
-},{"./node":25}],49:[function(require,module,exports){
+},{"./node":23}],47:[function(require,module,exports){
 
 /*!
  * Stylus - Comment
@@ -7952,7 +7826,7 @@ var Comment = module.exports = function Comment(str, suppress){
 
 Comment.prototype.__proto__ = Node.prototype;
 
-},{"./node":25}],50:[function(require,module,exports){
+},{"./node":23}],48:[function(require,module,exports){
 
 /*!
  * Stylus - Keyframes
@@ -8032,7 +7906,7 @@ Keyframes.prototype.toString = function(){
   return '@keyframes ' + this.name;
 };
 
-},{"./node":25}],52:[function(require,module,exports){
+},{"./node":23}],50:[function(require,module,exports){
 
 /*!
  * Stylus - Import
@@ -8064,7 +7938,7 @@ var Import = module.exports = function Import(expr){
 
 Import.prototype.__proto__ = Node.prototype;
 
-},{"./node":25}],53:[function(require,module,exports){
+},{"./node":23}],51:[function(require,module,exports){
 
 /*!
  * Stylus - Extend
@@ -8118,7 +7992,82 @@ Extend.prototype.toString = function(){
   return '@extend ' + this.selector;
 };
 
-},{"./node":25}],54:[function(require,module,exports){
+},{"./node":23}],52:[function(require,module,exports){
+
+/*!
+ * Stylus - Property
+ * Copyright(c) 2010 LearnBoost <dev@learnboost.com>
+ * MIT Licensed
+ */
+
+/**
+ * Module dependencies.
+ */
+
+var Node = require('./node');
+
+/**
+ * Initialize a new `Property` with the given `segs` and optional `expr`.
+ *
+ * @param {Array} segs
+ * @param {Expression} expr
+ * @api public
+ */
+
+var Property = module.exports = function Property(segs, expr){
+  Node.call(this);
+  this.segments = segs;
+  this.expr = expr;
+};
+
+/**
+ * Inherit from `Node.prototype`.
+ */
+
+Property.prototype.__proto__ = Node.prototype;
+
+/**
+ * Return a clone of this node.
+ * 
+ * @return {Node}
+ * @api public
+ */
+
+Property.prototype.clone = function(){
+  var clone = new Property(this.segments);
+  clone.name = this.name;
+  clone.lineno = this.lineno;
+  clone.filename = this.filename;
+  clone.segments = this.segments.map(function(node){ return node.clone(); });
+  if (this.expr) clone.expr = this.expr.clone();
+  return clone;
+};
+
+/**
+ * Return string representation of this node.
+ *
+ * @return {String}
+ * @api public
+ */
+
+Property.prototype.toString = function(){
+  return 'property(' + this.segments.join('') + ', ' + this.expr + ')';
+};
+
+/**
+ * Operate on the property expression.
+ *
+ * @param {String} op
+ * @param {Node} right
+ * @return {Node}
+ * @api public
+ */
+
+Property.prototype.operate = function(op, right, val){
+  return this.expr.operate(op, right, val);
+};
+
+},{"./node":23}],53:[function(require,module,exports){
 
 /*!
  * Stylus - Function
@@ -8224,82 +8173,7 @@ Function.prototype.toString = function(){
   }
 };
 
-},{"./node":25}],55:[function(require,module,exports){
-
-/*!
- * Stylus - Property
- * Copyright(c) 2010 LearnBoost <dev@learnboost.com>
- * MIT Licensed
- */
-
-/**
- * Module dependencies.
- */
-
-var Node = require('./node');
-
-/**
- * Initialize a new `Property` with the given `segs` and optional `expr`.
- *
- * @param {Array} segs
- * @param {Expression} expr
- * @api public
- */
-
-var Property = module.exports = function Property(segs, expr){
-  Node.call(this);
-  this.segments = segs;
-  this.expr = expr;
-};
-
-/**
- * Inherit from `Node.prototype`.
- */
-
-Property.prototype.__proto__ = Node.prototype;
-
-/**
- * Return a clone of this node.
- * 
- * @return {Node}
- * @api public
- */
-
-Property.prototype.clone = function(){
-  var clone = new Property(this.segments);
-  clone.name = this.name;
-  clone.lineno = this.lineno;
-  clone.filename = this.filename;
-  clone.segments = this.segments.map(function(node){ return node.clone(); });
-  if (this.expr) clone.expr = this.expr.clone();
-  return clone;
-};
-
-/**
- * Return string representation of this node.
- *
- * @return {String}
- * @api public
- */
-
-Property.prototype.toString = function(){
-  return 'property(' + this.segments.join('') + ', ' + this.expr + ')';
-};
-
-/**
- * Operate on the property expression.
- *
- * @param {String} op
- * @param {Node} right
- * @return {Node}
- * @api public
- */
-
-Property.prototype.operate = function(op, right, val){
-  return this.expr.operate(op, right, val);
-};
-
-},{"./node":25}],56:[function(require,module,exports){
+},{"./node":23}],54:[function(require,module,exports){
 
 /*!
  * Stylus - Selector
@@ -8359,7 +8233,7 @@ Selector.prototype.clone = function(){
   return clone;
 };
 
-},{"./block":35,"./node":25}],66:[function(require,module,exports){
+},{"./block":34,"./node":23}],66:[function(require,module,exports){
 (function(process){var path = require('path');
 var fs = require('fs');
 
@@ -10033,7 +9907,7 @@ Converter.prototype.visitStyle = function(node){
   --this.indents;
   return buf + '\n';
 };
-},{"cssom":69}],25:[function(require,module,exports){
+},{"cssom":69}],23:[function(require,module,exports){
 
 /*!
  * Stylus - Node
@@ -10258,7 +10132,7 @@ Node.prototype.coerce = function(other){
   throw new CoercionError('cannot coerce ' + other + ' to ' + this.nodeName);
 };
 
-},{"../visitor/evaluator":8,"../utils":6,"./":12}],27:[function(require,module,exports){
+},{"../visitor/evaluator":8,"../utils":6,"./":12}],25:[function(require,module,exports){
 
 /*!
  * Stylus - Null
@@ -10331,7 +10205,7 @@ Null.prototype.__defineGetter__('isNull', function(){
 Null.prototype.__defineGetter__('hash', function(){
   return null;
 });
-},{"./node":25,"./":12}],28:[function(require,module,exports){
+},{"./node":23,"./":12}],26:[function(require,module,exports){
 
 /*!
  * Stylus - Each
@@ -10388,7 +10262,131 @@ Each.prototype.clone = function(){
   clone.filename = this.filename;
   return clone;
 };
-},{"./node":25,"./":12}],37:[function(require,module,exports){
+},{"./node":23,"./":12}],35:[function(require,module,exports){
+
+/*!
+ * Stylus - String
+ * Copyright(c) 2010 LearnBoost <dev@learnboost.com>
+ * MIT Licensed
+ */
+
+/**
+ * Module dependencies.
+ */
+
+var Node = require('./node')
+  , sprintf = require('../functions').s
+  , utils = require('../utils')
+  , nodes = require('./');
+
+/**
+ * Initialize a new `String` with the given `val`.
+ *
+ * @param {String} val
+ * @param {String} quote
+ * @api public
+ */
+
+var String = module.exports = function String(val, quote){
+  Node.call(this);
+  this.val = val;
+  this.string = val;
+  this.quote = quote || "'";
+};
+
+/**
+ * Inherit from `Node.prototype`.
+ */
+
+String.prototype.__proto__ = Node.prototype;
+
+/**
+ * Return quoted string.
+ *
+ * @return {String}
+ * @api public
+ */
+
+String.prototype.toString = function(){
+  return this.quote + this.val + this.quote;
+};
+
+/**
+ * Return a clone of this node.
+ * 
+ * @return {Node}
+ * @api public
+ */
+
+String.prototype.clone = function(){
+  var clone = new String(this.val, this.quote);
+  clone.lineno = this.lineno;
+  clone.filename = this.filename;
+  return clone;
+};
+
+/**
+ * Return Boolean based on the length of this string.
+ *
+ * @return {Boolean}
+ * @api public
+ */
+
+String.prototype.toBoolean = function(){
+  return nodes.Boolean(this.val.length);
+};
+
+/**
+ * Coerce `other` to a string.
+ *
+ * @param {Node} other
+ * @return {String}
+ * @api public
+ */
+
+String.prototype.coerce = function(other){
+  switch (other.nodeName) {
+    case 'string':
+      return other;
+    case 'expression':
+      return new String(other.nodes.map(function(node){
+        return this.coerce(node).val;
+      }, this).join(' '));
+    default:
+      return new String(other.toString());
+  }
+};
+
+/**
+ * Operate on `right` with the given `op`.
+ *
+ * @param {String} op
+ * @param {Node} right
+ * @return {Node}
+ * @api public
+ */
+
+String.prototype.operate = function(op, right){
+  switch (op) {
+    case '%':
+      var expr = new nodes.Expression;
+      expr.push(this);
+
+      // constructargs
+      var args = 'expression' == right.nodeName
+        ? utils.unwrap(right).nodes
+        : [right];
+
+      // apply
+      return sprintf.apply(null, [expr].concat(args));
+    case '+':
+      return new String(this.val + this.coerce(right).val);
+    default:
+      return Node.prototype.operate.call(this, op, right);
+  }
+};
+
+},{"../utils":6,"./node":23,"../functions":13,"./":12}],36:[function(require,module,exports){
 
 /*!
  * Stylus - Unit
@@ -10598,131 +10596,7 @@ Unit.prototype.coerce = function(other){
   }
 };
 
-},{"./node":25,"./":12}],38:[function(require,module,exports){
-
-/*!
- * Stylus - String
- * Copyright(c) 2010 LearnBoost <dev@learnboost.com>
- * MIT Licensed
- */
-
-/**
- * Module dependencies.
- */
-
-var Node = require('./node')
-  , sprintf = require('../functions').s
-  , utils = require('../utils')
-  , nodes = require('./');
-
-/**
- * Initialize a new `String` with the given `val`.
- *
- * @param {String} val
- * @param {String} quote
- * @api public
- */
-
-var String = module.exports = function String(val, quote){
-  Node.call(this);
-  this.val = val;
-  this.string = val;
-  this.quote = quote || "'";
-};
-
-/**
- * Inherit from `Node.prototype`.
- */
-
-String.prototype.__proto__ = Node.prototype;
-
-/**
- * Return quoted string.
- *
- * @return {String}
- * @api public
- */
-
-String.prototype.toString = function(){
-  return this.quote + this.val + this.quote;
-};
-
-/**
- * Return a clone of this node.
- * 
- * @return {Node}
- * @api public
- */
-
-String.prototype.clone = function(){
-  var clone = new String(this.val, this.quote);
-  clone.lineno = this.lineno;
-  clone.filename = this.filename;
-  return clone;
-};
-
-/**
- * Return Boolean based on the length of this string.
- *
- * @return {Boolean}
- * @api public
- */
-
-String.prototype.toBoolean = function(){
-  return nodes.Boolean(this.val.length);
-};
-
-/**
- * Coerce `other` to a string.
- *
- * @param {Node} other
- * @return {String}
- * @api public
- */
-
-String.prototype.coerce = function(other){
-  switch (other.nodeName) {
-    case 'string':
-      return other;
-    case 'expression':
-      return new String(other.nodes.map(function(node){
-        return this.coerce(node).val;
-      }, this).join(' '));
-    default:
-      return new String(other.toString());
-  }
-};
-
-/**
- * Operate on `right` with the given `op`.
- *
- * @param {String} op
- * @param {Node} right
- * @return {Node}
- * @api public
- */
-
-String.prototype.operate = function(op, right){
-  switch (op) {
-    case '%':
-      var expr = new nodes.Expression;
-      expr.push(this);
-
-      // constructargs
-      var args = 'expression' == right.nodeName
-        ? utils.unwrap(right).nodes
-        : [right];
-
-      // apply
-      return sprintf.apply(null, [expr].concat(args));
-    case '+':
-      return new String(this.val + this.coerce(right).val);
-    default:
-      return Node.prototype.operate.call(this, op, right);
-  }
-};
-
-},{"./node":25,"../utils":6,"../functions":13,"./":12}],39:[function(require,module,exports){
+},{"./node":23,"./":12}],37:[function(require,module,exports){
 
 /*!
  * Stylus - HSLA
@@ -10980,7 +10854,7 @@ function clampAlpha(n) {
   return Math.max(0, Math.min(n, 1));
 }
 
-},{"./node":25,"./":12}],40:[function(require,module,exports){
+},{"./node":23,"./":12}],38:[function(require,module,exports){
 
 /*!
  * Stylus - RGBA
@@ -11319,7 +11193,7 @@ function clampAlpha(n) {
   return Math.max(0, Math.min(n, 1));
 }
 
-},{"./node":25,"./hsla":39,"../functions":13,"./":12}],41:[function(require,module,exports){
+},{"./node":23,"./hsla":37,"../functions":13,"./":12}],39:[function(require,module,exports){
 
 /*!
  * Stylus - Ident
@@ -11448,7 +11322,7 @@ Ident.prototype.operate = function(op, right){
   return Node.prototype.operate.call(this, op, right);
 };
 
-},{"./node":25,"./":12}],43:[function(require,module,exports){
+},{"./node":23,"./":12}],41:[function(require,module,exports){
 
 /*!
  * Stylus - Literal
@@ -11542,7 +11416,7 @@ Literal.prototype.operate = function(op, right){
   }
 };
 
-},{"./node":25,"./":12}],44:[function(require,module,exports){
+},{"./node":23,"./":12}],42:[function(require,module,exports){
 
 /*!
  * Stylus - JSLiteral
@@ -11576,7 +11450,7 @@ var JSLiteral = module.exports = function JSLiteral(str){
 
 JSLiteral.prototype.__proto__ = Node.prototype;
 
-},{"./node":25,"./":12}],45:[function(require,module,exports){
+},{"./node":23,"./":12}],43:[function(require,module,exports){
 
 /*!
  * Stylus - Boolean
@@ -11680,52 +11554,7 @@ Boolean.prototype.toString = function(){
     ? 'true'
     : 'false';
 };
-},{"./node":25,"./":12}],46:[function(require,module,exports){
-
-/*!
- * Stylus - Return
- * Copyright(c) 2010 LearnBoost <dev@learnboost.com>
- * MIT Licensed
- */
-
-/**
- * Module dependencies.
- */
-
-var Node = require('./node')
-  , nodes = require('./');
-
-/**
- * Initialize a new `Return` node with the given `expr`.
- *
- * @param {Expression} expr
- * @api public
- */
-
-var Return = module.exports = function Return(expr){
-  this.expr = expr || nodes.null;
-};
-
-/**
- * Inherit from `Node.prototype`.
- */
-
-Return.prototype.__proto__ = Node.prototype;
-
-/**
- * Return a clone of this node.
- * 
- * @return {Node}
- * @api public
- */
-
-Return.prototype.clone = function(){
-  var clone = new Return(this.expr.clone());
-  clone.lineno = this.lineno;
-  clone.filename = this.filename;
-  return clone;
-};
-},{"./node":25,"./":12}],47:[function(require,module,exports){
+},{"./node":23,"./":12}],45:[function(require,module,exports){
 
 /*!
  * Stylus - Media
@@ -11782,7 +11611,52 @@ Media.prototype.toString = function(){
   return '@media ' + this.val;
 };
 
-},{"./node":25,"./":12}],51:[function(require,module,exports){
+},{"./node":23,"./":12}],44:[function(require,module,exports){
+
+/*!
+ * Stylus - Return
+ * Copyright(c) 2010 LearnBoost <dev@learnboost.com>
+ * MIT Licensed
+ */
+
+/**
+ * Module dependencies.
+ */
+
+var Node = require('./node')
+  , nodes = require('./');
+
+/**
+ * Initialize a new `Return` node with the given `expr`.
+ *
+ * @param {Expression} expr
+ * @api public
+ */
+
+var Return = module.exports = function Return(expr){
+  this.expr = expr || nodes.null;
+};
+
+/**
+ * Inherit from `Node.prototype`.
+ */
+
+Return.prototype.__proto__ = Node.prototype;
+
+/**
+ * Return a clone of this node.
+ * 
+ * @return {Node}
+ * @api public
+ */
+
+Return.prototype.clone = function(){
+  var clone = new Return(this.expr.clone());
+  clone.lineno = this.lineno;
+  clone.filename = this.filename;
+  return clone;
+};
+},{"./node":23,"./":12}],49:[function(require,module,exports){
 
 /*!
  * Stylus - Charset
@@ -11826,7 +11700,7 @@ Charset.prototype.toString = function(){
   return '@charset ' + this.val;
 };
 
-},{"./node":25,"./":12}],57:[function(require,module,exports){
+},{"./node":23,"./":12}],55:[function(require,module,exports){
 
 /*!
  * Stylus - Expression
@@ -12021,7 +11895,28 @@ Expression.prototype.toString = function(){
 };
 
 
-},{"./node":25,"../utils":6,"../nodes":12}],58:[function(require,module,exports){
+},{"./node":23,"../utils":6,"../nodes":12}],56:[function(require,module,exports){
+var Node = require('./node')
+  , nodes = require('./');
+
+var MozDocument = module.exports = function MozDocument(val){
+  Node.call(this);
+  this.val = val;
+};
+
+MozDocument.prototype.__proto__ = Node.prototype;
+
+MozDocument.prototype.clone = function(){
+  var clone = new MozDocument(this.val);
+  clone.block = this.block.clone();
+  return clone;
+};
+
+MozDocument.prototype.toString = function(){
+  return '@-moz-document ' + this.val;
+}
+
+},{"./node":23,"./":12}],57:[function(require,module,exports){
 
 /*!
  * Stylus - Arguments
@@ -12088,28 +11983,7 @@ Arguments.prototype.clone = function(){
 };
 
 
-},{"./node":25,"../utils":6,"../nodes":12}],59:[function(require,module,exports){
-var Node = require('./node')
-  , nodes = require('./');
-
-var MozDocument = module.exports = function MozDocument(val){
-  Node.call(this);
-  this.val = val;
-};
-
-MozDocument.prototype.__proto__ = Node.prototype;
-
-MozDocument.prototype.clone = function(){
-  var clone = new MozDocument(this.val);
-  clone.block = this.block.clone();
-  return clone;
-};
-
-MozDocument.prototype.toString = function(){
-  return '@-moz-document ' + this.val;
-}
-
-},{"./node":25,"./":12}],70:[function(require,module,exports){
+},{"./node":23,"../utils":6,"../nodes":12}],70:[function(require,module,exports){
 require=(function(e,t,n,r){function i(r){if(!n[r]){if(!t[r]){if(e)return e(r);throw new Error("Cannot find module '"+r+"'")}var s=n[r]={exports:{}};t[r][0](function(e){var n=t[r][1][e];return i(n?n:e)},s,s.exports)}return n[r].exports}for(var s=0;s<r.length;s++)i(r[s]);return i})(typeof require!=="undefined"&&require,{1:[function(require,module,exports){
 exports.readIEEE754 = function(buffer, offset, isBE, mLen, nBytes) {
   var e, m,
@@ -16619,7 +16493,7 @@ CSSOM.CSSMediaRule.prototype.__defineGetter__("cssText", function() {
 exports.CSSMediaRule = CSSOM.CSSMediaRule;
 ///CommonJS
 
-},{"./MediaList":74,"./CSSRule":72}],76:[function(require,module,exports){
+},{"./CSSRule":72,"./MediaList":74}],76:[function(require,module,exports){
 //.CommonJS
 var CSSOM = {
 	CSSRule: require("./CSSRule").CSSRule,
@@ -17293,7 +17167,7 @@ CSSOM.CSSKeyframeRule = require('./CSSKeyframeRule').CSSKeyframeRule;
 CSSOM.CSSKeyframesRule = require('./CSSKeyframesRule').CSSKeyframesRule;
 ///CommonJS
 
-},{"./CSSStyleSheet":79,"./CSSStyleRule":73,"./CSSImportRule":76,"./CSSMediaRule":75,"./CSSFontFaceRule":77,"./CSSStyleDeclaration":71,"./CSSKeyframesRule":80,"./CSSKeyframeRule":81}],83:[function(require,module,exports){
+},{"./CSSStyleSheet":79,"./CSSStyleRule":73,"./CSSImportRule":76,"./CSSMediaRule":75,"./CSSFontFaceRule":77,"./CSSStyleDeclaration":71,"./CSSKeyframeRule":81,"./CSSKeyframesRule":80}],83:[function(require,module,exports){
 //.CommonJS
 var CSSOM = {
 	CSSStyleSheet: require("./CSSStyleSheet").CSSStyleSheet,
@@ -17371,5 +17245,131 @@ CSSOM.clone = function clone(stylesheet) {
 exports.clone = CSSOM.clone;
 ///CommonJS
 
-},{"./CSSStyleSheet":79,"./CSSStyleRule":73,"./CSSMediaRule":75,"./CSSStyleDeclaration":71,"./CSSKeyframeRule":81,"./CSSKeyframesRule":80}]},{},[1])
+},{"./CSSStyleSheet":79,"./CSSStyleRule":73,"./CSSMediaRule":75,"./CSSStyleDeclaration":71,"./CSSKeyframeRule":81,"./CSSKeyframesRule":80}],65:[function(require,module,exports){
+
+/**
+ * Expose `debug()` as the module.
+ */
+
+module.exports = debug;
+
+/**
+ * Create a debugger with the given `name`.
+ *
+ * @param {String} name
+ * @return {Type}
+ * @api public
+ */
+
+function debug(name) {
+  if (!debug.enabled(name)) return function(){};
+
+  return function(fmt){
+    var curr = new Date;
+    var ms = curr - (debug[name] || curr);
+    debug[name] = curr;
+
+    fmt = name
+      + ' '
+      + fmt
+      + ' +' + debug.humanize(ms);
+
+    // This hackery is required for IE8
+    // where `console.log` doesn't have 'apply'
+    window.console
+      && console.log
+      && Function.prototype.apply.call(console.log, console, arguments);
+  }
+}
+
+/**
+ * The currently active debug mode names.
+ */
+
+debug.names = [];
+debug.skips = [];
+
+/**
+ * Enables a debug mode by name. This can include modes
+ * separated by a colon and wildcards.
+ *
+ * @param {String} name
+ * @api public
+ */
+
+debug.enable = function(name) {
+  try {
+    localStorage.debug = name;
+  } catch(e){}
+
+  var split = (name || '').split(/[\s,]+/)
+    , len = split.length;
+
+  for (var i = 0; i < len; i++) {
+    name = split[i].replace('*', '.*?');
+    if (name[0] === '-') {
+      debug.skips.push(new RegExp('^' + name.substr(1) + '$'));
+    }
+    else {
+      debug.names.push(new RegExp('^' + name + '$'));
+    }
+  }
+};
+
+/**
+ * Disable debug output.
+ *
+ * @api public
+ */
+
+debug.disable = function(){
+  debug.enable('');
+};
+
+/**
+ * Humanize the given `ms`.
+ *
+ * @param {Number} m
+ * @return {String}
+ * @api private
+ */
+
+debug.humanize = function(ms) {
+  var sec = 1000
+    , min = 60 * 1000
+    , hour = 60 * min;
+
+  if (ms >= hour) return (ms / hour).toFixed(1) + 'h';
+  if (ms >= min) return (ms / min).toFixed(1) + 'm';
+  if (ms >= sec) return (ms / sec | 0) + 's';
+  return ms + 'ms';
+};
+
+/**
+ * Returns true if the given mode name is enabled, false otherwise.
+ *
+ * @param {String} name
+ * @return {Boolean}
+ * @api public
+ */
+
+debug.enabled = function(name) {
+  for (var i = 0, len = debug.skips.length; i < len; i++) {
+    if (debug.skips[i].test(name)) {
+      return false;
+    }
+  }
+  for (var i = 0, len = debug.names.length; i < len; i++) {
+    if (debug.names[i].test(name)) {
+      return true;
+    }
+  }
+  return false;
+};
+
+// persist
+
+//if (window.localStorage) debug.enable(localStorage.debug);
+
+},{}]},{},[1])
 ;
