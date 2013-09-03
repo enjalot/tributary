@@ -20,7 +20,7 @@ This screenshot plugin lets you click a button in the Config panel to automatica
 ```
 tb.events.on("loaded", function() { 
   [...]
-  tb.loadPlugin("/static/plugins/tb-screenshot-plugin/plugin.json", {}, 
+  tb.loadPlugin("/static/plugins/screenshots/plugin.json", {}, 
     function(e) {console.log("callback: ",e);}
   );
   [...]
@@ -49,4 +49,4 @@ Your github keys and imgur keys must be configured properly in settings.js to us
 + Handle other views (not just svg)
 
 ## Contributing 
-Send pull requests to https://github.com/georules/tb-screenshot-plugin
+Send pull requests to https://github.com/georules/screenshots

@@ -1,7 +1,7 @@
 {
   "id": "screenshot"
 , "description": "take screenshots for thumbnails automagically"
-, "url": "/static/plugins/tb-screenshot-plugin"
+, "url": "/static/plugins/screenshots"
 , "js": "index.js"
 , "html": "index.html"
 , "css": "style.css"

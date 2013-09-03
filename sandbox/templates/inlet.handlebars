@@ -140,7 +140,9 @@
 <!-- 3rd party libs we want available as global variables (should be libs in the add libraries list) -->
 <script src="/static/lib/underscore-min.js"></script>
 <script src="/static/lib/queue.min.js"></script>
-<!-- extra 3rd party libs 
+
+<script src="/static/lib/gif.js"></script>
+<!-- extra 3rd party libs
 TODO: add these as defualt libs in the list
 <script src="http://d3js.org/topojson.v0.min.js"></script>
 <script src="http://d3js.org/d3.geo.projection.v0.min.js"></script>
@@ -156,13 +158,13 @@ TODO: add these as defualt libs in the list
 <script src="/static/tributary-ui.min.js"></script>
 
 <!-- canvg for screenshots -->
-<script type="text/javascript" src="/static/plugins/tb-screenshot-plugin/lib/rgbcolor.js"></script>
-<script type="text/javascript" src="/static/plugins/tb-screenshot-plugin/lib/StackBlur.js"></script>
-<script type="text/javascript" src="/static/plugins/tb-screenshot-plugin/lib/canvg.js"></script>
-<script type="text/javascript" src="/static/plugins/tb-screenshot-plugin/lib/html2canvas.js"></script>
+<script type="text/javascript" src="/static/plugins/screenshots/lib/rgbcolor.js"></script>
+<script type="text/javascript" src="/static/plugins/screenshots/lib/StackBlur.js"></script>
+<script type="text/javascript" src="/static/plugins/screenshots/lib/canvg.js"></script>
+<script type="text/javascript" src="/static/plugins/screenshots/lib/html2canvas.js"></script>
 
 <script type="text/javascript">
-  
+
 /*
 //get rid of selection when dragging things
 if(typeof document.body.style.MozUserSelect!="undefined")
@@ -189,12 +191,9 @@ tb.loadPlugin("/static/plugins/stylus/plugin.json", {}, function(e) {
 
 tb.events.on("loaded", function() {
   tb.loadPlugin("/static/plugins/play/plugin.json", {}
-  , function (err, pluginId) { /*console.log("plugin load err?", err)*/
-      tb.events.trigger("execute");
-    });
-  tb.loadPlugin("/static/plugins/tb-screenshot-plugin/plugin.json", {},
-    function(e) { /*console.log("callback: ",e); */}
-  );
+  , function (err, pluginId) { tb.events.trigger("execute"); });
+  tb.loadPlugin("/static/plugins/screenshots/plugin.json", {}
+  ,  function(e) { /*console.log("callback: ",e); */});
   /*
   //example simple plugin
   tb.loadPlugin("/static/plugins/simple/plugin.json"

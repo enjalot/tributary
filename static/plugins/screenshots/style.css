@@ -1,0 +1,27 @@
+canvas#pngit {
+  /*display:none;*/
+  pointer-events: none;
+}
+
+#gif {
+  /*position: absolute;
+  bottom: 10px;
+  left: 350px;
+  */
+}
+#gifpanel {
+  position: absolute;
+  bottom: 10px;
+  left: 400px;
+  height: 200px;
+  overflow: scroll;
+}
+#gifdone {
+  float:left;
+}
+.frame {
+  float: left;
+  position:relative;
+  display: inline-block;
+  pointer-events: visiblePainted;
+}
