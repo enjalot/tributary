@@ -564,6 +564,7 @@ Tributary = function() {
       this.model.on("change:code", function() {
         tributary.events.trigger("execute");
       });
+      tributary.events.on("prerender", this.execute, this);
     },
     execute: function() {
       if (tributary.__noupdate__) return;
@@ -585,6 +586,7 @@ Tributary = function() {
       this.model.on("change:code", function() {
         tributary.events.trigger("execute");
       });
+      tributary.events.on("prerender", this.execute, this);
     },
     execute: function() {
       if (tributary.__noupdate__) return;
@@ -608,6 +610,7 @@ Tributary = function() {
       this.model.on("change:code", function() {
         tributary.events.trigger("execute");
       });
+      tributary.events.on("prerender", this.execute, this);
     },
     execute: function() {
       if (tributary.__noupdate__) return;
@@ -634,6 +637,7 @@ Tributary = function() {
       this.model.on("change:code", function() {
         tributary.events.trigger("execute");
       });
+      tributary.events.on("prerender", this.execute, this);
     },
     execute: function() {
       if (tributary.__noupdate__) return;
@@ -655,6 +659,7 @@ Tributary = function() {
       this.model.on("change:code", function() {
         tributary.events.trigger("execute");
       });
+      tributary.events.on("prerender", this.execute, this);
     },
     execute: function() {
       if (tributary.__noupdate__) return;

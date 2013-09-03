@@ -260,6 +260,7 @@ tributary.JSONContext = tributary.Context.extend({
     this.model.on("change:code", function() {
       tributary.events.trigger("execute");
     });
+    tributary.events.on("prerender", this.execute, this);
   },
 
   execute: function() {
@@ -291,6 +292,7 @@ tributary.JSContext = tributary.Context.extend({
     this.model.on("change:code", function() {
       tributary.events.trigger("execute");
     });
+    tributary.events.on("prerender", this.execute, this);
   },
 
   execute: function() {
@@ -324,6 +326,7 @@ tributary.CoffeeContext = tributary.Context.extend({
     this.model.on("change:code", function() {
       tributary.events.trigger("execute");
     });
+    tributary.events.on("prerender", this.execute, this);
   },
 
   execute: function() {
@@ -381,6 +384,7 @@ tributary.CSVContext = tributary.Context.extend({
     this.model.on("change:code", function() {
       tributary.events.trigger("execute");
     });
+    tributary.events.on("prerender", this.execute, this);
   },
 
   execute: function() {
@@ -409,6 +413,7 @@ tributary.TSVContext = tributary.Context.extend({
     this.model.on("change:code", function() {
       tributary.events.trigger("execute");
     });
+    tributary.events.on("prerender", this.execute, this);
   },
 
   execute: function() {
