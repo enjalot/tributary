@@ -23,14 +23,10 @@ function tributaryScreenshotPlugin(tributary, plugin) {
     //gif button
     d3.select("#gif").on("click", function() {
       tributary.__gif__ = !tributary.__gif__;
-      pngit.style("display", tributary.__gif__ ? "" : "none" );
       d3.select("#gifpanel").style("display", tributary.__gif__ ? "" : "none" );
     });
     //for gifs
     tributary.__frames__ = [];
-    tributary.__rect__ = {x: 0, y: 0, width: width, height: height};
-    tributary.__ghost__ = {x: 0, y: 0, width: width, height: height};
-
   }
   plugin.deactivate = function()  {
     el = document.getElementById(plugin.elId);
@@ -90,56 +86,8 @@ function tributaryScreenshotPlugin(tributary, plugin) {
   d3.select("#display").on("mouseup.gif", up);
   d3.select("body").on("mouseup.gif", up);
 
-  function drawRect(rect, ghost) {
-    var canvas = document.getElementById('pngit');
-    var ctx = canvas.getContext('2d');
-
-    ctx.beginPath();
-    ctx.rect(rect.x, rect.y, rect.width, rect.height);
-    if(!ghost) {
-      ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
-      ctx.fill();
-    }
-    ctx.lineWidth = 1;
-    if(ghost) {
-      var frames = tributary.__frames__;
-      var frame = frames[frames.length-1];
-      if(frame) {
-        var image = new Image();
-        image.src = frame;
-        image.onload = function() {
-        ctx.drawImage(image, 0, header);
-        //ctx.drawImage(image, 0, 0, ghost.width, ghost.height, ghost.x, ghost.y + header, ghost.width, ghost.height);
-        };
-      }
-      if(ctx.setLineDash) ctx.setLineDash([2,3]);
-    }
-    ctx.strokeStyle = 'orange';
-    ctx.stroke();
-  }
-  function clear() {
-    var canvas = document.getElementById('pngit');
-    var ctx = canvas.getContext('2d');
-    ctx.clearRect(0, 0, tributary.sw, tributary.sh);
-    //ctx.fillStyle ="#fff";
-    //ctx.fillRect(0, 0, tributary.sw, tributary.sh);
-  }
-  function render() {
-    var rect = tributary.__rect__;
-    var ghost = tributary.__ghost__;
-    clear();
-
-    drawRect(rect);
-    drawRect(ghost, true);
-  }
   function move() {
     if(!tributary.__gif__) return;
-    var rect = tributary.__rect__;
-
-    rect.x = d3.event.x - rect.width/2;
-    rect.y = d3.event.y - rect.height/2;
-    //console.log("RECT", rect)
-    render();
   }
   var timer;
   var duration = 60;
@@ -154,10 +102,10 @@ function tributaryScreenshotPlugin(tributary, plugin) {
         image.src = img;
         image.onload = function() {
           var canv = document.getElementById('gifit');
-          canv.width = width;
-          canv.height = height;
+          canv.width = tributary.sw;
+          canv.height = tributary.sh;
           var ctx = canv.getContext('2d');
-          ctx.drawImage(image, ghost.x, ghost.y);
+          ctx.drawImage(image, 0, 0);
           tributary.__frames__.push(img);
           renderFrames()
         };
@@ -166,10 +114,6 @@ function tributaryScreenshotPlugin(tributary, plugin) {
       timer = setTimeout(timeFn, duration);
     }
     timer = setTimeout(timeFn, duration);
-    var ghost = tributary.__ghost__;
-    ghost.x = d3.event.x - ghost.width/2;
-    ghost.y = d3.event.y - ghost.height/2;
-    render();
   }
   function up() {
     //clear timer
@@ -195,8 +139,8 @@ function tributaryScreenshotPlugin(tributary, plugin) {
       workers: 1,
       quality: 20,
       background: "#fff",
-      width: width,
-      height: height,
+      width: tributary.sw,
+      height: tributary.sh,
       workerScript: "/static/lib/gif.worker.js"
     });
 
@@ -208,7 +152,7 @@ function tributaryScreenshotPlugin(tributary, plugin) {
         image.onload = function() {
           var ctx = d3.select("#gifit").node().getContext('2d');
           ctx.fillStyle ="#fff";
-          ctx.fillRect(0, 0, width, height);
+          ctx.fillRect(0, 0, tributary.sw, tributary.sh);
           ctx.drawImage(image, 0, 0)
           gif.addFrame(ctx, {delay:tributary.delay || delay, copy:true});
           setTimeout(function() {
