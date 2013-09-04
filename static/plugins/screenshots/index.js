@@ -3,10 +3,10 @@ Tributary.plugin("screenshot", tributaryScreenshotPlugin);
 
 function tributaryScreenshotPlugin(tributary, plugin) {
   var el;
-  var delay = 100;
   var width = 500;
   var height = 500;
   var header = 30;
+  var delay = 150;
   plugin.activate = function()  {
     //console.log("hi from screenshot plugin");
     el = document.getElementById(plugin.elId);
@@ -210,7 +210,7 @@ function tributaryScreenshotPlugin(tributary, plugin) {
           ctx.fillStyle ="#fff";
           ctx.fillRect(0, 0, width, height);
           ctx.drawImage(image, 0, 0)
-          gif.addFrame(ctx, {delay:delay, copy:true});
+          gif.addFrame(ctx, {delay:tributary.delay || delay, copy:true});
           setTimeout(function() {
             var ind = tributary.__frames__.indexOf(frame);
             tributary.__frames__.splice(ind, 1);
