@@ -21,7 +21,32 @@ function tributaryInlineConsolePlugin(tributary, plugin) {
 
   plugin.activate = function() {
     el = document.getElementById(plugin.elId);
-    tributary.events.on("execute", clearWidgets);
+    tributary.events.on("prerender", clearWidgets);
+
+    var button = d3.select("#editorcontrols").append("button").attr("id","inline-logs").text("Inline Logs")
+      .on("click", function(d) {
+        var dis = d3.select(this);
+        //if($(this).attr("data-name") === "log-errors") {
+          //if (tributary.hint === true && tributary.trace === true) {
+          if( dis.classed("active") ) {
+            console.log("Inline logging disabled");
+            tributary.__config__.set("inline-console", false)
+            tributary.events.trigger("execute");
+            dis.classed("active", false)
+          }
+          else {
+            console.log("Inline logging initiated");
+            tributary.__config__.set("inline-console", true)
+            tributary.events.trigger("execute");
+            dis.classed("active", true)
+          }
+       // }
+      })
+
+      tributary.events.on("loaded", function() {
+        console.log("load")
+        button.classed("active", tributary.__config__.get("inline-console"));
+      })
   }
 
   plugin.deactivate = function() {
@@ -157,8 +182,8 @@ function tributaryInlineConsolePlugin(tributary, plugin) {
     var context = tributary.getContext(pos.filename);
     var cm = context.editor.cm;
     try {
-    var text = JSON.stringify(args)
-    text = text.slice(1, text.length-1);
+      var text = JSON.stringify(args)
+      text = text.slice(1, text.length-1);
     } catch(e) {
       var text = args.toString();
     }
