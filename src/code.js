@@ -50,8 +50,27 @@ tributary.CodeModel = Backbone.Model.extend({
     }
     return js;
   },
- 
-
+  //We allow parsing of code before execution
+  handleParser: function(js) {
+    //TODO: This is from plugin, should somehow be able to hook in here
+    var inline = tributary.__config__.get("inline-console");
+    if(inline) {
+      try {
+      transformed = tributary.__parser__(js, this.get("filename"));
+      } catch(e) {
+        console.log("PARSE", e.stack);
+      }
+      try {
+      js = escodegen.generate(transformed.ast);
+      } catch(e) {
+        console.log("GEN", e.stack)
+      }
+      if(tributary.trace) {
+        console.log("JS", js)
+      }
+    }
+    return js;
+  },
   //main use case of local storage is recovery after a crash
   //uniqueness comes from filename and optional user defined key
   local_storage: function(key) {

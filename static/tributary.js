@@ -234,6 +234,25 @@ Tributary = function() {
       }
       return js;
     },
+    handleParser: function(js) {
+      var inline = tributary.__config__.get("inline-console");
+      if (inline) {
+        try {
+          transformed = tributary.__parser__(js, this.get("filename"));
+        } catch (e) {
+          console.log("PARSE", e.stack);
+        }
+        try {
+          js = escodegen.generate(transformed.ast);
+        } catch (e) {
+          console.log("GEN", e.stack);
+        }
+        if (tributary.trace) {
+          console.log("JS", js);
+        }
+      }
+      return js;
+    },
     local_storage: function(key) {
       if (!key) {
         key = "";
@@ -361,6 +380,20 @@ Tributary = function() {
           dis.classed("active", true);
         }
       });
+      editorcontrols.select("#inline-logs").on("click", function(d) {
+        var dis = d3.select(this);
+        if (dis.classed("active")) {
+          console.log("Inline logging disabled");
+          tributary.__config__.set("inline-console", false);
+          tributary.events.trigger("execute");
+          dis.classed("active", false);
+        } else {
+          console.log("Inline logging initiated");
+          tributary.__config__.set("inline-console", true);
+          tributary.events.trigger("execute");
+          dis.classed("active", true);
+        }
+      });
       var checkList = d3.select(this.el).select("#library-checklist");
       var libLinks = d3.select(this.el).select("#library-links");
       var name_input = libLinks.select("input.library-title");
@@ -400,7 +433,9 @@ Tributary = function() {
             that.model.set("require", reqs);
           }
         });
-        li.append("span").text(function(d) {
+        li.append("a").attr("target", "_blank").attr("href", function(d) {
+          return d.url;
+        }).text(function(d) {
           return d.name;
         });
       }
@@ -442,6 +477,7 @@ Tributary = function() {
       if (tributary.__noupdate__) return;
       try {
         var js = this.model.handleCoffee();
+        js = this.model.handleParser(js);
       } catch (e) {
         this.model.trigger("error", e);
         return false;
@@ -591,6 +627,7 @@ Tributary = function() {
     execute: function() {
       if (tributary.__noupdate__) return;
       var js = this.model.get("code");
+      js = this.model.handleParser(js);
       try {
         eval(js);
       } catch (e) {

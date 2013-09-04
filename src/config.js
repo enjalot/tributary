@@ -187,6 +187,27 @@ tributary.ConfigView = Backbone.View.extend({
        // }
       })
 
+    //TODO: generalize this pattern into a component
+    editorcontrols.select("#inline-logs")
+      .on("click", function(d) {
+        var dis = d3.select(this);
+        //if($(this).attr("data-name") === "log-errors") {
+          //if (tributary.hint === true && tributary.trace === true) {
+          if( dis.classed("active") ) {
+            console.log("Inline logging disabled");
+            tributary.__config__.set("inline-console", false)
+            tributary.events.trigger("execute");
+            dis.classed("active", false)
+          }
+          else {
+            console.log("Inline logging initiated");
+            tributary.__config__.set("inline-console", true)
+            tributary.events.trigger("execute");
+            dis.classed("active", true)
+          }
+       // }
+      })
+
 
 
     // Require / External files config section
@@ -246,7 +267,10 @@ tributary.ConfigView = Backbone.View.extend({
             that.model.set("require", reqs);
           }
         })
-      li.append("span").text(function(d) {
+      li.append("a")
+      .attr("target", "_blank")
+      .attr("href", function(d) { return d.url })
+      .text(function(d) {
         return d.name;
       })
 

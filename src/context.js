@@ -55,6 +55,7 @@ tributary.TributaryContext = tributary.Context.extend({
     if(tributary.__noupdate__) return;
     try {
       var js = this.model.handleCoffee();
+      js = this.model.handleParser(js)
     } catch (e) {
       this.model.trigger("error", e);
       return false;
@@ -298,6 +299,7 @@ tributary.JSContext = tributary.Context.extend({
   execute: function() {
     if(tributary.__noupdate__) return;
     var js = this.model.get("code");
+    js = this.model.handleParser(js)
 
     try {
       eval(js);

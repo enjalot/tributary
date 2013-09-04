@@ -1,0 +1,8 @@
+{
+  "id": "inline-console"
+, "description": "see console.log inline!"
+, "url": "/static/plugins/inline-console"
+, "js": "index.js"
+, "html": "index.html"
+, "css": "style.css"
+}

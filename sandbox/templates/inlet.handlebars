@@ -82,6 +82,7 @@
           <h4>Editor Controls <small><i class="explain-this-shit icon-help-circled"></i></small></h4>
           <button id="logerrors" >Log Errors</button>
           <button id="updatecode" class="active">Auto Update</button>
+          <button id="inline-logs">Inline Logs</button>
         </div>
 
         <div id="thumbnail-content">
@@ -130,7 +131,6 @@
 <script src="/static/lib/coffee-script.js"></script>
 <script src="/static/lib/jsonlint.js"></script>
 
-<script src="/static/lib/stylus.js"></script>
 
 <!-- three.js should probably be done as a plugin -->
 <!--<script src="/static/lib/three.min.js"></script>-->
@@ -141,12 +141,15 @@
 <script src="/static/lib/underscore-min.js"></script>
 <script src="/static/lib/queue.min.js"></script>
 
-<script src="/static/lib/gif.js"></script>
 <!-- extra 3rd party libs
 TODO: add these as defualt libs in the list
 <script src="http://d3js.org/topojson.v0.min.js"></script>
 <script src="http://d3js.org/d3.geo.projection.v0.min.js"></script>
 -->
+<script src="/static/lib/gif.js"></script>
+<script src="/static/lib/stylus.js"></script>
+<script src="/static/lib/esprima.js"></script>
+<script src="/static/lib/escodegen.browser.js"></script>
 
 
 <!-- Tributary -->
@@ -184,8 +187,10 @@ tb._origin = "{{ origin }}";
 //decorate the tributary object with the ui logic
 TributaryUi(tb);
 
-tb.loadPlugin("/static/plugins/stylus/plugin.json", {}, function(e) { 
-  tb.ui.setup();
+tb.loadPlugin("/static/plugins/stylus/plugin.json", {}, function(e) {
+  tb.loadPlugin("/static/plugins/inline-console/plugin.json", {}, function(e) {
+    tb.ui.setup();
+  });
 });
 
 
