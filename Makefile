@@ -3,6 +3,7 @@
 NODE_PATH ?= ./node_modules
 JS_COMPILER = $(NODE_PATH)/uglify-js/bin/uglifyjs
 JS_BEAUTIFIER = $(NODE_PATH)/uglify-js/bin/uglifyjs -b -i 2 -nm -ns
+BROWSERIFY = $(NODE_PATH)/.bin/browserify
 HANDLEBARS_COMPILER = $(NODE_PATH)/handlebars/bin/handlebars
 LESS_COMPILER = $(NODE_PATH)/less/bin/lessc
 JS_TESTER = $(NODE_PATH)/vows/bin/vows
@@ -50,7 +51,7 @@ test: all
 	@rm -f static/$@
 	#$(JS_COMPILER) < static/$< > static/$@
 	#browserify -x $(THIRD_PARTY) static/tributary.js -o static/tributary.min.js
-	browserify static/$< -o static/$@
+	$(BROWSERIFY) static/$< -o static/$@
 
 tributary.js: Makefile
 	@rm -f static/$@
