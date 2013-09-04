@@ -62,6 +62,16 @@ function tributaryInlineConsolePlugin(tributary, plugin) {
     }
     d3.select("#widgets").selectAll(".log-widget").remove()
   }
+  function clearLineWidgets(cm, line) {
+    for(var i = widgets.length; i--;) {
+      var w = widgets[i];
+      var wline = cm.getLineNumber(w.line);
+      if(wline == line) {
+        w.clear(); //this remove's CodeMirror's handle to the widget;
+      }
+    }
+    //d3.select("#widgets").selectAll(".log-widget").remove()
+  }
 
   //this is where we use esprima to interperet our code
   //mainly taken from https://github.com/nornagon/live/blob/master/xform.coffee
@@ -189,6 +199,7 @@ function tributaryInlineConsolePlugin(tributary, plugin) {
     var widget = d3.select("#widgets").append("div")
       .text(text)
       .classed("log-widget", true)
+    clearLineWidgets(cm, pos.line);
     var lwidget = cm.addLineWidget(pos.line, widget.node());
     widgets.push(lwidget);
     console.log.apply(console, args);
