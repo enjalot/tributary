@@ -54,7 +54,6 @@ tributary.CodeModel = Backbone.Model.extend({
   handleParser: function(js) {
     //TODO: This is from plugin, should somehow be able to hook in here
     var inline = tributary.__config__.get("inline-console");
-    console.log("inline", inline)
     if(inline) {
       try {
       transformed = tributary.__parser__(js, this.get("filename"));

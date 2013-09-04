@@ -44,7 +44,6 @@ function tributaryInlineConsolePlugin(tributary, plugin) {
       })
 
       tributary.events.on("loaded", function() {
-        console.log("load")
         button.classed("active", tributary.__config__.get("inline-console"));
       })
   }

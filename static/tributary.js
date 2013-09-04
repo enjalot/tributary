@@ -236,7 +236,6 @@ Tributary = function() {
     },
     handleParser: function(js) {
       var inline = tributary.__config__.get("inline-console");
-      console.log("inline", inline);
       if (inline) {
         try {
           transformed = tributary.__parser__(js, this.get("filename"));
