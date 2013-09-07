@@ -282,7 +282,7 @@ Tributary = function() {
       restart: false,
       autoinit: true,
       pause: true,
-      loop_type: "period",
+      loop_type: "pingpong",
       bv: false,
       nclones: 15,
       clone_opacity: .4,

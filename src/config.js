@@ -18,7 +18,7 @@ tributary.Config = Backbone.Model.extend({
       //time options
       autoinit: true,
       pause: true,
-      loop_type: "period", //["off", "period", "pingpong"]
+      loop_type: "pingpong", //["off", "period", "pingpong"]
       bv: false,
       nclones: 15,
       clone_opacity: 0.4,

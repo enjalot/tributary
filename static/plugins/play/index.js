@@ -114,7 +114,10 @@ function tributaryPlayPlugin(tributary, plugin) {
         tributary.t = parseFloat(this.value);//$('#slider').attr('value');
         if(tributary.pause){
           //only want to run code if we aren't already playing
-          tributary.execute();    
+          tributary.execute();
+        }
+        if(tributary.__animating__) {
+          tributary.events.trigger("execute")
         }
       });
       config.on("tick", function(t) {
@@ -213,6 +216,15 @@ function tributaryPlayPlugin(tributary, plugin) {
         tributary.run(tributary.g, t, 0);
       }
     }
+    //TODO: enale loop and ease to be individually set
+    tributary.anim = function(min, max) {
+      tributary.__animating__ = true;
+      if(!min) min = 0;
+      if(!max && !(max === 0)) max = 1;
+      //if(!loop) loop = tributary.loop_type;
+      var t = tributary.ease(tributary.t);
+      return d3.scale.linear().range([min, max])(t);
+    }
 
     d3.timer(timerFunction);
     function timerFunction() {
@@ -224,7 +236,7 @@ function tributaryPlayPlugin(tributary, plugin) {
       var now = new Date();
       var dtime = now - tributary.timer.then;
       var dt;
-            
+
       //TODO: implement play button, should reset the timer
       if(tributary.loop) {
         if (tributary.reverse) {
@@ -267,11 +279,15 @@ function tributaryPlayPlugin(tributary, plugin) {
         tributary.t += tributary.dt;
       }
       
-      try {
-        tributary.execute();
-        tributary.__config__.trigger("noerror");
-      } catch (err) {
-        tributary.__config__.trigger("error", err);
+      if(tributary.__animating__) {
+        tributary.events.trigger("execute");
+      } else {
+        try {
+          tributary.execute();
+          tributary.__config__.trigger("noerror");
+        } catch (err) {
+          tributary.__config__.trigger("error", err);
+        }
       }
       tributary.__config__.trigger("tick", tributary.t);
     }
