@@ -7,6 +7,7 @@ function tributaryScreenshotPlugin(tributary, plugin) {
   var height = 500;
   var header = 30;
   var delay = 150;
+  var maxProgress = 70;
   plugin.activate = function()  {
     //console.log("hi from screenshot plugin");
     el = document.getElementById(plugin.elId);
@@ -14,7 +15,11 @@ function tributaryScreenshotPlugin(tributary, plugin) {
     d3.select("#thumbnail-content").node().appendChild(d3.select(el).select("#screenshot").node());
     d3.select("#screenshot").on("click", _handleScreenshot);
 
-    d3.select(".time_controls").append("button").attr("id", "gif").text("GIF");
+    d3.select(".time_controls")
+      .append("button")
+      .attr("id", "gif")
+      .text("GIF")
+      .attr("title", "activate GIF mode. clicking anywhere on the display will capture a frame. click and hold for fun")
     tributary.__gif__ = false;
     var pngit = d3.select("#pngit").attr({
       width: tributary.sw,
@@ -25,6 +30,13 @@ function tributaryScreenshotPlugin(tributary, plugin) {
       tributary.__gif__ = !tributary.__gif__;
       d3.select("#gifpanel").style("display", tributary.__gif__ ? "" : "none" );
     });
+    $('#gif').tipsy({fade: true, gravity: 's', opacity: 0.86});
+    $('#gifclear').tipsy({fade: true, gravity: 'w', opacity: 0.86});
+    $('#gifdone').tipsy({fade: true, gravity: 'sw', opacity: 0.86});
+    d3.select("#gifclear").on("click", function() {
+      tributary.__frames__ = [];
+      renderFrames();
+    })
     //for gifs
     tributary.__frames__ = [];
   }
@@ -106,7 +118,7 @@ function tributaryScreenshotPlugin(tributary, plugin) {
           canv.height = tributary.sh;
           var ctx = canv.getContext('2d');
           ctx.drawImage(image, 0, 0);
-          tributary.__frames__.push(img);
+          tributary.__frames__.unshift(img);
           renderFrames()
         };
 
@@ -121,15 +133,16 @@ function tributaryScreenshotPlugin(tributary, plugin) {
   }
 
   function renderFrames() {
-    var frames = d3.select("#gifpanel").selectAll("img.frame")
+    var frames = d3.select("#gifframes").selectAll("img.frame")
       .data(tributary.__frames__)
     frames.enter()
     .append("img").classed("frame", true)
     frames
       .attr({
         src: function(frame) { return frame },
-        width: "100px",
-        height: "100px"
+        width: "49px",
+        height: "49px",
+        title: "right click and Save As to keep this image"
       })
     frames.exit().remove();
   }
@@ -145,7 +158,7 @@ function tributaryScreenshotPlugin(tributary, plugin) {
     });
 
     var q = queue(1)
-    tributary.__frames__.forEach(function(frame) {
+    tributary.__frames__.reverse().forEach(function(frame) {
       q.defer(function(cb) {
         var image = new Image();
         image.src = frame;
@@ -167,6 +180,8 @@ function tributaryScreenshotPlugin(tributary, plugin) {
         console.log("done");
         gif.on('progress', function(percent) {
           console.log("progress", percent)
+          console.log(percent * maxProgress + "px")
+          d3.select("#gifprogress").style("width", percent * maxProgress + "px");
         })
         gif.on('finished', function(blob) {
           var PBJ = URL.createObjectURL(blob)
@@ -181,7 +196,11 @@ function tributaryScreenshotPlugin(tributary, plugin) {
           reader.readAsDataURL(blob);
           //window.open(PBJ);
           renderFrames();
+
+          $('.frame').tipsy({fade: true, gravity: 'sw', opacity: 0.86});
+
           tributary.__frames__ = [];
+          d3.select("#gifprogress").style("width", "0px");
         });
         gif.render();
       })

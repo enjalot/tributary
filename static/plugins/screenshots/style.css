@@ -11,17 +11,43 @@ canvas#pngit {
 }
 #gifpanel {
   position: absolute;
-  bottom: 10px;
-  left: 400px;
-  height: 200px;
-  overflow: scroll;
+  bottom: 60px;
+  left: 10px;
+  width: 180px;
+  height: 90px;
+}
+.gifbuttons {
+  float:left;
+  top: 0;
+  height: 90px;
 }
 #gifdone {
   float:left;
 }
+#gifclear {
+  float:left;
+  clear:left;
+}
+#gifprogress {
+  float:left;
+  display: inline-block;
+  height: 20px;
+  background-color: #1EAD1E;
+  /*border: 1px solid #fff;*/
+}
+#gifframes {
+  position: absolute;
+  left: 70px;
+  top: 5px;
+  width: 400px;
+  height: 90px;
+  overflow: scroll;
+  pointer-events: none;
+}
 .frame {
-  float: left;
-  position:relative;
+  border: 1px solid white;
+  float:left;
+  top: 0px;
   display: inline-block;
   pointer-events: visiblePainted;
 }
