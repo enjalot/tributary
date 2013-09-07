@@ -181,7 +181,10 @@ function tributaryScreenshotPlugin(tributary, plugin) {
         gif.on('progress', function(percent) {
           console.log("progress", percent)
           console.log(percent * maxProgress + "px")
-          d3.select("#gifprogress").style("width", percent * maxProgress + "px");
+          d3.select("#gifprogress").style({
+            "width": percent * maxProgress + "px",
+            "background-color": d3.scale.linear().range(["#F8025B", "#38F514"]).interpolate(d3.interpolateHsl)(percent)
+          });
         })
         gif.on('finished', function(blob) {
           var PBJ = URL.createObjectURL(blob)
