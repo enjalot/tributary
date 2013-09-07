@@ -54,11 +54,11 @@ function tributaryPlayPlugin(tributary, plugin) {
   plugin.deactivate = function() {
     el = document.getElementById(plugin.elId);
     el.innerHTML = "";
-    
+
     tributary.pause = true;
     var configDiv = d3.select("#config-content");
     var timecontrolsDiv = configDiv.select(".timecontrols").remove();
-    
+
     //remove all the stuff we added to tributary
     destroy();
   }

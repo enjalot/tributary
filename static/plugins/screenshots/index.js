@@ -171,6 +171,14 @@ function tributaryScreenshotPlugin(tributary, plugin) {
         gif.on('finished', function(blob) {
           var PBJ = URL.createObjectURL(blob)
           tributary.__frames__ = [PBJ];
+          var reader = new FileReader();
+          reader.addEventListener("loadend", function() {
+            var len = "data:image/gif;base64,".length;
+            var img = reader.result.substring(len);
+            tributary.events.trigger("imgur", img);
+             // reader.result contains the contents of blob as a typed array
+          });
+          reader.readAsDataURL(blob);
           //window.open(PBJ);
           renderFrames();
           tributary.__frames__ = [];
