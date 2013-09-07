@@ -205,10 +205,11 @@ tb.loadPlugin("/static/plugins/stylus/plugin.json", {}, function(e) {
 
 tb.events.on("loaded", function() {
   tb.loadPlugin("/static/plugins/play/plugin.json", {}
-  , function (err, pluginId) { tb.events.trigger("execute"); });
-  tb.loadPlugin("/static/plugins/screenshots/plugin.json", {}
-  ,  function(e) { /*console.log("callback: ",e); */});
-  /*
+    , function (err, pluginId) { 
+      tb.loadPlugin("/static/plugins/screenshots/plugin.json", {}
+    ,  function(e) { tb.events.trigger("execute"); });
+    });
+    /*
   //example simple plugin
   tb.loadPlugin("/static/plugins/simple/plugin.json"
   , {}
