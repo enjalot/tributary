@@ -328,7 +328,7 @@ function getGist(id, callback) {
     success: function(data) { callback(null, data) },
     error: function(e) {
       console.log("err", e)
-      //if a 403 error (because of rate limiting) 
+      //if a 403 error (because of rate limiting)
       url = "/gist/" + id + cachebust;
       $.ajax({
         url: url,

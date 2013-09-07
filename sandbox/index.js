@@ -27,6 +27,7 @@ function share(req, res, next) {
   var html = template({
     origin: origin,
     fullscreen: true,
+    share: true,
     embed: false
   });
   res.send(html);
