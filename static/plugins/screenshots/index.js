@@ -12,7 +12,7 @@ function tributaryScreenshotPlugin(tributary, plugin) {
     el = document.getElementById(plugin.elId);
     // get the screenshot button and put it on the config panel
     d3.select("#thumbnail-content").node().appendChild(d3.select(el).select("#screenshot").node());
-    d3.select("#screenshot").on("click", handleScreenshot);
+    d3.select("#screenshot").on("click", _handleScreenshot);
 
     d3.select(".time_controls").append("button").attr("id", "gif").text("GIF");
     tributary.__gif__ = false;
