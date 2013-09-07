@@ -217,13 +217,18 @@ function tributaryPlayPlugin(tributary, plugin) {
       }
     }
     //TODO: enale loop and ease to be individually set
-    tributary.anim = function(min, max) {
+    tributary.anim = function(min, max, options) {
       tributary.__animating__ = true;
       if(!min) min = 0;
       if(!max && !(max === 0)) max = 1;
+      if(!options) options = {};
+      if(!options.interpolate) options.interpolate = d3.interpolate;
+      if(!options.ease) options.ease = tributary.ease;
       //if(!loop) loop = tributary.loop_type;
-      var t = tributary.ease(tributary.t);
-      return d3.scale.linear().range([min, max])(t);
+      var t = options.ease(tributary.t);
+      return d3.scale.linear()
+        .range([min, max])
+        .interpolate(options.interpolate)(t);
     }
 
     d3.timer(timerFunction);

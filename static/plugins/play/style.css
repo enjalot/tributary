@@ -14,4 +14,7 @@
   padding: 1px !important;
 }
 
-
+/* deactivate bv button until it works with all contexts */
+.bv {
+  display: none;
+}

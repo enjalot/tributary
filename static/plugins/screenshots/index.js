@@ -30,7 +30,7 @@ function tributaryScreenshotPlugin(tributary, plugin) {
       tributary.__gif__ = !tributary.__gif__;
       d3.select("#gifpanel").style("display", tributary.__gif__ ? "" : "none" );
     });
-    $('#gif').tipsy({fade: true, gravity: 's', opacity: 0.86});
+    $('#gif').tipsy({fade: true, gravity: 'sw', opacity: 0.86});
     $('#gifclear').tipsy({fade: true, gravity: 'w', opacity: 0.86});
     $('#gifdone').tipsy({fade: true, gravity: 'sw', opacity: 0.86});
     d3.select("#gifclear").on("click", function() {
