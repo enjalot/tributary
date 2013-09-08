@@ -59,12 +59,14 @@ tributary.CodeModel = Backbone.Model.extend({
       try {
       transformed = tributary.__parser__(js, this.get("filename"));
       } catch(e) {
-        console.log("PARSE", e.stack);
+        if(tributary.trace)
+          console.log("PARSE", e.stack);
       }
       try {
-      js = escodegen.generate(transformed.ast);
+        js = escodegen.generate(transformed.ast);
       } catch(e) {
-        console.log("GEN", e.stack)
+        if(tributary.trace)
+          console.log("GEN", e.stack)
       }
       if(tributary.trace) {
         console.log("JS", js)
