@@ -1,0 +1,8 @@
+{
+  "id": "controls"
+, "description": "activate controls from your code"
+, "url": "/static/plugins/controls"
+, "js": "index.js"
+, "html": "index.html"
+, "css": "style.css"
+}
