@@ -37,6 +37,7 @@ tributary.CodeModel = Backbone.Model.extend({
     }
   },
   handleNoError: function() {
+    tributary.events.trigger("noerror");
     tributary.__error__ = false;
   },
 

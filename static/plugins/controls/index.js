@@ -22,14 +22,25 @@ function tributaryControlsPlugin(tributary, plugin) {
   plugin.activate = function() {
     el = document.getElementById(plugin.elId);
 
-    tributary.__controlEls__ = {};
     tributary.__controls__ = tributary.__config__.get("controls") || {};
-
+    tributary.__activeControls__ = {};
     //load control values from config on start
     tributary.events.on("prerender", function() {
-      console.log("PRE")
-      //tributary.__controlEls__ = {};
-      //d3.select(".time_controls").selectAll("div.control").remove();
+      tributary.__activeControls__ = {};
+    })
+    //TODO: this should probably be events
+    tributary.events.on("noerror", function() {
+      var names = Object.keys(tributary.__activeControls__);
+      d3.select(".time_controls").selectAll("div.control").data(names, function(d) { return d })
+        .exit().remove();
+      var all = Object.keys(tributary.__controls__)
+      var key;
+      for(var i = 0, l = all.length; i < l; i++) {
+        key = all[i];
+        if(!~names.indexOf(key)) {
+          delete tributary.__controls__[key];
+        }
+      }
     })
   }
 
@@ -55,17 +66,17 @@ function tributaryControlsPlugin(tributary, plugin) {
 
   function makeSlider(options) {
     var controlElement = getCE();
-    var control = controlElement.selectAll('div.control'+ options.name)
-      .data([options.name], function(d) { return d })
+    var control = controlElement.selectAll('div.control_'+ options.name)
+      .data([options.name])
     var center = control.enter()
-    center.append("div").classed("control"+options.name, true);
+      .append("div").classed("control_"+options.name, true).classed("control", true);
     center.append("span").text(options.name).append("span").text(":");
     center.append("input")
       .attr({
         type: "range"
       })
-    //control.exit().remove();
-    control = control.selectAll("input");
+
+    control = control.select("input")
     var value = tributary.__controls__[options.name];
     if(!exists(value)) {
       value = (options.max || 0 + options.min || 0) / 2
@@ -76,28 +87,34 @@ function tributaryControlsPlugin(tributary, plugin) {
       min: options.min,
       max: options.max
     });
-    //control.attr("value", tributary.__controls__[options.name]);
     control.on("change", function() { tributary.events.trigger("execute"); });
     return control.node();
   }
   function makeDropdown(options) {
     var controlElement = getCE();
-    var control = controlElement.selectAll('div.control'+options.name)
-      .data([options.name], function(d) { console.log("D", d); return d })
-    var center = control.enter();
-    center.append("div").classed("control"+options.name, true);
+    var control = controlElement.selectAll('div.control_'+options.name)
+      .data([options.name])
+    var center = control.enter()
+    .append("div").classed("control_"+options.name, true).classed("control", true);
     center.append("span").text(options.name).append("span").text(":");
     center.append("select");
 
-    console.log("SELECT", control)
-    center.select("select").on("change", function() {
+
+    control = control.select("select")
+    control.on("change", function() {
+      tributary.__controls__[options.name] = options.options[this.selectedIndex];
       tributary.events.trigger("execute");
     })
     var opts = control.selectAll("option").data(options.options)
     opts.enter()
-      .append("option")
+      .append("option");
+
+    var value = tributary.__controls__[options.name];
     opts.attr({
       value: function(d) { return d },
+      selected: function(d) {
+        if(value == d) return true;
+      },
     }).text(function(d) { return d });
     opts.exit().remove();
     return control.node();
@@ -111,18 +128,16 @@ function tributaryControlsPlugin(tributary, plugin) {
     //dropdown menu
     if(options.options && options.options.length) {
       var el = makeDropdown(options);
-      console.log("DEL", el)
       value = options.options[el.selectedIndex];
     } else if((options.min || options.min === 0) && (options.max || options.max === 0)) {
       //this is a number
       var el = makeSlider(options);
-      console.log("EL", el)
       value = el.value;
     }
     //update config
-    tributary.__controlEls__[name] = el;
     tributary.__controls__[name] = value;
     tributary.__config__.set("controls", tributary.__controls__);
+    tributary.__activeControls__[name] = true;
     return value;
   };
 

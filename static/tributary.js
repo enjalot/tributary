@@ -223,6 +223,7 @@ Tributary = function() {
       }
     },
     handleNoError: function() {
+      tributary.events.trigger("noerror");
       tributary.__error__ = false;
     },
     handleCoffee: function() {
