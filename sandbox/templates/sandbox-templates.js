@@ -12,7 +12,7 @@ function program1(depth0,data) {
 function program3(depth0,data) {
   
   
-  return "\n<style>\n  #gif {\n    display:none;\n  }\n<style>\n";}
+  return "\n<style>\n  #gif {\n    display:none;\n  }\n</style>\n";}
 
 function program5(depth0,data) {
   
@@ -33,7 +33,7 @@ function program7(depth0,data) {
   stack1 = depth0.embed;
   stack1 = helpers['if'].call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(1, program1, data)});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n";
+  buffer += "\n\n";
   stack1 = depth0.share;
   stack1 = helpers['if'].call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(3, program3, data)});
   if(stack1 || stack1 === 0) { buffer += stack1; }
