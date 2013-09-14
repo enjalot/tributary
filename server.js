@@ -386,16 +386,18 @@ function after_save(gist, callback) {
   //if gist doesn't exist in mongo, we create it, otherwise we update it.
   $inlets.findOne({gistid: gist.id}, function(err, mgist) {
     if(!mgist) {
-      mgist = { 
+      mgist = {
         gistid: gist.id
       , createdAt: new Date()
       , description: gist.description
       , public: newgist['public']
       }
     }
-    mgist.user = {
-      id: gist.user.id
-    , login: gist.user.login
+    if(gist.user) {
+      mgist.user = {
+        id: gist.user.id
+      , login: gist.user.login
+      }
     }
     mgist.description = gist.description
 
