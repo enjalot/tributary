@@ -264,6 +264,9 @@ a:visited {
 section {
   margin: 12px 0;
 }
+section#plugins {
+  margin: 0;
+}
 section:last-child {
   margin-bottom: 0;
 }
