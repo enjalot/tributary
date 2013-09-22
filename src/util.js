@@ -113,7 +113,8 @@ Tributary.makeContext = function(options) {
       model: model,
     });
   } else if(type === "pde") {
-    model.set("mode", "java")
+    model.set("mode", "javascript")
+    tributary.__config__.set("display", "canvas");
     context = new tributary.ProcessingContext({
       config: config,
       model: model,

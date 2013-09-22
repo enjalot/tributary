@@ -132,7 +132,8 @@ Tributary = function() {
         model: model
       });
     } else if (type === "pde") {
-      model.set("mode", "java");
+      model.set("mode", "javascript");
+      tributary.__config__.set("display", "canvas");
       context = new tributary.ProcessingContext({
         config: config,
         model: model
@@ -348,15 +349,21 @@ Tributary = function() {
       }
       var displaySelect = d3.select(this.el).select("#config-content select").on("change", function() {
         var display = this.selectedOptions[0].value;
+        console.log("DISPLAY", display);
+        console.log("model", that.model);
         that.model.set("display", display);
         tributary.events.trigger("execute");
       });
-      var currentDisplay = this.model.get("display");
-      displaySelect.selectAll("option").each(function(d, i) {
-        if (this.value === currentDisplay) {
-          displaySelect.node().value = this.value;
-        }
-      });
+      this.model.on("change:display", updateDisplayMenu);
+      function updateDisplayMenu() {
+        var currentDisplay = that.model.get("display");
+        displaySelect.selectAll("option").each(function(d, i) {
+          if (this.value === currentDisplay) {
+            displaySelect.node().value = this.value;
+          }
+        });
+      }
+      updateDisplayMenu();
       var editorcontrols = d3.select(this.el);
       editorcontrols.select("#logerrors").on("click", function(d) {
         var dis = d3.select(this);
@@ -672,11 +679,9 @@ Tributary = function() {
     execute: function() {
       if (tributary.__noupdate__) return;
       var pde = this.model.get("code");
-      console.log("canvas", tributary.canvas);
       var js = Processing.compile(pde).sourceCode;
       try {
         var fn = eval(js);
-        console.log("FN", fn);
         if (tributary.__processing__) tributary.__processing__.exit();
         tributary.__processing__ = new Processing(tributary.canvas, fn);
       } catch (e) {

@@ -133,16 +133,19 @@ tributary.ConfigView = Backbone.View.extend({
         tributary.events.trigger("execute");
       })
 
-    var currentDisplay = this.model.get("display");
-    displaySelect.selectAll("option")
-      .each(function(d,i) {
-        if(this.value === currentDisplay) {
-          //d3.select(this).attr("selected", "selected")
-         displaySelect.node().value= this.value;
-        }
-      })
-    
-    
+    this.model.on("change:display", updateDisplayMenu)
+    function updateDisplayMenu() {
+      var currentDisplay = that.model.get("display");
+      displaySelect.selectAll("option")
+        .each(function(d,i) {
+          if(this.value === currentDisplay) {
+            //d3.select(this).attr("selected", "selected")
+           displaySelect.node().value= this.value;
+          }
+        })
+    }
+    updateDisplayMenu();
+
     // Editor controls config section
 
     var editorcontrols = d3.select(this.el)
