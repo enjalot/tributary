@@ -112,6 +112,12 @@ Tributary.makeContext = function(options) {
       config: config,
       model: model,
     });
+  } else if(type === "pde") {
+    model.set("mode", "java")
+    context = new tributary.ProcessingContext({
+      config: config,
+      model: model,
+    });
   } else if(type === "html") {
     model.set("mode", "text/html")
     context = new tributary.HTMLContext({

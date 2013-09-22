@@ -244,15 +244,13 @@ tributary.TributaryContext = tributary.Context.extend({
     tributary.clear = function() {
       tributary.scene.clear();
     };
-
   }
-
 });
 
 
 //JSON Context
 //The JSON context evaluates json and sets the result to
-//tributary.foo where foo is the name of the context 
+//tributary.foo where foo is the name of the context
 //i.e. the filename without the extension
 tributary.JSONContext = tributary.Context.extend({
 
@@ -377,6 +375,41 @@ tributary.CoffeeContext = tributary.Context.extend({
   },
 
 });
+
+//processing context
+tributary.ProcessingContext = tributary.Context.extend({
+  initialize: function() {
+    this.model.on("change:code", this.execute, this);
+    this.model.on("change:code", function() {
+      tributary.events.trigger("execute");
+    });
+    tributary.events.on("prerender", this.execute, this);
+  },
+
+  execute: function() {
+    if(tributary.__noupdate__) return;
+    var pde = this.model.get("code");
+    var js = Processing.compile(pde).sourceCode;
+
+    try {
+      var fn = eval(js);
+      if(tributary.__processing__) tributary.__processing__.exit();
+      tributary.__processing__ = new Processing(tributary.canvas, fn);
+    } catch (e) {
+      this.model.trigger("error", e);
+      return false;
+    }
+    this.model.trigger("noerror");
+
+    return true;
+  },
+
+  render: function() {
+    //JS context doesn't do anything on rendering
+  },
+
+});
+
 
 
 //The CSV context evaluates js in the global namespace
