@@ -64,6 +64,7 @@ tributary.CodeModel = Backbone.Model.extend({
       }
       try {
         js = escodegen.generate(transformed.ast);
+        console.log("TRANSFORMED", js)
       } catch(e) {
         if(tributary.trace)
           console.log("GEN", e.stack)

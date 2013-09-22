@@ -245,6 +245,7 @@ Tributary = function() {
         }
         try {
           js = escodegen.generate(transformed.ast);
+          console.log("TRANSFORMED", js);
         } catch (e) {
           if (tributary.trace) console.log("GEN", e.stack);
         }

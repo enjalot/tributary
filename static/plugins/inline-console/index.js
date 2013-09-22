@@ -78,7 +78,8 @@ function tributaryInlineConsolePlugin(tributary, plugin) {
 
   //TODO: this should be more general and we would add in our particular parser in here
   tributary.__parser__ = function(code, filename) {
-    var parsed = esprima.parse(code, {loc:true});
+    console.log("PARSSSEEE")
+    var parsed = esprima.parse(code, {loc:true, raw: true});
     //console.log(parsed)
     __hasProp = {}.hasOwnProperty;
 
