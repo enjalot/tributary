@@ -45,7 +45,10 @@
   }
   function setThumbnail(image) {
     sandbox.postMessage({request: "thumbnail", image: image}, _origin);
-    getConfig();
+    //only save the gist if it belongs to the user
+    if(header.gist && header.gist.user && header.username == header.gist.user.login) {
+      getConfig();
+    }
   }
 
   //on the load of the iframe, we want to get the gist (if any)
@@ -136,6 +139,7 @@
       setup_header(user);
       setup_save(user, !!data);
     } else {
+      header.gist = data;
       if(data.user === null || data.user === undefined) {
         user = anon;
       } else {
@@ -250,7 +254,7 @@
   };
 
   function save(gist, saveorfork, callback) {
-    var oldgist = header.gistid || ""; 
+    var oldgist = header.gistid || "";
 
     var url;
     if(saveorfork === "fork") {
@@ -283,7 +287,7 @@
         setThumbnail(image);
       } else {
         //oops
-        getConfig();
+        //getConfig();
       }
     })
   }
