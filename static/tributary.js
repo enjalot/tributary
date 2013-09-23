@@ -25,7 +25,7 @@ Tributary = function() {
   window.addEventListener("resize", function(event) {
     tributary.events.trigger("resize", event);
   });
-  tributary.__mainfiles__ = [ "inlet.js", "inlet.coffee", "sinwaves.js", "squarecircle.js" ];
+  tributary.__mainfiles__ = [ "inlet.js", "inlet.coffee", "inlet.pde", "sinwaves.js", "squarecircle.js" ];
   var reservedFiles = [ "_.md", "config.json" ];
   tributary.displays = [ {
     name: "svg",
@@ -85,6 +85,7 @@ Tributary = function() {
     model.set("type", type);
     if (tributary.__mainfiles__.indexOf(filename) >= 0) {
       if (type === "coffee") model.set("mode", "coffeescript");
+      if (type === "pde") tributary.__config__.set("display", "canvas");
       context = new tributary.TributaryContext({
         config: config,
         model: model,
@@ -233,14 +234,18 @@ Tributary = function() {
       tributary.events.trigger("noerror");
       tributary.__error__ = false;
     },
-    handleCoffee: function() {
-      var js = this.get("code");
+    handleCode: function() {
+      var code = this.get("code");
       if (this.get("mode") === "coffeescript") {
-        js = CoffeeScript.compile(js, {
+        js = CoffeeScript.compile(code, {
           bare: true
         });
+        return js;
+      } else if (this.get("type") === "pde") {
+        js = Processing.compile(code).sourceCode;
+        return js;
       }
-      return js;
+      return code;
     },
     handleParser: function(js) {
       var inline = tributary.__config__.get("inline-console");
@@ -349,8 +354,6 @@ Tributary = function() {
       }
       var displaySelect = d3.select(this.el).select("#config-content select").on("change", function() {
         var display = this.selectedOptions[0].value;
-        console.log("DISPLAY", display);
-        console.log("model", that.model);
         that.model.set("display", display);
         tributary.events.trigger("execute");
       });
@@ -476,11 +479,16 @@ Tributary = function() {
     execute: function() {
       if (tributary.__noupdate__) return;
       try {
-        var js = this.model.handleCoffee();
+        var js = this.model.handleCode();
         js = this.model.handleParser(js);
       } catch (e) {
         this.model.trigger("error", e);
         return false;
+      }
+      if (this.model.get("type") === "pde") {
+        var fn = eval(js);
+        if (tributary.__processing__) tributary.__processing__.exit();
+        tributary.__processing__ = new Processing(tributary.canvas, fn);
       }
       try {
         tributary.initialize = new Function("g", "tributary", js);
@@ -970,6 +978,7 @@ Tributary = function() {
     var ret = {};
     if (!data) {
       ret.config = new tributary.Config;
+      ret.config.isNew = true;
       ret.models = new tributary.CodeModels(new tributary.CodeModel);
       return callback(null, ret);
     }

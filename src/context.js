@@ -42,25 +42,30 @@ tributary.TributaryContext = tributary.Context.extend({
 
     tributary.init = undefined;
     tributary.run = undefined;
-  
+
     //autoinit determins whether we call tributary.init by default
     tributary.autoinit = config.get("autoinit");
 
     tributary.render = function() {};
     tributary.execute = function() {};
-     
+
   },
 
-  execute: function() {   
+  execute: function() {
     if(tributary.__noupdate__) return;
     try {
-      var js = this.model.handleCoffee();
+      var js = this.model.handleCode();
       js = this.model.handleParser(js)
     } catch (e) {
       this.model.trigger("error", e);
       return false;
     }
 
+    if(this.model.get("type") === "pde") {
+      var fn = eval(js);
+      if(tributary.__processing__) tributary.__processing__.exit();
+      tributary.__processing__ = new Processing(tributary.canvas, fn);
+    }
     try {
       //eval(js);
       tributary.initialize = new Function("g", "tributary", js);
@@ -71,7 +76,6 @@ tributary.TributaryContext = tributary.Context.extend({
     }
 
     try {
-      
       //empty out our display element
       if(tributary.autoinit) {
         tributary.clear();

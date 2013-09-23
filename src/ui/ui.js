@@ -186,6 +186,7 @@ function _assemble(error, ret) {
       display: d3.select("#display")
     });
     if(context) {
+      if(config.isNew) context.isNew = true;
       config.contexts.push(context);
       context.render();
       if(tributary.__mainfiles__.indexOf(m.get("filename")) < 0) {
@@ -258,12 +259,12 @@ function _assemble(error, ret) {
       tributary.events.trigger("resize");
     }
   }
- 
+
   $("#fullscreen").on("click", function() { fullscreenEvent(true) });
   tributary.events.on("fullscreen", fullscreenEvent);
-  
+
   tributary.events.trigger("fullscreen", config.get("fullscreen"))
-    
+
   tributary.events.trigger("loaded");
 
 }

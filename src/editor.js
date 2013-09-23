@@ -26,8 +26,6 @@ Tributary.makeEditor = function(options) {
 }
 
 
-
-
 //The editor view renders the CodeMirror editor and sets up the logic for interaction
 //with the code model
 tributary.Editor = Backbone.View.extend({
@@ -74,10 +72,8 @@ tributary.Editor = Backbone.View.extend({
 
     var dis = d3.select(this.el)
       .classed("editor", true)
-    
-    //filetype = that.model.get("filename").split(".")[1];
+
     var filetype = that.model.get("type");
-    
 
     var options = {
       mode: that.model.get("mode"),
@@ -129,17 +125,6 @@ tributary.Editor = Backbone.View.extend({
     this.inlet = Inlet(this.cm);
 
     this.model.on("error", function(error) {
-      /*
-      var trace = error.stack;
-      var match = trace.match(/eval at \<anonymous\>.*\<anonymous\>:([0-9]+):([0-9]+)/)
-      console.log("trace", trace);
-      console.log("match", match);
-      */
-      /*
-      if(match) {
-        //console.logJack("MATCH", match[1]);
-        args = ["line " + (+match[1]-1) + ":"].concat([].splice.call(arguments,0))
-      */
       d3.select(that.el).select(".CodeMirror-gutter")
         .classed("error", true);
     });
@@ -147,7 +132,6 @@ tributary.Editor = Backbone.View.extend({
       d3.select(that.el).select(".CodeMirror-gutter")
         .classed("error", false);
     });
-    
 
     //Setup toolbar functionality
     var toolbar = dis.select(".toolbar");

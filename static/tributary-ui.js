@@ -142,6 +142,7 @@ TributaryUi = function(tributary) {
         display: d3.select("#display")
       });
       if (context) {
+        if (config.isNew) context.isNew = true;
         config.contexts.push(context);
         context.render();
         if (tributary.__mainfiles__.indexOf(m.get("filename")) < 0) {
@@ -303,13 +304,13 @@ TributaryUi = function(tributary) {
           return d.model.get("filename") === filename;
         });
         context.model.trigger("delete");
-        var ind = config.contexts.indexOf(context);
-        config.contexts.splice(ind, 1);
-        delete context;
         if (!config.todelete) {
           config.todelete = [];
         }
-        config.todelete.push(filename);
+        if (!context.isNew) config.todelete.push(filename);
+        var ind = config.contexts.indexOf(context);
+        config.contexts.splice(ind, 1);
+        delete context;
         d3.select(that.el).selectAll("li.file").each(function() {
           if (this.dataset.filename === filename) {
             $(this).remove();
@@ -333,6 +334,7 @@ TributaryUi = function(tributary) {
               config: config
             });
             if (context) {
+              context.isNew = true;
               config.contexts.push(context);
               context.render();
               context.execute();
