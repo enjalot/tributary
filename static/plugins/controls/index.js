@@ -25,11 +25,11 @@ function tributaryControlsPlugin(tributary, plugin) {
     tributary.__controls__ = tributary.__config__.get("controls") || {};
     tributary.__activeControls__ = {};
     //load control values from config on start
-    tributary.events.on("prerender", function() {
+    tributary.__events__.on("prerender", function() {
       tributary.__activeControls__ = {};
     })
     //TODO: this should probably be events
-    tributary.events.on("noerror", function() {
+    tributary.__events__.on("noerror", function() {
       var names = Object.keys(tributary.__activeControls__);
       d3.select(".time_controls").selectAll("div.control").data(names, function(d) { return d })
         .exit().remove();
@@ -87,7 +87,7 @@ function tributaryControlsPlugin(tributary, plugin) {
       min: options.min,
       max: options.max
     });
-    control.on("change", function() { tributary.events.trigger("execute"); });
+    control.on("change", function() { tributary.__events__.trigger("execute"); });
     return control.node();
   }
   function makeDropdown(options) {
@@ -103,7 +103,7 @@ function tributaryControlsPlugin(tributary, plugin) {
     control = control.select("select")
     control.on("change", function() {
       tributary.__controls__[options.name] = options.options[this.selectedIndex];
-      tributary.events.trigger("execute");
+      tributary.__events__.trigger("execute");
     })
     var opts = control.selectAll("option").data(options.options)
     opts.enter()

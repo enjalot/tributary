@@ -38,7 +38,7 @@ function loadScript(plugin, callback) {
     src: plugin.url + "/" + plugin.js
   });
   //TODO: check the type of plugin.js and load multiple if it's an array
-  Tributary.__events__.on("pluginLoaded", function(id) {
+  Tributary.events.on("pluginLoaded", function(id) {
     if(id === plugin.id)
       callback();
   })
@@ -67,7 +67,7 @@ tributary.loadPlugin = function (url, opts, cb) {
 //This is what the plugin calls to register itself
 Tributary.plugin = function (id, fn) {
   this.plugins[id].fn = fn;
-  Tributary.__events__.trigger("pluginLoaded", id);
+  Tributary.events.trigger("pluginLoaded", id);
 };
 
 //Once all a plugin's files are loaded, you can instancite it

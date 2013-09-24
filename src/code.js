@@ -37,10 +37,11 @@ tributary.CodeModel = Backbone.Model.extend({
     }
   },
   handleNoError: function() {
-    tributary.events.trigger("noerror");
+    tributary.__events__.trigger("noerror");
     tributary.__error__ = false;
   },
 
+  /*
   handleCode: function() {
     //This checks if coffeescript is being used
     //and returns compiled javascript
@@ -55,6 +56,7 @@ tributary.CodeModel = Backbone.Model.extend({
     }
     return code;
   },
+  */
   //We allow parsing of code before execution
   handleParser: function(js) {
     //TODO: This is from plugin, should somehow be able to hook in here

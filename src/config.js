@@ -53,7 +53,7 @@ tributary.Config = Backbone.Model.extend({
       .attr("src", function(d) { return d.url })
       .on("load", function() {
         //TODO: defer all loaded events and execute once?
-        tributary.events.trigger("execute");
+        tributary.__events__.trigger("execute");
       })
      
     
@@ -110,7 +110,7 @@ tributary.ConfigView = Backbone.View.extend({
             var len = "data:image/png;base64,".length;
             var img = e.target.result.substring(len);
 
-            tributary.events.trigger("imgur", img);
+            tributary.__events__.trigger("imgur", img);
 
           };
         })(f);
@@ -130,7 +130,7 @@ tributary.ConfigView = Backbone.View.extend({
       .on("change", function() {
         var display = this.selectedOptions[0].value;
         that.model.set("display", display);
-        tributary.events.trigger("execute");
+        tributary.__events__.trigger("execute");
       })
 
     this.model.on("change:display", updateDisplayMenu)
@@ -158,14 +158,14 @@ tributary.ConfigView = Backbone.View.extend({
             console.log("Error logging disabled");
             tributary.hint = false;
             tributary.trace = false;
-            tributary.events.trigger("execute");
+            tributary.__events__.trigger("execute");
             dis.classed("active", false)
           }
           else {
             console.log("Error logging initiated");
             tributary.hint = true;
             tributary.trace = true;
-            tributary.events.trigger("execute");
+            tributary.__events__.trigger("execute");
             dis.classed("active", true)
           }
        // }
@@ -178,18 +178,17 @@ tributary.ConfigView = Backbone.View.extend({
           if( dis.classed("active") ) {
             console.log("Auto updating disabled");
             tributary.__noupdate__ = true;
-            //tributary.events.trigger("execute");
+            //tributary.__events__.trigger("execute");
             dis.classed("active", false)
           }
           else {
             console.log("Auto updating initiated");
             tributary.__noupdate__ = false;
-            tributary.events.trigger("execute");
+            tributary.__events__.trigger("execute");
             dis.classed("active", true)
           }
        // }
-      }) 
-
+      })
 
     // Require / External files config section
     var checkList = d3.select(this.el)

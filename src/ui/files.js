@@ -100,8 +100,8 @@ Tributary.FilesView = Backbone.View.extend({
             if(context) {
               context.isNew = true;
               config.contexts.push(context);
-              context.render();
-              context.execute();
+              if(context.render) context.render();
+              if(context.execute) context.execute();
               var editor = Tributary.makeEditor({model: context.model});
               context.editor = editor;
 
@@ -119,7 +119,6 @@ Tributary.FilesView = Backbone.View.extend({
                 return "fv type-"+filetype;
               })
               */
-
 
             } else {
               input.classed("error", true);

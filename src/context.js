@@ -2,121 +2,47 @@
 //The Context is the essential part of tributary, it is what makes assumptions
 //about the code and provides the context for the code to execute.
 
-//The primary purpose of the context will be to supply the event handler for the 
-//execute event from the code model
-tributary.Context = Backbone.View.extend({
-  initialize: function() {},
-  execute: function() {},
-  render: function() {}
-});
+tributary.Main = function(options) {
+  this.el = options.el;
+  tributary.__events__.on("execute", execute, this);
 
+  if(!tributary.__config__) {
+    tributary.__config__ = new tributary.Config();
+  }
+  this.config = tributary.__config__;
+  this.config.on("change:display", set_display, this);
 
-tributary.TributaryContext = tributary.Context.extend({
+  tributary.init = undefined;
+  tributary.run = undefined;
 
-  initialize: function() {
-    //this.model.on("change:code", this.execute, this);
-    this.model.on("change:code", function() {
-      tributary.events.trigger("execute");
-    });
-    tributary.events.on("execute", this.execute, this);
+  //autoinit determins whether we call tributary.init by default
+  tributary.autoinit = this.config.get("autoinit");
+  tributary.render = function() {};
+  tributary.execute = function() {};
 
-    if(!tributary.__config__) {
-      if(this.options.config) {
-        tributary.__config__ = this.options.config;
-      } else {
-        tributary.__config__ = new tributary.Config();
-      }
-    }
-
-    //if the user has modified the code, we want to protect them from losing their work
-    this.model.on("change:code", function() {
-      //TODO: use CodeMirror .isClean / .markClean when switch to v3 
-      tributary.events.trigger("warnchanged");
-    }, this);
-    //allow other context's to make this code execute
-    //tributary.events.on("execute", this.execute, this);
-
-    this.config = tributary.__config__;
-    this.config.on("change:display", this.set_display, this);
-    var config = this.config;
-
-    tributary.init = undefined;
-    tributary.run = undefined;
-
-    //autoinit determins whether we call tributary.init by default
-    tributary.autoinit = config.get("autoinit");
-
-    tributary.render = function() {};
-    tributary.execute = function() {};
-
-  },
-
-  execute: function() {
+  function execute() {
     if(tributary.__noupdate__) return;
-    try {
-      var js = this.model.handleCode();
-      js = this.model.handleParser(js)
-    } catch (e) {
-      this.model.trigger("error", e);
-      return false;
-    }
-
-    if(this.model.get("type") === "pde") {
-      var fn = eval(js);
-      if(tributary.__processing__) tributary.__processing__.exit();
-      tributary.__processing__ = new Processing(tributary.canvas, fn);
-    }
-    try {
-      //eval(js);
-      tributary.initialize = new Function("g", "tributary", js);
-      //tributary.initialize(tributary.g);
-    } catch (e) {
-      this.model.trigger("error", e);
-      return false;
-    }
-
     try {
       //empty out our display element
       if(tributary.autoinit) {
         tributary.clear();
-        //call anything that needs to be prerendered (SVG and HTML contexts)
-        tributary.events.trigger("prerender");
+        //trigger all the contexts to execute, after the canvas has been cleared
+        tributary.__events__.trigger("post:execute");
       }
-      if(tributary.ctx && !tributary.g) {
-        //somehow tributary.g ends up undefined...
-      //  tributary.g = tributary.ctx;
-      }
-
-      //execute the code
-      tributary.initialize(tributary.g, tributary);
-
-      if(tributary.autoinit && tributary.init !== undefined) {
-        tributary.init(tributary.g, 0);
-      }
-      //then we run the user defined run function
-      tributary.execute();
     } catch (err) {
-        this.model.trigger("error", err);
-        return false;
+      return false;
     }
-    this.model.trigger("noerror");
-
     return true;
-  },
+  }
 
-  render: function() {
-    //check config for display to use
-    this.set_display(); 
-  },
-
-  set_display: function() {
+  function set_display() {
     var that = this;
-    this.$el.empty();
+    $(this.el).empty();
     var display = this.config.get("display");
     if(display === "svg") {
       this.make_svg();
     } else if (display === "canvas") {
-      this.make_canvas(); 
+      this.make_canvas();
     } else if (display === "webgl") {
       this.make_webgl();
     } else if (display === "div") {
@@ -124,16 +50,16 @@ tributary.TributaryContext = tributary.Context.extend({
       this.g = d3.select(this.el);
       tributary.g = this.g;
       tributary.clear = function() {
-          that.$el.empty();
+          $(that.el).empty();
       };
     } else {
       tributary.clear = function() {
-          that.$el.empty();
+          $(that.el).empty();
       };
     }
-  },
+  }
 
-  make_svg: function() {
+  this.make_svg = function() {
     //Use mustache or other templates here? naaah...
     this.svg = d3.select(this.el).append("svg")
       .attr({
@@ -146,33 +72,26 @@ tributary.TributaryContext = tributary.Context.extend({
       });
     tributary.g = this.svg;
     tributary.__svg__ = this.svg;
-
     tributary.clear = function() {
       $(tributary.__svg__.node()).empty();
-      //this handles delta (clones)
-      //$(tributary.svg.node()).empty();
     };
+  }
 
-  },
-
-  make_canvas: function() {
+  this.make_canvas = function() {
     tributary.__svg__ = null;
     tributary.clear = function() {
-      //var sw = parseInt(d3.select("#display").style("width"));
-      //var sh = parseInt(d3.select("#display").style("height"));
       tributary.canvas.width = tributary.sw;
       tributary.canvas.height = tributary.sh;
       tributary.ctx.clearRect(0, 0, tributary.sw, tributary.sh);
     };
-
     tributary.canvas = d3.select(this.el).append("canvas")
       .classed("tributary_canvas",true)
       .node();
     tributary.ctx = tributary.canvas.getContext('2d');
     tributary.g = tributary.ctx;
-  },
+  }
 
-  make_webgl: function() {
+  this.make_webgl = function() {
     tributary.__svg__ = null;
     container = this.el;
 
@@ -181,7 +100,6 @@ tributary.TributaryContext = tributary.Context.extend({
     tributary.camera.position.z = 500;
 
     tributary.scene = new THREE.Scene();
-
     THREE.Object3D.prototype.clear = function(){
       var children = this.children;
       var i;
@@ -194,7 +112,6 @@ tributary.TributaryContext = tributary.Context.extend({
     tributary.renderer = new THREE.WebGLRenderer();
     //tributary.renderer = new THREE.CanvasRenderer();
     tributary.renderer.setSize( tributary.sw, tributary.sh );
-
     container.appendChild( tributary.renderer.domElement );
 
     /*
@@ -205,24 +122,18 @@ tributary.TributaryContext = tributary.Context.extend({
     container.appendChild( stats.domElement );
     */
     //tributary.renderer.render( tributary.scene, tributary.camera );
-
     /*
     var controls = new THREE.TrackballControls( tributary.camera );
     controls.target.set( 0, 0, 0 );
     controls.rotateSpeed = 1.0;
     controls.zoomSpeed = 1.2;
     controls.panSpeed = 0.8;
-
     controls.noZoom = false;
     controls.noPan = false;
-
     controls.staticMoving = false;
     controls.dynamicDampingFactor = 0.15;
-
     tributary.controls = controls;
     */
-    
-
     tributary.render = function() {
       if(tributary.useThreejsControls) {
         //tributary.controls.update();
@@ -230,167 +141,94 @@ tributary.TributaryContext = tributary.Context.extend({
       tributary.renderer.render( tributary.scene, tributary.camera );
     };
     tributary.render();
-    
-    function onWindowResize() {
 
+    function onWindowResize() {
       windowHalfX = tributary.sw / 2;
       windowHalfY = tributary.sh / 2;
-
       tributary.camera.aspect = tributary.sw / tributary.sh;
       tributary.camera.updateProjectionMatrix();
-
       tributary.renderer.setSize( tributary.sw, tributary.sh );
-
     }
-    tributary.events.on("resize", onWindowResize, false);
+    Tributary.__events__.on("resize", onWindowResize, false);
     //window.addEventListener( 'resize', onWindowResize, false );
-
     tributary.clear = function() {
       tributary.scene.clear();
     };
   }
-});
+  set_display.call(this);
+}
 
-
-//JSON Context
-//The JSON context evaluates json and sets the result to
-//tributary.foo where foo is the name of the context
-//i.e. the filename without the extension
-tributary.JSONContext = tributary.Context.extend({
-
-  initialize: function() {
-    this.model.on("change:code", this.execute, this);
+Tributary.init = init; //expose for plugins
+function init(options) {
+  this.model = options.model;
+  this.el = options.el;
+  this.config = options.config;
+  //execute on code changes (if not silenced)
+  //this.model.on("change:code", this.execute, this);
+  if(!options.silent) {
     this.model.on("change:code", function() {
-      tributary.events.trigger("execute");
+      tributary.__events__.trigger("execute");
     });
-    tributary.events.on("prerender", this.execute, this);
-  },
-
-  execute: function() {
-    if(tributary.__noupdate__) return;
-    try {
-      var json = JSON.parse(this.model.get("code"));
-      tributary[this.model.get("name")] = json;
-    } catch (e) {
-      this.model.trigger("error", e);
-      return false;
-    }
-    this.model.trigger("noerror");
-
-    return true;
-  },
-
-  render: function() {
-    //JSON context doesn't do anything on rendering
-  },
-
-});
+    tributary.__events__.on("post:execute", this.execute, this)
+  }
+  //if the user has modified the code, we want to protect them from losing their work
+  this.model.on("change:code", function() {
+    //TODO: use CodeMirror .isClean / .markClean when switch to v3
+    tributary.__events__.trigger("warnchanged");
+  }, this);
+}
 
 
 //The JS context evaluates js in the global namespace
-//TODO: doesn't seem to really be global, need to use tributary object...
-tributary.JSContext = tributary.Context.extend({
-  initialize: function() {
-    this.model.on("change:code", this.execute, this);
-    this.model.on("change:code", function() {
-      tributary.events.trigger("execute");
-    });
-    tributary.events.on("prerender", this.execute, this);
-  },
-
-  execute: function() {
+tributary.JSContext = function(options) {
+  this.execute = function() {
     if(tributary.__noupdate__) return;
     var js = this.model.get("code");
     js = this.model.handleParser(js)
-
     try {
-      eval(js);
+      //eval(js);
+      var initialize = new Function("g", "tributary", js);
+      initialize(tributary.g, tributary)
     } catch (e) {
       this.model.trigger("error", e);
       return false;
     }
     this.model.trigger("noerror");
-
     return true;
-  },
-
-  render: function() {
-    //JS context doesn't do anything on rendering
-  },
-
-});
+  }
+  init.call(this, options);
+}
 
 //Coffeescript Context
-tributary.CoffeeContext = tributary.Context.extend({
-  initialize: function() {
-    //TODO: add this in as a pattern for all contexts? or just make a better way of wiring up events period.
-    if(!this.options.silent) {
-      this.model.on("change:code", this.execute, this);
-    }
-    this.model.on("change:code", function() {
-      tributary.events.trigger("execute");
-    });
-    tributary.events.on("prerender", this.execute, this);
-  },
-
-  execute: function() {
+tributary.CoffeeContext = function(options) {
+  this.execute = function() {
     if(tributary.__noupdate__) return;
     try {
-      var js = this.model.handleCoffee();
+      //TODO: use coffee compilation to give errors/warnings
+      var code = this.model.get("code");
+      js = CoffeeScript.compile(code, {"bare":true});
+      //js = this.model.handleParser(js)
     } catch(err) {
       this.model.trigger("error", err);
       return false;
     }
-    //TODO: use coffee compilation to give errors/warnings
-    /*
-    if(js.length > 0) {
-      var hints = JSHINT(js, {
-        asi: true,
-        laxcomma: true,
-        laxbreak: true,
-        loopfunc: true,
-        smarttabs: true,
-        sub: true
-      })
-      if(!hints) {
-        this.model.trigger("jshint", JSHINT.errors);
-        //for now, we can let the user continue incase JSHINT is too strict
-        //this.model.trigger("error", null);
-        //return false;
-      } else {
-        this.model.trigger("nojshint");
-      }
-    }
-    */
-
     try {
-      eval(js);
+      //eval(js);
+      var initialize = new Function("g", "tributary", js);
+      initialize(tributary.g, tributary)
     } catch (err) {
       this.model.trigger("error", err);
       return false;
     }
     this.model.trigger("noerror");
-
     return true;
-  },
-
-  render: function() {
-    //JS context doesn't do anything on rendering
-  },
-
-});
+  }
+  init.call(this, options);
+}
 
 //processing context
-tributary.ProcessingContext = tributary.Context.extend({
-  initialize: function() {
-    this.model.on("change:code", this.execute, this);
-    this.model.on("change:code", function() {
-      tributary.events.trigger("execute");
-    });
-    tributary.events.on("prerender", this.execute, this);
-  },
-
-  execute: function() {
+tributary.ProcessingContext = function(options) {
+  this.execute = function() {
     if(tributary.__noupdate__) return;
     var pde = this.model.get("code");
     var js = Processing.compile(pde).sourceCode;
@@ -404,29 +242,34 @@ tributary.ProcessingContext = tributary.Context.extend({
       return false;
     }
     this.model.trigger("noerror");
-
     return true;
-  },
+  }
+  init.call(this, options);
+}
 
-  render: function() {
-    //JS context doesn't do anything on rendering
-  },
-
-});
-
-
+//JSON Context
+//The JSON context evaluates json and sets the result to
+//tributary.foo where foo is the name of the context
+//i.e. the filename without the extension
+tributary.JSONContext = function(options) {
+  this.execute = function() {
+    if(tributary.__noupdate__) return;
+    try {
+      var json = JSON.parse(this.model.get("code"));
+      tributary[this.model.get("name")] = json;
+    } catch (e) {
+      this.model.trigger("error", e);
+      return false;
+    }
+    this.model.trigger("noerror");
+    return true;
+  }
+  init.call(this, options);
+}
 
 //The CSV context evaluates js in the global namespace
-tributary.CSVContext = tributary.Context.extend({
-  initialize: function() {
-    this.model.on("change:code", this.execute, this);
-    this.model.on("change:code", function() {
-      tributary.events.trigger("execute");
-    });
-    tributary.events.on("prerender", this.execute, this);
-  },
-
-  execute: function() {
+tributary.CSVContext = function(options) {
+  this.execute = function() {
     if(tributary.__noupdate__) return;
     try {
       var json = d3.csv.parse(this.model.get("code"));
@@ -436,26 +279,14 @@ tributary.CSVContext = tributary.Context.extend({
       return false;
     }
     this.model.trigger("noerror");
-
     return true;
-  },
-
-  render: function() {
-    //CSV context doesn't do anything on rendering
-  },
-});
+  }
+  init.call(this, options);
+}
 
 //The TSV context evaluates js in the global namespace
-tributary.TSVContext = tributary.Context.extend({
-  initialize: function() {
-    this.model.on("change:code", this.execute, this);
-    this.model.on("change:code", function() {
-      tributary.events.trigger("execute");
-    });
-    tributary.events.on("prerender", this.execute, this);
-  },
-
-  execute: function() {
+tributary.TSVContext = function(options) {
+  this.execute = function() {
     if(tributary.__noupdate__) return;
     try {
       var json = d3.tsv.parse(this.model.get("code"));
@@ -465,32 +296,14 @@ tributary.TSVContext = tributary.Context.extend({
       return false;
     }
     this.model.trigger("noerror");
-
     return true;
-  },
-
-  render: function() {
-    //TSV context doesn't do anything on rendering
-  },
-});
-
-
-
+  }
+  init.call(this, options);
+}
 
 //The CSS context adds a style element to the head with the contents of the css
-tributary.CSSContext = tributary.Context.extend({
-  initialize: function() {
-    this.model.on("change:code", this.execute, this);
-    this.model.on("change:code", function() {
-      tributary.events.trigger("execute");
-    });
-    tributary.events.on("prerender", this.execute, this);
-    this.model.on("delete", function() {
-      d3.select(this.el).remove();
-    }, this)
-  },
-
-  execute: function() {
+tributary.CSSContext = function(options) {
+  this.execute = function() {
     if(tributary.__noupdate__) return;
     try {
       //set the text of the style element to the code
@@ -500,11 +313,10 @@ tributary.CSSContext = tributary.Context.extend({
       return false;
     }
     this.model.trigger("noerror");
-
     return true;
-  },
+  }
 
-  render: function() {
+  this.render = function() {
     //we create a style element for the model in the head
     this.el = d3.select("head")
       .selectAll("style.csscontext")
@@ -515,22 +327,15 @@ tributary.CSSContext = tributary.Context.extend({
       .attr({
         type:"text/css"
       }).node();
-    //console.log("style el", this.el);
-
   }
+  init.call(this, options);
+  this.model.on("delete", function() {
+    d3.select(this.el).remove();
+  }, this)
+}
 
-});
-
-tributary.HTMLContext = tributary.Context.extend({
-  initialize: function() {
-    //this.model.on("change:code", this.execute, this);
-    this.model.on("change:code", function() {
-      tributary.events.trigger("execute");
-    });
-    tributary.events.on("prerender", this.execute, this);
-  },
-
-  execute: function() {
+tributary.HTMLContext = function(options) {
+  this.execute = function() {
     if(tributary.__noupdate__) return;
     try {
       //set the text of the style element to the code
@@ -540,68 +345,37 @@ tributary.HTMLContext = tributary.Context.extend({
       return false;
     }
     this.model.trigger("noerror");
-
     return true;
-  },
+  }
+  init.call(this, options);
+}
 
-  render: function() {
-  },
-});
-
-//TODO: figure out how to make this useful
-tributary.SVGContext = tributary.Context.extend({
-  initialize: function() {
-    //this.model.on("change:code", this.execute, this);
-    this.model.on("change:code", function() {
-      tributary.events.trigger("execute");
-    });
-    tributary.events.on("prerender", this.execute, this);
-  },
-
-  execute: function() {
+tributary.SVGContext = function(options) {
+  this.execute = function() {
     if(tributary.__noupdate__) return;
     try {
-      //TODO: validate the SVG?
       var svg = d3.select(this.el).select("svg").node();
+      if(!svg) {
+        svg = d3.select(this.el).append("svg")
+      }
+      //TODO: validate the SVG?
       //this should happen before code from inlet gets executed
-      //$(svg).append("<svg class='injected'>" + this.model.get("code") + "</svg>");
       tributary.appendSVGFragment(svg, this.model.get("code"));
     } catch (e) {
       this.model.trigger("error", e);
       return false;
     }
     this.model.trigger("noerror");
-
     return true;
-  },
+  }
+  init.call(this, options);
+}
 
-  render: function() {
-  },
-
-});
-
-
-//The Text context doesn't do anything
-tributary.TextContext = tributary.Context.extend({
-  initialize: function() {
-    this.model.on("change:code", this.execute, this);
-    this.model.on("change:code", function() {
-      tributary.events.trigger("execute");
-    });
-  },
-
-  execute: function() {
+tributary.TextContext = function(options) {
+  this.execute = function() {
     if(tributary.__noupdate__) return;
     this.model.trigger("noerror");
-
     return true;
-  },
-
-  render: function() {
-    //Text context doesn't do anything on rendering
-  },
-});
-
-
-
-
+  }
+  init.call(this, options);
+}

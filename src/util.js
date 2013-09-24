@@ -55,7 +55,6 @@ Tributary.makeContext = function(options) {
 
     //make a code model with the content
     model = new tributary.CodeModel({name: fn[0], filename: filename, code: content});
-
   }
   if(options.display) {
     display = options.display;
@@ -64,6 +63,7 @@ Tributary.makeContext = function(options) {
   }
 
   model.set("type", type);
+  /*
   if(tributary.__mainfiles__.indexOf(filename) >= 0 ) {//  === "inlet.js") {
     if(type === "coffee") model.set("mode", "coffeescript");
     if(type === "pde") tributary.__config__.set("display", "canvas");
@@ -72,7 +72,8 @@ Tributary.makeContext = function(options) {
       model: model,
       el: display.node()
     });
-  } else if(type === "json") {
+  } else */
+  if(type === "json") {
     model.set("mode", "json")
     context = new tributary.JSONContext({
       config: config,
@@ -144,7 +145,8 @@ Tributary.makeContext = function(options) {
   } else if(reservedFiles.indexOf(filename) < 0) {
     //make a text context by default
     model.set("mode", "text")
-    context = new tributary.TextContext({
+    //context = new tributary.TextContext({
+    context = tributary.TextContext({
       config: config,
       model: model,
       el: display.node()

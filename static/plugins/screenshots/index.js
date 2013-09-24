@@ -49,7 +49,7 @@ function tributaryScreenshotPlugin(tributary, plugin) {
   tributary._screenshot = _handleScreenshot;
   function _handleScreenshot() {
     function cb(img) {
-      tributary.events.trigger("imgur", img);
+      tributary.__events__.trigger("imgur", img);
     }
     handleScreenshot(cb);
   }
@@ -74,7 +74,7 @@ function tributaryScreenshotPlugin(tributary, plugin) {
       var len = "data:image/png;base64,".length;
       var img = canvas.toDataURL("image/png").substring(len);
       cb(img);
-      //tributary.events.trigger("imgur", img);
+      //tributary.__events__.trigger("imgur", img);
     }});
   }
   function canvasScreenshot(cb) {
@@ -193,7 +193,7 @@ function tributaryScreenshotPlugin(tributary, plugin) {
           reader.addEventListener("loadend", function() {
             var len = "data:image/gif;base64,".length;
             var img = reader.result.substring(len);
-            tributary.events.trigger("imgur", img);
+            tributary.__events__.trigger("imgur", img);
              // reader.result contains the contents of blob as a typed array
           });
           reader.readAsDataURL(blob);

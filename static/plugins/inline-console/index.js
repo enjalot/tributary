@@ -21,7 +21,7 @@ function tributaryInlineConsolePlugin(tributary, plugin) {
 
   plugin.activate = function() {
     el = document.getElementById(plugin.elId);
-    tributary.events.on("prerender", clearWidgets);
+    tributary.__events__.on("prerender", clearWidgets);
 
     var button = d3.select("#editorcontrols").append("button").attr("id","inline-logs").text("Inline Logs")
       .on("click", function(d) {
@@ -31,19 +31,19 @@ function tributaryInlineConsolePlugin(tributary, plugin) {
           if( dis.classed("active") ) {
             console.log("Inline logging disabled");
             tributary.__config__.set("inline-console", false)
-            tributary.events.trigger("execute");
+            tributary.__events__.trigger("execute");
             dis.classed("active", false)
           }
           else {
             console.log("Inline logging initiated");
             tributary.__config__.set("inline-console", true)
-            tributary.events.trigger("execute");
+            tributary.__events__.trigger("execute");
             dis.classed("active", true)
           }
        // }
       })
 
-      tributary.events.on("loaded", function() {
+      tributary.__events__.on("loaded", function() {
         button.classed("active", tributary.__config__.get("inline-console"));
       })
   }

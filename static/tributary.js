@@ -17,13 +17,13 @@ var thirdparty = require("../static/lib/3rdparty.js");
 
 Tributary = function() {
   var tributary = {};
-  tributary.events = _.clone(Backbone.Events);
-  Tributary.__events__ = _.clone(Backbone.Events);
+  tributary.__events__ = _.clone(Backbone.Events);
+  Tributary.events = _.clone(Backbone.Events);
   tributary.data = {};
   window.trib = {};
   window.trib_options = {};
   window.addEventListener("resize", function(event) {
-    tributary.events.trigger("resize", event);
+    tributary.__events__.trigger("resize", event);
   });
   tributary.__mainfiles__ = [ "inlet.js", "inlet.coffee", "inlet.pde", "sinwaves.js", "squarecircle.js" ];
   var reservedFiles = [ "_.md", "config.json" ];
@@ -83,15 +83,7 @@ Tributary = function() {
       display = d3.select("#display");
     }
     model.set("type", type);
-    if (tributary.__mainfiles__.indexOf(filename) >= 0) {
-      if (type === "coffee") model.set("mode", "coffeescript");
-      if (type === "pde") tributary.__config__.set("display", "canvas");
-      context = new tributary.TributaryContext({
-        config: config,
-        model: model,
-        el: display.node()
-      });
-    } else if (type === "json") {
+    if (type === "json") {
       model.set("mode", "json");
       context = new tributary.JSONContext({
         config: config,
@@ -162,7 +154,7 @@ Tributary = function() {
       });
     } else if (reservedFiles.indexOf(filename) < 0) {
       model.set("mode", "text");
-      context = new tributary.TextContext({
+      context = tributary.TextContext({
         config: config,
         model: model,
         el: display.node()
@@ -231,21 +223,8 @@ Tributary = function() {
       }
     },
     handleNoError: function() {
-      tributary.events.trigger("noerror");
+      tributary.__events__.trigger("noerror");
       tributary.__error__ = false;
-    },
-    handleCode: function() {
-      var code = this.get("code");
-      if (this.get("mode") === "coffeescript") {
-        js = CoffeeScript.compile(code, {
-          bare: true
-        });
-        return js;
-      } else if (this.get("type") === "pde") {
-        js = Processing.compile(code).sourceCode;
-        return js;
-      }
-      return code;
     },
     handleParser: function(js) {
       var inline = tributary.__config__.get("inline-console");
@@ -311,7 +290,7 @@ Tributary = function() {
       required.enter().append("script").classed("require", true).attr("src", function(d) {
         return d.url;
       }).on("load", function() {
-        tributary.events.trigger("execute");
+        tributary.__events__.trigger("execute");
       });
       required.exit().remove();
       callback(null, null);
@@ -341,7 +320,7 @@ Tributary = function() {
             return function(e) {
               var len = "data:image/png;base64,".length;
               var img = e.target.result.substring(len);
-              tributary.events.trigger("imgur", img);
+              tributary.__events__.trigger("imgur", img);
             };
           }(f);
           reader.readAsDataURL(f);
@@ -355,7 +334,7 @@ Tributary = function() {
       var displaySelect = d3.select(this.el).select("#config-content select").on("change", function() {
         var display = this.selectedOptions[0].value;
         that.model.set("display", display);
-        tributary.events.trigger("execute");
+        tributary.__events__.trigger("execute");
       });
       this.model.on("change:display", updateDisplayMenu);
       function updateDisplayMenu() {
@@ -374,13 +353,13 @@ Tributary = function() {
           console.log("Error logging disabled");
           tributary.hint = false;
           tributary.trace = false;
-          tributary.events.trigger("execute");
+          tributary.__events__.trigger("execute");
           dis.classed("active", false);
         } else {
           console.log("Error logging initiated");
           tributary.hint = true;
           tributary.trace = true;
-          tributary.events.trigger("execute");
+          tributary.__events__.trigger("execute");
           dis.classed("active", true);
         }
       });
@@ -393,7 +372,7 @@ Tributary = function() {
         } else {
           console.log("Auto updating initiated");
           tributary.__noupdate__ = false;
-          tributary.events.trigger("execute");
+          tributary.__events__.trigger("execute");
           dis.classed("active", true);
         }
       });
@@ -446,80 +425,34 @@ Tributary = function() {
       createLibCheckbox(newCheckboxes);
     }
   });
-  tributary.Context = Backbone.View.extend({
-    initialize: function() {},
-    execute: function() {},
-    render: function() {}
-  });
-  tributary.TributaryContext = tributary.Context.extend({
-    initialize: function() {
-      this.model.on("change:code", function() {
-        tributary.events.trigger("execute");
-      });
-      tributary.events.on("execute", this.execute, this);
-      if (!tributary.__config__) {
-        if (this.options.config) {
-          tributary.__config__ = this.options.config;
-        } else {
-          tributary.__config__ = new tributary.Config;
-        }
-      }
-      this.model.on("change:code", function() {
-        tributary.events.trigger("warnchanged");
-      }, this);
-      this.config = tributary.__config__;
-      this.config.on("change:display", this.set_display, this);
-      var config = this.config;
-      tributary.init = undefined;
-      tributary.run = undefined;
-      tributary.autoinit = config.get("autoinit");
-      tributary.render = function() {};
-      tributary.execute = function() {};
-    },
-    execute: function() {
+  tributary.Main = function(options) {
+    this.el = options.el;
+    tributary.__events__.on("execute", execute, this);
+    if (!tributary.__config__) {
+      tributary.__config__ = new tributary.Config;
+    }
+    this.config = tributary.__config__;
+    this.config.on("change:display", set_display, this);
+    tributary.init = undefined;
+    tributary.run = undefined;
+    tributary.autoinit = this.config.get("autoinit");
+    tributary.render = function() {};
+    tributary.execute = function() {};
+    function execute() {
       if (tributary.__noupdate__) return;
-      try {
-        var js = this.model.handleCode();
-        js = this.model.handleParser(js);
-      } catch (e) {
-        this.model.trigger("error", e);
-        return false;
-      }
-      if (this.model.get("type") === "pde") {
-        var fn = eval(js);
-        if (tributary.__processing__) tributary.__processing__.exit();
-        tributary.__processing__ = new Processing(tributary.canvas, fn);
-      }
-      try {
-        tributary.initialize = new Function("g", "tributary", js);
-      } catch (e) {
-        this.model.trigger("error", e);
-        return false;
-      }
       try {
         if (tributary.autoinit) {
           tributary.clear();
-          tributary.events.trigger("prerender");
+          tributary.__events__.trigger("post:execute");
         }
-        if (tributary.ctx && !tributary.g) {}
-        tributary.initialize(tributary.g, tributary);
-        if (tributary.autoinit && tributary.init !== undefined) {
-          tributary.init(tributary.g, 0);
-        }
-        tributary.execute();
       } catch (err) {
-        this.model.trigger("error", err);
         return false;
       }
-      this.model.trigger("noerror");
       return true;
-    },
-    render: function() {
-      this.set_display();
-    },
-    set_display: function() {
+    }
+    function set_display() {
       var that = this;
-      this.$el.empty();
+      $(this.el).empty();
       var display = this.config.get("display");
       if (display === "svg") {
         this.make_svg();
@@ -532,15 +465,15 @@ Tributary = function() {
         this.g = d3.select(this.el);
         tributary.g = this.g;
         tributary.clear = function() {
-          that.$el.empty();
+          $(that.el).empty();
         };
       } else {
         tributary.clear = function() {
-          that.$el.empty();
+          $(that.el).empty();
         };
       }
-    },
-    make_svg: function() {
+    }
+    this.make_svg = function() {
       this.svg = d3.select(this.el).append("svg").attr({
         xmlns: "http://www.w3.org/2000/svg",
         xlink: "http://www.w3.org/1999/xlink",
@@ -553,8 +486,8 @@ Tributary = function() {
       tributary.clear = function() {
         $(tributary.__svg__.node()).empty();
       };
-    },
-    make_canvas: function() {
+    };
+    this.make_canvas = function() {
       tributary.__svg__ = null;
       tributary.clear = function() {
         tributary.canvas.width = tributary.sw;
@@ -564,8 +497,8 @@ Tributary = function() {
       tributary.canvas = d3.select(this.el).append("canvas").classed("tributary_canvas", true).node();
       tributary.ctx = tributary.canvas.getContext("2d");
       tributary.g = tributary.ctx;
-    },
-    make_webgl: function() {
+    };
+    this.make_webgl = function() {
       tributary.__svg__ = null;
       container = this.el;
       tributary.camera = new THREE.PerspectiveCamera(70, tributary.sw / tributary.sh, 1, 1e3);
@@ -596,95 +529,71 @@ Tributary = function() {
         tributary.camera.updateProjectionMatrix();
         tributary.renderer.setSize(tributary.sw, tributary.sh);
       }
-      tributary.events.on("resize", onWindowResize, false);
+      Tributary.__events__.on("resize", onWindowResize, false);
       tributary.clear = function() {
         tributary.scene.clear();
       };
+    };
+    set_display.call(this);
+  };
+  Tributary.init = init;
+  function init(options) {
+    this.model = options.model;
+    this.el = options.el;
+    this.config = options.config;
+    if (!options.silent) {
+      this.model.on("change:code", function() {
+        tributary.__events__.trigger("execute");
+      });
+      tributary.__events__.on("post:execute", this.execute, this);
     }
-  });
-  tributary.JSONContext = tributary.Context.extend({
-    initialize: function() {
-      this.model.on("change:code", this.execute, this);
-      this.model.on("change:code", function() {
-        tributary.events.trigger("execute");
-      });
-      tributary.events.on("prerender", this.execute, this);
-    },
-    execute: function() {
-      if (tributary.__noupdate__) return;
-      try {
-        var json = JSON.parse(this.model.get("code"));
-        tributary[this.model.get("name")] = json;
-      } catch (e) {
-        this.model.trigger("error", e);
-        return false;
-      }
-      this.model.trigger("noerror");
-      return true;
-    },
-    render: function() {}
-  });
-  tributary.JSContext = tributary.Context.extend({
-    initialize: function() {
-      this.model.on("change:code", this.execute, this);
-      this.model.on("change:code", function() {
-        tributary.events.trigger("execute");
-      });
-      tributary.events.on("prerender", this.execute, this);
-    },
-    execute: function() {
+    this.model.on("change:code", function() {
+      tributary.__events__.trigger("warnchanged");
+    }, this);
+  }
+  tributary.JSContext = function(options) {
+    this.execute = function() {
       if (tributary.__noupdate__) return;
       var js = this.model.get("code");
       js = this.model.handleParser(js);
       try {
-        eval(js);
+        var initialize = new Function("g", "tributary", js);
+        initialize(tributary.g, tributary);
       } catch (e) {
         this.model.trigger("error", e);
         return false;
       }
       this.model.trigger("noerror");
       return true;
-    },
-    render: function() {}
-  });
-  tributary.CoffeeContext = tributary.Context.extend({
-    initialize: function() {
-      if (!this.options.silent) {
-        this.model.on("change:code", this.execute, this);
-      }
-      this.model.on("change:code", function() {
-        tributary.events.trigger("execute");
-      });
-      tributary.events.on("prerender", this.execute, this);
-    },
-    execute: function() {
+    };
+    init.call(this, options);
+  };
+  tributary.CoffeeContext = function(options) {
+    this.execute = function() {
       if (tributary.__noupdate__) return;
       try {
-        var js = this.model.handleCoffee();
+        var code = this.model.get("code");
+        js = CoffeeScript.compile(code, {
+          bare: true
+        });
       } catch (err) {
         this.model.trigger("error", err);
         return false;
       }
       try {
-        eval(js);
+        var initialize = new Function("g", "tributary", js);
+        initialize(tributary.g, tributary);
       } catch (err) {
         this.model.trigger("error", err);
         return false;
       }
       this.model.trigger("noerror");
       return true;
-    },
-    render: function() {}
-  });
-  tributary.ProcessingContext = tributary.Context.extend({
-    initialize: function() {
-      this.model.on("change:code", this.execute, this);
-      this.model.on("change:code", function() {
-        tributary.events.trigger("execute");
-      });
-      tributary.events.on("prerender", this.execute, this);
-    },
-    execute: function() {
+    };
+    init.call(this, options);
+  };
+  tributary.ProcessingContext = function(options) {
+    this.execute = function() {
       if (tributary.__noupdate__) return;
       var pde = this.model.get("code");
       var js = Processing.compile(pde).sourceCode;
@@ -698,18 +607,26 @@ Tributary = function() {
       }
       this.model.trigger("noerror");
       return true;
-    },
-    render: function() {}
-  });
-  tributary.CSVContext = tributary.Context.extend({
-    initialize: function() {
-      this.model.on("change:code", this.execute, this);
-      this.model.on("change:code", function() {
-        tributary.events.trigger("execute");
-      });
-      tributary.events.on("prerender", this.execute, this);
-    },
-    execute: function() {
+    };
+    init.call(this, options);
+  };
+  tributary.JSONContext = function(options) {
+    this.execute = function() {
+      if (tributary.__noupdate__) return;
+      try {
+        var json = JSON.parse(this.model.get("code"));
+        tributary[this.model.get("name")] = json;
+      } catch (e) {
+        this.model.trigger("error", e);
+        return false;
+      }
+      this.model.trigger("noerror");
+      return true;
+    };
+    init.call(this, options);
+  };
+  tributary.CSVContext = function(options) {
+    this.execute = function() {
       if (tributary.__noupdate__) return;
       try {
         var json = d3.csv.parse(this.model.get("code"));
@@ -720,18 +637,11 @@ Tributary = function() {
       }
       this.model.trigger("noerror");
       return true;
-    },
-    render: function() {}
-  });
-  tributary.TSVContext = tributary.Context.extend({
-    initialize: function() {
-      this.model.on("change:code", this.execute, this);
-      this.model.on("change:code", function() {
-        tributary.events.trigger("execute");
-      });
-      tributary.events.on("prerender", this.execute, this);
-    },
-    execute: function() {
+    };
+    init.call(this, options);
+  };
+  tributary.TSVContext = function(options) {
+    this.execute = function() {
       if (tributary.__noupdate__) return;
       try {
         var json = d3.tsv.parse(this.model.get("code"));
@@ -742,21 +652,11 @@ Tributary = function() {
       }
       this.model.trigger("noerror");
       return true;
-    },
-    render: function() {}
-  });
-  tributary.CSSContext = tributary.Context.extend({
-    initialize: function() {
-      this.model.on("change:code", this.execute, this);
-      this.model.on("change:code", function() {
-        tributary.events.trigger("execute");
-      });
-      tributary.events.on("prerender", this.execute, this);
-      this.model.on("delete", function() {
-        d3.select(this.el).remove();
-      }, this);
-    },
-    execute: function() {
+    };
+    init.call(this, options);
+  };
+  tributary.CSSContext = function(options) {
+    this.execute = function() {
       if (tributary.__noupdate__) return;
       try {
         this.el.textContent = this.model.get("code");
@@ -766,23 +666,21 @@ Tributary = function() {
       }
       this.model.trigger("noerror");
       return true;
-    },
-    render: function() {
+    };
+    this.render = function() {
       this.el = d3.select("head").selectAll("style.csscontext").data([ this.model ], function(d) {
         return d.cid;
       }).enter().append("style").classed("csscontext", true).attr({
         type: "text/css"
       }).node();
-    }
-  });
-  tributary.HTMLContext = tributary.Context.extend({
-    initialize: function() {
-      this.model.on("change:code", function() {
-        tributary.events.trigger("execute");
-      });
-      tributary.events.on("prerender", this.execute, this);
-    },
-    execute: function() {
+    };
+    init.call(this, options);
+    this.model.on("delete", function() {
+      d3.select(this.el).remove();
+    }, this);
+  };
+  tributary.HTMLContext = function(options) {
+    this.execute = function() {
       if (tributary.__noupdate__) return;
       try {
         $(this.el).append(this.model.get("code"));
@@ -792,20 +690,17 @@ Tributary = function() {
       }
       this.model.trigger("noerror");
       return true;
-    },
-    render: function() {}
-  });
-  tributary.SVGContext = tributary.Context.extend({
-    initialize: function() {
-      this.model.on("change:code", function() {
-        tributary.events.trigger("execute");
-      });
-      tributary.events.on("prerender", this.execute, this);
-    },
-    execute: function() {
+    };
+    init.call(this, options);
+  };
+  tributary.SVGContext = function(options) {
+    this.execute = function() {
       if (tributary.__noupdate__) return;
       try {
         var svg = d3.select(this.el).select("svg").node();
+        if (!svg) {
+          svg = d3.select(this.el).append("svg");
+        }
         tributary.appendSVGFragment(svg, this.model.get("code"));
       } catch (e) {
         this.model.trigger("error", e);
@@ -813,23 +708,17 @@ Tributary = function() {
       }
       this.model.trigger("noerror");
       return true;
-    },
-    render: function() {}
-  });
-  tributary.TextContext = tributary.Context.extend({
-    initialize: function() {
-      this.model.on("change:code", this.execute, this);
-      this.model.on("change:code", function() {
-        tributary.events.trigger("execute");
-      });
-    },
-    execute: function() {
+    };
+    init.call(this, options);
+  };
+  tributary.TextContext = function(options) {
+    this.execute = function() {
       if (tributary.__noupdate__) return;
       this.model.trigger("noerror");
       return true;
-    },
-    render: function() {}
-  });
+    };
+    init.call(this, options);
+  };
   Tributary.makeEditor = function(options) {
     var editorParent = options.parent || tributary.edit;
     var model = options.model;
@@ -1070,7 +959,7 @@ Tributary = function() {
       id: "js-" + plugin.id,
       src: plugin.url + "/" + plugin.js
     });
-    Tributary.__events__.on("pluginLoaded", function(id) {
+    Tributary.events.on("pluginLoaded", function(id) {
       if (id === plugin.id) callback();
     });
   }
@@ -1093,7 +982,7 @@ Tributary = function() {
   };
   Tributary.plugin = function(id, fn) {
     this.plugins[id].fn = fn;
-    Tributary.__events__.trigger("pluginLoaded", id);
+    Tributary.events.trigger("pluginLoaded", id);
   };
   Tributary.activatePlugin = function(tributary, id) {
     if (this.plugins[id].fn) {

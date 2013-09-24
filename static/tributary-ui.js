@@ -37,7 +37,7 @@ TributaryUi = function(tributary) {
       } else if (data.request === "description") {
         tributary.__config__.set("description", data.description);
       } else if (data.request === "exitfullscreen") {
-        tributary.events.trigger("fullscreen", false);
+        tributary.__events__.trigger("fullscreen", false);
       } else if (data.request === "thumbnail") {
         var image = data.image;
         d3.select("#thumb-load").transition().duration(1e3).style("opacity", 0);
@@ -48,12 +48,12 @@ TributaryUi = function(tributary) {
     }
     window.addEventListener("message", receiveMessage, false);
   }
-  tributary.events.on("warnchanged", function() {
+  tributary.__events__.on("warnchanged", function() {
     if (parentWindow) parentWindow.postMessage({
       request: "warnchanged"
     }, tributary._origin);
   });
-  tributary.events.on("imgur", function(img) {
+  tributary.__events__.on("imgur", function(img) {
     if (parentWindow) {
       d3.select("#thumb-load").style("opacity", 1);
       parentWindow.postMessage({
@@ -68,7 +68,7 @@ TributaryUi = function(tributary) {
     }, tributary._origin);
   }
   tributary.ui.setup = function() {
-    tributary.events.on("resize", function() {
+    tributary.__events__.on("resize", function() {
       if ($("#container").width() > 767) {
         tributary.sw = $("#container").width() - $("#panel").width();
       } else {
@@ -79,9 +79,9 @@ TributaryUi = function(tributary) {
       }
       $("#display").width(tributary.sw + "px");
       tributary.sh = $("#display").height();
-      tributary.events.trigger("execute");
+      tributary.__events__.trigger("execute");
     });
-    tributary.events.trigger("resize");
+    tributary.__events__.trigger("resize");
   };
   function _assemble(error, ret) {
     if (error) {
@@ -90,6 +90,9 @@ TributaryUi = function(tributary) {
     }
     var config = ret.config;
     tributary.__config__ = config;
+    tributary.Main({
+      el: d3.select("#display").node()
+    });
     var context;
     var edel;
     var editor;
@@ -144,9 +147,9 @@ TributaryUi = function(tributary) {
       if (context) {
         if (config.isNew) context.isNew = true;
         config.contexts.push(context);
-        context.render();
+        if (context.render) context.render();
         if (tributary.__mainfiles__.indexOf(m.get("filename")) < 0) {
-          context.execute();
+          if (context.execute) context.execute();
         }
         context.editor = Tributary.makeEditor({
           model: m,
@@ -194,19 +197,19 @@ TributaryUi = function(tributary) {
         config.set("fullscreen", true);
         $("#container").addClass("fullscreen");
         goFullscreen();
-        tributary.events.trigger("resize");
+        tributary.__events__.trigger("resize");
       } else {
         config.set("fullscreen", false);
         $("#container").removeClass("fullscreen");
-        tributary.events.trigger("resize");
+        tributary.__events__.trigger("resize");
       }
     }
     $("#fullscreen").on("click", function() {
       fullscreenEvent(true);
     });
-    tributary.events.on("fullscreen", fullscreenEvent);
-    tributary.events.trigger("fullscreen", config.get("fullscreen"));
-    tributary.events.trigger("loaded");
+    tributary.__events__.on("fullscreen", fullscreenEvent);
+    tributary.__events__.trigger("fullscreen", config.get("fullscreen"));
+    tributary.__events__.trigger("loaded");
   }
   function serializeGist() {
     var config = tributary.__config__;
@@ -336,8 +339,8 @@ TributaryUi = function(tributary) {
             if (context) {
               context.isNew = true;
               config.contexts.push(context);
-              context.render();
-              context.execute();
+              if (context.render) context.render();
+              if (context.execute) context.execute();
               var editor = Tributary.makeEditor({
                 model: context.model
               });

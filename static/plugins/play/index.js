@@ -21,17 +21,17 @@ function tributaryPlayPlugin(tributary, plugin) {
 
   plugin.activate = function() {
     el = document.getElementById(plugin.elId);
-    
+
     init();
     playButton();
     timeSlider();
     restartButton();
-    
+
     config.on("change:play", playButton, this);
     config.on("change:loop", timeSlider, this);
     config.on("change:restart", restartButton, this);
     config.on("pause", onPlayPause, this);
-    
+
     //Setup the ui for choosing the controls in the config div
     var configDiv = d3.select("#config-content");
     var timecontrolsDiv = configDiv.node().appendChild(d3.select(el).select(".timecontrols").node());
@@ -108,7 +108,7 @@ function tributaryPlayPlugin(tributary, plugin) {
     if(tributary.loop) {
       var ts = tc.select("input.time_slider");
       ts.style("display", "")
-      
+
       //idk why jquery selections for on("change") works but d3 doesnt...
       ts.on('change', function() {
         tributary.t = parseFloat(this.value);//$('#slider').attr('value');
@@ -117,7 +117,7 @@ function tributaryPlayPlugin(tributary, plugin) {
           tributary.execute();
         }
         if(tributary.__animating__) {
-          tributary.events.trigger("execute")
+          tributary.__events__.trigger("execute")
         }
       });
       config.on("tick", function(t) {
@@ -132,7 +132,7 @@ function tributaryPlayPlugin(tributary, plugin) {
 
         bv.on("click", function() {
           tributary.bv = !tributary.bv;
-          tributary.events.trigger("execute");
+          tributary.__events__.trigger("execute");
         });
       }
 
@@ -154,13 +154,13 @@ function tributaryPlayPlugin(tributary, plugin) {
         tributary.initialize(tributary.g, tributary);
       }
       if(tributary.init) {
-        tributary.init(tributary.g);
+        tributary.init(tributary.g, 0);
       }
       tributary.execute();
     } catch(e) {
-      tributary.events.trigger("error", e);
+      tributary.__events__.trigger("error", e);
     }
-    tributary.events.trigger("restart");
+    tributary.__events__.trigger("restart");
   }
   function restartButton() {
     var that = this;
@@ -199,7 +199,7 @@ function tributaryPlayPlugin(tributary, plugin) {
     tributary.t = 0;
     tributary.dt = config.get("dt");
     tributary.reverse = false;
-    
+
     //we need to save state of timer so when we pause/unpause or manually change slider
     //we can finish a transition
     tributary.timer = {
@@ -207,11 +207,20 @@ function tributaryPlayPlugin(tributary, plugin) {
       ctime: tributary.t
     };
 
+    tributary.__events__.on("post:execute", function() {
+      //execute the code
+      if(tributary.autoinit && tributary.init !== undefined) {
+        tributary.init(tributary.g, 0);
+      }
+      //then we run the user defined run function
+      tributary.execute();
+    });
+
     tributary.execute = function() {
       if(tributary.run !== undefined) {
         var t = tributary.t;
         if(tributary.loop) {
-          t = tributary.ease(tributary.t); 
+          t = tributary.ease(tributary.t);
         }
         tributary.run(tributary.g, t, 0);
       }
@@ -242,7 +251,6 @@ function tributaryPlayPlugin(tributary, plugin) {
       var dtime = now - tributary.timer.then;
       var dt;
 
-      //TODO: implement play button, should reset the timer
       if(tributary.loop) {
         if (tributary.reverse) {
           dt = tributary.timer.ctime * dtime / tributary.duration * -1;
@@ -270,12 +278,12 @@ function tributaryPlayPlugin(tributary, plugin) {
           else {
             if (tributary.t !== 0)
             {
-                tributary.t = 1;
-                tributary.pause = true;
-                tributary.__config__.trigger("pause");
+              tributary.t = 1;
+              tributary.pause = true;
+              tributary.__config__.trigger("pause");
             }
           }
-        } 
+        }
         //TODO: fix, look up 10 lines to pingpong
         //not sure why we get true and false for 1 and 0 when range hits the end
         if(tributary.t === true) { tributary.t = 1; }
@@ -283,9 +291,9 @@ function tributaryPlayPlugin(tributary, plugin) {
       } else {
         tributary.t += tributary.dt;
       }
-      
+
       if(tributary.__animating__) {
-        tributary.events.trigger("execute");
+        tributary.__events__.trigger("execute");
       } else {
         try {
           tributary.execute();
@@ -296,11 +304,11 @@ function tributaryPlayPlugin(tributary, plugin) {
       }
       tributary.__config__.trigger("tick", tributary.t);
     }
-    
+
     //Clones
-    tributary.events.on("prerender", function() {
-      if(tributary.clones && config.get("display") === "svg") { 
-        //$(tributary.clones.node()).empty(); 
+    tributary.__events__.on("prerender", function() {
+      if(tributary.clones && config.get("display") === "svg") {
+        //$(tributary.clones.node()).empty();
         tributary.clones.remove();
         tributary.__svg__.select("g.base").remove();
       }
@@ -316,7 +324,7 @@ function tributaryPlayPlugin(tributary, plugin) {
   }
 
   //TODO: make canvas clones
-  //This function 
+  //This function
   makeClones = function() {
     //create the clone and tributary g elements if they don't exist
     var svg = tributary.__svg__;
