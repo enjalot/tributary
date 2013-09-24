@@ -336,7 +336,7 @@ tributary.CoffeeContext = tributary.Context.extend({
   execute: function() {
     if(tributary.__noupdate__) return;
     try {
-      var js = this.model.handleCoffee();
+      var js = this.model.handleCode();
     } catch(err) {
       this.model.trigger("error", err);
       return false;
