@@ -42,11 +42,3 @@ This plugin uses canvg https://code.google.com/p/canvg/ to process the svg displ
 Your github keys and imgur keys must be configured properly in settings.js to use this.  Note that when you set up your API keys with github and imgur that the callback routes for are:
 + /github-authenticated
 + /imgur-authenticated
-
-## To-Do
-+ Automatically save after screenshot is completed.  (Possible?)
-+ Determine a better way to include the canvg library
-+ Handle other views (not just svg)
-
-## Contributing 
-Send pull requests to https://github.com/georules/screenshots
