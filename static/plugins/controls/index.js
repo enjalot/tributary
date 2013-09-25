@@ -70,25 +70,38 @@ function tributaryControlsPlugin(tributary, plugin) {
       .data([options.name])
     var center = control.enter()
       .append("div").classed("control_"+options.name, true).classed("control", true);
-    center.append("span").text(options.name).append("span").text(":");
     center.append("input")
       .attr({
         type: "range"
       })
 
-    control = control.select("input")
+    input = control.select("input")
     var value = tributary.__controls__[options.name];
     if(!exists(value)) {
       value = (options.max || 0 + options.min || 0) / 2
       tributary.__controls__[options.name] = value;
     }
-    control.attr({
+
+    center.append("span").classed("name", true)
+      .text(options.name + ": ")
+      .append("span").classed("value", true).text(value);
+
+    var attrs = {
       value: value,
       min: options.min,
-      max: options.max
+      max: options.max,
+      step: Math.abs((options.max - options.min) / 20)
+
+    }
+    if(options.step) {
+      attrs.step = options.step
+    }
+    input.attr(attrs)
+    input.on("change", function() {
+      control.select("span.value").text(this.value);
+      tributary.events.trigger("execute");
     });
-    control.on("change", function() { tributary.__events__.trigger("execute"); });
-    return control.node();
+    return input.node();
   }
   function makeDropdown(options) {
     var controlElement = getCE();

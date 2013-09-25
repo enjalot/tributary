@@ -140,7 +140,7 @@ tributary.ConfigView = Backbone.View.extend({
         .each(function(d,i) {
           if(this.value === currentDisplay) {
             //d3.select(this).attr("selected", "selected")
-           displaySelect.node().value= this.value;
+           displaySelect.node().value = this.value;
           }
         })
     }
