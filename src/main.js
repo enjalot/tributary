@@ -97,5 +97,59 @@ tributary.Main = function(options) {
     tributary.g = tributary.ctx;
   }
 
+  function makeWebgl() {
+    tributary.__svg__ = null;
+    container = el;
+    tributary.camera = new THREE.PerspectiveCamera(70, tributary.sw / tributary.sh, 1, 1e3);
+    tributary.camera.position.y = 150;
+    tributary.camera.position.z = 500;
+    tributary.scene = new THREE.Scene;
+    tributary.scene.add(tributary.camera);
+    THREE.Object3D.prototype.clear = function() {
+      var children = this.children;
+      var i;
+      for (i = children.length - 1; i >= 0; i--) {
+        var child = children[i];
+        if (child == tributary.camera) continue;
+        child.clear();
+        this.remove(child);
+      }
+    };
+    tributary.renderer = new THREE.WebGLRenderer;
+    tributary.renderer.setSize(tributary.sw, tributary.sh);
+    container.appendChild(tributary.renderer.domElement);
+    var controls = new THREE.TrackballControls(tributary.camera);
+    controls.target.set(0, 0, 0);
+    controls.rotateSpeed = 1;
+    controls.zoomSpeed = .4;
+    controls.panSpeed = .8;
+    controls.noZoom = true;
+    controls.noPan = false;
+    controls.staticMoving = false;
+    controls.dynamicDampingFactor = .15;
+    tributary.useThreejsControls = true;
+    tributary.__threeControls__ = controls;
+    tributary.render = function() {
+      tributary.renderer.render(tributary.scene, tributary.camera);
+    };
+    d3.timer(function() {
+      if (tributary.useThreejsControls && tributary.__threeControls__) {
+        tributary.__threeControls__.update();
+      }
+      tributary.render();
+    });
+    function onWindowResize() {
+      windowHalfX = tributary.sw / 2;
+      windowHalfY = tributary.sh / 2;
+      tributary.camera.aspect = tributary.sw / tributary.sh;
+      tributary.camera.updateProjectionMatrix();
+      tributary.renderer.setSize(tributary.sw, tributary.sh);
+    }
+    tributary.__events__.on("resize", onWindowResize, false);
+    tributary.clear = function() {
+      tributary.scene.clear();
+    };
+  }
+
   set_display.call(this);
 }

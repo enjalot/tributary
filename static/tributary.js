@@ -462,21 +462,20 @@ Tributary = function() {
     function set_display() {
       tributary.clear();
       var display = this.config.get("display");
-      console.log("DISPLAYU", display);
       var fn = tributary.__displayFns__[display];
       if (fn) {
-        fn();
+        fn(el);
       } else {
         tributary.clear = function() {
           d3.select(el).selectAll("*").remove();
         };
       }
     }
-    function makeDiv() {
+    function makeDiv(el) {
       tributary.__svg__ = null;
       tributary.g = d3.select(el);
     }
-    function makeSvg() {
+    function makeSvg(el) {
       var svg = d3.select(el).append("svg").attr({
         xmlns: "http://www.w3.org/2000/svg",
         xlink: "http://www.w3.org/1999/xlink",
@@ -490,7 +489,7 @@ Tributary = function() {
         tributary.__svg__.selectAll("*").remove();
       };
     }
-    function makeCanvas() {
+    function makeCanvas(el) {
       tributary.__svg__ = null;
       tributary.clear = function() {
         tributary.canvas.width = tributary.sw;
@@ -504,13 +503,11 @@ Tributary = function() {
     function makeWebgl() {
       tributary.__svg__ = null;
       container = el;
-      console.log("el", el);
       tributary.camera = new THREE.PerspectiveCamera(70, tributary.sw / tributary.sh, 1, 1e3);
       tributary.camera.position.y = 150;
       tributary.camera.position.z = 500;
       tributary.scene = new THREE.Scene;
       tributary.scene.add(tributary.camera);
-      console.log("scene", tributary.scene);
       THREE.Object3D.prototype.clear = function() {
         var children = this.children;
         var i;
