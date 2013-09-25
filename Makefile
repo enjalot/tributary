@@ -25,13 +25,14 @@ all: \
 	src/util.js \
 	src/code.js \
 	src/config.js \
+	src/main.js \
 	src/context.js \
 	src/editor.js \
 	src/gist.js \
 	src/batch.js \
 	src/plugin.js \
 	src/end.js
-	
+
 UI = \
 	src/ui/start.js \
   src/ui/ui.js \
@@ -42,7 +43,6 @@ UI = \
 	#static/lib/three.min.js \
 	#static/lib/Stats.js
 	#static/lib/jsonlint.js
-	
 
 test: all
 	@$(JS_TESTER)
@@ -57,7 +57,7 @@ tributary.js: Makefile
 	@rm -f static/$@
 	cat $(filter %.js,$^) | $(JS_BEAUTIFIER) > static/$@
 	@chmod a-w static/$@
-	
+
 tributary-ui.js: Makefile
 	@rm -f static/$@
 	cat $(UI) | $(JS_BEAUTIFIER) > static/$@
