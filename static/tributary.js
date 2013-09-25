@@ -507,6 +507,7 @@ Tributary = function() {
           tributary.init(tributary.g, 0);
         }
         tributary.execute();
+        tributary.render();
       } catch (err) {
         this.model.trigger("error", err);
         return false;
@@ -572,11 +573,13 @@ Tributary = function() {
       tributary.camera.position.y = 150;
       tributary.camera.position.z = 500;
       tributary.scene = new THREE.Scene;
+      tributary.scene.add(tributary.camera);
       THREE.Object3D.prototype.clear = function() {
         var children = this.children;
         var i;
         for (i = children.length - 1; i >= 0; i--) {
           var child = children[i];
+          if (child == tributary.camera) continue;
           child.clear();
           this.remove(child);
         }
@@ -584,8 +587,24 @@ Tributary = function() {
       tributary.renderer = new THREE.WebGLRenderer;
       tributary.renderer.setSize(tributary.sw, tributary.sh);
       container.appendChild(tributary.renderer.domElement);
+      var controls = new THREE.TrackballControls(tributary.camera);
+      controls.target.set(0, 0, 0);
+      controls.rotateSpeed = 1;
+      controls.zoomSpeed = .4;
+      controls.panSpeed = .8;
+      controls.noZoom = true;
+      controls.noPan = false;
+      controls.staticMoving = false;
+      controls.dynamicDampingFactor = .15;
+      tributary.useThreejsControls = true;
+      tributary.__threeControls__ = controls;
+      d3.timer(function() {
+        if (tributary.useThreejsControls && tributary.__threeControls__) {
+          tributary.__threeControls__.update();
+        }
+        tributary.render();
+      });
       tributary.render = function() {
-        if (tributary.useThreejsControls) {}
         tributary.renderer.render(tributary.scene, tributary.camera);
       };
       tributary.render();

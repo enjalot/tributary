@@ -95,6 +95,7 @@ tributary.TributaryContext = tributary.Context.extend({
       }
       //then we run the user defined run function
       tributary.execute();
+      tributary.render();
     } catch (err) {
         this.model.trigger("error", err);
         return false;
@@ -116,7 +117,7 @@ tributary.TributaryContext = tributary.Context.extend({
     if(display === "svg") {
       this.make_svg();
     } else if (display === "canvas") {
-      this.make_canvas(); 
+      this.make_canvas();
     } else if (display === "webgl") {
       this.make_webgl();
     } else if (display === "div") {
@@ -181,12 +182,14 @@ tributary.TributaryContext = tributary.Context.extend({
     tributary.camera.position.z = 500;
 
     tributary.scene = new THREE.Scene();
+    tributary.scene.add( tributary.camera )
 
     THREE.Object3D.prototype.clear = function(){
       var children = this.children;
       var i;
       for(i = children.length-1;i>=0;i--){
         var child = children[i];
+        if(child == tributary.camera) continue;
         child.clear();
         this.remove(child);
       }
@@ -197,40 +200,33 @@ tributary.TributaryContext = tributary.Context.extend({
 
     container.appendChild( tributary.renderer.domElement );
 
-    /*
-    stats = new Stats();
-    stats.domElement.style.position = 'absolute';
-    stats.domElement.style.right = '0px';
-    stats.domElement.style.top = '0px';
-    container.appendChild( stats.domElement );
-    */
-    //tributary.renderer.render( tributary.scene, tributary.camera );
-
-    /*
     var controls = new THREE.TrackballControls( tributary.camera );
     controls.target.set( 0, 0, 0 );
     controls.rotateSpeed = 1.0;
-    controls.zoomSpeed = 1.2;
+    controls.zoomSpeed = 0.4;
     controls.panSpeed = 0.8;
 
-    controls.noZoom = false;
+    controls.noZoom = true;
     controls.noPan = false;
 
     controls.staticMoving = false;
     controls.dynamicDampingFactor = 0.15;
 
-    tributary.controls = controls;
-    */
-    
+    tributary.useThreejsControls = true;
+    tributary.__threeControls__ = controls;
 
-    tributary.render = function() {
-      if(tributary.useThreejsControls) {
-        //tributary.controls.update();
+    d3.timer(function() {
+      if(tributary.useThreejsControls && tributary.__threeControls__) {
+        tributary.__threeControls__.update();
       }
+      tributary.render();
+    })
+    tributary.render = function() {
+
       tributary.renderer.render( tributary.scene, tributary.camera );
     };
     tributary.render();
-    
+
     function onWindowResize() {
 
       windowHalfX = tributary.sw / 2;
