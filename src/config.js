@@ -31,22 +31,11 @@ tributary.Config = Backbone.Model.extend({
   require: function(callback) {
     //load scripts from the require array with require.js
     var modules = this.get("require");
-    //var scripts = _.pluck(modules, "url");
 
-    /*
-    //NOTE: require.js  does not give us a real callback, in the sense that if things fail
-    //it doesn't callback with an error. not sure how to detect script failure... 
-    var rcb = function() {
-      return callback(null, arguments);
-    };
-    rcb();
-    //require(scripts, rcb);
-    */
-    
     var required = d3.select("head")
       .selectAll("script.require")
       .data(modules, function(d) { return d.name });
-    
+
     required.enter()
       .append("script")
       .classed("require", true)
@@ -55,8 +44,7 @@ tributary.Config = Backbone.Model.extend({
         //TODO: defer all loaded events and execute once?
         tributary.__events__.trigger("execute");
       })
-     
-    
+
     required.exit().remove();
 
     callback(null, null);

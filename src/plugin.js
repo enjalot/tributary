@@ -26,7 +26,7 @@ function loadHtml(plugin, callback) {
   });
   //TODO: check the type of plugin.html and load multiple if it's an array
 }
-  
+
 function loadScript(plugin, callback) {
   if(!plugin.js) { return callback() };
   // Add <script> to page
@@ -44,18 +44,42 @@ function loadScript(plugin, callback) {
   })
 }
 
+//TODO: finish implementing this
+function loadRequires(plugin, callback) {
+  var required = d3.select("head")
+    .selectAll("script.require-" + plugin.id)
+    .data(plugin.require || [])
+
+  required.enter()
+    .append("script")
+    .classed("require-" + plugin.id, true)
+    .attr("src", function(d) { return d })
+    .on("load", function() {
+      //TODO: defer all loaded events and execute once?
+      tributary.__events__.trigger("execute");
+    })
+}
+
+function onErr(err) {
+  Tributary.events.trigger("pluginError", err);
+  console.log("plugin error", err)
+}
+
 tributary.loadPlugin = function (url, opts, cb) {
   d3.json(url, function (err, plugin) {
     if (err) return onErr(err);
-    
+
     plugin.options = opts;
     plugin.elId = Tributary.newPluginId();
     Tributary.plugins[plugin.id] = plugin;
+
+
 
     var q = queue();
     q.defer(loadCss, plugin);
     q.defer(loadHtml, plugin);
     q.defer(loadScript, plugin)
+    //q.defer(loadRequires, plugin)
     q.awaitAll(function (err) {
       if (err) return cb(err);
       Tributary.activatePlugin(tributary, plugin.id);
@@ -63,6 +87,22 @@ tributary.loadPlugin = function (url, opts, cb) {
     });
   });
 };
+
+//plugins are [{ url: "url", options: {} }, ...]
+tributary.loadPlugins = function (plugins, options, cb) {
+  var q;
+  if(options.serial) {
+    q = queue(1)
+  } else {
+    q = queue();
+  }
+  plugins.forEach(function(plugin) {
+    var opts = plugin.options;
+    if(!opts) opts = {}
+    q.defer(tributary.loadPlugin, plugin.url, opts)
+  })
+  q.awaitAll(cb)
+}
 
 //This is what the plugin calls to register itself
 Tributary.plugin = function (id, fn) {

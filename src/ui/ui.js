@@ -7,7 +7,15 @@ tributary.hint = false;
 
 var parentWindow;
 
-
+tributary.getGist = function() {
+  if(tributary.gistid) {
+    getGist(tributary.gistid,function(err, gist) {
+      tributary.loadGist(gist, _assemble);
+    });
+  } else {
+    tributary.loadGist(undefined, _assemble);
+  }
+}
 
 if(window) {
   function receiveMessage(event) {
@@ -17,13 +25,7 @@ if(window) {
     var data = event.data;
 
     if(data.request === "load") {
-      if(data.gistid) {
-        getGist(data.gistid,function(err, gist) {
-          tributary.loadGist(gist, _assemble);
-        });
-      } else {
-        tributary.loadGist(undefined, _assemble);
-      }
+      tributary.gistid = data.gistid;
 
       //assemble the ui using gist data;
       parentWindow = event.source;

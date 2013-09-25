@@ -982,6 +982,10 @@ Tributary = function() {
       if (id === plugin.id) callback();
     });
   }
+  function onErr(err) {
+    Tributary.events.trigger("pluginError", err);
+    console.log("plugin error", err);
+  }
   tributary.loadPlugin = function(url, opts, cb) {
     d3.json(url, function(err, plugin) {
       if (err) return onErr(err);
@@ -998,6 +1002,21 @@ Tributary = function() {
         cb(null, plugin.id);
       });
     });
+  };
+  tributary.loadPlugins = function(plugins, options, cb) {
+    var q;
+    if (options.serial) {
+      q = queue(1);
+    } else {
+      q = queue();
+    }
+    plugins.forEach(function(plugin) {
+      var opts = plugin.options;
+      if (!opts) opts = {};
+      console.log("plugin", plugin);
+      q.defer(tributary.loadPlugin, plugin.url, opts);
+    });
+    q.awaitAll(cb);
   };
   Tributary.plugin = function(id, fn) {
     this.plugins[id].fn = fn;

@@ -145,7 +145,7 @@
 <!-- three.js should probably be done as a plugin -->
 <!--<script src="/static/lib/three.min.js"></script>-->
 <script src="/static/lib/three.js"></script>
-<script src="/static/lib/Stats.js"></script>
+<!--<script src="/static/lib/Stats.js"></script>-->
 
 <!-- 3rd party libs we want available as global variables (should be libs in the add libraries list) -->
 <script src="/static/lib/underscore-min.js"></script>
@@ -180,49 +180,29 @@ TODO: add these as defualt libs in the list
 
 <script type="text/javascript">
 
-/*
-//get rid of selection when dragging things
-if(typeof document.body.style.MozUserSelect!="undefined")
-    document.body.style.MozUserSelect="none";
-else if(typeof document.body.onselectstart!="undefined")
-    document.body.onselectstart=function(){return false};
-else
-    document.body.onmousedown=function(){return false};
-document.body.style.cursor = "default";
-*/
-
-
 var tb = Tributary();
 tb._origin = "{{ origin }}";
 {{#if fullscreen}}tb.__fullscreen__ = {{ fullscreen }}; {{/if}}
 
 //decorate the tributary object with the ui logic
 TributaryUi(tb);
+tb.ui.setup();
 
 tb.loadPlugin("/static/plugins/stylus/plugin.json", {}, function(e) {
-  tb.loadPlugin("/static/plugins/inline-console/plugin.json", {}, function(e) {
-    tb.ui.setup();
-  });
+  tb.getGist();
 });
 
-
 tb.__events__.on("loaded", function() {
-  tb.loadPlugin("/static/plugins/play/plugin.json", {}, function (err, pluginId) {
-      tb.loadPlugin("/static/plugins/screenshots/plugin.json", {}, function(e) {
-        tb.loadPlugin("/static/plugins/controls/plugin.json", {}, function(e) {
-        tb.__events__.trigger("execute");
-        });
-      });
-    });
-    /*
-  //example simple plugin
-  tb.loadPlugin("/static/plugins/simple/plugin.json"
-  , {}
-  , function (err) { console.log("plugin load err?", err) }
-  );
-  */
+  tb.loadPlugins([
+    { url: "/static/plugins/play/plugin.json" },
+    { url: "/static/plugins/screenshots/plugin.json" },
+    { url: "/static/plugins/controls/plugin.json" },
+    { url: "/static/plugins/inline-console/plugin.json" }
+    ], {serial: true },
+  function(err) {
+    tb.__events__.trigger("execute");
+  })
 })
-
 
 $('i').tipsy({fade: true, gravity: 'n', opacity: 0.86});
 </script>
