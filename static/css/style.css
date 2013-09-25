@@ -264,9 +264,6 @@ a:visited {
 section {
   margin: 12px 0;
 }
-section#plugins {
-  margin: 0;
-}
 section:last-child {
   margin-bottom: 0;
 }
@@ -566,6 +563,8 @@ px      68    160    252    344    436    528    620    712    804    896    */
       background-image: linear-gradient(top, rgba(113, 112, 113, 0.72), rgba(227, 226, 228, 0.60));
       filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,StartColorStr='#717071', EndColorStr='#e3e2e4');
       */
+
+  /*background-color: #ffffff;*/
 
   /*background-color: #ffffff;*/
 
