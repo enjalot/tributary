@@ -50,118 +50,6 @@ Tributary = function() {
     name: "restart",
     description: "assumes you only want tributary.init(g) to be run when the restart button is clicked"
   } ];
-  Tributary.makeContext = function(options) {
-    var context, model, display, type;
-    var config = options.config;
-    if (options.model) {
-      model = options.model;
-      filename = model.get("filename");
-      type = model.get("type");
-    } else {
-      var filename, content;
-      if (options.filename) {
-        filename = options.filename;
-      } else {
-        filename = "inlet.js";
-      }
-      if (options.content) {
-        content = options.content;
-      } else {
-        content = "";
-      }
-      var fn = filename.split(".");
-      type = fn[fn.length - 1];
-      model = new tributary.CodeModel({
-        name: fn[0],
-        filename: filename,
-        code: content
-      });
-    }
-    if (options.display) {
-      display = options.display;
-    } else {
-      display = d3.select("#display");
-    }
-    model.set("type", type);
-    if (type === "json") {
-      model.set("mode", "json");
-      context = new tributary.JSONContext({
-        config: config,
-        model: model
-      });
-    } else if (type === "csv") {
-      model.set("mode", "text");
-      context = new tributary.CSVContext({
-        config: config,
-        model: model
-      });
-    } else if (type === "tsv") {
-      model.set("mode", "text");
-      context = new tributary.TSVContext({
-        config: config,
-        model: model
-      });
-    } else if (type === "js") {
-      context = new tributary.JSContext({
-        config: config,
-        model: model
-      });
-    } else if (type === "coffee") {
-      model.set("mode", "coffeescript");
-      context = new tributary.CoffeeContext({
-        config: config,
-        model: model
-      });
-    } else if (type === "css") {
-      model.set("mode", "css");
-      context = new tributary.CSSContext({
-        config: config,
-        model: model
-      });
-    } else if (type === "styl") {
-      model.set("mode", "stylus");
-      context = new tributary.StylusContext({
-        config: config,
-        model: model
-      });
-    } else if (type === "pde") {
-      model.set("mode", "javascript");
-      tributary.__config__.set("display", "canvas");
-      context = new tributary.ProcessingContext({
-        config: config,
-        model: model
-      });
-    } else if (type === "html") {
-      model.set("mode", "text/html");
-      context = new tributary.HTMLContext({
-        config: config,
-        model: model,
-        el: display.node()
-      });
-    } else if (type === "svg" && filename !== "inlet.svg") {
-      model.set("mode", "text/html");
-      context = new tributary.SVGContext({
-        config: config,
-        model: model,
-        el: display.node()
-      });
-    } else if (type === "frag" || type === "geom" || type === "c" || type === "cpp") {
-      model.set("mode", "text/x-csrc");
-      context = new tributary.TextContext({
-        config: config,
-        model: model,
-        el: display.node()
-      });
-    } else if (reservedFiles.indexOf(filename) < 0) {
-      model.set("mode", "text");
-      context = tributary.TextContext({
-        config: config,
-        model: model,
-        el: display.node()
-      });
-    }
-    return context;
-  };
   d3.selection.prototype.moveToFront = function() {
     return this.each(function() {
       this.parentNode.appendChild(this);
@@ -555,6 +443,48 @@ Tributary = function() {
     }
     set_display.call(this);
   };
+  Tributary.makeContext = function(options) {
+    var context, model, display, type;
+    var config = options.config;
+    if (options.model) {
+      model = options.model;
+      filename = model.get("filename");
+      type = model.get("type");
+    } else {
+      var filename, content;
+      if (options.filename) {
+        filename = options.filename;
+      } else {
+        filename = "inlet.js";
+      }
+      if (options.content) {
+        content = options.content;
+      } else {
+        content = "";
+      }
+      var fn = filename.split(".");
+      type = fn[fn.length - 1];
+      model = new tributary.CodeModel({
+        name: fn[0],
+        filename: filename,
+        code: content
+      });
+    }
+    if (options.display) {
+      display = options.display;
+    } else {
+      display = d3.select("#display");
+    }
+    model.set("type", type);
+    var ctxFn = tributary.__contextFns__;
+    var context;
+    if (ctxFn[type]) {
+      context = ctxFn[type](config, model, display);
+    } else {
+      context = ctxFn["txt"](config, model, display);
+    }
+    return context;
+  };
   Tributary.init = init;
   function init(options) {
     this.model = options.model;
@@ -571,7 +501,8 @@ Tributary = function() {
     }, this);
   }
   tributary.JSContext = function(options) {
-    this.execute = function() {
+    function ctx() {}
+    ctx.execute = function() {
       if (tributary.__noupdate__) return;
       var js = this.model.get("code");
       js = this.model.handleParser(js);
@@ -585,10 +516,12 @@ Tributary = function() {
       this.model.trigger("noerror");
       return true;
     };
-    init.call(this, options);
+    init.call(ctx, options);
+    return ctx;
   };
   tributary.CoffeeContext = function(options) {
-    this.execute = function() {
+    function ctx() {}
+    ctx.execute = function() {
       if (tributary.__noupdate__) return;
       try {
         var code = this.model.get("code");
@@ -609,10 +542,12 @@ Tributary = function() {
       this.model.trigger("noerror");
       return true;
     };
-    init.call(this, options);
+    init.call(ctx, options);
+    return ctx;
   };
   tributary.ProcessingContext = function(options) {
-    this.execute = function() {
+    function ctx() {}
+    ctx.execute = function() {
       if (tributary.__noupdate__) return;
       var pde = this.model.get("code");
       var js = Processing.compile(pde).sourceCode;
@@ -627,10 +562,12 @@ Tributary = function() {
       this.model.trigger("noerror");
       return true;
     };
-    init.call(this, options);
+    init.call(ctx, options);
+    return ctx;
   };
   tributary.JSONContext = function(options) {
-    this.execute = function() {
+    function ctx() {}
+    ctx.execute = function() {
       if (tributary.__noupdate__) return;
       try {
         var json = JSON.parse(this.model.get("code"));
@@ -642,10 +579,12 @@ Tributary = function() {
       this.model.trigger("noerror");
       return true;
     };
-    init.call(this, options);
+    init.call(ctx, options);
+    return ctx;
   };
   tributary.CSVContext = function(options) {
-    this.execute = function() {
+    function ctx() {}
+    ctx.execute = function() {
       if (tributary.__noupdate__) return;
       try {
         var json = d3.csv.parse(this.model.get("code"));
@@ -657,10 +596,12 @@ Tributary = function() {
       this.model.trigger("noerror");
       return true;
     };
-    init.call(this, options);
+    init.call(ctx, options);
+    return ctx;
   };
   tributary.TSVContext = function(options) {
-    this.execute = function() {
+    function ctx() {}
+    ctx.execute = function() {
       if (tributary.__noupdate__) return;
       try {
         var json = d3.tsv.parse(this.model.get("code"));
@@ -672,10 +613,12 @@ Tributary = function() {
       this.model.trigger("noerror");
       return true;
     };
-    init.call(this, options);
+    init.call(ctx, options);
+    return ctx;
   };
   tributary.CSSContext = function(options) {
-    this.execute = function() {
+    function ctx() {}
+    ctx.execute = function() {
       if (tributary.__noupdate__) return;
       try {
         this.el.textContent = this.model.get("code");
@@ -686,20 +629,22 @@ Tributary = function() {
       this.model.trigger("noerror");
       return true;
     };
-    this.render = function() {
+    ctx.render = function() {
       this.el = d3.select("head").selectAll("style.csscontext").data([ this.model ], function(d) {
         return d.cid;
       }).enter().append("style").classed("csscontext", true).attr({
         type: "text/css"
       }).node();
     };
-    init.call(this, options);
-    this.model.on("delete", function() {
+    init.call(ctx, options);
+    ctx.model.on("delete", function() {
       d3.select(this.el).remove();
-    }, this);
+    }, ctx);
+    return ctx;
   };
   tributary.HTMLContext = function(options) {
-    this.execute = function() {
+    function ctx() {}
+    ctx.execute = function() {
       if (tributary.__noupdate__) return;
       try {
         $(this.el).append(this.model.get("code"));
@@ -710,10 +655,12 @@ Tributary = function() {
       this.model.trigger("noerror");
       return true;
     };
-    init.call(this, options);
+    init.call(ctx, options);
+    return ctx;
   };
   tributary.SVGContext = function(options) {
-    this.execute = function() {
+    function ctx() {}
+    ctx.execute = function() {
       if (tributary.__noupdate__) return;
       try {
         var svg = d3.select(this.el).select("svg").node();
@@ -728,16 +675,99 @@ Tributary = function() {
       this.model.trigger("noerror");
       return true;
     };
-    init.call(this, options);
+    init.call(ctx, options);
+    return ctx;
   };
   tributary.TextContext = function(options) {
-    this.execute = function() {
+    function ctx() {}
+    ctx.execute = function() {
       if (tributary.__noupdate__) return;
       this.model.trigger("noerror");
       return true;
     };
-    init.call(this, options);
+    init.call(ctx, options);
+    return ctx;
   };
+  tributary.__contextFns__ = {
+    json: function(config, model) {
+      model.set("mode", "json");
+      return tributary.JSONContext({
+        config: config,
+        model: model
+      });
+    },
+    csv: function(config, model) {
+      model.set("mode", "text");
+      return tributary.CSVContext({
+        config: config,
+        model: model
+      });
+    },
+    tsv: function(config, model) {
+      model.set("mode", "text");
+      return tributary.TSVContext({
+        config: config,
+        model: model
+      });
+    },
+    js: function(config, model) {
+      return tributary.JSContext({
+        config: config,
+        model: model
+      });
+    },
+    coffee: function(config, model) {
+      model.set("mode", "coffeescript");
+      return tributary.CoffeeContext({
+        config: config,
+        model: model
+      });
+    },
+    css: function(config, model) {
+      model.set("mode", "css");
+      return tributary.CSSContext({
+        config: config,
+        model: model
+      });
+    },
+    pde: function(config, model) {
+      model.set("mode", "javascript");
+      tributary.__config__.set("display", "canvas");
+      return tributary.ProcessingContext({
+        config: config,
+        model: model
+      });
+    },
+    html: function(config, model, display) {
+      model.set("mode", "text/html");
+      return tributary.HTMLContext({
+        config: config,
+        model: model,
+        el: display.node()
+      });
+    },
+    svg: function(config, model, display) {
+      model.set("mode", "text/html");
+      return tributary.SVGContext({
+        config: config,
+        model: model,
+        el: display.node()
+      });
+    },
+    cpp: txt,
+    c: txt,
+    frag: txt,
+    geom: txt,
+    txt: txt
+  };
+  function txt(config, model, display) {
+    model.set("mode", "text/x-csrc");
+    return tributary.TextContext({
+      config: config,
+      model: model,
+      el: display.node()
+    });
+  }
   Tributary.makeEditor = function(options) {
     var editorParent = options.parent || tributary.edit;
     var model = options.model;
@@ -982,6 +1012,14 @@ Tributary = function() {
       if (id === plugin.id) callback();
     });
   }
+  function loadRequires(plugin, callback) {
+    var required = d3.select("head").selectAll("script.require-" + plugin.id).data(plugin.require || []);
+    required.enter().append("script").classed("require-" + plugin.id, true).attr("src", function(d) {
+      return d;
+    }).on("load", function() {
+      tributary.__events__.trigger("execute");
+    });
+  }
   function onErr(err) {
     Tributary.events.trigger("pluginError", err);
     console.log("plugin error", err);
@@ -1013,7 +1051,6 @@ Tributary = function() {
     plugins.forEach(function(plugin) {
       var opts = plugin.options;
       if (!opts) opts = {};
-      console.log("plugin", plugin);
       q.defer(tributary.loadPlugin, plugin.url, opts);
     });
     q.awaitAll(cb);

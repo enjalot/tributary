@@ -1,6 +1,57 @@
 //The Context is the essential part of tributary, it is what makes assumptions
 //about the code and provides the context for the code to execute.
 
+Tributary.makeContext = function(options) {
+  //Creates a context from a filename and/or file content
+  //{
+  //  config: REQUIRED
+  //  model: optional, if a CodeModel is passed in, filename and content wont be used
+  //  filename: optional, default: inlet.js
+  //  content: optional, default: ""
+  //  display: optional, default: "d3.select("#display")
+  //}
+  var context, model,display, type;
+  var config = options.config;
+  if(options.model) {
+    model = options.model;
+    filename = model.get("filename");
+    type = model.get("type");
+  } else {
+    var filename, content;
+    if(options.filename){
+      filename = options.filename;
+    } else {
+      filename = "inlet.js";
+    }
+    if(options.content) {
+      content = options.content;
+    } else {
+      content = "";
+    }
+    //figure out the context to make from the file extension
+    var fn = filename.split(".");
+    type = fn[fn.length-1];
+
+    //make a code model with the content
+    model = new tributary.CodeModel({name: fn[0], filename: filename, code: content});
+  }
+  if(options.display) {
+    display = options.display;
+  } else {
+    display = d3.select("#display");
+  }
+  model.set("type", type);
+  var ctxFn = tributary.__contextFns__;
+  var context;
+  if(ctxFn[type]) {
+    context = ctxFn[type](config, model, display);
+  } else {
+    context = ctxFn['txt'](config, model, display);
+  }
+  return context;
+}
+
+
 //basic init function for all contexts
 Tributary.init = init; //expose for plugins
 function init(options) {
@@ -23,7 +74,8 @@ function init(options) {
 
 //The JS context evaluates js in the global namespace
 tributary.JSContext = function(options) {
-  this.execute = function() {
+  function ctx() {};
+  ctx.execute = function() {
     if(tributary.__noupdate__) return;
     var js = this.model.get("code");
     js = this.model.handleParser(js)
@@ -38,12 +90,14 @@ tributary.JSContext = function(options) {
     this.model.trigger("noerror");
     return true;
   }
-  init.call(this, options);
+  init.call(ctx, options);
+  return ctx;
 }
 
 //Coffeescript Context
 tributary.CoffeeContext = function(options) {
-  this.execute = function() {
+  function ctx() {};
+  ctx.execute = function() {
     if(tributary.__noupdate__) return;
     try {
       //TODO: use coffee compilation to give errors/warnings
@@ -65,12 +119,14 @@ tributary.CoffeeContext = function(options) {
     this.model.trigger("noerror");
     return true;
   }
-  init.call(this, options);
+  init.call(ctx, options);
+  return ctx;
 }
 
 //processing context
 tributary.ProcessingContext = function(options) {
-  this.execute = function() {
+  function ctx() {};
+  ctx.execute = function() {
     if(tributary.__noupdate__) return;
     var pde = this.model.get("code");
     var js = Processing.compile(pde).sourceCode;
@@ -86,7 +142,8 @@ tributary.ProcessingContext = function(options) {
     this.model.trigger("noerror");
     return true;
   }
-  init.call(this, options);
+  init.call(ctx, options);
+  return ctx;
 }
 
 //JSON Context
@@ -94,7 +151,8 @@ tributary.ProcessingContext = function(options) {
 //tributary.foo where foo is the name of the context
 //i.e. the filename without the extension
 tributary.JSONContext = function(options) {
-  this.execute = function() {
+  function ctx() {};
+  ctx.execute = function() {
     if(tributary.__noupdate__) return;
     try {
       var json = JSON.parse(this.model.get("code"));
@@ -106,12 +164,14 @@ tributary.JSONContext = function(options) {
     this.model.trigger("noerror");
     return true;
   }
-  init.call(this, options);
+  init.call(ctx, options);
+  return ctx;
 }
 
 //The CSV context evaluates js in the global namespace
 tributary.CSVContext = function(options) {
-  this.execute = function() {
+  function ctx() {};
+  ctx.execute = function() {
     if(tributary.__noupdate__) return;
     try {
       var json = d3.csv.parse(this.model.get("code"));
@@ -123,12 +183,14 @@ tributary.CSVContext = function(options) {
     this.model.trigger("noerror");
     return true;
   }
-  init.call(this, options);
+  init.call(ctx, options);
+  return ctx;
 }
 
 //The TSV context evaluates js in the global namespace
 tributary.TSVContext = function(options) {
-  this.execute = function() {
+  function ctx() {};
+  ctx.execute = function() {
     if(tributary.__noupdate__) return;
     try {
       var json = d3.tsv.parse(this.model.get("code"));
@@ -140,12 +202,14 @@ tributary.TSVContext = function(options) {
     this.model.trigger("noerror");
     return true;
   }
-  init.call(this, options);
+  init.call(ctx, options);
+  return ctx;
 }
 
 //The CSS context adds a style element to the head with the contents of the css
 tributary.CSSContext = function(options) {
-  this.execute = function() {
+  function ctx() {}
+  ctx.execute = function() {
     if(tributary.__noupdate__) return;
     try {
       //set the text of the style element to the code
@@ -158,7 +222,7 @@ tributary.CSSContext = function(options) {
     return true;
   }
 
-  this.render = function() {
+  ctx.render = function() {
     //we create a style element for the model in the head
     this.el = d3.select("head")
       .selectAll("style.csscontext")
@@ -170,14 +234,16 @@ tributary.CSSContext = function(options) {
         type:"text/css"
       }).node();
   }
-  init.call(this, options);
-  this.model.on("delete", function() {
+  init.call(ctx, options);
+  ctx.model.on("delete", function() {
     d3.select(this.el).remove();
-  }, this)
+  }, ctx)
+  return ctx;
 }
 
 tributary.HTMLContext = function(options) {
-  this.execute = function() {
+  function ctx() {};
+  ctx.execute = function() {
     if(tributary.__noupdate__) return;
     try {
       //set the text of the style element to the code
@@ -189,11 +255,13 @@ tributary.HTMLContext = function(options) {
     this.model.trigger("noerror");
     return true;
   }
-  init.call(this, options);
+  init.call(ctx, options);
+  return ctx;
 }
 
 tributary.SVGContext = function(options) {
-  this.execute = function() {
+  function ctx() {};
+  ctx.execute = function() {
     if(tributary.__noupdate__) return;
     try {
       var svg = d3.select(this.el).select("svg").node();
@@ -210,14 +278,96 @@ tributary.SVGContext = function(options) {
     this.model.trigger("noerror");
     return true;
   }
-  init.call(this, options);
+  init.call(ctx, options);
+  return ctx;
 }
 
 tributary.TextContext = function(options) {
-  this.execute = function() {
+  function ctx() {};
+  ctx.execute = function() {
     if(tributary.__noupdate__) return;
     this.model.trigger("noerror");
     return true;
   }
-  init.call(this, options);
+  init.call(ctx, options);
+  return ctx;
 }
+
+//These create a context based on file type.
+tributary.__contextFns__ = {
+  "json": function(config, model) {
+    model.set("mode", "json")
+    return tributary.JSONContext({
+      config: config,
+      model: model,
+    });
+  },
+  "csv": function(config, model) {
+    model.set("mode", "text")
+    return tributary.CSVContext({
+      config: config,
+      model: model,
+    });
+  },
+  "tsv": function(config, model) {
+    model.set("mode", "text")
+    return tributary.TSVContext({
+      config: config,
+      model: model,
+    });
+  },
+  "js": function(config, model) {
+    return tributary.JSContext({
+      config: config,
+      model: model,
+    });
+  },
+  "coffee": function(config, model) {
+    model.set("mode", "coffeescript")
+    return tributary.CoffeeContext({
+      config: config,
+      model: model,
+    });
+  },
+  "css": function(config, model) {
+    model.set("mode", "css")
+    return tributary.CSSContext({
+      config: config,
+      model: model,
+    });
+  },
+  "pde": function(config, model) {
+    model.set("mode", "javascript")
+    tributary.__config__.set("display", "canvas");
+    return tributary.ProcessingContext({
+      config: config,
+      model: model,
+    });
+  },
+  "html": function(config, model, display) {
+    model.set("mode", "text/html")
+    return tributary.HTMLContext({
+      config: config,
+      model: model,
+      el: display.node()
+    });
+  },
+  "svg": function(config, model, display) {
+    model.set("mode", "text/html")
+    return tributary.SVGContext({
+      config: config,
+      model: model,
+      el: display.node()
+    });
+  },
+  "cpp": txt, "c": txt, "frag": txt, "geom": txt, "txt": txt
+}
+function txt(config, model, display) {
+    model.set("mode", "text/x-csrc")
+    return tributary.TextContext({
+      config: config,
+      model: model,
+      el: display.node()
+    });
+  }
+
