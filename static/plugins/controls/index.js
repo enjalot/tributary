@@ -95,7 +95,6 @@ function tributaryControlsPlugin(tributary, plugin) {
       min: options.min,
       max: options.max,
       step: Math.abs((options.max - options.min) / 20)
-
     }
     if(options.step) {
       attrs.step = options.step
@@ -103,6 +102,7 @@ function tributaryControlsPlugin(tributary, plugin) {
     input.attr(attrs)
     input.on("change", function() {
       control.select("span.value").text(this.value);
+      tributary.__controls__[options.name] = +this.value;
       tributary.events.trigger("execute");
     });
     return input.node();
@@ -150,6 +150,7 @@ function tributaryControlsPlugin(tributary, plugin) {
       //this is a number
       var el = makeSlider(options);
       value = +el.value;
+      console.log("value", value)
     }
     //update config
     tributary.__controls__[name] = value;
