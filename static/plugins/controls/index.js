@@ -145,7 +145,7 @@ function tributaryControlsPlugin(tributary, plugin) {
     } else if((options.min || options.min === 0) && (options.max || options.max === 0)) {
       //this is a number
       var el = makeSlider(options);
-      value = el.value;
+      value = +el.value;
     }
     //update config
     tributary.__controls__[name] = value;
