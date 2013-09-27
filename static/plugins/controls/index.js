@@ -109,16 +109,16 @@ function tributaryControlsPlugin(tributary, plugin) {
       .data([options.name])
     var center = control.enter()
     .append("div").classed("control_"+options.name, true).classed("control", true);
-    center.append("span").text(options.name).append("span").text(":");
     center.append("select");
+    center.append("span").text(options.name)//.append("span").text(":");
 
 
-    control = control.select("select")
-    control.on("change", function() {
+    var input = control.select("select")
+    input.on("change", function() {
       tributary.__controls__[options.name] = options.options[this.selectedIndex];
       tributary.events.trigger("execute");
     })
-    var opts = control.selectAll("option").data(options.options)
+    var opts = input.selectAll("option").data(options.options)
     opts.enter()
       .append("option");
 
@@ -130,7 +130,7 @@ function tributaryControlsPlugin(tributary, plugin) {
       },
     }).text(function(d) { return d });
     opts.exit().remove();
-    return control.node();
+    return input.node();
   }
 
   tributary.control = function(options) {
