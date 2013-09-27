@@ -150,7 +150,6 @@ function tributaryControlsPlugin(tributary, plugin) {
       //this is a number
       var el = makeSlider(options);
       value = +el.value;
-      console.log("value", value)
     }
     //update config
     tributary.__controls__[name] = value;
