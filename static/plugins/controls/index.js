@@ -23,7 +23,11 @@ function tributaryControlsPlugin(tributary, plugin) {
     el = document.getElementById(plugin.elId);
 
     tributary.__controls__ = tributary.__config__.get("controls") || {};
+
+    //make sure to active the controls we have loaded from the start
     tributary.__activeControls__ = {};
+    var actives = Object.keys(tributary.__controls__);
+    actives.forEach(function(active) { tributary.__activeControls__[active] = true });
     //load control values from config on start
     tributary.events.on("prerender", function() {
       tributary.__activeControls__ = {};
