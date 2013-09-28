@@ -5,7 +5,7 @@ tributary.loadGist = function(data, callback) {
   var ret = {};
   if(!data) {
     ret.config = new tributary.Config();
-    ret.config.isNew = true;
+    ret.config.newFile = true;
     ret.models = new tributary.CodeModels(new tributary.CodeModel());
     return callback(null, ret);
   }

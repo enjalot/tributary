@@ -142,7 +142,7 @@ TributaryUi = function(tributary) {
         display: d3.select("#display")
       });
       if (context) {
-        if (config.isNew) context.isNew = true;
+        if (config.newFile) context.newFile = true;
         config.contexts.push(context);
         context.render();
         if (tributary.__mainfiles__.indexOf(m.get("filename")) < 0) {
@@ -307,7 +307,7 @@ TributaryUi = function(tributary) {
         if (!config.todelete) {
           config.todelete = [];
         }
-        if (!context.isNew) config.todelete.push(filename);
+        if (!context.newFile) config.todelete.push(filename);
         var ind = config.contexts.indexOf(context);
         config.contexts.splice(ind, 1);
         delete context;
@@ -315,6 +315,9 @@ TributaryUi = function(tributary) {
           if (this.dataset.filename === filename) {
             $(this).remove();
           }
+        });
+        config.contexts.forEach(function(c) {
+          return c.model.trigger("hide");
         });
         var othertab = config.contexts[0].model;
         othertab.trigger("show");
@@ -334,7 +337,7 @@ TributaryUi = function(tributary) {
               config: config
             });
             if (context) {
-              context.isNew = true;
+              context.newFile = true;
               config.contexts.push(context);
               context.render();
               context.execute();

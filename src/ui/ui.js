@@ -186,7 +186,7 @@ function _assemble(error, ret) {
       display: d3.select("#display")
     });
     if(context) {
-      if(config.isNew) context.isNew = true;
+      if(config.newFile) context.newFile = true;
       config.contexts.push(context);
       context.render();
       if(tributary.__mainfiles__.indexOf(m.get("filename")) < 0) {
