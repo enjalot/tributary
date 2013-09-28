@@ -193,26 +193,15 @@ function _assemble(error, ret) {
       if(config.isNew) context.isNew = true;
       config.contexts.push(context);
       if(context.render) context.render();
-      if(tributary.__mainfiles__.indexOf(m.get("filename")) < 0) {
-        if(context.execute) context.execute();
-      }
+      if(context.execute) context.execute();
       context.editor = Tributary.makeEditor({model: m, parent:edit});
       m.trigger("hide");
     }
   });
 
-  //when done, need to execute code (because json/csv etc need to load first)
-  config.contexts.forEach(function(c) {
-    //select appropriate html ui containers
-    // and create contexts
-    if(tributary.__mainfiles__.indexOf(c.model.get("filename")) >= 0) {
-      c.model.trigger("show");
-      //first load should auto init
-      tributary.autoinit = true;
-      c.execute();
-      tributary.autoinit = config.get("autoinit");
-    }
-  });
+  var c = config.contexts[0];
+  c.model.trigger("show");
+  
 
   //fill in the file tabs
   var files_view = new Tributary.FilesView({

@@ -1,11 +1,3 @@
-
-//list of old filenames that are broken by the change.
-//TODO: decide if want to allow for arbitrary file to be the tributary context, in config somehow?
-tributary.__mainfiles__ = ["inlet.js", "inlet.coffee", "inlet.pde", "sinwaves.js", "squarecircle.js"];
-
-var reservedFiles = ["_.md", "config.json"];
-
-
 //Tributary display options
 tributary.displays = [
   {name:"svg", description: "creates an <svg> element for you to use"},

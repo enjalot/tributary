@@ -1,6 +1,7 @@
 //The Context is the essential part of tributary, it is what makes assumptions
 //about the code and provides the context for the code to execute.
 
+var reservedFiles = ["_.md", "config.json"];
 Tributary.makeContext = function(options) {
   //Creates a context from a filename and/or file content
   //{
@@ -16,6 +17,7 @@ Tributary.makeContext = function(options) {
     model = options.model;
     filename = model.get("filename");
     type = model.get("type");
+    if(reservedFiles.indexOf(filename) >= 0) return;
   } else {
     var filename, content;
     if(options.filename){

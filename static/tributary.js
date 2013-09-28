@@ -25,8 +25,6 @@ Tributary = function() {
   window.addEventListener("resize", function(event) {
     tributary.__events__.trigger("resize", event);
   });
-  tributary.__mainfiles__ = [ "inlet.js", "inlet.coffee", "inlet.pde", "sinwaves.js", "squarecircle.js" ];
-  var reservedFiles = [ "_.md", "config.json" ];
   tributary.displays = [ {
     name: "svg",
     description: "creates an <svg> element for you to use"
@@ -443,6 +441,7 @@ Tributary = function() {
     }
     set_display.call(this);
   };
+  var reservedFiles = [ "_.md", "config.json" ];
   Tributary.makeContext = function(options) {
     var context, model, display, type;
     var config = options.config;
@@ -450,6 +449,7 @@ Tributary = function() {
       model = options.model;
       filename = model.get("filename");
       type = model.get("type");
+      if (reservedFiles.indexOf(filename) >= 0) return;
     } else {
       var filename, content;
       if (options.filename) {

@@ -151,9 +151,7 @@ TributaryUi = function(tributary) {
         if (config.isNew) context.isNew = true;
         config.contexts.push(context);
         if (context.render) context.render();
-        if (tributary.__mainfiles__.indexOf(m.get("filename")) < 0) {
-          if (context.execute) context.execute();
-        }
+        if (context.execute) context.execute();
         context.editor = Tributary.makeEditor({
           model: m,
           parent: edit
@@ -161,14 +159,8 @@ TributaryUi = function(tributary) {
         m.trigger("hide");
       }
     });
-    config.contexts.forEach(function(c) {
-      if (tributary.__mainfiles__.indexOf(c.model.get("filename")) >= 0) {
-        c.model.trigger("show");
-        tributary.autoinit = true;
-        c.execute();
-        tributary.autoinit = config.get("autoinit");
-      }
-    });
+    var c = config.contexts[0];
+    c.model.trigger("show");
     var files_view = new Tributary.FilesView({
       el: "#file-list",
       model: config
