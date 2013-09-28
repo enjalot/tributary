@@ -41,15 +41,19 @@ tributary.CodeModel = Backbone.Model.extend({
     tributary.__error__ = false;
   },
 
-  handleCoffee: function() {
+  handleCode: function() {
     //This checks if coffeescript is being used
     //and returns compiled javascript
-    var js = this.get("code");
+    var code = this.get("code");
     if(this.get("mode") === "coffeescript") {
       //compile the coffee
-      js = CoffeeScript.compile(js, {"bare":true});
+      js = CoffeeScript.compile(code, {"bare":true});
+      return js;
+    } else if (this.get("type") === "pde") {
+      js = Processing.compile(code).sourceCode;
+      return js;
     }
-    return js;
+    return code;
   },
   //We allow parsing of code before execution
   handleParser: function(js) {

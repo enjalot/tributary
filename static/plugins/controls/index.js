@@ -23,7 +23,11 @@ function tributaryControlsPlugin(tributary, plugin) {
     el = document.getElementById(plugin.elId);
 
     tributary.__controls__ = tributary.__config__.get("controls") || {};
+
+    //make sure to active the controls we have loaded from the start
     tributary.__activeControls__ = {};
+    var actives = Object.keys(tributary.__controls__);
+    actives.forEach(function(active) { tributary.__activeControls__[active] = true });
     //load control values from config on start
     tributary.events.on("prerender", function() {
       tributary.__activeControls__ = {};
@@ -70,25 +74,38 @@ function tributaryControlsPlugin(tributary, plugin) {
       .data([options.name])
     var center = control.enter()
       .append("div").classed("control_"+options.name, true).classed("control", true);
-    center.append("span").text(options.name).append("span").text(":");
     center.append("input")
       .attr({
         type: "range"
       })
 
-    control = control.select("input")
+    input = control.select("input")
     var value = tributary.__controls__[options.name];
     if(!exists(value)) {
       value = (options.max || 0 + options.min || 0) / 2
       tributary.__controls__[options.name] = value;
     }
-    control.attr({
+
+    center.append("span").classed("name", true)
+      .text(options.name + ": ")
+      .append("span").classed("value", true).text(value);
+
+    var attrs = {
       value: value,
       min: options.min,
-      max: options.max
+      max: options.max,
+      step: Math.abs((options.max - options.min) / 20)
+    }
+    if(options.step) {
+      attrs.step = options.step
+    }
+    input.attr(attrs)
+    input.on("change", function() {
+      control.select("span.value").text(this.value);
+      tributary.__controls__[options.name] = +this.value;
+      tributary.events.trigger("execute");
     });
-    control.on("change", function() { tributary.events.trigger("execute"); });
-    return control.node();
+    return input.node();
   }
   function makeDropdown(options) {
     var controlElement = getCE();
@@ -96,16 +113,16 @@ function tributaryControlsPlugin(tributary, plugin) {
       .data([options.name])
     var center = control.enter()
     .append("div").classed("control_"+options.name, true).classed("control", true);
-    center.append("span").text(options.name).append("span").text(":");
     center.append("select");
+    center.append("span").text(options.name)//.append("span").text(":");
 
 
-    control = control.select("select")
-    control.on("change", function() {
+    var input = control.select("select")
+    input.on("change", function() {
       tributary.__controls__[options.name] = options.options[this.selectedIndex];
       tributary.events.trigger("execute");
     })
-    var opts = control.selectAll("option").data(options.options)
+    var opts = input.selectAll("option").data(options.options)
     opts.enter()
       .append("option");
 
@@ -117,7 +134,7 @@ function tributaryControlsPlugin(tributary, plugin) {
       },
     }).text(function(d) { return d });
     opts.exit().remove();
-    return control.node();
+    return input.node();
   }
 
   tributary.control = function(options) {
@@ -132,7 +149,7 @@ function tributaryControlsPlugin(tributary, plugin) {
     } else if((options.min || options.min === 0) && (options.max || options.max === 0)) {
       //this is a number
       var el = makeSlider(options);
-      value = el.value;
+      value = +el.value;
     }
     //update config
     tributary.__controls__[name] = value;

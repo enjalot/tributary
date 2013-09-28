@@ -1,7 +1,7 @@
 
 //list of old filenames that are broken by the change.
 //TODO: decide if want to allow for arbitrary file to be the tributary context, in config somehow?
-tributary.__mainfiles__ = ["inlet.js", "inlet.coffee", "sinwaves.js", "squarecircle.js"];
+tributary.__mainfiles__ = ["inlet.js", "inlet.coffee", "inlet.pde", "sinwaves.js", "squarecircle.js"];
 
 var reservedFiles = ["_.md", "config.json"];
 
@@ -60,12 +60,13 @@ Tributary.makeContext = function(options) {
   if(options.display) {
     display = options.display;
   } else {
-    display = d3.select("#display"); 
+    display = d3.select("#display");
   }
-  
+
   model.set("type", type);
   if(tributary.__mainfiles__.indexOf(filename) >= 0 ) {//  === "inlet.js") {
     if(type === "coffee") model.set("mode", "coffeescript");
+    if(type === "pde") tributary.__config__.set("display", "canvas");
     context = new tributary.TributaryContext({
       config: config,
       model: model,
@@ -109,6 +110,13 @@ Tributary.makeContext = function(options) {
   } else if(type === "styl") {
     model.set("mode", "stylus")
     context = new tributary.StylusContext({
+      config: config,
+      model: model,
+    });
+  } else if(type === "pde") {
+    model.set("mode", "javascript")
+    tributary.__config__.set("display", "canvas");
+    context = new tributary.ProcessingContext({
       config: config,
       model: model,
     });

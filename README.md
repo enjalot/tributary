@@ -14,8 +14,8 @@ If you want to save your work you can click the fork button and it will save int
 The url in your browser will update to something like:
 http://tributary.io/inlet/2958568
 
-where the number: 2958568 is the gist id 
-(you can see it here: https://gist.github.com/2958568 ) 
+where the number: 2958568 is the gist id
+(you can see it here: https://gist.github.com/2958568 )
 
 
 # Development:
@@ -29,9 +29,13 @@ npm install
 node server.js
 ```
 
-
 If you want to have github authentication working you will need to setup a
-github app and fill out the settings.js (see example-settings.js)
+github app ( https://github.com/settings/applications ) and fill out the settings.js (see example-settings.js)
+The github app should have the following settings:  
+full URL: http://localhost:8888  
+callback URL: http://localhost:8888/github-authenticated  
+
+Right now you will also need to setup an imgur app and set the authentication details in settings.js as well
 
 
 Frontend JS src file compilation with make to static requires node.js, uglify-js and browserify
