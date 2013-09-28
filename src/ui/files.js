@@ -58,7 +58,7 @@ Tributary.FilesView = Backbone.View.extend({
         if(!config.todelete) {
           config.todelete = [];
         }
-        if(!context.isNew)
+        if(!context.newFile)
           config.todelete.push(filename);
 
 
@@ -75,6 +75,7 @@ Tributary.FilesView = Backbone.View.extend({
           })
 
         //show the first context available
+        config.contexts.forEach(function(c) { return c.model.trigger("hide") })
         var othertab = config.contexts[0].model;
         othertab.trigger("show");
         d3.event.stopPropagation();
@@ -98,7 +99,7 @@ Tributary.FilesView = Backbone.View.extend({
             //create a new file with the given name
             var context = Tributary.makeContext({ filename: input.node().value, config: config });
             if(context) {
-              context.isNew = true;
+              context.newFile = true;
               config.contexts.push(context);
               if(context.render) context.render();
               if(context.execute) context.execute();
