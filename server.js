@@ -36,7 +36,6 @@ var $visits = db.collection("visits");
 var $images = db.collection("images");
 
 
-
 var app = express()
   .use(express.cookieParser())
   .use(express.bodyParser())
@@ -46,7 +45,7 @@ var app = express()
     store: new MongoStore(mongoConf)
   }))
   .use('/static', express.static(__dirname + '/static'))
-  
+
 app.use(express.vhost('sandbox.' + settings.hostname || "localhost", require(__dirname + '/sandbox').app))
 
 

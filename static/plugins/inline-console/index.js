@@ -78,8 +78,7 @@ function tributaryInlineConsolePlugin(tributary, plugin) {
 
   //TODO: this should be more general and we would add in our particular parser in here
   tributary.__parser__ = function(code, filename) {
-    var parsed = esprima.parse(code, {loc:true});
-    //console.log(parsed)
+    var parsed = esprima.parse(code, {loc:true, raw: true});
     __hasProp = {}.hasOwnProperty;
 
     var transformed;
@@ -145,6 +144,8 @@ function tributaryInlineConsolePlugin(tributary, plugin) {
           e['expression']['arguments'] = newArgs;
           //console.log("pos", e, callee.loc.end);
           return transform(e,replace);
+        } else {
+          return transform(e, replace);
         }
       } else {
         return transform(e, replace);
