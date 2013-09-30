@@ -592,6 +592,7 @@ function getParent(foundInlet, inlet, res){
   // 'foundInlet' is only used with res.send()
   // 'inlet' is the current inlet having its parent filled in.
   // The first time the function is called the two are the same.
+  if(!inlet) return res.send(404);
   if (inlet.parent){
       find_inlet(inlet.parent, function(err, foundParentInlet){
         if (err) res.send(err);
