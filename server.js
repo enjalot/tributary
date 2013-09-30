@@ -570,6 +570,42 @@ function imgur_upload(req,res,next) {
 
 
 //API
+function find_inlet(gistid, callback){
+  var query = {
+    "gistid": gistid
+    , public: { $ne: false }
+  };
+  $inlets.findOne(query, callback);
+}
+ 
+app.get('/api/inlet/:gistid', get_inlet_family)
+function get_inlet_family(req, res, next){
+  res.header("Access-Control-Allow-Origin", "*");
+  find_inlet(req.params.gistid, function(err, foundInlet) {
+    if (err) res.send(err);
+    // Fill in the parent of foundInlet the first time through
+    getParent(foundInlet, foundInlet, res);
+  });
+}
+ 
+function getParent(foundInlet, inlet, res){
+  // 'foundInlet' is only used with res.send()
+  // 'inlet' is the current inlet having its parent filled in.
+  // The first time the function is called the two are the same.
+  if (inlet.parent){
+      find_inlet(inlet.parent, function(err, foundParentInlet){
+        if (err) res.send(err);
+        inlet.parent = foundParentInlet;
+        // Recurse and fill in the parent of 'inlet'
+        // Pass the original 'foundInlet' along too.
+        getParent(foundInlet, inlet.parent, res)
+      });
+    }
+    else {
+      // When the recursion is complete, return the original 'foundInlet'
+      res.send(foundInlet);
+    }
+}
 
 app.get('/api/latest/created', latest_created)
 app.get('/api/latest/created/:limit', latest_created)
