@@ -765,6 +765,20 @@ function dateQuery(start, end) {
   return query;
 }
 
+/*
+app.get("/api/proxy", proxy)
+function proxy(req, res, next) {
+  var url = req.query.url;
+  if(!url ){ return res.send(404) }
+  request.get({
+    url: url
+  , headers: { 'User-Agent': 'tributary' }
+  }, function(err, response, body) {
+      res.send(body);
+  })
+}
+*/
+
 app.listen(port, function() {
   console.log("tributary running on port", port);
 });
