@@ -1,6 +1,7 @@
 (function(){
   //Get a reference to our iframe window so we can postMessage to it
   var sandbox = d3.select("#sandbox").node().contentWindow;
+  var saveType;
 
   var _origin = header.origin;
 

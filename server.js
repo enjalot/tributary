@@ -152,6 +152,7 @@ function save_endpoint(req,res,next) {
   var data = req.body.gist;
   var token = req.session.access_token;
   var gistid = req.params['gistid'];
+  console.log("SAVING", gistid);
   save(gistid, data, token, function(err, response) {
     if(!err) {
       //post save
@@ -176,6 +177,7 @@ function fork_endpoint(req,res,next) {
   var token = req.session.access_token;
   var user = req.session.user;
   var gistid = req.params['gistid'];
+  console.log("FORKING", gistid);
 
   //get the user of this gist
   if(!gistid || !user) {
@@ -217,7 +219,6 @@ function fork_endpoint(req,res,next) {
         function onResponse(err, response) {
           if(!err) {
             //post fork. but only if user is authenticated
-            console.log("after fork");
             after_fork(oldgist, response, token, function(error, newgist) {
               if(!error) {
                 return res.send(newgist);
@@ -681,7 +682,6 @@ function api_users(req,res,next) {
   }
   var sort = {}
   sort[sortBy] = ascdsc
-    console.log("SORT", sort)
   //TODO: make sure this is secure in the future
   $users.find(query, fields, opts).sort(sort).toArray(function(err, users) {
     if(err) res.send(err);

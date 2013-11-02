@@ -26,14 +26,13 @@ TributaryUi = function(tributary) {
       } else if (data.request === "save") {
         if (!tributary.__config__.get("thumbnail")) {
           tributary._screenshot();
-        } else {
-          var json = serializeGist();
-          event.source.postMessage({
-            request: "save",
-            config: json,
-            salt: data.salt
-          }, event.origin);
         }
+        var json = serializeGist();
+        event.source.postMessage({
+          request: "save",
+          config: json,
+          salt: data.salt
+        }, event.origin);
       } else if (data.request === "description") {
         tributary.__config__.set("description", data.description);
       } else if (data.request === "exitfullscreen") {
