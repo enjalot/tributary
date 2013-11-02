@@ -33,13 +33,14 @@ if(window) {
       //tributary.loadGist(data.gist, _assemble);
     } else if(data.request === "save") {
       //postMessage the host frame with the tributary.context information
-      //get screenshot
+      //TODO: should be a way to auto-screenshot on save if we want it. now it will lose the race for saving.
+      //people who save more than once will take a screenshot. can always manually take a screen too
       if(!tributary.__config__.get("thumbnail")) {
         tributary._screenshot();
-      } else {
-        var json = serializeGist();
-        event.source.postMessage({request: "save", config: json, salt: data.salt}, event.origin)
       }
+      var json = serializeGist();
+      event.source.postMessage({request: "save", config: json, salt: data.salt}, event.origin)
+
     } else if(data.request === "description") {
       //update the gist's description
       tributary.__config__.set("description", data.description);

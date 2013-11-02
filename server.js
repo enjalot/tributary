@@ -152,6 +152,7 @@ function save_endpoint(req,res,next) {
   var data = req.body.gist;
   var token = req.session.access_token;
   var gistid = req.params['gistid'];
+  console.log("SAVING", gistid);
   save(gistid, data, token, function(err, response) {
     if(!err) {
       //post save
@@ -176,6 +177,7 @@ function fork_endpoint(req,res,next) {
   var token = req.session.access_token;
   var user = req.session.user;
   var gistid = req.params['gistid'];
+  console.log("FORKING", gistid);
 
   //get the user of this gist
   if(!gistid || !user) {
@@ -217,7 +219,6 @@ function fork_endpoint(req,res,next) {
         function onResponse(err, response) {
           if(!err) {
             //post fork. but only if user is authenticated
-            console.log("after fork");
             after_fork(oldgist, response, token, function(error, newgist) {
               if(!error) {
                 return res.send(newgist);
@@ -570,6 +571,43 @@ function imgur_upload(req,res,next) {
 
 
 //API
+function find_inlet(gistid, callback){
+  var query = {
+    "gistid": gistid
+    , public: { $ne: false }
+  };
+  $inlets.findOne(query, callback);
+}
+ 
+app.get('/api/inlet/:gistid', get_inlet_family)
+function get_inlet_family(req, res, next){
+  res.header("Access-Control-Allow-Origin", "*");
+  find_inlet(req.params.gistid, function(err, foundInlet) {
+    if (err) res.send(err);
+    // Fill in the parent of foundInlet the first time through
+    getParent(foundInlet, foundInlet, res);
+  });
+}
+ 
+function getParent(foundInlet, inlet, res){
+  // 'foundInlet' is only used with res.send()
+  // 'inlet' is the current inlet having its parent filled in.
+  // The first time the function is called the two are the same.
+  if(!inlet) return res.send(404);
+  if (inlet.parent){
+      find_inlet(inlet.parent, function(err, foundParentInlet){
+        if (err) res.send(err);
+        inlet.parent = foundParentInlet;
+        // Recurse and fill in the parent of 'inlet'
+        // Pass the original 'foundInlet' along too.
+        getParent(foundInlet, inlet.parent, res)
+      });
+    }
+    else {
+      // When the recursion is complete, return the original 'foundInlet'
+      res.send(foundInlet);
+    }
+}
 
 app.get('/api/latest/created', latest_created)
 app.get('/api/latest/created/:limit', latest_created)
@@ -644,7 +682,6 @@ function api_users(req,res,next) {
   }
   var sort = {}
   sort[sortBy] = ascdsc
-    console.log("SORT", sort)
   //TODO: make sure this is secure in the future
   $users.find(query, fields, opts).sort(sort).toArray(function(err, users) {
     if(err) res.send(err);
