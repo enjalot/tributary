@@ -51,6 +51,10 @@
       getConfig();
     }
   }
+  // hack for d3.unconf badge construction
+  window.step = function() {
+    sandbox.postMessage({request: "step" }, _origin)
+  }
 
   //on the load of the iframe, we want to get the gist (if any)
   //and then give it what it needs to fill out

@@ -43,9 +43,14 @@ TributaryUi = function(tributary) {
         d3.select("#trib-thumbnail").attr("src", image.data.link);
         d3.select("#trib-thumbnail").style("display", "");
         tributary.__config__.set("thumbnail", image.data.link);
+      } else if (data.request === "step") {
+        if (tributary.step) {
+          tributary.step();
+        }
       }
     }
     window.addEventListener("message", receiveMessage, false);
+    window.is_ready = true;
   }
   tributary.events.on("warnchanged", function() {
     if (parentWindow) parentWindow.postMessage({
