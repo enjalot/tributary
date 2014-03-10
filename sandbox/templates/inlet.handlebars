@@ -197,9 +197,11 @@ tb.__events__.on("loaded", function() {
     { url: "/static/plugins/play/plugin.json" },
     { url: "/static/plugins/screenshots/plugin.json" },
     { url: "/static/plugins/controls/plugin.json" },
-    { url: "/static/plugins/inline-console/plugin.json" }
+    { url: "/static/plugins/inline-console/plugin.json" },
+    { url: "/static/plugins/ajax-caching/plugin.json" }
     ], {serial: true },
   function(err) {
+    tb.__events__.trigger("loaded:plugins");
     tb.__events__.trigger("execute");
   })
 })

@@ -7,7 +7,6 @@ TributaryUi = function(tributary) {
     tributary.ui = {};
   }
   tributary.trace = false;
-  tributary.hint = false;
   var parentWindow;
   tributary.getGist = function() {
     if (tributary.gistid) {

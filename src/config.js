@@ -24,8 +24,10 @@ tributary.Config = Backbone.Model.extend({
       clone_opacity: 0.4,
       duration: 3000,
       ease: "linear",
-      dt: 0.01
+      dt: 0.01,
 
+      //somehow this default value needs to come from the plugin
+      "ajax-caching": true
   },
 
   require: function(callback) {
@@ -140,42 +142,33 @@ tributary.ConfigView = Backbone.View.extend({
     editorcontrols.select("#logerrors")
       .on("click", function(d) {
         var dis = d3.select(this);
-        //if($(this).attr("data-name") === "log-errors") {
-          //if (tributary.hint === true && tributary.trace === true) {
-          if( dis.classed("active") ) {
-            console.log("Error logging disabled");
-            tributary.hint = false;
-            tributary.trace = false;
-            tributary.__events__.trigger("execute");
-            dis.classed("active", false)
-          }
-          else {
-            console.log("Error logging initiated");
-            tributary.hint = true;
-            tributary.trace = true;
-            tributary.__events__.trigger("execute");
-            dis.classed("active", true)
-          }
-       // }
+        if( dis.classed("active") ) {
+          console.log("Error logging disabled");
+          tributary.trace = false;
+          tributary.__events__.trigger("execute");
+          dis.classed("active", false)
+        }
+        else {
+          console.log("Error logging initiated");
+          tributary.trace = true;
+          tributary.__events__.trigger("execute");
+          dis.classed("active", true)
+        }
       })
     editorcontrols.select("#updatecode")
       .on("click", function(d) {
         var dis = d3.select(this);
-        //if($(this).attr("data-name") === "log-errors") {
-          //if (tributary.hint === true && tributary.trace === true) {
-          if( dis.classed("active") ) {
-            console.log("Auto updating disabled");
-            tributary.__noupdate__ = true;
-            //tributary.__events__.trigger("execute");
-            dis.classed("active", false)
-          }
-          else {
-            console.log("Auto updating initiated");
-            tributary.__noupdate__ = false;
-            tributary.__events__.trigger("execute");
-            dis.classed("active", true)
-          }
-       // }
+        if( dis.classed("active") ) {
+          console.log("Auto updating disabled");
+          tributary.__noupdate__ = true;
+          dis.classed("active", false)
+        }
+        else {
+          console.log("Auto updating initiated");
+          tributary.__noupdate__ = false;
+          tributary.__events__.trigger("execute");
+          dis.classed("active", true)
+        }
       })
 
     // Require / External files config section

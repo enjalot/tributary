@@ -1,5 +1,5 @@
 /*
- * The Main function is the backbone of the contexts. 
+ * The Main function is the backbone of the contexts.
  * it listens on execute events and does things like clean, execute and render
  * as well as emitting events along the way
  */
@@ -48,8 +48,7 @@ tributary.Main = function(options) {
   }
 
   function set_display() {
-
-    tributary.clear();
+    tributary.clearAll();
     var display = this.config.get("display");
     var fn = tributary.__displayFns__[display]
     if(fn) { fn(el); }
@@ -58,6 +57,10 @@ tributary.Main = function(options) {
         d3.select(el).selectAll("*").remove();
       };
     }
+  }
+
+  tributary.clearAll = function() {
+    d3.select("#display").selectAll("*").remove();
   }
 
   function makeDiv(el) {
@@ -118,7 +121,8 @@ tributary.Main = function(options) {
     tributary.renderer = new THREE.WebGLRenderer;
     tributary.renderer.setSize(tributary.sw, tributary.sh);
     container.appendChild(tributary.renderer.domElement);
-    var controls = new THREE.TrackballControls(tributary.camera);
+    // TODO: don't hardcode #display here?
+    var controls = new THREE.TrackballControls(tributary.camera, d3.select("#display").node());
     controls.target.set(0, 0, 0);
     controls.rotateSpeed = 1;
     controls.zoomSpeed = .4;

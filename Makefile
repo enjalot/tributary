@@ -30,6 +30,7 @@ all: \
 	src/editor.js \
 	src/gist.js \
 	src/batch.js \
+	src/parser.js \
 	src/plugin.js \
 	src/end.js
 

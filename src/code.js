@@ -59,24 +59,20 @@ tributary.CodeModel = Backbone.Model.extend({
   */
   //We allow parsing of code before execution
   handleParser: function(js) {
-    //TODO: This is from plugin, should somehow be able to hook in here
-    var inline = tributary.__config__.get("inline-console");
-    if(inline) {
-      try {
-      transformed = tributary.__parser__(js, this.get("filename"));
-      } catch(e) {
-        if(tributary.trace)
-          console.log("PARSE", e.stack);
-      }
-      try {
-        js = escodegen.generate(transformed.ast);
-      } catch(e) {
-        if(tributary.trace)
-          console.log("GEN", e.stack)
-      }
-      if(tributary.trace) {
-        console.log("JS", js)
-      }
+    try {
+      var transformed = tributary.__parser__(js, this.get("filename"));
+    } catch(e) {
+      if(tributary.trace)
+        console.log("PARSE", e.stack);
+    }
+    try {
+      js = escodegen.generate(transformed);
+    } catch(e) {
+      if(tributary.trace)
+        console.log("GENERATE", e.stack)
+    }
+    if(tributary.trace) {
+      console.log("JS", js)
     }
     return js;
   },

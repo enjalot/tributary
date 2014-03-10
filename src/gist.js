@@ -33,7 +33,7 @@ tributary.loadGist = function(data, callback) {
 
   //per-file configurations
   fileconfigs = ret.config.get("fileconfigs") || {};
-  
+
   ret.models = new tributary.CodeModels();
   var fsplit, model, context, i = 0, ext;
   files.forEach(function(f) {

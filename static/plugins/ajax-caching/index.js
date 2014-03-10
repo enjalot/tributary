@@ -3,7 +3,7 @@
 //id: the id should match what's in the plugin.json
 //function: the plugin function which has access to the tributary instance and
 //the plugin object
-Tributary.plugin("inline-console", tributaryInlineConsolePlugin);
+Tributary.plugin("ajax-caching", tributaryAJAXPlugin);
 
 //tributary is the main object available in inlets
 //plugin has some gauranteed elements:
@@ -15,32 +15,30 @@ Tributary.plugin("inline-console", tributaryInlineConsolePlugin);
 //  activate() { //initializes the plugin },
 //  deactivate() { //cleans up after the plugin (removes itself) }
 //}
-function tributaryInlineConsolePlugin(tributary, plugin) {
+function tributaryAJAXPlugin(tributary, plugin) {
   var el;
   var config = tributary.__config__;
 
   plugin.activate = function() {
     el = document.getElementById(plugin.elId);
-    tributary.__events__.on("prerender", clearWidgets);
 
-    var button = d3.select("#editorcontrols").append("button").attr("id","inline-logs").text("Inline Logs")
+    var button = d3.select("#editorcontrols").append("button").attr("id","ajax-caching").text("AJAX Caching")
       .on("click", function(d) {
         var dis = d3.select(this);
         if( dis.classed("active") ) {
-          console.log("Inline logging disabled");
-          tributary.__config__.set("inline-console", false)
+          console.log("AJAX Caching disabled");
+          tributary.__config__.set("ajax-caching", false)
           tributary.__events__.trigger("execute");
           dis.classed("active", false)
-          clearWidgets();
         }
         else {
-          console.log("Inline logging initiated");
-          tributary.__config__.set("inline-console", true)
+          console.log("AJAX Caching initiated");
+          tributary.__config__.set("ajax-caching", true)
           tributary.__events__.trigger("execute");
           dis.classed("active", true)
         }
       })
-      .classed("active", tributary.__config__.get("inline-console"))
+      .classed("active", tributary.__config__.get("ajax-caching"))
   }
 
   plugin.deactivate = function() {
@@ -50,28 +48,18 @@ function tributaryInlineConsolePlugin(tributary, plugin) {
     //destroy();
   }
 
-  var widgets = [];
-  function clearWidgets() {
-    for(var i = widgets.length; i--;) {
-      widgets.pop().clear(); //this remove's CodeMirror's handle to the widget;
-    }
-    d3.select("#widgets").selectAll(".log-widget").remove()
-  }
-  function clearLineWidgets(cm, line) {
-    for(var i = widgets.length; i--;) {
-      var w = widgets[i];
-      var wline = cm.getLineNumber(w.line);
-      if(wline == line) {
-        w.clear(); //this remove's CodeMirror's handle to the widget;
-      }
-    }
-    //d3.select("#widgets").selectAll(".log-widget").remove()
-  }
-
+  var ajaxMethods = [
+    "json",
+    "csv",
+    "tsv",
+    "xml",
+    "html",
+    "text"
+  ]
   //this is where we use esprima to interperet our code
   //mainly taken from https://github.com/nornagon/live/blob/master/xform.coffee
-  tributary.__parsers__["inline-console"] = function(parsed, code, filename) {
-    if(!tributary.__config__.get("inline-console")) { return parsed }
+  tributary.__parsers__["ajax-caching"] = function(parsed, code, filename) {
+    if(!tributary.__config__.get("ajax-caching")) { return parsed }
     __hasProp = {}.hasOwnProperty;
 
     var transformed;
@@ -79,8 +67,11 @@ function tributaryInlineConsolePlugin(tributary, plugin) {
     function replace(e) {
       if(e.type === 'ExpressionStatement' && e.expression && e.expression.type === 'CallExpression') {
         var callee = e.expression.callee;
-        if(callee.object && callee.object.name === 'console' && callee.property && callee.property.name === 'log') {
-          callee.property.name = 'logJack';
+        if(callee.object && callee.object.name === 'd3'
+        && callee.property
+        && (ajaxMethods.indexOf(callee.property.name) > -1)) {
+          var method = callee.property.name;
+          callee.property.name = 'ajaxJack';
           var pos = e.expression.loc.end;
           pos.line -= 1;
           var newArgs = [
@@ -123,6 +114,19 @@ function tributaryInlineConsolePlugin(tributary, plugin) {
                       "type": "Literal",
                       "value": filename,
                       "raw": filename + ""
+                  },
+                  "kind": "init"
+                },
+                {
+                  "type": "Property",
+                  "key": {
+                      "type": "Identifier",
+                      "name": "method"
+                  },
+                  "value": {
+                      "type": "Literal",
+                      "value": method,
+                      "raw": method + ""
                   },
                   "kind": "init"
                 }
@@ -176,22 +180,31 @@ function tributaryInlineConsolePlugin(tributary, plugin) {
     return transformed;
   }
 
-  console.logJack = function(pos, args) {
-    var context = tributary.getContext(pos.filename);
-    var cm = context.editor.cm;
-    try {
-      var text = JSON.stringify(args)
-      text = text.slice(1, text.length-1);
-    } catch(e) {
-      var text = args.toString();
+  var urlCache = {};
+  // TODO: not put this on d3?
+  d3.ajaxJack = function(pos, args) {
+    var method = pos.method;
+    // the user's url
+    var url = args[0]
+    var hash = [pos.filename, url].join("_");
+    if(!tributary.__data__) tributary.__data__ = {};
+    // the user's callback
+    var userCb = args[1];
+    // our callback
+    var ourCb = function(err, result) {
+      if(err) return userCb(err);
+      urlCache[hash] = url;
+      tributary.__data__[hash] = result;
+      userCb(null, result);
     }
-    var widget = d3.select("#widgets").append("div")
-      .text(text)
-      .classed("log-widget", true)
-    clearLineWidgets(cm, pos.line);
-    var lwidget = cm.addLineWidget(pos.line, widget.node());
-    widgets.push(lwidget);
-    console.log.apply(console, args);
+    args[1] = ourCb;
+
+    // We cache the data for the most recent url call.
+    // if the user changes the url for this d3.json call it will be refreshed.
+    if(urlCache[hash] === url) {
+      return userCb(null, tributary.__data__[hash]);
+    }
+    d3[method].apply(d3, args);
   }
   return plugin;
 }

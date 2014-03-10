@@ -90,6 +90,7 @@ tributary.Editor = Backbone.View.extend({
         laxbreak: true,
         loopfunc: true,
         smarttabs: true,
+        multistr: true,
         sub: true
       })
     } else if(filetype == "json") {

@@ -1,0 +1,8 @@
+{
+  "id": "ajax-caching"
+, "description": "d3.json and other ajax calls work as expected"
+, "url": "/static/plugins/ajax-caching"
+, "js": "index.js"
+, "html": "index.html"
+, "css": "style.css"
+}

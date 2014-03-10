@@ -3,7 +3,6 @@ if(!tributary.ui) {
 }
 
 tributary.trace = false;
-tributary.hint = false;
 
 var parentWindow;
 
@@ -98,7 +97,6 @@ tributary.ui.setup = function() {
     tributary.__events__.trigger("execute");
   });
   tributary.__events__.trigger("resize");
-
 };
 
 
@@ -260,7 +258,6 @@ function _assemble(error, ret) {
   tributary.__events__.trigger("fullscreen", config.get("fullscreen"))
 
   tributary.__events__.trigger("loaded");
-
 }
 
 function serializeGist() {
