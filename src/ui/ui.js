@@ -52,11 +52,19 @@ if(window) {
       d3.select("#trib-thumbnail").attr("src", image.data.link);
       d3.select("#trib-thumbnail").style("display", "");
       tributary.__config__.set("thumbnail", image.data.link);
+    } else if( data.request === "step" ) {
+      //hack for d3.unconf
+      if(tributary.step) {
+        tributary.step()
+      }
     }
   }
 
   //listen on window postMessage to load gist and handle save/forks
   window.addEventListener("message", receiveMessage, false)
+  //hack for d3.unconf
+  window.is_ready = true;
+  
 }
 
 //user has changed code, so let parent frame know not to let them leave too easy ;)
@@ -76,8 +84,6 @@ function goFullscreen() {
   if(parentWindow)
     parentWindow.postMessage({request: "fullscreen" }, tributary._origin);
 }
-
-
 
 tributary.ui.setup = function() {
   tributary.__events__.on("resize", function() {
