@@ -330,9 +330,9 @@ function after_fork(oldgist, newgist, token, callback) {
   }
 
   if(!newgist) return callback({status:500}, null)
-  var user = newgist.user;
+  var user = newgist.owner || newgist.user;
   var name = "anon";
-  if(newgist.user) name = newgist.user.login;
+  if(user) name = user.login;
   var markdown = "[ <a href=\"http://tributary.io/inlet/" + newgist.id +"\">Launch: " + newgist.description + "</a> ] "
     + newgist.id
     + " by " + name
@@ -352,10 +352,10 @@ function after_fork(oldgist, newgist, token, callback) {
   , public: newgist['public']
   }
 
-  if(newgist.user) {
+  if(user) {
     inlet_data.user = {
-      id: newgist.user.id
-      , login: newgist.user.login
+      id: user.id
+    , login: user.login
     }
   }
 
@@ -393,10 +393,10 @@ function after_save(gist, callback) {
       , public: newgist['public']
       }
     }
-    if(gist.user) {
+    if(gist.owner) {
       mgist.user = {
-        id: gist.user.id
-      , login: gist.user.login
+        id: gist.owner.id
+      , login: gist.owner.login
       }
     }
     mgist.description = gist.description

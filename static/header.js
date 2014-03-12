@@ -47,7 +47,7 @@
   function setThumbnail(image) {
     sandbox.postMessage({request: "thumbnail", image: image}, _origin);
     //only save the gist if it belongs to the user
-    if(header.gist && header.gist.user && header.username == header.gist.user.login) {
+    if(header.gist && header.gist.owner && header.username == header.gist.owner.login) {
       getConfig();
     }
   }
@@ -145,10 +145,10 @@
       setup_save(user, !!data);
     } else {
       header.gist = data;
-      if(data.user === null || data.user === undefined) {
+      if(data.owner === null || data.owner === undefined) {
         user = anon;
       } else {
-        user = data.user;
+        user = data.owner;
       }
 
       setup_header(user, data.description);
