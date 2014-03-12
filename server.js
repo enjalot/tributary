@@ -393,10 +393,11 @@ function after_save(gist, callback) {
       , public: newgist['public']
       }
     }
-    if(gist.owner) {
+    var user = gist.owner || gist.user
+    if(user) {
       mgist.user = {
-        id: gist.owner.id
-      , login: gist.owner.login
+        id: user.id
+      , login: user.login
       }
     }
     mgist.description = gist.description

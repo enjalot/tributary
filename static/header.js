@@ -47,7 +47,9 @@
   function setThumbnail(image) {
     sandbox.postMessage({request: "thumbnail", image: image}, _origin);
     //only save the gist if it belongs to the user
-    if(header.gist && header.gist.owner && header.username == header.gist.owner.login) {
+    if(!header.gist) return;
+    var user = header.gist.owner || header.gist.user;
+    if(user && header.username == user.login) {
       getConfig();
     }
   }
@@ -145,12 +147,10 @@
       setup_save(user, !!data);
     } else {
       header.gist = data;
-      if(data.owner === null || data.owner === undefined) {
+      user = data.owner || data.user;
+      if(!user) {
         user = anon;
-      } else {
-        user = data.owner;
       }
-
       setup_header(user, data.description);
       setup_save(user, !!data);
 
