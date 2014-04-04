@@ -318,7 +318,8 @@ function getGist(id, callback) {
   //return object
   var ret = {};
   var cachebust = "?cachebust=" + Math.random() * 4242424242424242;
-  var url = 'https://api.github.com/gists/' + id + cachebust;
+  //var url = 'https://api.github.com/gists/' + id + cachebust;
+  var url = '/gist/' + id;
   $.ajax({
     url: url,
     contentType: 'application/json',

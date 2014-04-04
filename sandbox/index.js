@@ -43,11 +43,25 @@ function embed(req, res, next) {
   res.send(html);
 };
 
+var mongoConf = {
+  type: 'Mongo',
+  host: 'localhost',
+  port: 27017,
+  db: 'tributary'
+}
 
+//MONGO SETUP
+var mongo = require('mongoskin');
+var db = mongo.db(mongoConf.host + ':' + mongoConf.port + '/' + mongoConf.db + '?auto_reconnect');
+
+//collection to store a cache of gists (for faster loading)
+var cache = require('../cache');
+var $gistcache = db.collection("gists");
 
 //API endpoint for fetching a gist from github
 app.get("/gist/:gistid", getgist_endpoint);
 function getgist_endpoint(req, res, next) {
+  console.log("hi");
   getgist(req.params.gistid, function(error, response, body) {
     if (!error && response.statusCode == 200) {
       res.header("Content-Type", 'application/json');
@@ -59,14 +73,25 @@ function getgist_endpoint(req, res, next) {
 }
 
 function getgist(gistid, callback) {
-  var url = 'https://api.github.com/gists/' + gistid
-    + "?client_id=" + settings.GITHUB_CLIENT_ID
-    + "&client_secret=" + settings.GITHUB_CLIENT_SECRET;
-
-  request.get({
-    url: url
-  , headers: { 'User-Agent': 'tributary' }
-  }, callback);
+  cache.get($gistcache, gistid, function(err, data) {
+    if(!data) {
+      console.log("data loaded from github")
+      var url = 'https://api.github.com/gists/' + gistid
+        + "?client_id=" + settings.GITHUB_CLIENT_ID
+        + "&client_secret=" + settings.GITHUB_CLIENT_SECRET;
+      request.get({
+        url: url
+      , headers: { 'User-Agent': 'tributary' }
+      }, function (err, response, body){
+        cache.add($gistcache, gistid, body);
+        callback(err,response,body);
+      });
+    }
+    else {
+      console.log("data loaded from cache")
+      callback(null,{statusCode:200},data);
+    }
+  })
 }
 
 
