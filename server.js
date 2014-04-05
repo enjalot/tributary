@@ -35,6 +35,9 @@ var $visits = db.collection("visits");
 //collection where we store images uploaded for thumbnails
 var $images = db.collection("images");
 
+//collection to store a cache of gists (for faster loading)
+var cache = require('./cache');
+var $gistcache = db.collection("gists");
 
 var app = express()
   .use(express.cookieParser())
@@ -101,6 +104,12 @@ app.get('/s/:gistid', inlet)
 app.get('/e/:gistid', inlet)
 function inlet(req,res,next) {
   var gistid = req.params['gistid'];
+
+  // invalidate the cache if get provides ?update=true
+  if(req.query['update']) {
+    cache.invalidate($gistcache, gistid)
+  }
+
   var user = req.session.user;
   if(gistid) {
     //record this visit
@@ -182,7 +191,7 @@ function fork_endpoint(req,res,next) {
   //get the user of this gist
   if(!gistid || !user) {
     //No id, so creating a new gist
-    //or anan user, can't make anon fork so create new gist
+    //or anon user, can't make anon fork so create new gist
     console.log("creating new gist");
     newgist(data, token, function (err, response) {
       if(!err) {
@@ -380,6 +389,9 @@ function after_fork(oldgist, newgist, token, callback) {
 
 //post save functionality
 function after_save(gist, callback) {
+  // after a save, invalidate our cached gist
+
+  cache.invalidate($gistcache, gist.id)
   //update the raw url for the thumbnail
 
   //save info in mongo.
