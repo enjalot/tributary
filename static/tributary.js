@@ -368,6 +368,9 @@ Tributary = function() {
     function makeDiv(el) {
       tributary.__svg__ = null;
       tributary.g = d3.select(el);
+      tributary.clear = function() {
+        d3.select(el).selectAll("*").remove();
+      };
     }
     function makeSvg(el) {
       var svg = d3.select(el).append("svg").attr({

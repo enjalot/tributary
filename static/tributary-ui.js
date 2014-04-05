@@ -162,8 +162,12 @@ TributaryUi = function(tributary) {
         m.trigger("hide");
       }
     });
-    var c = config.contexts[0];
-    c.model.trigger("show");
+    console.log("CONTEXTS", config.contexts);
+    var inlet = _.find(config.contexts, function(d) {
+      return d.model.get("filename") === "inlet.js" || d.model.get("filename") === "inlet.coffee";
+    });
+    console.log("INLET", inlet);
+    inlet.model.trigger("show");
     var files_view = new Tributary.FilesView({
       el: "#file-list",
       model: config
