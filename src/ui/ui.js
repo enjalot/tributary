@@ -64,7 +64,6 @@ if(window) {
   window.addEventListener("message", receiveMessage, false)
   //hack for d3.unconf
   window.is_ready = true;
-  
 }
 
 //user has changed code, so let parent frame know not to let them leave too easy ;)
@@ -204,9 +203,9 @@ function _assemble(error, ret) {
     }
   });
 
-  var c = config.contexts[0];
-  c.model.trigger("show");
-  
+  var inlet = _.find(config.contexts, function(d) { return d.model.get("filename") === "inlet.js" || d.model.get("filename") === "inlet.coffee" });
+  inlet.model.trigger("show");
+
 
   //fill in the file tabs
   var files_view = new Tributary.FilesView({

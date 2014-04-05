@@ -15,6 +15,7 @@ Tributary.FilesView = Backbone.View.extend({
     contexts = contexts.sort(function(a,b) { if(a.filename < b.filename) return -1; return 1; });
     //inlet.js comes first TODO: mainfile comes first (TributaryContext)
     var inlet = _.find(contexts, function(d) { return d.filename === "inlet.js" || d.filename === "inlet.coffee" });
+
     if(inlet) {
       contexts.splice(contexts.indexOf(inlet), 1);
       contexts.unshift(inlet);
