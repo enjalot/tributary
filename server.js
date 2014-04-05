@@ -104,6 +104,12 @@ app.get('/s/:gistid', inlet)
 app.get('/e/:gistid', inlet)
 function inlet(req,res,next) {
   var gistid = req.params['gistid'];
+
+  // invalidate the cache if get provides ?update=true
+  if(req.query['update']) {
+    cache.invalidate($gistcache, gistid)
+  }
+
   var user = req.session.user;
   if(gistid) {
     //record this visit
@@ -383,6 +389,7 @@ function after_fork(oldgist, newgist, token, callback) {
 
 //post save functionality
 function after_save(gist, callback) {
+  // after a save, invalidate our cached gist
 
   cache.invalidate($gistcache, gist.id)
   //update the raw url for the thumbnail

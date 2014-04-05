@@ -61,7 +61,6 @@ var $gistcache = db.collection("gists");
 //API endpoint for fetching a gist from github
 app.get("/gist/:gistid", getgist_endpoint);
 function getgist_endpoint(req, res, next) {
-  console.log("hi");
   getgist(req.params.gistid, function(error, response, body) {
     if (!error && response.statusCode == 200) {
       res.header("Content-Type", 'application/json');
@@ -74,8 +73,9 @@ function getgist_endpoint(req, res, next) {
 
 function getgist(gistid, callback) {
   cache.get($gistcache, gistid, function(err, data) {
+    // TODO: verify that this cached data is valid
     if(!data) {
-      console.log("data loaded from github")
+      //console.log("data loaded from github")
       var url = 'https://api.github.com/gists/' + gistid
         + "?client_id=" + settings.GITHUB_CLIENT_ID
         + "&client_secret=" + settings.GITHUB_CLIENT_SECRET;
@@ -88,7 +88,7 @@ function getgist(gistid, callback) {
       });
     }
     else {
-      console.log("data loaded from cache")
+      //console.log("data loaded from cache")
       callback(null,{statusCode:200},data);
     }
   })

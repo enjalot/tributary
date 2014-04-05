@@ -237,7 +237,8 @@ TributaryUi = function(tributary) {
   function getGist(id, callback) {
     var ret = {};
     var cachebust = "?cachebust=" + Math.random() * 0xf12765df4c9b2;
-    var url = "/gist/" + id;
+    var githuburl = "https://api.github.com/gists/" + id + cachebust;
+    var url = "/gist/" + id + cachebust;
     $.ajax({
       url: url,
       contentType: "application/json",
@@ -247,9 +248,8 @@ TributaryUi = function(tributary) {
       },
       error: function(e) {
         console.log("err", e);
-        url = "/gist/" + id + cachebust;
         $.ajax({
-          url: url,
+          url: githuburl,
           contentType: "application/json",
           dataType: "json",
           success: function(data) {

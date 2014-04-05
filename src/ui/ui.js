@@ -318,8 +318,9 @@ function getGist(id, callback) {
   //return object
   var ret = {};
   var cachebust = "?cachebust=" + Math.random() * 4242424242424242;
-  //var url = 'https://api.github.com/gists/' + id + cachebust;
-  var url = '/gist/' + id;
+  var githuburl = 'https://api.github.com/gists/' + id + cachebust;
+  //now using the sandbox API data, and then check github if there is an error
+  var url = '/gist/' + id + cachebust;
   $.ajax({
     url: url,
     contentType: 'application/json',
@@ -327,10 +328,9 @@ function getGist(id, callback) {
     success: function(data) { callback(null, data) },
     error: function(e) {
       console.log("err", e)
-      //if a 403 error (because of rate limiting)
-      url = "/gist/" + id + cachebust;
+      // try github if the local sandbox API did not work
       $.ajax({
-        url: url,
+        url: githuburl,
         contentType: 'application/json',
         dataType: 'json',
         success: function(data) { callback(null, data) },
