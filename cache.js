@@ -1,21 +1,24 @@
 var cache = module.exports;
 
+var collectionError = "Cache: No collection provided.";
+
 cache.add = function (collection, id, data, callback) {
-	if (!collection) {
-		console.error("No collection provided to store data")
-	}
-	else{
+	if(collection) {
 		collection.update({gistid: id}, {gistid: id, data:data}, {upsert:true}, 
 			function(err, result) { 
 				if(err) console.error(err); 
 				if(callback) callback(err, result);
 			});
 	}
+	else {
+		console.error(collectionError);
+    callback(collectionError, null);
+	}
 }
 
 cache.get = function (collection, id, callback) {
 	if (!collection) {
-		callback("No collection provided", null);
+		callback(collectionError, null);
 	}
 	else {
 	  //console.log("trying to get " + id);
@@ -34,6 +37,7 @@ cache.invalidate = function(collection, id, callback) {
 		collection.remove({"gistid": id}, callback)
 	}
 	else {
-		console.error("No collection provided");
+		console.error(collectionError);
+    callback(collectionError, null);
 	}
 }
