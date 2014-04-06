@@ -116,11 +116,17 @@ tributary.Editor = Backbone.View.extend({
     //we render the codemirror instance into the el
     this.cm = CodeMirror(this.el, options);
 
-    this.cm.on("change", throttle(function() {
-      var code = that.cm.getValue();
-      //TODO: local storage?
-      that.model.set("code", code);
-    }, 150));
+    var throttler = throttle(function() {
+        var code = that.cm.getValue();
+        //TODO: local storage?
+        that.model.set("code", code);
+    });
+    this.cm.on("change", function() {
+      var wait = 150;
+      if(that.cm.dragging || that.cm.picking) wait = 0;
+      throttler.wait(wait);
+      throttler();
+    });
 
     this.cm.setValue(this.model.get("code"));
     this.inlet = Inlet(this.cm);

@@ -81,14 +81,21 @@ Tributary = function() {
     if (!context || !context.model) return;
     return context.model;
   };
-  function throttle(func, wait) {
-    return function() {
+  function throttle(func) {
+    var wait = 0;
+    var throttler = function() {
       var that = this, args = [].slice(arguments);
       clearTimeout(func._throttleTimeout);
       func._throttleTimeout = setTimeout(function() {
         func.apply(that, args);
       }, wait);
     };
+    throttler.wait = function(_) {
+      if (!arguments.length) return wait;
+      wait = _;
+      return throttler;
+    };
+    return throttler;
   }
   tributary.CodeModel = Backbone.Model.extend({
     defaults: {
@@ -868,10 +875,16 @@ Tributary = function() {
         options.theme = "lesser-dark";
       }
       this.cm = CodeMirror(this.el, options);
-      this.cm.on("change", throttle(function() {
+      var throttler = throttle(function() {
         var code = that.cm.getValue();
         that.model.set("code", code);
-      }, 150));
+      });
+      this.cm.on("change", function() {
+        var wait = 150;
+        if (that.cm.dragging || that.cm.picking) wait = 0;
+        throttler.wait(wait);
+        throttler();
+      });
       this.cm.setValue(this.model.get("code"));
       this.inlet = Inlet(this.cm);
       this.model.on("error", function(error) {

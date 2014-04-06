@@ -55,13 +55,20 @@ tributary.getModel = function(filename) {
 
 //dat stack overflow
 //http://stackoverflow.com/questions/8366043/how-to-throttle-callback-of-jquery-event/12185544#12185544
-function throttle (func, wait) {
-    return function() {
-        var that = this,
-            args = [].slice(arguments);
-        clearTimeout(func._throttleTimeout);
-        func._throttleTimeout = setTimeout(function() {
-            func.apply(that, args);
-        }, wait);
-    };
+function throttle (func) {
+  var wait = 0;
+  var throttler = function() {
+    var that = this,
+        args = [].slice(arguments);
+    clearTimeout(func._throttleTimeout);
+    func._throttleTimeout = setTimeout(function() {
+        func.apply(that, args);
+    }, wait);
+  };
+  throttler.wait = function(_) {
+    if(!arguments.length) return wait;
+    wait = _;
+    return throttler;
+  }
+  return throttler;
 }
