@@ -73,6 +73,7 @@ handlebars: Makefile
 less: Makefile
 	$(LESS_COMPILER)  static/css/less/style.less > static/css/style.css 
 	$(LESS_COMPILER)  static/css/less/header.less > static/css/header.css 
+	$(LESS_COMPILER)  static/css/index.less > static/css/index.css 
 
 clean:
 	rm -f static/tributary*.js
