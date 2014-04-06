@@ -38,6 +38,7 @@ var $images = db.collection("images");
 //collection to store a cache of gists (for faster loading)
 var cache = require('./cache');
 var $gistcache = db.collection("gists");
+$gistcache.ensureIndex({gistid:1}, false, function(err) { console.log(err) });
 
 var app = express()
   .use(express.cookieParser())

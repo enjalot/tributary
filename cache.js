@@ -4,9 +4,9 @@ var collectionError = "Cache: No collection provided.";
 
 cache.add = function (collection, id, data, callback) {
   if(collection) {
-    collection.update({gistid: id}, {gistid: id, data:data}, {upsert:true}, 
-      function(err, result) { 
-        if(err) console.error(err); 
+    collection.update({gistid: id}, {gistid: id, data:data}, {upsert:true},
+      function(err, result) {
+        if(err) console.error(err);
         if(callback) callback(err, result);
       });
   }
