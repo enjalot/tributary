@@ -139,9 +139,7 @@ Tributary = function() {
       } catch (e) {
         if (tributary.trace) console.log("GENERATE", e.stack);
       }
-      if (tributary.trace) {
-        console.log("JS", js);
-      }
+      if (tributary.trace) {}
       return js;
     },
     local_storage: function(key) {

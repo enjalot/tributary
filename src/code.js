@@ -72,7 +72,8 @@ tributary.CodeModel = Backbone.Model.extend({
         console.log("GENERATE", e.stack)
     }
     if(tributary.trace) {
-      console.log("JS", js)
+      // TODO expose this some other way, pollutes reading out runtime errors
+      //console.log("JS", js)
     }
     return js;
   },
