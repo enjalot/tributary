@@ -14,6 +14,8 @@ all: \
 	tributary.min.js \
 	tributary-ui.js \
 	tributary-ui.min.js \
+	tributary-screenshot.js \
+	tributary-screenshot.min.js \
 	handlebars \
 	less
 
@@ -39,6 +41,12 @@ UI = \
   src/ui/ui.js \
 	src/ui/files.js \
 	src/ui/end.js
+
+SCREENSHOT = \
+	static/plugins/screenshots/lib/rgbcolor.js \
+	static/plugins/screenshots/lib/StackBlur.js \
+	static/plugins/screenshots/lib/canvg.js \
+	static/plugins/screenshots/lib/html2canvas.js
 
 #THIRD_PARTY = \
 	#static/lib/three.min.js \
@@ -72,7 +80,12 @@ handlebars: Makefile
 
 less: Makefile
 	$(LESS_COMPILER)  static/css/less/style.less > static/css/style.css 
-	$(LESS_COMPILER)  static/css/less/header.less > static/css/header.css 
+	$(LESS_COMPILER)  static/css/less/header.less > static/css/header.css
+
+tributary-screenshot.js: Makefile
+	@rm -f static/$@
+	cat $(SCREENSHOT) | $(JS_BEAUTIFIER) > static/$@
+	@chmod a-w static/$@
 
 clean:
 	rm -f static/tributary*.js
