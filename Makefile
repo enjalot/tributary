@@ -79,8 +79,9 @@ handlebars: Makefile
 	$(HANDLEBARS_COMPILER) sandbox/templates/*.handlebars > sandbox/templates/sandbox-templates.js
 
 less: Makefile
-	$(LESS_COMPILER)  static/css/less/style.less > static/css/style.css 
+	$(LESS_COMPILER)  static/css/less/style.less > static/css/style.css
 	$(LESS_COMPILER)  static/css/less/header.less > static/css/header.css
+	$(LESS_COMPILER)  static/css/index.less > static/css/index.css
 
 tributary-screenshot.js: Makefile
 	@rm -f static/$@

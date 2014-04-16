@@ -300,6 +300,9 @@ section {
 section:last-child {
   margin-bottom: 0;
 }
+section #plugins {
+  margin: 0;
+}
 nav {
   font-weight: bold;
   font-size: 0.9em;
@@ -345,13 +348,6 @@ nav li {
   list-style: none;
   vertical-align: top;
 }
-#latest-inlets {
-  padding: 20px;
-  font-size: 30px;
-  width: 80%;
-  text-align: center;
-}
-
 #popular-inlets {
   margin-bottom: 52px;
 }
@@ -387,7 +383,6 @@ nav li {
   transition: all 1.3s ease-out 0.07s;
   margin-top: 0;
 }
-
 #more-details {
   margin-top: 10%;
 }
@@ -400,7 +395,7 @@ nav li {
   margin-right: auto;
   opacity: 0.9;
   font-weight: bold;
-  font-size: 2em;
+  font-size: 1.8em;
   line-height: 1em;
   margin-bottom: 1em;
 }
@@ -467,6 +462,12 @@ nav li {
   -o-transition: opacity 0.35s ease-in 0.15s;
   transition: opacity 0.35s ease-in 0.15s;
 }
+#latest-inlets {
+  padding: 20px;
+  font-size: 30px;
+  width: 80%;
+  text-align: center;
+}
 /*		Tablet Layout: 768px.
 		Gutters: 24px.
 		Outer margins: 28px.
@@ -506,10 +507,6 @@ px      68    160    252    */
     margin: 1.4em 0;
   }
   #mostactive-inlets {
-    width: 100%;
-    text-align: left;
-  }
-  #latest-inlets {
     width: 100%;
     text-align: left;
   }
@@ -577,7 +574,7 @@ button {
   background-image: -o-linear-gradient(top, #ffffff, #d6d6d6);
   background-image: -ms-linear-gradient(top, #ffffff, #d6d6d6);
   background-image: linear-gradient(top, #ffffff, #d6d6d6);
-  filter: progid:dximagetransform.microsoft.gradient(GradientType=0, StartColorStr='#ffffff', EndColorStr='#d6d6d6');
+  filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0, StartColorStr='#ffffff', EndColorStr='#d6d6d6');
   -webkit-transition: all 0.001s ease-out;
   -moz-transition: all 0.001s ease-out;
   transition: all 0.001s ease-out;
@@ -626,7 +623,7 @@ select {
   background-image: -o-linear-gradient(top, #ebebeb, #ffffff);
   background-image: -ms-linear-gradient(top, #ebebeb, #ffffff);
   background-image: linear-gradient(top, #ebebeb, #ffffff);
-  filter: progid:dximagetransform.microsoft.gradient(GradientType=0, StartColorStr='#ebebeb', EndColorStr='#ffffff');
+  filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0, StartColorStr='#ebebeb', EndColorStr='#ffffff');
   -webkit-transition: all 0.8s ease-out;
   -moz-transition: all 0.8s ease-out;
   transition: all 0.8s ease-out;
@@ -650,7 +647,7 @@ select:focus {
   background-image: -o-linear-gradient(top, #ffffff, #d6d6d6);
   background-image: -ms-linear-gradient(top, #ffffff, #d6d6d6);
   background-image: linear-gradient(top, #ffffff, #d6d6d6);
-  filter: progid:dximagetransform.microsoft.gradient(GradientType=0, StartColorStr='#ffffff', EndColorStr='#d6d6d6');
+  filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0, StartColorStr='#ffffff', EndColorStr='#d6d6d6');
   text-shadow: 0 2px 1px #FFF;
 }
 @media only screen and (max-width: 767px) {
@@ -706,7 +703,7 @@ input[type=submit] {
   background-image: -o-linear-gradient(top, #ffffff, #d6d6d6);
   background-image: -ms-linear-gradient(top, #ffffff, #d6d6d6);
   background-image: linear-gradient(top, #ffffff, #d6d6d6);
-  filter: progid:dximagetransform.microsoft.gradient(GradientType=0, StartColorStr='#ffffff', EndColorStr='#d6d6d6');
+  filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0, StartColorStr='#ffffff', EndColorStr='#d6d6d6');
   -webkit-transition: all 0.1s ease-out;
   -moz-transition: all 0.1s ease-out;
   transition: all 0.1s ease-out;
