@@ -566,8 +566,6 @@ px      68    160    252    344    436    528    620    712    804    896    */
 
   /*background-color: #ffffff;*/
 
-  /*background-color: #ffffff;*/
-
   background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(255, 255, 255, 0)), to(rgba(66, 66, 66, 0.6)));
   background-image: -webkit-linear-gradient(top, rgba(255, 255, 255, 0), rgba(66, 66, 66, 0.6));
   background-image: -moz-linear-gradient(top, rgba(255, 255, 255, 0), rgba(66, 66, 66, 0.6));

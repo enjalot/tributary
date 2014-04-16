@@ -41,6 +41,7 @@ var $gistcache = db.collection("gists");
 $gistcache.ensureIndex({gistid:1}, false, function(err) { console.log(err) });
 
 var app = express()
+  .use(express.compress())
   .use(express.cookieParser())
   .use(express.bodyParser())
   .use(express.session({
