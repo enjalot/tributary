@@ -116,6 +116,6 @@ function program9(depth0,data) {
   stack1 = depth0.inletRoute;
   stack1 = helpers.unless.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(9, program9, data)});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n    \n    \n    $('i').tipsy({fade: true, gravity: 'n', opacity: 0.86});\n  </script>\n\n\n  <!-- header.js sets up the header and does communication with child iframe -->\n  <script src='/static/header.js?v=0.9'></script>\n\n</body>\n</html>\n\n\n";
+  buffer += "\n    \n    console.log(\"HEADER\", header)\n    \n    $('i').tipsy({fade: true, gravity: 'n', opacity: 0.86});\n  </script>\n\n\n  <!-- header.js sets up the header and does communication with child iframe -->\n  <script src='/static/header.js?v=0.9'></script>\n\n</body>\n</html>\n\n\n";
   return buffer;});
 })();

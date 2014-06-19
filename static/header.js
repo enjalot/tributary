@@ -26,6 +26,7 @@
   function load(error, data) {
     //query comes from the request query and is passed to the template as a JSON string
     //sandbox.postMessage({request: "load", gist: data, query: header.query}, _origin);
+    sandbox.postMessage({request: "load", gistid: header.gistid, query: header.query}, _origin);
   }
   d3.select("#sandbox").node().onload = function() {
     sandbox.postMessage({request: "load", gistid: header.gistid, query: header.query}, _origin);

@@ -12,7 +12,9 @@ function tributaryScreenshotPlugin(tributary, plugin) {
     //console.log("hi from screenshot plugin");
     el = document.getElementById(plugin.elId);
     // get the screenshot button and put it on the config panel
-    d3.select("#thumbnail-content").node().appendChild(d3.select(el).select("#screenshot").node());
+    screenshotDiv = d3.select(el).select("#screenshot").node();
+    if(!screenshotDiv) return;
+    d3.select("#thumbnail-content").node().appendChild(screenshotDiv);
     d3.select("#screenshot").on("click", _handleScreenshot);
 
     d3.select(".time_controls")

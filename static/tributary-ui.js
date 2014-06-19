@@ -25,6 +25,9 @@ TributaryUi = function(tributary) {
         tributary.gistid = data.gistid;
         parentWindow = event.source;
         tributary.query = data.query;
+        if (!tributary.__loading__) {
+          tributary.getGist();
+        }
       } else if (data.request === "save") {
         if (!tributary.__config__.get("thumbnail")) {
           tributary._screenshot();
@@ -94,6 +97,7 @@ TributaryUi = function(tributary) {
       console.log("error!", error);
       return;
     }
+    if (ret.__loaded__) return;
     var config = ret.config;
     tributary.__config__ = config;
     tributary.Main({

@@ -29,6 +29,9 @@ if(window) {
       //assemble the ui using gist data;
       parentWindow = event.source;
       tributary.query = data.query;
+      if(!tributary.__loading__) {
+        tributary.getGist();
+      }
       //tributary.loadGist(data.gist, _assemble);
     } else if(data.request === "save") {
       //postMessage the host frame with the tributary.context information
@@ -119,6 +122,8 @@ function _assemble(error, ret) {
     console.log("error!", error);
     return;
   }
+  if(ret.__loaded__) return;
+
   var config = ret.config;
   tributary.__config__ = config;
 

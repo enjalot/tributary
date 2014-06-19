@@ -34,7 +34,10 @@ function tributaryPlayPlugin(tributary, plugin) {
 
     //Setup the ui for choosing the controls in the config div
     var configDiv = d3.select("#config-content");
-    var timecontrolsDiv = configDiv.node().appendChild(d3.select(el).select(".timecontrols").node());
+    var timeControlNode = d3.select(el).select(".timecontrols").node()
+    if(!timeControlNode) return;
+
+    var timecontrolsDiv = configDiv.node().appendChild(timeControlNode);
     var timecontrols = d3.select(timecontrolsDiv)
       .selectAll("button");
 

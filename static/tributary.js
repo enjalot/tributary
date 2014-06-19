@@ -937,6 +937,9 @@ Tributary = function() {
   });
   tributary.loadGist = function(data, callback) {
     var ret = {};
+    if (data && tributary.__loaded__) return callback(null, {
+      __loaded__: true
+    });
     if (!data) {
       ret.config = new tributary.Config;
       ret.config.newFile = true;
@@ -985,6 +988,7 @@ Tributary = function() {
     });
     ret.config.set("fileconfigs", fileconfigs);
     ret.config.require(function(err, res) {
+      tributary.__loaded__ = true;
       callback(null, ret);
     });
   };

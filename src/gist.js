@@ -3,6 +3,7 @@
 //returns an object with those models and descriptive information
 tributary.loadGist = function(data, callback) {
   var ret = {};
+  if(data && tributary.__loaded__) return callback(null, { __loaded__: true })
   if(!data) {
     ret.config = new tributary.Config();
     ret.config.newFile = true;
@@ -62,6 +63,7 @@ tributary.loadGist = function(data, callback) {
 
   //ret.config.require(callback, ret);
   ret.config.require(function(err, res) {
+    tributary.__loaded__ = true;
     callback(null, ret);
   });
 }
