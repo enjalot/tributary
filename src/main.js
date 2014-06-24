@@ -29,7 +29,11 @@ tributary.Main = function(options) {
       if(tributary.autoinit) {
         tributary.clear();
         //trigger all the contexts to execute, after the canvas has been cleared
-        tributary.__events__.trigger("post:execute");
+        tributary.__events__.trigger("pre:execute");
+        //setTimeout(function() {
+          tributary.__events__.trigger("post:execute");
+        //},0)
+        //tributary.__events__.trigger("post:execute");
       }
       //then we run the user defined run function
       tributary.execute();

@@ -214,6 +214,7 @@ function tributaryPlayPlugin(tributary, plugin) {
     //we can finish a transition
     tributary.timer = {
       then: new Date(),
+      last: new Date(),
       ctime: tributary.t
     };
 
@@ -260,6 +261,11 @@ function tributaryPlayPlugin(tributary, plugin) {
       var now = new Date();
       var dtime = now - tributary.timer.then;
       var dt;
+
+      // rate limiting
+      var last = tributary.timer.last
+      if(now - last < 20) return false;
+      tributary.timer.last = now;
 
       if(tributary.loop) {
         if (tributary.reverse) {

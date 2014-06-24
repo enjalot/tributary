@@ -62,10 +62,19 @@ function init(options) {
   this.config = options.config;
   //execute on code changes (if not silenced)
   if(!options.silent) {
-    this.model.on("change:code", function() {
-      tributary.__events__.trigger("execute");
-    });
-    tributary.__events__.on("post:execute", this.execute, this)
+    // we want to let some things execute before others
+    // e.g. html and svg should happen before any new code executes
+    if(options.preExecute) {
+      this.model.on("change:code", function() {
+        tributary.__events__.trigger("execute");
+      });
+      tributary.__events__.on("pre:execute", this.execute, this)
+    } else {
+      this.model.on("change:code", function() {
+        tributary.__events__.trigger("execute");
+      });
+      tributary.__events__.on("post:execute", this.execute, this)
+    }
   }
   //if the user has modified the code, we want to protect them from losing their work
   this.model.on("change:code", function() {
@@ -257,6 +266,7 @@ tributary.HTMLContext = function(options) {
     this.model.trigger("noerror");
     return true;
   }
+  options.preExecute = true
   init.call(ctx, options);
   return ctx;
 }
@@ -280,6 +290,7 @@ tributary.SVGContext = function(options) {
     this.model.trigger("noerror");
     return true;
   }
+  options.preExecute = true
   init.call(ctx, options);
   return ctx;
 }

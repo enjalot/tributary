@@ -340,6 +340,7 @@ Tributary = function() {
       try {
         if (tributary.autoinit) {
           tributary.clear();
+          tributary.__events__.trigger("pre:execute");
           tributary.__events__.trigger("post:execute");
         }
         tributary.execute();
@@ -507,10 +508,17 @@ Tributary = function() {
     this.el = options.el;
     this.config = options.config;
     if (!options.silent) {
-      this.model.on("change:code", function() {
-        tributary.__events__.trigger("execute");
-      });
-      tributary.__events__.on("post:execute", this.execute, this);
+      if (options.preExecute) {
+        this.model.on("change:code", function() {
+          tributary.__events__.trigger("execute");
+        });
+        tributary.__events__.on("pre:execute", this.execute, this);
+      } else {
+        this.model.on("change:code", function() {
+          tributary.__events__.trigger("execute");
+        });
+        tributary.__events__.on("post:execute", this.execute, this);
+      }
     }
     this.model.on("change:code", function() {
       tributary.__events__.trigger("warnchanged");
@@ -671,6 +679,7 @@ Tributary = function() {
       this.model.trigger("noerror");
       return true;
     };
+    options.preExecute = true;
     init.call(ctx, options);
     return ctx;
   };
@@ -691,6 +700,7 @@ Tributary = function() {
       this.model.trigger("noerror");
       return true;
     };
+    options.preExecute = true;
     init.call(ctx, options);
     return ctx;
   };
