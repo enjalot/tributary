@@ -58,7 +58,7 @@ function tributaryControlsPlugin(tributary, plugin) {
   // get the control element
   function getCE() {
     var sel = d3.select(".time_controls")
-      .selectAll("#controls").data([0])
+      .selectAll("#display-controls").data([0])
     sel.enter()
       .append("div").attr("id", "controls");
     return sel;

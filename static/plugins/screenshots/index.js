@@ -17,7 +17,7 @@ function tributaryScreenshotPlugin(tributary, plugin) {
     d3.select("#thumbnail-content").node().appendChild(screenshotDiv);
     d3.select("#screenshot").on("click", _handleScreenshot);
 
-    d3.select("#controls")
+    d3.select("#display-controls")
     .selectAll("button#gif")
       .data([0])
     .enter()

@@ -127,7 +127,7 @@
 
 	</aside>
   
-  <section id="controls">
+  <section id="display-controls">
   </section>
   
   <section id="plugins">
@@ -186,7 +186,8 @@ TributaryUi(tb);
 tb.ui.setup();
 
 tb.loadPlugin("/static/plugins/stylus/plugin.json", {}, function(e) {
-  tb.getGist();
+  // we wait for the outter frame to tell us to load with a gistid if any
+  //tb.getGist();
 });
 
 tb.__events__.on("loaded", function() {

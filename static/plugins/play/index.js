@@ -33,7 +33,7 @@ function tributaryPlayPlugin(tributary, plugin) {
     config.on("pause", onPlayPause, this);
 
     //attach the time_controls to the #control display div
-    var controlDiv = d3.select("#controls")
+    var controlDiv = d3.select("#display-controls")
     var timeControlNode = d3.select(el).select(".time_controls").node()
     if(timeControlNode) {
       controlDiv.node().appendChild(timeControlNode);
