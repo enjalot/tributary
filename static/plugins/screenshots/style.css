@@ -3,7 +3,7 @@ canvas#pngit {
   pointer-events: none;
 }
 
-#gif {
+.gif_button {
   /*position: absolute;
   bottom: 10px;
   left: 350px;
@@ -13,8 +13,8 @@ canvas#pngit {
   position: absolute;
   bottom: 60px;
   left: 10px;
-  width: 180px;
-  height: 90px;
+  height: 120px;
+  background-color: white;
 }
 .gifbuttons {
   float:left;
@@ -28,24 +28,25 @@ canvas#pngit {
   float:left;
   clear:left;
 }
+
 #gifprogress {
-  float:left;
-  display: inline-block;
-  height: 20px;
+  width: 0px;
+  height: 0px;
   background-color: #1EAD1E;
   /*border: 1px solid #fff;*/
 }
 #gifframes {
   position: absolute;
-  left: 70px;
-  top: 5px;
+  left: 75px;
   width: 400px;
-  height: 90px;
+  height: 120px;
   overflow: scroll;
   pointer-events: none;
+  background-color: white;
 }
 .frame {
-  border: 1px solid white;
+  border: 1px solid black;
+  margin: 2px;
   float:left;
   top: 0px;
   display: inline-block;

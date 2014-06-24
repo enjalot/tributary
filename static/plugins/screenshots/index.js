@@ -17,7 +17,11 @@ function tributaryScreenshotPlugin(tributary, plugin) {
     d3.select("#thumbnail-content").node().appendChild(screenshotDiv);
     d3.select("#screenshot").on("click", _handleScreenshot);
 
-    d3.select(".time_controls")
+    d3.select("#controls")
+    .selectAll("button#gif")
+      .data([0])
+    .enter()
+    .append("div").classed("gif_button", true)
       .append("button")
       .attr("id", "gif")
       .text("GIF")
@@ -185,6 +189,7 @@ function tributaryScreenshotPlugin(tributary, plugin) {
           console.log(percent * maxProgress + "px")
           d3.select("#gifprogress").style({
             "width": percent * maxProgress + "px",
+            "height": "20px",
             "background-color": d3.scale.linear().range(["#F8025B", "#38F514"]).interpolate(d3.interpolateHsl)(percent)
           });
         })
@@ -205,7 +210,10 @@ function tributaryScreenshotPlugin(tributary, plugin) {
           $('.frame').tipsy({fade: true, gravity: 'sw', opacity: 0.86});
 
           tributary.__frames__ = [];
-          d3.select("#gifprogress").style("width", "0px");
+          d3.select("#gifprogress").style({
+            "width": "0px",
+            "height": "0px"
+          })
         });
         gif.render();
       })

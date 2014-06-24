@@ -746,6 +746,11 @@ px      68    160    252    344    436    528    620    712    804    896    */
   width: 100%;
   height: 100%;
 }
+#controls {
+  position: absolute;
+  bottom: 12px;
+  left: 12px;
+}
 /*    Tablet Layout: 768px.
     Gutters: 24px.
     Outer margins: 28px.
@@ -824,11 +829,6 @@ px      68    160    252    */
   }
   #panel #files {
     height: auto;
-  }
-  #controls {
-    position: static;
-    text-align: center;
-    margin-bottom: 18px;
   }
   #panel #config {
     position: static !important;
