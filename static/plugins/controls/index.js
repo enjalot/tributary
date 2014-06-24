@@ -137,6 +137,46 @@ function tributaryControlsPlugin(tributary, plugin) {
     return input.node();
   }
 
+  function makeButton(options) {
+    var controlElement = getCE();
+    var control = controlElement.selectAll('div.control_'+ options.name)
+      .data([options.name])
+    var center = control.enter()
+      .append("div").classed("control_"+options.name, true).classed("control", true);
+    center.append("input")
+      .attr({
+        type: "range"
+      })
+
+    input = control.select("input")
+    var value = tributary.__controls__[options.name];
+    if(!exists(value)) {
+      value = (options.max || 0 + options.min || 0) / 2
+      tributary.__controls__[options.name] = value;
+    }
+
+    center.append("span").classed("name", true)
+      .text(options.name + ": ")
+      .append("span").classed("value", true).text(value);
+
+    var attrs = {
+      value: value,
+      min: options.min,
+      max: options.max,
+      step: Math.abs((options.max - options.min) / 20)
+    }
+    if(options.step) {
+      attrs.step = options.step
+    }
+    input.attr(attrs)
+    input.on("change", function() {
+      control.select("span.value").text(this.value);
+      tributary.__controls__[options.name] = +this.value;
+      tributary.events.trigger("execute");
+    });
+    return input.node();
+  }
+
   tributary.control = function(options) {
     //must specify a unique name
     if(!options.name) return 0;
@@ -147,9 +187,13 @@ function tributaryControlsPlugin(tributary, plugin) {
       var el = makeDropdown(options);
       value = options.options[el.selectedIndex];
     } else if((options.min || options.min === 0) && (options.max || options.max === 0)) {
-      //this is a number
+      //this is a number, make a slider
       var el = makeSlider(options);
       value = +el.value;
+    } else if(options.onclick) {
+      // this is a button
+      var el = makeButton(options);
+      //value = +el.value;
     }
     //update config
     tributary.__controls__[name] = value;
