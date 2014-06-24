@@ -28,9 +28,21 @@
     //sandbox.postMessage({request: "load", gist: data, query: header.query}, _origin);
     sandbox.postMessage({request: "load", gistid: header.gistid, query: header.query}, _origin);
   }
+  /*
   d3.select("#sandbox").node().onload = function() {
     sandbox.postMessage({request: "load", gistid: header.gistid, query: header.query}, _origin);
-  }
+  }*/
+  //on the load of the iframe, we want to get the gist (if any)
+  //and then give it what it needs to fill out
+  d3.select("#sandbox").on("load", function() {
+    load();
+    if(header.gistid !== "" && header.gistid) {
+      getGist(header.gistid, function(err) { if(err) console.log("err", err) });
+    } else {
+      //this sets up the ui even tho we have no gist;
+      handle_gist();
+    }
+  })
 
   //Config object has everything we need to save our gist
   function getConfig() {
@@ -58,18 +70,6 @@
   window.step = function() {
     sandbox.postMessage({request: "step" }, _origin)
   }
-
-  //on the load of the iframe, we want to get the gist (if any)
-  //and then give it what it needs to fill out
-  d3.select("#sandbox").on("load", function() {
-    load();
-    if(header.gistid !== "" && header.gistid) {
-      getGist(header.gistid, function(err) { if(err) console.log("err", err) });
-    } else {
-      //this sets up the ui even tho we have no gist;
-      handle_gist();
-    }
-  })
 
   window.addEventListener("message", recieveMessage, false)
   function recieveMessage(event) {

@@ -32,12 +32,19 @@ function tributaryPlayPlugin(tributary, plugin) {
     config.on("change:restart", restartButton, this);
     config.on("pause", onPlayPause, this);
 
+    //attach the time_controls to the #control display div
+    var controlDiv = d3.select("#controls")
+    var timeControlNode = d3.select(el).select(".time_controls").node()
+    if(timeControlNode) {
+      controlDiv.node().appendChild(timeControlNode);
+    }
+
     //Setup the ui for choosing the controls in the config div
     var configDiv = d3.select("#config-content");
-    var timeControlNode = d3.select(el).select(".timecontrols").node()
-    if(!timeControlNode) return;
+    var timeControlConfigNode = d3.select(el).select(".timecontrols").node()
+    if(!timeControlConfigNode) return;
 
-    var timecontrolsDiv = configDiv.node().appendChild(timeControlNode);
+    var timecontrolsDiv = configDiv.node().appendChild(timeControlConfigNode);
     var timecontrols = d3.select(timecontrolsDiv)
       .selectAll("button");
 
