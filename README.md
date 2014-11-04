@@ -1,5 +1,6 @@
 # Tributary
-[![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/enjalot/tributary?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/enjalot/tributary?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)  
+
 Tributary allows you to share live-editable code snippets. These snippets will
 most likely use d3.js and allow a user to play with code in a very responsive
 way.
