@@ -7,7 +7,7 @@ var _ = require('underscore');
 var Backbone = require('backbone');
 Backbone.$ = $;
 var Inlet = require('inlet');
-var cm = require('CodeMirror');
+var cm = require('codemirror');
 //Third party includes the codemirror modes and addons, as well as jshint
 var thirdparty = require('../static/lib/3rdparty.js');
 //TODO: these two can't be browserified right now

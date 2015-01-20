@@ -11,7 +11,7 @@ Backbone.$ = $;
 
 var Inlet = require("inlet");
 
-var cm = require("CodeMirror");
+var cm = require("codemirror");
 
 var thirdparty = require("../static/lib/3rdparty.js");
 
