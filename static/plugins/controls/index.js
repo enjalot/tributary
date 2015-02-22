@@ -103,7 +103,7 @@ function tributaryControlsPlugin(tributary, plugin) {
     input.on("change", function() {
       control.select("span.value").text(this.value);
       tributary.__controls__[options.name] = +this.value;
-      tributary.events.trigger("execute");
+      tributary.__events__.trigger("execute");
     });
     return input.node();
   }
@@ -172,7 +172,7 @@ function tributaryControlsPlugin(tributary, plugin) {
     input.on("change", function() {
       control.select("span.value").text(this.value);
       tributary.__controls__[options.name] = +this.value;
-      tributary.events.trigger("execute");
+      tributary.__events__.trigger("execute");
     });
     return input.node();
   }
