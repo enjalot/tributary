@@ -75,7 +75,8 @@ function tributaryPlayPlugin(tributary, plugin) {
 
 
   function onPlayPause() {
-    var tc = d3.select(el).select(".time_controls");
+    var tc = d3.select("#display-controls").select(".time_controls");
+    if(!tc.node()) tc = d3.select(el).select(".time_controls")
     var pb = tc.select("button.play");
     if(!tributary.pause){
       pb.classed("playing", false);
@@ -131,6 +132,7 @@ function tributaryPlayPlugin(tributary, plugin) {
         }
       });
       config.on("tick", function(t) {
+        if(!ts.node()) return;
         ts.node().setAttribute("value", tributary.t);
         ts.node().value = tributary.t;
       });
