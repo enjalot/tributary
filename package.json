@@ -24,7 +24,7 @@
     "express": "3.0.6",
     "request":"*",
     "handlebars":"1.0.7",
-    "mongoskin":"0.5.0",
+    "mongoskin":"^1.4",
     "connect-mongo": "0.1.x",
     "d3":"3.1.4",
     "inlet":"git://github.com/enjalot/Inlet.git",
