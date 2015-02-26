@@ -112,7 +112,7 @@ db.open(function(err, db) {
         cursor.nextObject(iterator);
         function iterator(err, mr_inlet) {
         //mr_inlets.forEach(function(mr_inlet) {
-          console.log("args", arguments)
+          //console.log("args", arguments)
           if(!mr_inlet) return finish();
           console.log("inlet id", mr_inlet._id, mr_inlet.value.count);
           $inlets.findOne({gistid: mr_inlet._id}, function(error, inlet) {

@@ -8,7 +8,7 @@ var mongoConf = {
   db: 'tributary'
 }
 var mongo = require('mongoskin');
-var db = mongo.db(mongoConf.host + ':' + mongoConf.port + '/' + mongoConf.db + '?auto_reconnect');
+var db = mongo.db('mongodb://' + mongoConf.host + ':' + mongoConf.port + '/' + mongoConf.db + '?auto_reconnect');
 db.open(function(err, db) {
   //collection to store some info on our users
   var $users = db.collection("users");
