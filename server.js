@@ -109,7 +109,7 @@ function inlet(req,res,next) {
 
   // invalidate the cache if get provides ?update=true
   if(req.query['update']) {
-    cache.invalidate($gistcache, gistid)
+    cache.invalidate($gistcache, gistid, function(err) { if(err) console.log(err)})
   }
 
   var user = req.session.user;
@@ -393,7 +393,7 @@ function after_fork(oldgist, newgist, token, callback) {
 function after_save(gist, callback) {
   // after a save, invalidate our cached gist
 
-  cache.invalidate($gistcache, gist.id)
+  cache.invalidate($gistcache, gist.id, function(err) { if(err) console.log(err) })
   //update the raw url for the thumbnail
 
   //save info in mongo.
