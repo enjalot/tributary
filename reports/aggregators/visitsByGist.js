@@ -99,20 +99,12 @@ db.open(function(err, db) {
       $mr_inlets.find({}, function(err, cursor) { //.toArray(function(err, mr_inlets) {
         console.log("still here?")
         var count = 0;
-        /*
-        var num = mr_inlets.length;
-        */
         function finish() {
-          //count++;
-          //if(count === num) {
-            db.close(); 
-            process.exit();
-          //}
+          db.close(); 
+          process.exit();
         }
         cursor.nextObject(iterator);
         function iterator(err, mr_inlet) {
-        //mr_inlets.forEach(function(mr_inlet) {
-          //console.log("args", arguments)
           if(!mr_inlet) return finish();
           console.log("inlet id", mr_inlet._id, mr_inlet.value.count);
           $inlets.findOne({gistid: mr_inlet._id}, function(error, inlet) {
@@ -124,20 +116,10 @@ db.open(function(err, db) {
               if(error) console.log(error)
               console.log("updated!")
               cursor.nextObject(iterator);
-              //finish();
-              //db.close();
             });
           })
         }
-        //db.close();
       })
-
     })
-
   })
-
-
-  
-  //db.close();
-
 })
