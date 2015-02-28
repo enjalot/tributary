@@ -8,14 +8,14 @@ var mongoConf = {
   db: 'tributary'
 }
 var mongo = require('mongoskin');
-var db = mongo.db(mongoConf.host + ':' + mongoConf.port + '/' + mongoConf.db + '?auto_reconnect');
+var db = mongo.db('mongodb://' + mongoConf.host + ':' + mongoConf.port + '/' + mongoConf.db + '?auto_reconnect');
 db.open(function(err, db) {
   //collection where we store info on inlets that are created and saved
   var $inlets = db.collection("inlets");
   //collection that's the output of mapreduce
   var out = "mr_inlets";
   var $mr_inlets = db.collection(out);
-  $mr_inlets.remove({});
+  $mr_inlets.remove({}, function(err) { if(err) console.log("err", err); });
   //collection where we store visits (specifically to particular inlets)
   var $visits = db.collection("visits");
 
@@ -85,7 +85,7 @@ db.open(function(err, db) {
     query: query
   }, function(err, coll) {
     console.log("Visits reduced!", err);
-    db.close();
+    //db.close();
 
     //Count up and collect forks for each inlet
     $inlets.mapReduce(mapForks, reduceForks, {
@@ -93,42 +93,33 @@ db.open(function(err, db) {
       query: query
     }, function(err, coll) {
       console.log("Forks reduced!", err);
-      db.close();
+      //db.close();
 
       //iterate over the inlets, get the created_at time and set it on the mongo inlet
-      $mr_inlets.find().toArray(function(err, mr_inlets) {
+      $mr_inlets.find({}, function(err, cursor) { //.toArray(function(err, mr_inlets) {
+        console.log("still here?")
         var count = 0;
-        var num = mr_inlets.length;
         function finish() {
-          count++;
-          if(count === num) {
-            db.close(); 
-            process.exit();
-          }
+          db.close(); 
+          process.exit();
         }
-        mr_inlets.forEach(function(mr_inlet) {
-          console.log("inlet id", mr_inlet._id);
+        cursor.nextObject(iterator);
+        function iterator(err, mr_inlet) {
+          if(!mr_inlet) return finish();
+          console.log("inlet id", mr_inlet._id, mr_inlet.value.count);
           $inlets.findOne({gistid: mr_inlet._id}, function(error, inlet) {
-            if(error || !inlet ) return finish();
+            if(error || !inlet ) return cursor.nextObject(iterator);
             inlet.visits = mr_inlet.value.count || 1;
             inlet.nforks = mr_inlet.value.nforks || 0;
             inlet.forks = mr_inlet.value.forks || [];
             $inlets.update({gistid: inlet.gistid}, inlet, {safe: true}, function(error) { 
               if(error) console.log(error)
-              finish();
-              //db.close();
+              console.log("updated!")
+              cursor.nextObject(iterator);
             });
           })
-        })
-        //db.close();
+        }
       })
-
     })
-
   })
-
-
-  
-  //db.close();
-
 })

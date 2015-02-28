@@ -57,10 +57,10 @@ function tributaryControlsPlugin(tributary, plugin) {
 
   // get the control element
   function getCE() {
-    var sel = d3.select(".time_controls")
-      .selectAll("#display-controls").data([0])
-    sel.enter()
-      .append("div").attr("id", "controls");
+    var sel = d3.select("#controls");
+    if(!sel.node()){
+      sel = d3.select(".time_controls").append("div").attr("id", "controls");
+    }
     return sel;
   }
   function exists(val) {
@@ -103,14 +103,13 @@ function tributaryControlsPlugin(tributary, plugin) {
     input.on("change", function() {
       control.select("span.value").text(this.value);
       tributary.__controls__[options.name] = +this.value;
-      tributary.events.trigger("execute");
+      tributary.__events__.trigger("execute");
     });
     return input.node();
   }
   function makeDropdown(options) {
     var controlElement = getCE();
-    var control = controlElement.selectAll('div.control_'+options.name)
-      .data([options.name])
+    var control = controlElement.selectAll('div.control_'+options.name).data([options.name])
     var center = control.enter()
     .append("div").classed("control_"+options.name, true).classed("control", true);
     center.append("select");
@@ -122,7 +121,8 @@ function tributaryControlsPlugin(tributary, plugin) {
       tributary.__controls__[options.name] = options.options[this.selectedIndex];
       tributary.__events__.trigger("execute");
     })
-    var opts = input.selectAll("option").data(options.options)
+    var opts = input.selectAll("option").data(options.options, function(d) { return d})
+    opts.exit().remove();
     opts.enter()
       .append("option");
 
@@ -133,7 +133,6 @@ function tributaryControlsPlugin(tributary, plugin) {
         if(value == d) return true;
       },
     }).text(function(d) { return d });
-    opts.exit().remove();
     return input.node();
   }
 
@@ -141,6 +140,7 @@ function tributaryControlsPlugin(tributary, plugin) {
     var controlElement = getCE();
     var control = controlElement.selectAll('div.control_'+ options.name)
       .data([options.name])
+    control.remove()
     var center = control.enter()
       .append("div").classed("control_"+options.name, true).classed("control", true);
     center.append("input")
@@ -172,7 +172,7 @@ function tributaryControlsPlugin(tributary, plugin) {
     input.on("change", function() {
       control.select("span.value").text(this.value);
       tributary.__controls__[options.name] = +this.value;
-      tributary.events.trigger("execute");
+      tributary.__events__.trigger("execute");
     });
     return input.node();
   }

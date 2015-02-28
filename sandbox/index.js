@@ -52,7 +52,7 @@ var mongoConf = {
 
 //MONGO SETUP
 var mongo = require('mongoskin');
-var db = mongo.db(mongoConf.host + ':' + mongoConf.port + '/' + mongoConf.db + '?auto_reconnect');
+var db = mongo.db('mongodb://' + mongoConf.host + ':' + mongoConf.port + '/' + mongoConf.db + '?auto_reconnect');
 
 //collection to store a cache of gists (for faster loading)
 var cache = require('../cache');

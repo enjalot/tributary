@@ -23,7 +23,7 @@ var mongoConf = {
 
 //MONGO SETUP
 var mongo = require('mongoskin');
-var db = mongo.db(mongoConf.host + ':' + mongoConf.port + '/' + mongoConf.db + '?auto_reconnect');
+var db = mongo.db('mongodb://' + mongoConf.host + ':' + mongoConf.port + '/' + mongoConf.db + '?auto_reconnect');
 
 //collection to store some info on our users
 var $users = db.collection("users");
@@ -109,7 +109,7 @@ function inlet(req,res,next) {
 
   // invalidate the cache if get provides ?update=true
   if(req.query['update']) {
-    cache.invalidate($gistcache, gistid)
+    cache.invalidate($gistcache, gistid, function(err) { if(err) console.log(err)})
   }
 
   var user = req.session.user;
@@ -393,7 +393,7 @@ function after_fork(oldgist, newgist, token, callback) {
 function after_save(gist, callback) {
   // after a save, invalidate our cached gist
 
-  cache.invalidate($gistcache, gist.id)
+  cache.invalidate($gistcache, gist.id, function(err) { if(err) console.log(err) })
   //update the raw url for the thumbnail
 
   //save info in mongo.

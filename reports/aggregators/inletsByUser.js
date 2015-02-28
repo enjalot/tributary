@@ -8,7 +8,7 @@ var mongoConf = {
   db: 'tributary'
 }
 var mongo = require('mongoskin');
-var db = mongo.db(mongoConf.host + ':' + mongoConf.port + '/' + mongoConf.db + '?auto_reconnect');
+var db = mongo.db('mongodb://' + mongoConf.host + ':' + mongoConf.port + '/' + mongoConf.db + '?auto_reconnect');
 db.open(function(err, db) {
   //collection to store some info on our users
   var $users = db.collection("users");
@@ -17,7 +17,7 @@ db.open(function(err, db) {
   //collection that's the output of mapreduce
   var out = "mr_users";
   var $mr_users = db.collection(out);
-  $mr_users.remove({});
+  $mr_users.remove({}, function(err) { if(err) console.log(err) });
 
   function mapUsers() {
     if(this.user) {
@@ -60,32 +60,29 @@ db.open(function(err, db) {
     query: query
   }, function(err, coll) {
     console.log("Users reduced!", err);
-    db.close();
 
     //iterate over the inlets, get the created_at time and set it on the mongo inlet
-    $mr_users.find().toArray(function(err, mr_users) {
+    $mr_users.find({}, function(err, cursor){ //.toArray(function(err, mr_users) {
       var count = 0;
-      var num = mr_users.length;
       function finish() {
-        count++;
-        if(count === num) {
-          db.close(); 
-          process.exit();
-        }
+        db.close(); 
+        process.exit();
       }
-      mr_users.forEach(function(mr_user) {
+      cursor.nextObject(iterator);
+      function iterator(err, mr_user) {
+        if(!mr_user) return finish();
         console.log("user id", mr_user._id);
         $users.findOne({id: mr_user._id}, function(error, user) {
-          if(error || !user ) return finish();
+          if(error || !user ) return cursor.nextObject(iterator);
           user.inlets = mr_user.value.count || 1;
           user.visits = mr_user.value.visits || 1;
           user.nforks = mr_user.value.nforks || 0;
           $users.update({id: user.id}, user, {safe: true}, function(error) { 
             if(error) console.log(error)
-            finish()
+            cursor.nextObject(iterator);
           });
         })
-      })
+      }
     })
   })
 
