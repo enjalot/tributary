@@ -3,10 +3,7 @@ By running the shell script `./runtributary` during development, your web pages 
 
 ## Installataion
 ### Installing nodemon
-You must install nodemon globally by this command
-
-         npm install nodemon -g
-
+You must install nodemon and the livereload server. They have been added to the package.json file.
 
 ### The LiveReload plugin
 In order to have a browser reload its pages, you need to get the `livereoad` plugin for your broswer by visiting [http://help.livereload.com/kb/general-use/browser-extensions](http://help.livereload.com/kb/general-use/browser-extensions)
