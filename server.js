@@ -544,7 +544,7 @@ function imgur_authenticated(req,res,next) {
   next();
 }
 
-app.post("/imgur/upload/thumbnail", imgur_upload) 
+app.post("/imgur/upload/thumbnail", imgur_upload)
 function imgur_upload(req,res,next) {
   var data = req.body.image;
   var user = req.session.user;
@@ -570,7 +570,7 @@ function imgur_upload(req,res,next) {
       var image_data = {
         link: body.data.link
       , deletehash: body.data.deletehash
-      , user: { 
+      , user: {
           id: user.id
         , login: user.login
         }
@@ -582,7 +582,7 @@ function imgur_upload(req,res,next) {
   }
 
 }
- 
+
 
 
 //API
@@ -593,7 +593,7 @@ function find_inlet(gistid, callback){
   };
   $inlets.findOne(query, callback);
 }
- 
+
 app.get('/api/inlet/:gistid', get_inlet_family)
 function get_inlet_family(req, res, next){
   res.header("Access-Control-Allow-Origin", "*");
@@ -603,7 +603,7 @@ function get_inlet_family(req, res, next){
     getParent(foundInlet, foundInlet, res);
   });
 }
- 
+
 function getParent(foundInlet, inlet, res){
   // 'foundInlet' is only used with res.send()
   // 'inlet' is the current inlet having its parent filled in.
@@ -671,8 +671,8 @@ function latest_visits(req, res, next) {
   })
 }
 
-app.get('/api/users', api_users) 
-app.get('/api/users/:sortby/:limit/:ascdsc', api_users) 
+app.get('/api/users', api_users)
+app.get('/api/users/:sortby/:limit/:ascdsc', api_users)
 function api_users(req,res,next) {
   res.header("Access-Control-Allow-Origin", "*");
   var sortBy = req.params.sortby || "createdAt";
@@ -725,8 +725,8 @@ function user_latest(req,res,next) {
 }
 
 //Reporting API
-app.get('/api/counts/inlets', counts_inlets) 
-app.get('/api/counts/inlets/:start/:end', counts_inlets) 
+app.get('/api/counts/inlets', counts_inlets)
+app.get('/api/counts/inlets/:start/:end', counts_inlets)
 function counts_inlets(req,res,next) {
   res.header("Access-Control-Allow-Origin", "*");
   var start = req.params.start || new Date(new Date() - (24 * 60 * 60 * 1000));
@@ -744,8 +744,8 @@ function counts_inlets(req,res,next) {
     });
   });
 }
-app.get('/api/counts/visits', counts_visits) 
-app.get('/api/counts/visits/:start/:end', counts_visits) 
+app.get('/api/counts/visits', counts_visits)
+app.get('/api/counts/visits/:start/:end', counts_visits)
 function counts_visits(req,res,next) {
   res.header("Access-Control-Allow-Origin", "*");
   var start = req.params.start || new Date(new Date() - (24 * 60 * 60 * 1000));
@@ -835,3 +835,8 @@ app.listen(port, function() {
   console.log("tributary running on port", port);
 });
 
+
+livereload = require('livereload');
+//Print debug messages, and watch 'md' files
+server = livereload.createServer({debug: true, exts:['md']});
+server.watch(__dirname + "/static");
