@@ -1,4 +1,4 @@
-.log-widget {
+.log-widget, .html-widget {
   /*border: 1px solid red;*/
   opacity: 0.9;
   /*background-color: rgba(250,250,250,0.6);*/
@@ -6,9 +6,12 @@
   color: #115C3B;
   padding-left: 1.2em;
 }
+.html-widget {
+    padding-left: 0em;
+}
 .log-widget:before {
-color: orange;
- content: ">" 
+ color: orange;
+ content: ">"
 }
 
 #widgets {

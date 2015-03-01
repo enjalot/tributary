@@ -547,6 +547,7 @@ Tributary = function() {
     function ctx() {}
     ctx.execute = function() {
       if (tributary.__noupdate__) return;
+      if (!tributary.__pluginsLoaded__) return;
       if (!this.editor) return;
       try {
         var code = this.model.get("code");

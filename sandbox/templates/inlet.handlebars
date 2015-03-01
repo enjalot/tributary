@@ -15,7 +15,7 @@
   <!-- Add jQuery -->
   <script src="/static/lib/jquery-1.7.min.js"></script>
   <script src="/static/lib/jquery.tipsy.js" type="text/javascript" charset="utf-8"></script>
-  
+
   <!-- CodeMirror Things -->
 <link rel="stylesheet" href="/static/lib/CodeMirror3/lib/codemirror.css">
 <link rel="stylesheet" href="/static/lib/CodeMirror3/lib/util/dialog.css">
@@ -65,7 +65,7 @@
 
 	<section id="display">
 	</section>
-  
+
   <aside id="panel" {{#if fullscreen}}class="hidden"{{/if}}>
 		<section id="files">
 			<ul id="file-list">
@@ -87,7 +87,7 @@
 					<option value="div">HTML</option>
 				</select>
 
-        
+
 
         <div id="editorcontrols">
           <h4>Editor Controls <small><i class="explain-this-shit icon-help-circled"></i></small></h4>
@@ -126,10 +126,10 @@
 		</section>
 
 	</aside>
-  
+
   <section id="display-controls">
   </section>
-  
+
   <section id="plugins">
   </section>
 
@@ -199,6 +199,7 @@ tb.__events__.on("loaded", function() {
     { url: "/static/plugins/ajax-caching/plugin.json" }
     ], {serial: true },
   function(err) {
+    tb.__pluginsLoaded__ = true;
     tb.__events__.trigger("loaded:plugins");
     tb.__events__.trigger("execute");
   })

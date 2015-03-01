@@ -105,26 +105,88 @@ tributary.JSContext = function(options) {
   return ctx;
 }
 
-//Coffeescript Context
+//Coffeescript Context MW
 tributary.CoffeeContext = function(options) {
   function ctx() {};
   ctx.execute = function() {
     if(tributary.__noupdate__) return;
+    if(!tributary.__pluginsLoaded__) return;
+    //If editor not defined, then self-references are a problem
+    if( !this.editor ) return;
     try {
       //TODO: use coffee compilation to give errors/warnings
       var code = this.model.get("code");
-      js = CoffeeScript.compile(code, {"bare":true});
+      result = CoffeeScript.compile(code, {"bare":true, "sourceMap": true,
+        "filename": this.model.get("filename")});
       //js = this.model.handleParser(js)
+      js = result.js
+      //Log at line based on depth of stack
+      this.logAt = function(errLine,adjust,args) {
+        var matcher = errLine.match(/:(\d*):(\d*)/)
+        //Adjust for raw or wrapped code
+        var line = matcher[1] -1 - adjust
+        var col = matcher[2] -1
+        var csPos=result.sourceMap.getSourcePosition([line,col])
+        if(csPos) {
+          pos = {filename: this.model.get("filename"), line: csPos[0]-1}
+        } else {
+          pos = {filename: this.model.get("filename"), line: 0}
+          args[0] = args[0] + errLine
+        }
+
+        console.logJack(pos, args)
+      }
+      this.log = function() {
+        var err = new Error()
+        var errLine = err.stack.split("\n")[2]
+        //Adjust line number by 0
+        this.logAt(errLine, 0, [].slice.call(arguments));
+      }
+      this.logErr = function(err) {
+        var errLine = err.stack.split("\n")[1]
+        //Adjust by 2 because of initialize function wrapper
+        if (this.timeOut) {
+          clearTimeout(this.timeOut);
+        }
+        _this = this
+        cb = function(){
+          _this.logAt(errLine,2,[err.toString()]);
+        }
+        this.timeOut = setTimeout(cb,1000)
+      }
+      if (js.match(/^\s*debug\s*$/)) {
+        if(!this.sequence) {this.sequence = 0}
+        this.sequence++
+        srcmap = JSON.parse(result.v3SourceMap);
+        fileName = this.model.get("filename");
+        srcmap.sources[0] = fileName + " (" + this.sequence + ")"
+        srcmap.sourcesContent = [ code ];
+        srcmap.file = fileName ;//+ " (" + this.sequence + ")"
+        datauri = "data:application/json;charset=utf-8;base64," + btoa(JSON.stringify(srcmap));
+        js += "\n//@ sourceMappingURL=" + datauri;
+        }
+        // matcher = (err.stack.split("\n")[1]).match(/:(\d*):(\d*)/)
+        // line = matcher[1] -1
+        // col = matcher[2] -1
+        // origin = result.sourceMap.getSourcePosition([28,0])
+        // origin[1] = origin[1] -3
     } catch(err) {
       this.model.trigger("error", err);
+      if (console.logHTML) {
+        pos = {filename: this.model.get("filename"), line: err.location.first_line}
+        eLoc = (new Array(err.location.first_column)).join(" ") + "^"
+        console.logHTML(pos, "<PRE> " + eLoc + " <\PRE><BR> " + err.message)
+      }
       return false;
     }
+
     try {
       //eval(js);
-      var initialize = new Function("g", "tributary", js);
-      initialize(tributary.g, tributary)
+        var initialize = new Function("g", "tributary", "context", js);
+        initialize(tributary.g, tributary, this);
     } catch (err) {
       this.model.trigger("error", err);
+      this.logErr(err)
       return false;
     }
     this.model.trigger("noerror");
