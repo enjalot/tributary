@@ -547,20 +547,82 @@ Tributary = function() {
     function ctx() {}
     ctx.execute = function() {
       if (tributary.__noupdate__) return;
+      if (!tributary.__pluginsLoaded__) return;
+      if (!this.editor) return;
       try {
         var code = this.model.get("code");
-        js = CoffeeScript.compile(code, {
-          bare: true
+        result = CoffeeScript.compile(code, {
+          bare: true,
+          sourceMap: true,
+          filename: this.model.get("filename")
         });
+        js = result.js;
+        this.logAt = function(errLine, adjust, args) {
+          var matcher = errLine.match(/:(\d*):(\d*)/);
+          var line = matcher[1] - 1 - adjust;
+          var col = matcher[2] - 1;
+          var csPos = result.sourceMap.getSourcePosition([ line, col ]);
+          if (csPos) {
+            pos = {
+              filename: this.model.get("filename"),
+              line: csPos[0] - 1
+            };
+          } else {
+            pos = {
+              filename: this.model.get("filename"),
+              line: 0
+            };
+            args[0] = args[0] + errLine;
+          }
+          console.logJack(pos, args);
+        };
+        this.log = function() {
+          var err = new Error;
+          var errLine = err.stack.split("\n")[2];
+          this.logAt(errLine, 0, [].slice.call(arguments));
+        };
+        this.logErr = function(err) {
+          var errLine = err.stack.split("\n")[1];
+          if (this.timeOut) {
+            clearTimeout(this.timeOut);
+          }
+          _this = this;
+          cb = function() {
+            _this.logAt(errLine, 2, [ err.toString() ]);
+          };
+          this.timeOut = setTimeout(cb, 1e3);
+        };
+        if (js.match(/^\s*debug\s*$/)) {
+          if (!this.sequence) {
+            this.sequence = 0;
+          }
+          this.sequence++;
+          srcmap = JSON.parse(result.v3SourceMap);
+          fileName = this.model.get("filename");
+          srcmap.sources[0] = fileName + " (" + this.sequence + ")";
+          srcmap.sourcesContent = [ code ];
+          srcmap.file = fileName;
+          datauri = "data:application/json;charset=utf-8;base64," + btoa(JSON.stringify(srcmap));
+          js += "\n//@ sourceMappingURL=" + datauri;
+        }
       } catch (err) {
         this.model.trigger("error", err);
+        if (console.logHTML) {
+          pos = {
+            filename: this.model.get("filename"),
+            line: err.location.first_line
+          };
+          eLoc = (new Array(err.location.first_column)).join(" ") + "^";
+          console.logHTML(pos, "<PRE> " + eLoc + " <PRE><BR> " + err.message);
+        }
         return false;
       }
       try {
-        var initialize = new Function("g", "tributary", js);
-        initialize(tributary.g, tributary);
+        var initialize = new Function("g", "tributary", "context", js);
+        initialize(tributary.g, tributary, this);
       } catch (err) {
         this.model.trigger("error", err);
+        this.logErr(err);
         return false;
       }
       this.model.trigger("noerror");

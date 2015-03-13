@@ -1,0 +1,2 @@
+node node_modules/nodemon/bin/nodemon.js -w server.js -w settings.js -x node server.js &
+node node_modules/nodemon/bin/nodemon.js -w src -x make &

@@ -21,7 +21,7 @@ function tributaryInlineConsolePlugin(tributary, plugin) {
 
   plugin.activate = function() {
     el = document.getElementById(plugin.elId);
-    tributary.__events__.on("prerender", clearWidgets);
+    tributary.__events__.on("pre:execute", clearWidgets);
 
     var button = d3.select("#editorcontrols").append("button").attr("id","inline-logs").text("Inline Logs")
       .on("click", function(d) {
@@ -58,13 +58,18 @@ function tributaryInlineConsolePlugin(tributary, plugin) {
     d3.select("#widgets").selectAll(".log-widget").remove()
   }
   function clearLineWidgets(cm, line) {
+    wRetained = [] //widgets that have not been cleared
     for(var i = widgets.length; i--;) {
       var w = widgets[i];
       var wline = cm.getLineNumber(w.line);
-      if(wline == line) {
-        w.clear(); //this remove's CodeMirror's handle to the widget;
+      //clear only widgets from same editor and line
+      if(cm == w.cm && wline == line ) {
+        w.clear(); //this removes CodeMirror's handle to the widget;
+      } else {
+        wRetained.push(w)
       }
     }
+    widgets = wRetained //update the array
     //d3.select("#widgets").selectAll(".log-widget").remove()
   }
 
@@ -176,9 +181,14 @@ function tributaryInlineConsolePlugin(tributary, plugin) {
     return transformed;
   }
 
-  console.logJack = function(pos, args) {
-    var context = tributary.getContext(pos.filename);
-    var cm = context.editor.cm;
+  console.logHTML = function(pos, html,preserve) {
+    var widget = d3.select("#widgets").append("div")
+      .html(html)
+      .classed("html-widget", true)
+    console.log.apply(console, [html]);
+    putWidget(pos, widget, preserve);
+  }
+  console.logJack = function(pos, args, preserve) {
     try {
       var text = JSON.stringify(args)
       text = text.slice(1, text.length-1);
@@ -188,10 +198,20 @@ function tributaryInlineConsolePlugin(tributary, plugin) {
     var widget = d3.select("#widgets").append("div")
       .text(text)
       .classed("log-widget", true)
-    clearLineWidgets(cm, pos.line);
+    console.log.apply(console, args);
+    putWidget(pos, widget, preserve);
+  }
+  putWidget = function(pos, widget, preserve) {
+    var context = tributary.getContext(pos.filename);
+    var cm = context.editor.cm;
+    if(!preserve) {
+      clearLineWidgets(cm, pos.line);
+    }
     var lwidget = cm.addLineWidget(pos.line, widget.node());
     widgets.push(lwidget);
-    console.log.apply(console, args);
+  }
+  console.clearWidgets = function() {
+    clearWidgets()
   }
   return plugin;
 }
