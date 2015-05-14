@@ -18,12 +18,16 @@ pre {
   padding: 15px;
   white-space: pre;
   /* CSS2 */
+
   white-space: pre-wrap;
   /* CSS 2.1 */
+
   white-space: pre-line;
   /* CSS 3 (and 2.1 as well, actually) */
+
   word-wrap: break-word;
   /* IE */
+
 }
 /* hand cursor on clickable input elements */
 label,
@@ -241,6 +245,7 @@ body {
   color: #333333;
   -webkit-text-size-adjust: 100%;
   /* Stops Mobile Safari from auto-adjusting font-sizes */
+
   margin-left: auto;
   margin-right: auto;
 }
@@ -353,6 +358,7 @@ input[type=checkbox]:checked {
 input[type=radio] {
   -webkit-border-radius: 2em;
   /* Make radios round */
+
 }
 input[type=submit] {
   opacity: 0.95;
@@ -463,10 +469,13 @@ input[type=submit]:active {
   text-align: center;
   -webkit-box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2);
   /* Saf3.0+, Chrome */
+
   -moz-box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2);
   /* FF3.5+ */
+
   box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2);
   /* Opera 10.5, IE 9.0 */
+
 }
 #title a:link {
   color: white;
@@ -528,16 +537,20 @@ input[type=submit]:active {
     margin: 0 3px;
     }
     */
+
   vertical-align: middle;
   background-color: #CCC;
   border-radius: 16px;
   margin: 0 5px;
   -webkit-box-shadow: 0 2px 2px 0 rgba(250, 250, 250, 0.15);
   /* Saf3.0+, Chrome */
+
   -moz-box-shadow: 0 2px 2px 0 rgba(250, 250, 250, 0.15);
   /* FF3.5+ */
+
   box-shadow: 0 2px 2px 0 rgba(250, 250, 250, 0.15);
   /* Opera 10.5, IE 9.0 */
+
 }
 #title #login {
   position: absolute;
@@ -550,6 +563,7 @@ input[type=submit]:active {
   box-shadow: none;
   text-shadow: rgba(5, 5, 5, 0.8) 0px 1px 1px;
   /*background-color: #212121;*/
+
   background-image: -webkit-gradient(linear, left top, left bottom, from(#212121), to(rgba(255, 255, 255, 0)));
   background-image: -webkit-linear-gradient(top, #212121, rgba(255, 255, 255, 0));
   background-image: -moz-linear-gradient(top, #212121, rgba(255, 255, 255, 0));

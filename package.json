@@ -26,7 +26,7 @@
     "handlebars":"1.0.7",
     "mongoskin":"^1.4",
     "connect-mongo": "0.1.x",
-    "d3": "3.1.4",
+    "d3": "^3.1.4",
     "inlet": "git://github.com/enjalot/Inlet.git",
     "underscore": "1.4.4",
     "jquery": "*",

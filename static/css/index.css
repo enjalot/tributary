@@ -18,12 +18,16 @@ pre {
   padding: 15px;
   white-space: pre;
   /* CSS2 */
+
   white-space: pre-wrap;
   /* CSS 2.1 */
+
   white-space: pre-line;
   /* CSS 3 (and 2.1 as well, actually) */
+
   word-wrap: break-word;
   /* IE */
+
 }
 /* hand cursor on clickable input elements */
 label,
@@ -245,6 +249,7 @@ body {
   color: #333333;
   -webkit-text-size-adjust: 100%;
   /* Stops Mobile Safari from auto-adjusting font-sizes */
+
   margin-left: auto;
   margin-right: auto;
 }
@@ -351,10 +356,13 @@ nav li {
   border: 1px solid rgba(15, 15, 15, 0.2);
   -webkit-box-shadow: 0 2px 7px 0 rgba(0, 0, 0, 0.15);
   /* Saf3.0+, Chrome */
+
   -moz-box-shadow: 0 2px 7px 0 rgba(0, 0, 0, 0.15);
   /* FF3.5+ */
+
   box-shadow: 0 2px 7px 0 rgba(0, 0, 0, 0.15);
   /* Opera 10.5, IE 9.0 */
+
   height: 80px;
   overflow: hidden;
   margin-top: 8px;
@@ -439,10 +447,13 @@ nav li {
   border: 1px solid rgba(215, 215, 215, 0.4);
   -webkit-box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.3);
   /* Saf3.0+, Chrome */
+
   -moz-box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.3);
   /* FF3.5+ */
+
   box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.3);
   /* Opera 10.5, IE 9.0 */
+
 }
 #example-gallery img:hover {
   opacity: 1;
@@ -670,6 +681,7 @@ input[type=radio] {
 input[type=radio] {
   -webkit-border-radius: 2em;
   /* Make radios round */
+
 }
 input[type=submit] {
   opacity: 0.95;
