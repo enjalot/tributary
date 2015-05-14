@@ -835,8 +835,3 @@ app.listen(port, function() {
   console.log("tributary running on port", port);
 });
 
-
-livereload = require('livereload');
-//Print debug messages, and watch 'md' files
-server = livereload.createServer({debug: true, exts:['md']});
-server.watch(__dirname + "/static");
