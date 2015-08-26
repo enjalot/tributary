@@ -18,11 +18,11 @@ all: \
 	tributary-screenshot.min.js \
 	handlebars \
 	less
-	reload
+#	reload
 
 #Touch a file when job is done to force livereload
-reload:
-	touch static/reload/README.md
+#reload:
+#	touch static/reload/README.md
 # Modify this rule to build your own custom release.
 
 .INTERMEDIATE tributary.js: \

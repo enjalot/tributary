@@ -9,7 +9,7 @@ var Backbone = require("backbone");
 
 Backbone.$ = $;
 
-var Inlet = require("inlet");
+var Inlet = require("codemirror-inlet");
 
 var cm = require("codemirror");
 

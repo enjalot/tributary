@@ -6,7 +6,7 @@ var queue = require('queue-async');
 var _ = require('underscore');
 var Backbone = require('backbone');
 Backbone.$ = $;
-var Inlet = require('inlet');
+var Inlet = require('codemirror-inlet');
 var cm = require('codemirror');
 //Third party includes the codemirror modes and addons, as well as jshint
 var thirdparty = require('../static/lib/3rdparty.js');
