@@ -92,7 +92,7 @@ tributary.render
 
 
 
-###Contexts
+### Contexts
 
 I'm using latest CodeMirror from git (updating every-so often)  
 I have customized the JSHINT options in addons/lint/javascript-lint.js to be:
